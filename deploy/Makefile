@@ -21,4 +21,4 @@ install_admin:
 	-ln -s ./deploy/django $(HOME)/var/django
 	-ln -s ./deploy/supervisor $(HOME)/var/supervisor
 	cat gunicorn.cfg | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g; s/<USER>/$(USER)/g;" > ../gunicorn.cfg
-	cat start_gunicorn.sh | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g s/<REPO_NAME>/$(REPO_NAME)/g; s/<PROJECT_NAME>/$(PROJECT_NAME)/g;" > ../start_gunicorn.sh
+	cat start_gunicorn.sh | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g; s/<REPO_NAME>/$(REPO_NAME)/g; s/<PROJECT_NAME>/$(PROJECT_NAME)/g;" > ../start_gunicorn.sh
