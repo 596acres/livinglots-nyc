@@ -1,0 +1,3 @@
+*/5 * * * * $HOME/var/admin/check_supervisord_running.sh >> $HOME/var/admin/log 2>&1
+* * * * * $HOME/var/django/send_mail.sh >> $HOME/var/django/log 2>&1
+5 * * * * $HOME/var/django/syncdata.sh >> $HOME/var/django/log 2>&1
