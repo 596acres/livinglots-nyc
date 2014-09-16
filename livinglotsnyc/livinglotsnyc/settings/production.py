@@ -70,7 +70,7 @@ LOGGING = {
         'log_file': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(PROJECT_ROOT, '../../logs', 'django.log'),
+            'filename': os.path.join(PROJECT_ROOT, '../logs', 'django.log'),
             'maxBytes': '16777216', # 16megabytes
             'formatter': 'verbose'
         },
