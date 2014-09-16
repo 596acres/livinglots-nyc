@@ -17,7 +17,7 @@ echo "Starting $WEBAPP_NAME"
 
 # Activate the virtual environment
 source ~/bin/virtualenvwrapper.sh
-workon $VIRTUAL_ENV
+workon $VIRTUALENV
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 
 cd $DJANGODIR
