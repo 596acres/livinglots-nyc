@@ -13,7 +13,7 @@ requirements:
 	pip install -r ../requirements/production.txt
 
 install_admin:
-	bash install node.sh
+	bash install/node.sh
 	mkdir -p $(HOME)/var
 	ln -s ./deploy/admin $(HOME)/var/admin
 	ln -s ./deploy/django $(HOME)/var/django
