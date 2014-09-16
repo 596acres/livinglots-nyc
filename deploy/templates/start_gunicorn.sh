@@ -17,8 +17,10 @@ echo "Starting $WEBAPP_NAME"
 
 # Activate the virtual environment
 source ~/bin/virtualenvwrapper.sh
-workon $VIRTUALENV
+workon $VIRTUAL_ENV
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+
+cd $DJANGODIR
 
 # Start Django Unicorn
 exec gunicorn \
