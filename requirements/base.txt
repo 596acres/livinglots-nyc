@@ -22,7 +22,6 @@ django-admin-tools==0.5.1
 django-appconf==0.6
 django-autocomplete-light==1.4.13
 django-braces==1.4.0
-django-cache-machine>=0.8
 git+git://github.com/jbalogh/django-cache-machine/@master
 git+git://github.com/ebrelsford/django-chosen/@master
 django-compressor==1.3
