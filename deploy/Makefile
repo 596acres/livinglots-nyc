@@ -7,8 +7,8 @@ env:
 	easy_install-2.7 pip
 	pip2.7 install --user virtualenv
 	pip2.7 install --user virtualenvwrapper
-	source $(HOME)/bin/virtualenvwrapper.sh
-	mkvirtualenv $(WEBAPP_NAME)
+
+requirements:
 	pip install -r ../requirements/base.txt
 	pip install -r ../requirements/production.txt
 
