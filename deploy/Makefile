@@ -12,7 +12,7 @@ requirements:
 	pip install -r ../requirements/base.txt
 	pip install -r ../requirements/production.txt
 
-install:
+install_admin:
 	bash install node.sh
 	mkdir -p $(HOME)/var
 	ln -s ./deploy/admin $(HOME)/var/admin
