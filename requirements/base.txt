@@ -15,7 +15,7 @@ geojson==1.0.1
 
 # Django-specific requirements
 Django>=1.7
-FeinCMS==1.10.3
+FeinCMS==1.10.0
 django-activity-stream>=0.5.1
 django-admin-enhancer==0.1.2
 django-admin-tools==0.5.1
