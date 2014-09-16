@@ -1,0 +1,19 @@
+<ul class="organizer-list">
+    {% for organizer in organizers %}
+        {% if organizer.post_publicly %}
+            <li class="organizer-list-item">
+                <div class="organizer-name">
+                    {{ organizer.name }}
+                </div>
+                <div class="organizer-contact">
+                    {% if organizer.email %}
+                        {{ organizer.email }}{% if organizer.phone %},{% endif %}
+                    {% endif %}
+                    {% if organizer.phone %}
+                        {{ organizer.phone }}
+                    {% endif %}
+                </div>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>

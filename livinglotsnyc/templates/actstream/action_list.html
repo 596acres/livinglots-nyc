@@ -1,0 +1,16 @@
+{% load activity_tags %}
+
+<div class="activity-stream-container">
+    <ul class="action-list">
+        {% for action in action_list %}
+            <li class="action" data-lot-pk="{{ action.target.pk }}">
+                {% display_action action %}
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="activity-stream-nav" style="display: none;">
+        {% if page_obj.has_next %}
+            <a href="/activity-stream/?page={{ page_obj.next_page_number }}">next page</a>
+        {% endif %}
+    </div>
+</div>

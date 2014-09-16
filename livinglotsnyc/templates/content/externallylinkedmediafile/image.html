@@ -1,0 +1,11 @@
+<div class="image">
+    {% if content.external_url %}
+        <a href="{{ content.external_url }}">
+            <img src="{{ content.mediafile.file.url }}" alt="{{ content.mediafile.translation.caption }}" />
+        </a>
+    {% else %}
+        <img src="{{ content.mediafile.file.url }}" alt="{{ content.mediafile.translation.caption }}" />
+    {% endif %}
+    <span class="caption">{{ content.mediafile.translation.caption }}</span>
+    {% if content.mediafile.copyright %}<span class="copyright">{{ content.mediafile.copyright }}</span>{% endif %}
+</div>

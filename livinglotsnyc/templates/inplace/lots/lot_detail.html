@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% load files_tags flatblock_tags i18n inplace_tags notes_tags organize_tags pathways_tags photos_tags %}
+
+{% block title %}
+    {{ lot.display_name|title|default:"unknown" }} |
+    {% trans "SITE NAME" %}
+{% endblock %}
+
+{% block body_class %}lot-detail-page{% endblock %}
+
+{% block breadcrumbs_wrapper %}
+{% endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block pre_content %}
+    <div class="lot-detail-header-image" 
+        data-lat="{{ lot.centroid.y }}"
+        data-lon="{{ lot.centroid.x }}"
+    >
+        <div class="lot-detail-header-streetview-error alert alert-warning">
+            {% trans "Sorry, we could not load streetview imagery for this lot." %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="lot-detail-map-container row">
+        <div class="col-md-3">
+            <a href="/#18/{{ lot.centroid.y|floatformat:"4" }}/{{ lot.centroid.x|floatformat:"4" }}">
+                <div id="lot-detail-map"
+                    data-l-zoom="16" 
+                    data-l-center="[{{ lot.centroid.y }}, {{ lot.centroid.x }}]"
+                    data-l-apikey="{% inplace_setting PLACES_CLOUDMADE_KEY %}"
+                    data-l-styleid="{% inplace_setting PLACES_CLOUDMADE_STYLE %}"
+                    data-l-zoom-control="false"
+                    data-l-lotsurl="{% url "lots:lot_geojson_polygon" %}"
+                    data-l-lot-pk="{{ lot.pk }}"
+                ></div>
+            </a>
+        </div>
+
+        <div class="col-md-9">
+            <h1>
+                {{ lot.display_name|title|default:"unknown" }}
+                {% if lot.postal_code %}
+                    <span class="postal-code">{{ lot.postal_code }}</span>
+                {% endif %}
+            </h1>
+        </div>
+    </div>
+
+
+    <div class="lot-detail-actions">
+        {% if "lots.change_lot" in perms %}
+            <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_change" lot.pk %}">
+                <i class="icon-edit icon-white"></i>
+                {% trans "Edit this lot" %}
+            </a>
+        {% endif %}
+
+        <a class="btn btn-default build-community-button lot-page-tooltip" href="{% url "organize:add_organizer" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Get involved with this lot or let people know you are already working towards growing community here." %}">
+            {% trans "organize" %}
+        </a>
+
+        {% if lot.nearby %}
+            <a class="btn btn-default disabled">
+                {% trans "find lots nearby" %}
+            </a>
+        {% endif %}
+
+        {% if not lot.known_use %}
+            <a class="btn btn-default lot-page-tooltip" href="{% url "steward:add_stewardnotification" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Tell us more about your project." %}">
+                {% trans "Is this an active project?" %}
+            </a>
+
+            <a class="btn btn-default lot-page-tooltip" href="{% url "groundtruth:add_groundtruthrecord" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Let us know that this lot's actual use is not correctly identified." %}">
+                {% trans "Have we made a mistake?" %}
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="lot-detail-main">
+
+        {% include "_messages.html" %}
+
+        <div class="lot-detail-info-box">
+
+            <section>
+                <h2 style="margin-top: 0;">Information about this lot</h2>
+                <div class="lot-detail-details">
+
+                    <div>
+                        {% trans "Owner" %}: {{ lot.owner|default:"unknown" }}
+
+                        {% if lot.owner and "owners.change_owner" in perms %}
+                            <span class="lot-detail-admin admin-only">
+                                <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_changelist" %}?owner={{ lot.owner.pk }}">
+                                    {% trans "View all lots this owner owns" %}
+                                </a>
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    {% if lot.number_of_lots > 1 %}
+                        <div>
+                            {% trans "Number of Lots" %}: {{ lot.number_of_lots }}
+                        </div>
+                    {% endif %}
+
+                    {% if lot.known_use %}
+                        <div>
+                            {% trans "Known Use" %}: {{ lot.known_use }}
+                        </div>
+                    {% endif %}
+
+                    <div>
+                        {% trans "Area" %}:
+                        {{ lot.area_acres|floatformat:"2"|default:"unknown" }} acres
+                    </div>
+
+                </div>
+            </section>
+
+            {% comment %}
+            <section>
+                <h2>Project Description</h2>
+            </section>
+
+            <section>
+                <h2>Project Contact</h2>
+            </section>
+            {% endcomment %}
+
+            <section>
+                <h2>{% trans "Why is this lot here?" %}</h2>
+                {% if not lot.is_visible %}
+                    <p>
+                        {% blocktrans %}
+                            Actually, it should not be here. Let us know so we can take 
+                            care of it.
+                        {% endblocktrans %}
+                    </p>
+                {% elif not lot.known_use %}
+                    <p>{% trans "We think this lot is vacant because:" %}</p>
+                    <ul class="lot-detail-reasons">
+                    </ul>
+                {% else %}
+                    {% blocktrans with use=lot.known_use %}
+                        The lot is being used as a {{ use }}.
+                    {% endblocktrans %}
+                {% endif %}
+            </section>
+
+        </div>
+
+
+        {% if lot.steward_projects.all.count > 0 %}
+            {% with steward=lot.steward_projects.all.0 %}
+                {% if steward.organizer %}
+                    <div class="lot-detail-details lot-detail-main-section">
+                        <h2>{% trans "Steward" %}</h2>
+                        <p>{% trans "This land is being stewarded by the following group:" %}
+
+                        {% if "steward.change_stewardproject" in perms %}
+
+                            <div class="lot-detail-admin admin-only grid">
+                                <a class="btn btn-small btn-warning" href="{% url "admin:phillyorganize_organizer_change" steward.organizer.pk %}">
+                                    <i class="icon-edit icon-white"></i>
+                                    {% trans "Edit this steward's contact information" %}
+                                </a>
+                            </div>
+
+                            <div class="lot-detail-admin admin-only grid">
+                                <a class="btn btn-small btn-warning" href="{% url "admin:steward_stewardproject_change" steward.pk %}">
+                                    <i class="icon-edit icon-white"></i>
+                                    {% trans "Edit this steward's other information" %}
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <table>
+                            <tr>
+                                <th>{% trans "group name" %}:</th>
+                                <td>
+                                    {% if steward.organizer.url %}
+                                        <a href="{{ steward.organizer.url }}" target="_blank">
+                                            {{ steward.organizer.name }}
+                                        </a>
+                                    {% else %}
+                                        {{ steward.organizer.name }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            {% if steward.organizer.post_publicly or "steward.change_stewardproject" in perms %}
+                                <tr>
+                                    <th>{% trans "phone" %}:</th>
+                                    <td>{{ steward.organizer.phone }}</td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "email" %}:</th>
+                                    <td>
+                                        {% if steward.organizer.email %}
+                                        {% with email=steward.organizer.email %}
+                                        <a href="mailto:{{ email }}">{{ email }}</a>
+                                        {% endwith %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if steward.support_organization %}
+                            <tr>
+                                <th>{% trans "supported by" %}:</th>
+                                <td>{{ steward.support_organization }}</td>
+                            </tr>
+                            {% endif %}
+
+                        </table>
+
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+
+        {% if "lots.view_all_details" in perms %}
+        <div class="lot-detail-details lot-detail-main-section">
+            <h2>{% trans "Admin Details" %}</h2>
+            <div class="help-text">(This section is only visible to admins.)</div>
+            <table>
+
+                {% if lot.steward_projects.count > 0 %}
+                <tr>
+                    <th>{% trans "steward's land tenure" %}:</th>
+                    <td>{{ lot.steward_projects.all.0.land_tenure_status }}</td>
+                </tr>
+                {% endif %}
+
+            </table>
+        </div>
+        {% endif %}
+
+        <div id="pathways" class="pathways lot-detail-main-section">
+            <h2>
+                {% trans "Pathways" %}
+            </h2>
+            <div>
+                {% blocktrans %}
+                    Here are some pathways you might follow to use this piece of land legally:
+                {% endblocktrans %}
+                {% render_pathway_summary_list for lot %}
+            </div>
+        </div>
+
+        <div id="notes" class="notes lot-detail-main-section">
+            <h2>
+                {% trans "Notes" %}
+            </h2>
+            <a class="btn btn-default" href="{% url "usercontent:add_note" pk=lot.pk %}">
+                {% trans "Add your note" %}
+            </a>
+            {% render_note_list for lot %}
+        </div>
+
+        <div id="files" class="files lot-detail-main-section">
+            <h2>
+                {% trans "Files" %}
+            </h2>
+            <a class="btn btn-default" href="{% url "usercontent:add_file" pk=lot.pk %}">
+                {% trans "Add a file" %}
+            </a>
+            {% render_file_list for lot %}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <aside id="aside-right" class="col-sm-3">
+
+        <section id="photos" class="lot-detail-side-section photos">
+            <h2>{% trans "Photos" %}</h2>
+            <div>
+                <a class="btn btn-default" href="{% url "usercontent:add_photo" pk=lot.pk %}">
+                    {% trans "Submit a photo" %}
+                </a>
+            </div>
+            {% render_photo_list for lot %}
+        </section>
+
+        <section class="lot-detail-organizers">
+            {% get_organizer_count for lot as organizer_count %}
+            <h2>Number of organizers: {{ organizer_count }}</h2>
+            <div>
+                <section class="lot-detail-organizer-intro">
+                    <h3>Hey organizers!</h3>
+                    {% flatblock "lot-detail-organizer-intro" %}
+                    {% flatblock "lot-detail-organizer-contact" %}
+                </section>
+                {% render_organizer_list for lot %}
+            </div>
+        </section>
+    </aside>
+{% endblock %}

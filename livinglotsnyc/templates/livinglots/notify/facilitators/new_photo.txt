@@ -1,0 +1,2 @@
+{% load flatblock_tags %}{% flatblock "notify.facilitators.new_photo" evaluated=True using="flatblocks/flatblock.txt" %}
+{% include "livinglots/notify/facilitators/_footer.txt" %}

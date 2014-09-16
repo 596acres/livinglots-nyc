@@ -1,0 +1,42 @@
+{
+  "name": "{{ project_name }}",
+  "version": "0.0.0",
+  "authors": [
+    "Eric Brelsford <ebrelsford@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.0",
+    "jquery": "~2.0.3",
+    "fancybox": "~2.1.5",
+    "leaflet.usermarker": "git://github.com/heyman/leaflet-usermarker.git#master",
+    "normalize-css": "~2.1.3",
+    "requirejs": "~2.1.8",
+    "almond": "~0.2.6",
+    "tinymce": "~4.0.6",
+    "leaflet": "http://leaflet-cdn.s3.amazonaws.com/build/leaflet-0.7.1.zip",
+    "leaflet.dataoptions": "https://github.com/ebrelsford/Leaflet.dataoptions.git#master",
+    "handlebars": "~1.0.0",
+    "leaflet.handlebars": "https://github.com/ebrelsford/Leaflet.handlebars.git#master",
+    "underscore": "~1.5.2",
+    "leaflet-hash": "https://github.com/mlevans/leaflet-hash.git#d73fc84d8cac7f1ea7068e4fe1dcf70f93791837",
+    "spin.js": "~1.3.2",
+    "infinite-scroll": "*",
+    "leaflet-plugins": "https://github.com/shramov/leaflet-plugins.git#master",
+    "leaflet-tilelayer-vector": "https://github.com/ebrelsford/leaflet-tilelayer-vector.git#master",
+    "select2": "~3.4.5",
+    "leaflet.loading": "~0.1.4",
+    "requirejs-text": "~2.0.10"
+  },
+  "resolutions": {
+    "leaflet": "e-tag:08329f89f"
+  }
+}

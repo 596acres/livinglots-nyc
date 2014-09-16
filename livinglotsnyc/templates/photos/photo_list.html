@@ -1,0 +1,19 @@
+{% load i18n imagekit %}
+
+{% for photo in photos %}
+    {% thumbnail '100x100' photo.original_image %}
+
+    {% if "photos" in perms %}
+        <div class="admin-only">
+
+            {% if "photos.change_photo" in perms %}
+                <a href="{% url "admin:photos_photo_change" photo.pk %}">{% trans "Edit this photo" %}</a>
+            {% endif %}
+
+            {% if "photos.delete_photo" in perms %}
+                <a href="{% url "admin:photos_photo_delete" photo.pk %}">{% trans "Delete this photo" %}</a>
+            {% endif %}
+
+        </div>
+    {% endif %}
+{% endfor %}

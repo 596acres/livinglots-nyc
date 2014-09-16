@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<span class="actor">
+    {% block actor %}
+        {% if action.actor.get_absolute_url %}
+            <a href="{{ action.actor.get_absolute_url }}" target="_blank">{{ action.actor }}</a>
+        {% else %}
+            {{ action.actor }}
+        {% endif %}
+    {% endblock %}
+</span>
+
+<span class="verb">
+    {% block verb %}
+        {{ action.verb }}
+    {% endblock %}
+</span>
+
+<span class="action-object">
+    {% block action_object %}{% endblock %}
+</span>
+
+<span class="action-object">
+    {% block target %}
+        {% if action.target %}
+            {% if action.target.get_absolute_url %}
+                <a href="{{ action.target.get_absolute_url }}" target="_blank">{{ action.target }}</a>
+            {% else %}
+                <a href="{{ action.target_url }}" target="_blank">{{ action.target }}</a>
+            {% endif %}
+        {% endif %}
+    {% endblock %}
+</span>
+
+<div class="action-timestamp">
+    {{ action.timestamp|timesince }} {% trans "ago" %}
+</div>

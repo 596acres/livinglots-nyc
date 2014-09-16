@@ -1,0 +1,15 @@
+/*
+ * Global properties
+ */
+
+.map-page #map {
+    width: 100%;
+    height: 500px;
+}
+
+
+/*
+ * Leaflet overrides
+ */
+
+

@@ -1,0 +1,5 @@
+{% extends "actstream/action_detail_content.html" %}
+
+{% block action_object %}
+    <a href="{{ action.target.get_absolute_url }}#notes" target="_blank">"{{ action.action_object.text|striptags|truncatewords:"15" }}"</a> on
+{% endblock %}

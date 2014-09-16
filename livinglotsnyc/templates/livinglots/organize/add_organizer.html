@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load flatblock_tags i18n %}
+
+{% block body_class %} lot-add-page add-organizer-page {% endblock %}
+
+{% block breadcrumbs_wrapper %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">{% trans "Home" %}</a>
+        </li>
+        <li>
+            <a href="{{ content_object.get_absolute_url }}">
+                {{ content_object.display_name|title|default:"unknown" }}
+            </a>
+        </li>
+        <li>{% trans "Organize this lot!" %}</li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Organize this lot!" %}</h1>
+    <h2>{{ content_object.display_name|title|default:"unknown" }}</h2>
+    {% flatblock "organizer-add-intro" %}
+    {% include "_form.html" with form=form %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body_class %} lot-add-page add-organizer-page {% endblock %}
+
+{% block breadcrumbs_wrapper %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">{% trans "Home" %}</a>
+        </li>
+        <li>
+            <a href="{{ participant.content_object.get_absolute_url }}">
+                {{ participant.content_object.display_name|title|default:"unknown" }}
+            </a>
+        </li>
+        <li>{% trans "Organize this lot!" %}</li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-success">
+        {% trans "You were added as an organizer for" %}
+        {{ participant.content_object.display_name|title|default:"unknown" }}
+    </div>
+    <h1>Organize this lot!</h1>
+    <p>You're now growing community at {{ participant.content_object.display_name|title|default:"unknown" }}.</p>
+{% endblock %}

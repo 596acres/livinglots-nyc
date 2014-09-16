@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {{ content_object.display_name|title|default:"unknown" }} |
+    {% trans "SITE NAME" %}
+{% endblock %}
+
+{% block body_class %} lot-add-page {% endblock %}
+
+{% block breadcrumbs_wrapper %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">{% trans "Home" %}</a>
+        </li>
+        <li>
+            <a href="{{ content_object.get_absolute_url }}">
+                {{ content_object.display_name|title|default:"unknown" }}
+            </a>
+        </li>
+        <li>{% trans "Make a correction" %}</li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Make a correction" %}</h1>
+    {% include "_form.html" with form=form %}
+{% endblock %}

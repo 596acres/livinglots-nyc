@@ -1,0 +1,73 @@
+{% load i18n widget_tweaks %}
+
+<form class="form-horizontal" method="post" 
+    {% if multipart %}enctype="multipart/form-data"{% endif %}
+    {% if action %}action="{{ action }}"{% endif %}
+    >
+
+    {% csrf_token %}
+
+    {{ form.media }}
+
+    {% for hidden in form.hidden_fields %}
+        {% if hidden.errors %}
+            <div class="alert alert-error">
+                {% for error in hidden.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div>
+        {% for field in form.visible_fields %}
+            <div class="form-group {% if field.errors %}has-error{% endif %} {% if field.field.required %}required{% endif %}">
+                <div class="col-lg-3 control-label">
+                    {{ field.label_tag }}
+                </div>
+                <div class="col-lg-6">
+
+                    <div class="controls">
+                        {% render_field field class+="form-control" %}
+
+                        {% if field.errors %}
+                        <div class="help-block">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if field.help_text %}
+                        <div class="help-text">{{ field.help_text|safe }}</div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="form-actions">
+        <div class="col-lg-offset-3 col-lg-6">
+            {% if cancel_button %}
+                <button class="btn btn-default btn-cancel" type="button">
+                    {% trans "cancel" %}
+                </button>
+            {% endif %}
+            <button class="btn btn-primary" type="submit">
+                {% trans "submit" %}
+            </button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</form>

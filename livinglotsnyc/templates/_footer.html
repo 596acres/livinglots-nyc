@@ -1,0 +1,26 @@
+{% load feincms_tags %}
+
+<footer>
+
+    <div class="row">
+        <div class="footer-main col-md-8 col-md-offset-2">
+            {% feincms_render_region feincms_page "footer_main" request %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="footer-left col-md-4 col-md-offset-2">
+            {% feincms_render_region feincms_page "footer_left" request %}
+        </div>
+        <div class="footer-right col-md-4">
+            {% feincms_render_region feincms_page "footer_right" request %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="footer-bottom col-md-8 col-md-offset-2">
+            {% feincms_render_region feincms_page "footer_bottom" request %}
+        </div>
+    </div>
+
+</footer>

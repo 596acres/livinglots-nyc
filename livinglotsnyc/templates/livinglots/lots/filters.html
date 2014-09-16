@@ -1,0 +1,54 @@
+{% load i18n owners_tags %}
+
+<div class="overlaymenu-tip-container">
+    <div class="overlaymenu-tip"></div>
+</div>
+<div class="overlaymenu-menu-content">
+    <ul class="filters-list">
+        <li>
+            <input id="layer-public" type="checkbox" class="filter filter-layer" name="public" checked />
+            <label for="layer-public">
+                <span class="legend-marker legend-marker-public"></span>
+                {% trans "publicly owned land" %}
+            </label>
+
+            <ul class="owners-list owners-list-public">
+                {% get_owners type "public" as owners %}
+                {% for owner in owners %}
+                    <li>
+                        <input type="checkbox" class="filter filter-owner-public" id="owner-public-{{ owner.pk }}" data-owner-pk="{{ owner.pk }}" checked />
+                        <label for="owner-public-{{owner.pk }}">{{ owner.name }}</label>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li>
+            <input id="layer-private" type="checkbox" class="filter filter-layer" name="private" checked />
+            <label for="layer-private">
+                <span class="legend-marker legend-marker-private"></span>
+                {% trans "private land belonging to an owner who wants to see it used" %}
+            </label>
+        </li>
+    </ul>
+
+    <section class="filter-section filter-section-projects">
+        <div class="row form-horizontal filter-projects-row">
+            <div class="col-xs-5 control-label">
+                <label for="projects" class="">
+                    <span class="legend-marker legend-marker-project"></span>
+                    {% trans "projects" %}
+                </label>
+            </div>
+            <div class="col-xs-7">
+                <select class="filter filter-projects form-control" id="projects">
+                    <option value="include">{% trans "include" %}</option>
+                    <option value="exclude">{% trans "exclude" %}</option>
+                    <option value="only">{% trans "show only projects" %}</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <section class="filter-section filter-section-boundaries">
+    </section>
+</div>

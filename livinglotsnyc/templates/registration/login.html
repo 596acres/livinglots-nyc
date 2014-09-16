@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block page_title %}Login{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="/">Home</a></li>
+    <li>Login</li>
+{% endblock %}
+
+{% block content %}
+    {% include "_form.html" with form=form %}
+{% endblock %}

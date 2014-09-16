@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<ul class="note-list">
+    {% for note in notes %}
+        <li class="note-list-item">
+            <span class="note-added-by-name">
+                {{ note.added_by_name }}
+            </span>
+            {% trans "said" %}
+            <span class="note-text">
+                "{{ note.text }}"
+            </span>
+            <div class="note-added">
+                &mdash;
+                {{ note.added }}
+            </div>
+
+            {% if "notes" in perms %}
+                <div class="admin-only">
+
+                    {% if "notes.change_note" in perms %}
+                        <a href="{% url "admin:notes_note_change" note.pk %}" class="btn btn-small btn-warning">
+                            {% trans "Edit this note" %}
+                        </a>
+                    {% endif %}
+
+                    {% if "notes.delete_note" in perms %}
+                        <a href="{% url "admin:notes_note_delete" note.pk %}" class="btn btn-small btn-warning">
+                            {% trans "Delete this note" %}
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

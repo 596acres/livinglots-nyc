@@ -1,0 +1,28 @@
+{% load compress js static %}
+
+<link href='//fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+
+{% compress css %}
+    <link rel="stylesheet" href="{% static "bower_components/normalize-css/normalize.css" %}">
+    <link rel="stylesheet" href="{% static "bower_components/bootstrap/dist/css/bootstrap.css" %}">
+    <link rel="stylesheet" href="{% static "bower_components/fancybox/source/jquery.fancybox.css" %}">
+    <link rel="stylesheet" href="{% static "bower_components/leaflet/leaflet.css" %}">
+    <link rel="stylesheet" href="{% static "bower_components/leaflet.loading/src/Control.Loading.css" %}" />
+    <link rel="stylesheet" href="{% static "bower_components/leaflet.usermarker/src/leaflet.usermarker.css" %}" />
+    <link rel="stylesheet" href="{% static "bower_components/select2/select2.css" %}" />
+    <link rel="stylesheet" href="{% static "css/base.css" %}">
+{% endcompress %}
+
+{% django_js_init jquery=false i18n=false csrf=false %}
+
+{# This won't work when building with r.js #}
+<script src="//maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+{# Load requirejs main, built if in production #}
+{% if not debug %}
+    {% compress js %}
+        <script src="{% static "main-built.js" %}"></script>
+    {% endcompress %}
+{% else %}
+    <script src="{% static "bower_components/requirejs/require.js" %}" data-main="{% static "js/app.js" %}"></script>
+{% endif %}

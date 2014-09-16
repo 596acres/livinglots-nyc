@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<script id="details-template" type="text/x-handlebars-template">
+    {% verbatim %}
+        <ul>
+            {{#each lottypes}}
+                <li>
+                    <span class="legend-marker legend-marker-{{type}}"></span>
+                    {{label}}
+                    <ul>
+                        {{#each owners}}
+                            <li>
+                                {{count}} lots {{label}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                </li>
+            {{/each}}
+        </ul>
+    {% endverbatim %}
+</script>
+
+<div class="overlaymenu-tip-container hidden-print">
+    <div class="overlaymenu-tip"></div>
+</div>
+
+<div class="overlaymenu-menu-content">
+    <section class="details-overview"></section>
+
+    <section class="details-buttons hidden-print">
+        <a class="details-button details-link btn btn-default btn-block" target="_blank" href="#">
+            {% trans "Link to this view" %}
+        </a>
+        <a class="details-button details-print btn btn-default btn-block" href="#">
+            {% trans "Print" %}
+        </a>
+    </section>
+</div>

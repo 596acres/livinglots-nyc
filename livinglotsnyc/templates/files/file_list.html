@@ -1,0 +1,42 @@
+{% load i18n imagekit %}
+
+<ul class="file-list">
+    {% for file in files %}
+        <li class="file-list-item">
+            <span class="file-added-by-name">
+                {{ file.added_by_name }}
+            </span>
+            {% trans "posted a file called" %}
+            <span class="file-title">
+                <a href="{{ file.document.url }}">
+                    {{ file.title }}
+                </a>
+            </span>
+            <div class="file-description">
+                {{ file.description }}
+            </div>
+            <div class="file-added">
+                &mdash;
+                {{ file.added }}
+            </div>
+
+            {% if "files" in perms %}
+                <div class="admin-only">
+
+                    {% if "files.change_file" in perms %}
+                        <a href="{% url "admin:files_file_change" file.pk %}" class="btn btn-small btn-warning">
+                            {% trans "Edit this file" %}
+                        </a>
+                    {% endif %}
+
+                    {% if "files.delete_file" in perms %}
+                        <a href="{% url "admin:files_file_delete" file.pk %}" class="btn btn-small btn-warning">
+                            {% trans "Delete this file" %}
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

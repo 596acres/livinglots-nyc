@@ -1,0 +1,5 @@
+{% extends "actstream/action_detail_content.html" %}
+
+{% block verb %}
+    posted a <a href="{{ action.target.get_absolute_url }}#files" target="_blank">file</a> on
+{% endblock %}

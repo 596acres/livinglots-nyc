@@ -1,0 +1,7 @@
+# General requirements
+gunicorn==18.0
+python-memcached==1.53
+supervisor==3.0b1
+
+# Django requirements
+git+git://github.com/pinax/django-mailer/@919805e25fc18b06487b25414d4e5d5e05a92108

@@ -1,0 +1,11 @@
+{% extends "livinglots/usercontent/base.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+    <li>{% trans "Add a note" %}</li>
+{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Add a note" %}</h1>
+    {% include "_form.html" with form=form %}
+{% endblock %}

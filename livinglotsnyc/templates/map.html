@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load feincms_tags %}
+
+{% block body_class %}map-page{% endblock %}
+
+{% block mainclasses %}{% endblock %}
+
+{% block breadcrumbs_wrapper %}{% endblock %}
+
+{% block submenu %}{% endblock %}
+
+{% block body %}
+    {% include "_header.html" %}
+
+    {% feincms_render_region feincms_page "main" request %}
+    {% include "_footer.html" %}
+{% endblock %}

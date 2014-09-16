@@ -1,0 +1,36 @@
+{% extends feincms_page.template.path|default:"base.html" %}
+{% load feincms_tags i18n %}
+
+{% block page_title %}{{ pathway.name }}{% endblock %}
+
+{% block breadcrumbs_wrapper %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">{% trans "Home" %}</a>
+        </li>
+        <li>
+            <a href="{{ feincms_page.parent.get_absolute_url }}">
+                {{ feincms_page.parent.title }}
+            </a>
+        </li>
+        <li>{{ pathway.name }}</li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <article>
+        <header>
+            <h1>{{ pathway.name }}</h1>
+        </header>
+
+        {% if "pathways.change_pathway" in perms %}
+            <div class="lot-detail-admin admin-only grid">
+                <a class="btn btn-warning" href="{% url "admin:pathways_pathway_change" pathway.pk %}">{% trans "Edit this pathway" %}</a>
+            </div>
+        {% endif %}
+
+        <div class="pathway-content">
+            {% feincms_render_region object "main" request %}
+        </div>
+    </article>
+{% endblock %}

@@ -1,0 +1,209 @@
+{% load blog_widgets feincms_tags i18n inplace_tags static %}
+
+<script id="popup-template" type="text/x-handlebars-template">
+    {% verbatim %}
+        <section class="lotpopup">
+            <header>
+                <a target="_blank" href="{{detailUrl}}">
+                    {{feature.properties.address_line1}}
+                </a>
+            </header>
+            <div class="row">
+                <div class="popup-streetview col-xs-6">
+                    <div>
+                        {{#if feature.properties.centroid}}
+                            <img src="http://maps.googleapis.com/maps/api/streetview?location={{feature.properties.centroid.[1]}},{{feature.properties.centroid.[0]}}&size=105x110&sensor=false&fov=45" />
+                        {{else}}
+                            <img src="http://maps.googleapis.com/maps/api/streetview?location={{feature.geometry.coordinates.[1]}},{{feature.geometry.coordinates.[0]}}&size=105x110&sensor=false&fov=45" />
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="popup-lot-details col-xs-6">
+                    {{#if feature.properties.number_of_lots_plural}}
+                        <div class="lot-count">
+                            {{feature.properties.number_of_lots}}
+                            lots
+                        </div>
+                    {{/if}}
+                    <div class="size">Size: {{feature.properties.size}} acres</div>
+                    <div class="owner">Owner: {{feature.properties.owner}}</div>
+                    <!--
+                        <div class="recent-activity">Someone just posted a note</div>
+                    -->
+                    <a target="_blank" href="{{detailUrl}}" class="btn btn-default">learn more</a>
+                </div>
+            </div>
+        </section>
+    {% endverbatim %}
+</script>
+
+<section id="map-welcome" class="hidden-print">
+    <h1>
+        {% trans "Welcome!" %}
+        <a href="#" class="map-welcome-close-button">close</a>
+        <a href="#" class="map-welcome-open-button">show</a>
+    </h1>
+    <div class="map-welcome-body">
+        {% feincms_render_region feincms_page "welcome" request %}
+    </div>
+</section>
+
+<div id="map-header" class="hidden-xs hidden-print">
+    <div class="row map-header-content">
+        <div class="map-header-currently-viewing col-sm-4">
+            <h2>You are currently viewing</h2>
+            <ul>
+                <li>
+                    <span id="no-known-use-acres"></span>
+                    acres of opportunity on
+                    <span id="no-known-use-count"></span>
+                    lots
+                </li>
+                <li>
+                    <span id="in-use-acres"></span>
+                    acres of community projects on 
+                    <span id="in-use-count"></span>
+                    lots
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-sm-2">
+            <a class="btn btn-default overlay-details-button btn-block" href="#">
+                details
+            </a>
+            <a class="btn btn-default overlay-download-button btn-block" href="#">
+                download
+            </a>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="map-search">
+                <form class="map-search-form row" data-bounds="[-89.4747,29.7387,-90.4628,30.2158]" data-city="New Orleans" data-state="LA" data-error-message="Could not find your location. Try again?" data-warning-selector="map-search.warning">
+                    <input class="col-sm-6" id="search" name="search" placeholder="{% trans "Search by address, zip code" %}" type="text" />
+                    <button class="map-search-submit col-sm-2 btn btn-default" type="submit">{% trans "GO" %}</button>
+                    <div class="warning" style="display: none;"></div>
+                </form>
+            </div>
+
+            {% if user.is_superuser %}
+                <div class="row">
+                    <a class="overlay-admin-button btn btn-warning" href="#">
+                        {% trans "admin" %}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-sm-1">
+            <a class="btn btn-default overlay-filter-button" href="#">
+                filter
+            </a>
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-default overlay-news-button" href="#">
+                news
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="map"
+    data-l-zoom="11"
+    data-l-center="[30.01, -90.07]"
+    data-l-loading-control="true"
+    data-l-scroll-wheel-zoom="false"
+
+    data-l-apikey="{% inplace_setting PLACES_CLOUDMADE_KEY %}"
+    data-l-styleid="{% inplace_setting PLACES_CLOUDMADE_STYLE %}"
+    data-l-lot-centroids-url="{% url "lots:lot_geojson_centroid" %}"
+    data-l-lot-polygons-url="{% url "lots:lot_geojson_polygon" %}"
+>
+    <div id="map-legend" class="hidden-print">
+        <div>
+            <span class="legend-marker legend-marker-public"></span>
+            <label class="legend-label">
+                {% trans "publicly-owned land" %}
+            </label>
+        </div>
+        <div>
+            <span class="legend-marker legend-marker-private"></span>
+            <label class="legend-label">
+                {% trans "private land belonging to an owner who wants to see it used" %}
+            </label>
+        </div>
+        <div>
+            <span class="legend-marker legend-marker-project"></span>
+            <label class="legend-label">
+                {% trans "project" %}
+            </label>
+        </div>
+        <div>
+            <span class="legend-marker legend-marker-organized"></span>
+            <label class="legend-label legend-label-organized">
+                {% trans "lot being organized" %}
+            </label>
+        </div>
+    </div>
+</div>
+
+<div class="overlaymenu overlaymenu-details">
+    {% include "livinglots/lots/details.html" %}
+</div>
+
+<div class="overlaymenu overlaymenu-download">
+    <div class="overlaymenu-tip-container">
+        <div class="overlaymenu-tip"></div>
+    </div>
+
+    <div class="overlaymenu-menu-content">
+        <section style="margin-bottom: 10px;">
+            {% blocktrans %}
+                Download currently viewed lots. GeoJSON and KML are mapping 
+                formats, so you can make your own maps!
+            {% endblocktrans %}
+        </section>
+
+        <section class="details-buttons hidden-print">
+            <a href="#" class="btn btn-default btn-block export export-csv" data-baseurl="{% url "lots:csv" %}?">
+                {% trans "spreadsheet" %}
+            </a>
+            <a href="#" class="btn btn-default btn-block export export-geojson" data-baseurl="{% url "lots:geojson" %}?download=yes&">
+                {% trans "GeoJSON" %}
+            </a>
+            <a href="#" class="btn btn-default btn-block export export-kml" data-baseurl="{% url "lots:kml" %}?">
+                {% trans "KML" %}
+            </a>
+        </section>
+    </div>
+</div>
+
+<div class="overlaymenu overlaymenu-admin">
+    <div class="overlaymenu-tip-container">
+        <div class="overlaymenu-tip"></div>
+    </div>
+
+    <div class="overlaymenu-menu-content">
+        <section>
+            <a class="admin-button-add-lot btn btn-default btn-block">
+                {% trans "add lot" %}
+            </a>
+        </section>
+    </div>
+</div>
+
+<div class="overlaymenu overlaymenu-filter">
+    {% include "livinglots/lots/filters.html" %}
+</div>
+
+<div class="overlaymenu overlaymenu-news">
+    <div class="overlaymenu-tip-container">
+        <div class="overlaymenu-tip"></div>
+    </div>
+    <div class="overlaymenu-menu-content">
+        <div class="activity-stream-section map-sidebar-section">
+            <h2>{% trans "Recent Activity" %}</h2>
+            <div class="activity-stream"></div>
+        </div>
+    </div>
+</div>
