@@ -3,27 +3,23 @@ import contextlib
 from fabric.api import *
 
 
-# TODO set hosts
-env.hosts = ['',]
+env.hosts = ['fiveninesix',]
 env.use_ssh_config = True
 
 
-# TODO set
 server_project_dirs = {
     'dev': '~/webapps/',
-    'prod': '~/webapps/',
+    'prod': '~/webapps/llnyc',
 }
 
-# TODO set
 server_virtualenvs = {
     'dev': '',
-    'prod': '',
+    'prod': 'llnyc',
 }
 
-# TODO set
 supervisord_programs = {
     'dev': '',
-    'prod': '',
+    'prod': 'llnyc',
 }
 
 supervisord_conf = '~/var/supervisor/supervisord.conf'
@@ -73,14 +69,9 @@ def syncdb(version='prod'):
 
 
 @task
-def migrate(version='prod'):
+def restart_django(version='prod'):
     with workon(version):
-        run('django-admin.py migrate')
-
-
-@task
-def restart_django():
-    run('supervisorctl -c %s restart llnola' % supervisord_conf)
+        run('supervisorctl -c %s restart llnyc' % supervisord_conf)
 
 
 @task
@@ -98,7 +89,6 @@ def start(version='prod'):
     pull(version=version)
     install_requirements(version=version)
     syncdb(version=version)
-    migrate(version=version)
     build_static(version=version)
     with workon(version):
         run('supervisorctl -c %s start %s' % (supervisord_conf,
@@ -117,6 +107,5 @@ def deploy():
     pull()
     install_requirements()
     syncdb()
-    migrate()
     build_static()
     restart_django()
