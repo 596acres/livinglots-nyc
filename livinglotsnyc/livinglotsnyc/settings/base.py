@@ -77,7 +77,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 SECRET_KEY = get_env_variable('SECRET_KEY')
@@ -143,7 +142,6 @@ INSTALLED_APPS = (
     #
     'actstream',
     'admin_enhancer',
-    'compressor',
     'contact_form',
     'django_monitor',
     'djangojs',

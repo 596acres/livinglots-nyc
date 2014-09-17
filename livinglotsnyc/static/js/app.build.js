@@ -20,7 +20,6 @@
     ],
     insertRequire: ['main'],
 
-    // Let django-compressor take care of CSS
     optimizeCss: "none",
     optimize: "uglify2",
 
