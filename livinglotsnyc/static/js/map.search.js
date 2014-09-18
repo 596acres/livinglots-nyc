@@ -1,6 +1,6 @@
 var L = require('leaflet');
 
-var geocode = require('./geocode');
+var geocode = require('./geocode').geocode;
 
 
 function addCityAndState(query, city, state) {

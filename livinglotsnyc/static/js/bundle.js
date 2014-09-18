@@ -27093,7 +27093,7 @@ require('./lotdetailpage.js');
 },{"./lotdetailpage.js":29,"./mappage.js":33,"fancybox":1,"jquery":4}],31:[function(require,module,exports){
 var L = require('leaflet');
 
-var geocode = require('./geocode');
+var geocode = require('./geocode').geocode;
 
 
 function addCityAndState(query, city, state) {
