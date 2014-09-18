@@ -1,0 +1,13 @@
+{
+  "name": "leaflet-plugins",
+  "homepage": "https://github.com/shramov/leaflet-plugins",
+  "_release": "1e8779ef1f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "1e8779ef1f87af005b760fa06b25f78cbc18968f"
+  },
+  "_source": "https://github.com/shramov/leaflet-plugins.git",
+  "_target": "master",
+  "_originalSource": "https://github.com/shramov/leaflet-plugins.git"
+}

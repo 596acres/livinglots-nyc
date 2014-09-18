@@ -1,0 +1,36 @@
+{
+  "name": "leaflet.loading",
+  "version": "0.1.13",
+  "homepage": "https://github.com/ebrelsford/leaflet.loading",
+  "authors": [
+    "Eric Brelsford <ebrelsford@gmail.com>"
+  ],
+  "description": "A loading-indicator control for Leaflet",
+  "main": "src/Control.Loading.js",
+  "keywords": [
+    "leaflet",
+    "map",
+    "gis",
+    "loading"
+  ],
+  "dependencies": {
+    "leaflet": ">=0.6"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.1.13",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.13",
+    "commit": "4be4508d2e7e24f917a3d412c5825ca08b0a15c6"
+  },
+  "_source": "git://github.com/ebrelsford/Leaflet.loading.git",
+  "_target": "~0.1.4",
+  "_originalSource": "leaflet.loading"
+}

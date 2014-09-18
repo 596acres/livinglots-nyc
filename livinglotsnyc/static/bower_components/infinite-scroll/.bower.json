@@ -1,0 +1,31 @@
+{
+  "name": "jquery-infinite-scroll",
+  "version": "2.0.2",
+  "homepage": "https://github.com/paulirish/infinite-scroll",
+  "authors": [
+    "paulirish"
+  ],
+  "description": "jQuery Infinite Scroll Plugin",
+  "main": "jquery.infinitescroll.js",
+  "keywords": [
+    "jquery",
+    "infinitescroll"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "2.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.0.2",
+    "commit": "8c42c2a47c03d4d36d39ed085069ba70268c0a3c"
+  },
+  "_source": "git://github.com/paulirish/infinite-scroll.git",
+  "_target": "*",
+  "_originalSource": "infinite-scroll"
+}

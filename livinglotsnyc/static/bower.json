@@ -1,5 +1,5 @@
 {
-  "name": "{{ project_name }}",
+  "name": "livinglots-nyc",
   "version": "0.0.0",
   "authors": [
     "Eric Brelsford <ebrelsford@gmail.com>"
@@ -19,8 +19,6 @@
     "fancybox": "~2.1.5",
     "leaflet.usermarker": "git://github.com/heyman/leaflet-usermarker.git#master",
     "normalize-css": "~2.1.3",
-    "requirejs": "~2.1.8",
-    "almond": "~0.2.6",
     "tinymce": "~4.0.6",
     "leaflet": "http://leaflet-cdn.s3.amazonaws.com/build/leaflet-0.7.1.zip",
     "leaflet.dataoptions": "https://github.com/ebrelsford/Leaflet.dataoptions.git#master",
@@ -33,8 +31,7 @@
     "leaflet-plugins": "https://github.com/shramov/leaflet-plugins.git#master",
     "leaflet-tilelayer-vector": "https://github.com/ebrelsford/leaflet-tilelayer-vector.git#master",
     "select2": "~3.4.5",
-    "leaflet.loading": "~0.1.4",
-    "requirejs-text": "~2.0.10"
+    "leaflet.loading": "~0.1.4"
   },
   "resolutions": {
     "leaflet": "e-tag:08329f89f"

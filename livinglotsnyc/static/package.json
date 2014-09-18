@@ -1,0 +1,64 @@
+{
+  "name": "livinglots-nyc",
+  "version": "0.0.0",
+  "description": "Static media for livinglots-nyc",
+  "author": "Eric Brelsford",
+  "license": "BSD-2-Clause",
+  "main": "index.js",
+  "dependencies": {
+    "tinymce": "^4.0.28"
+  },
+  "devDependencies": {
+    "browserify": "^4.1.10",
+    "browserify-shim": "^3.6.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^2.1.0",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-handlebars": "^0.8.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-less": "^0.11.2",
+    "grunt-contrib-watch": "^0.6.1",
+    "handlebars": "^1.3.0",
+    "watchify": "^1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "browser": {
+    "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
+    "fancybox": "./bower_components/fancybox/source/jquery.fancybox.js",
+    "handlebars": "./bower_components/handlebars/handlebars.js",
+    "jquery": "./bower_components/jquery/jquery.js",
+    "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
+    "leaflet": "./bower_components/leaflet/leaflet-src.js",
+    "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",
+    "leaflet.bing": "./bower_components/leaflet-plugins/layer/tile/Bing.js",
+    "leaflet.dataoptions": "./bower_components/leaflet.dataoptions/src/leaflet.dataoptions.js",
+    "leaflet.handlebars": "./bower_components/leaflet.handlebars/src/leaflet.handlebars.js",
+    "leaflet.hash": "./bower_components/leaflet-hash/leaflet-hash.js",
+    "leaflet.loading": "./bower_components/leaflet.loading/src/Control.Loading.js",
+    "leaflet.usermarker": "./bower_components/leaflet.usermarker/src/leaflet.usermarker.js",
+    "spinjs": "./bower_components/spin.js/spin.js",
+    "underscore": "./bower_components/underscore/underscore.js",
+
+    "communist": "./bower_components/leaflet-tilelayer-vector/lib/communist.min.js",
+    "AbstractWorker": "./bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js",
+    "CommunistWorker": "./bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js",
+    "TileCache": "./bower_components/leaflet-tilelayer-vector/src/TileCache.js",
+    "TileLayer.GeoJSON": "./bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js",
+    "TileLayer.Overzoom": "./bower_components/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js",
+    "TileQueue": "./bower_components/leaflet-tilelayer-vector/src/TileQueue.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "handlebars": "Handlebars",
+    "leaflet.handlebars": { "depends": [ "handlebars:Handlebars" ] },
+    "spinjs": "Spinner"
+  }
+}

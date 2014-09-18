@@ -1,0 +1,13 @@
+{
+  "name": "leaflet.dataoptions",
+  "homepage": "https://github.com/ebrelsford/Leaflet.dataoptions",
+  "_release": "f9f87c2dad",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f9f87c2dad3332f6ac830b26ff5825b4d44eed64"
+  },
+  "_source": "https://github.com/ebrelsford/Leaflet.dataoptions.git",
+  "_target": "master",
+  "_originalSource": "https://github.com/ebrelsford/Leaflet.dataoptions.git"
+}
