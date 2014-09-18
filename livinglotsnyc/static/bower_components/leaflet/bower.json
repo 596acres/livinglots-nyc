@@ -20,15 +20,5 @@
     "spec",
     "src",
     "build"
-  ],
-  "homepage": "https://github.com/Leaflet/Leaflet",
-  "_release": "0.7.3",
-  "_resolution": {
-    "type": "version",
-    "tag": "v0.7.3",
-    "commit": "8a5fdfc6e3db2807b8f0dd617474e4ab2949142b"
-  },
-  "_source": "git://github.com/Leaflet/Leaflet.git",
-  "_target": ">=0.6",
-  "_originalSource": "leaflet"
+  ]
 }

@@ -32,7 +32,7 @@
     "handlebars": "./bower_components/handlebars/handlebars.js",
     "jquery": "./bower_components/jquery/jquery.js",
     "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
-    "leaflet": "./bower_components/leaflet/leaflet-src.js",
+    "leaflet": "./bower_components/leaflet/dist/leaflet-src.js",
     "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",
     "leaflet.bing": "./bower_components/leaflet-plugins/layer/tile/Bing.js",
     "leaflet.dataoptions": "./bower_components/leaflet.dataoptions/src/leaflet.dataoptions.js",

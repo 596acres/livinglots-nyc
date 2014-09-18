@@ -20,7 +20,7 @@
     "leaflet.usermarker": "git://github.com/heyman/leaflet-usermarker.git#master",
     "normalize-css": "~2.1.3",
     "tinymce": "~4.0.6",
-    "leaflet": "http://leaflet-cdn.s3.amazonaws.com/build/leaflet-0.7.1.zip",
+    "leaflet": "http://leaflet-cdn.s3.amazonaws.com/build/leaflet-0.7.3.zip",
     "leaflet.dataoptions": "https://github.com/ebrelsford/Leaflet.dataoptions.git#master",
     "handlebars": "~1.0.0",
     "leaflet.handlebars": "https://github.com/ebrelsford/Leaflet.handlebars.git#master",
