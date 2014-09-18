@@ -1,10 +1,6 @@
 var L = require('leaflet');
 
-/*
-require('TileCache');
 require('TileLayer.GeoJSON');
-require('TileLayer.Overzoom');
-*/
 
 require('./leaflet.geojson.bbox');
 require('./leaflet.lotmultipolygon');
@@ -115,8 +111,6 @@ L.lotGeoJson = function (geojson, options) {
     return new L.LotGeoJson(geojson, options);
 };
 
-
-/*
 L.LotLayer = L.TileLayer.Vector.extend({
 
     initialize: function (url, options, geojsonOptions) {
@@ -127,16 +121,7 @@ L.LotLayer = L.TileLayer.Vector.extend({
     },
 
 });
-*/
-
-L.LotLayer = L.GeoJSON.extend({});
 
 L.lotLayer = function (url, options, geojsonOptions) {
-    var layer = new L.LotLayer(null, options, geojsonOptions);
-    $.getJSON(url, function (data) {
-        if (data) {
-            layer.addData(data);
-        }
-    });
-    return layer;
+    return new L.LotLayer(url, options, geojsonOptions);
 };

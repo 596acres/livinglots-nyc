@@ -57,8 +57,24 @@
     ]
   },
   "browserify-shim": {
+    "communist": "communist",
+    "CommunistWorker": {
+        "depends": [
+            "communist:communist",
+            "leaflet",
+            "AbstractWorker"
+        ]
+    },
     "handlebars": "Handlebars",
     "leaflet.handlebars": { "depends": [ "handlebars:Handlebars" ] },
-    "spinjs": "Spinner"
+    "spinjs": "Spinner",
+    "TileLayer.GeoJSON": {
+        "depends": [
+            "CommunistWorker",
+            "TileCache",
+            "TileLayer.Overzoom",
+            "TileQueue"
+        ]
+    }
   }
 }
