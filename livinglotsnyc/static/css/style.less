@@ -1,5 +1,4 @@
 @import "../bower_components/normalize-css/normalize.css";
-@import "../bower_components/bootstrap/dist/css/bootstrap.css";
 @import "../bower_components/fancybox/source/jquery.fancybox.css";
 @import "../bower_components/leaflet/dist/leaflet.css";
 @import "../bower_components/leaflet.loading/src/Control.Loading.css";
@@ -7,18 +6,25 @@
 @import "../bower_components/select2/select2.css";
 
 
+@import "../bower_components/bootstrap/less/variables.less";
+@import "../bower_components/bootstrap/less/utilities.less";
+@import "../bower_components/bootstrap/less/mixins.less";
+@import "../bower_components/bootstrap/less/responsive-utilities.less";
+@import "../bower_components/bootstrap/less/scaffolding.less";
+@import "../bower_components/bootstrap/less/normalize.less";
+
+@import "../bower_components/bootstrap/less/buttons.less";
+@import "../bower_components/bootstrap/less/button-groups.less";
+@import "../bower_components/bootstrap/less/forms.less";
+@import "../bower_components/bootstrap/less/grid.less";
+@import "../bower_components/bootstrap/less/navbar.less";
+@import "../bower_components/bootstrap/less/navs.less";
+
+
 /*
  * Global properties
  */
 
-.map-page #map {
-    width: 100%;
-    height: 500px;
-}
-
-
-/*
- * Leaflet overrides
- */
-
-
+@import "filters.less";
+@import "footer.less";
+@import "map.less";
