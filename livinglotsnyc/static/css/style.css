@@ -3130,6 +3130,9 @@ footer .footer-main:after {
 footer .footer-main:after {
   clear: both;
 }
+.header-home-link img {
+  max-width: 300px;
+}
 .map-page #map {
   width: 100%;
   height: 500px;
