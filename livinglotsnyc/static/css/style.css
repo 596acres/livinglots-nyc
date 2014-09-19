@@ -3166,3 +3166,68 @@ footer .footer-main:after {
     width: 33.33333333%;
   }
 }
+.overlaymenu {
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #2593c6;
+  display: none;
+  padding: 15px;
+  position: absolute;
+  width: 250px;
+  z-index: 5005;
+}
+.overlaymenu h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin-top: 15px;
+  text-transform: uppercase;
+}
+.overlaymenu-tip-container {
+  display: block;
+  margin: 0 auto;
+  margin-top: -31px;
+  width: 40px;
+  height: 20px;
+  position: relative;
+  overflow: hidden;
+  z-index: 5009;
+  left: 97px;
+}
+.overlaymenu-tip {
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #2593c6;
+  border-bottom: 0;
+  border-right: 0;
+  display: block;
+  padding: 10px;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 0;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  z-index: 5010;
+}
+.overlaymenu-menu-content {
+  max-height: 400px;
+  min-height: 150px;
+  overflow-y: auto;
+}
+.overlaymenu-admin .overlaymenu-menu-content {
+  min-height: 10px;
+}
+.overlaymenu-details,
+.overlaymenu-filter,
+.overlaymenu-news {
+  width: 350px;
+}
+.overlaymenu-details .overlaymenu-tip-container,
+.overlaymenu-filter .overlaymenu-tip-container,
+.overlaymenu-news .overlaymenu-tip-container {
+  left: 140px;
+}
+.overlaymenu-news .activity-stream-container {
+  min-height: 200px;
+}

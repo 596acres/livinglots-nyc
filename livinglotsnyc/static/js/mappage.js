@@ -15,6 +15,7 @@ require('jquery.infinitescroll');
 require('leaflet.loading');
 require('./leaflet.lotmap');
 require('./map.search.js');
+require('./overlaymenu');
 
 
 function buildLotFilterParams(map, options) {
@@ -108,6 +109,60 @@ function setFilters(params) {
     }
 }
 
+function prepareOverlayMenus(map) {
+    $('.overlay-download-button').overlaymenu({
+        menu: '.overlaymenu-download'
+    });
+
+    $('.overlay-admin-button').overlaymenu({
+        menu: '.overlaymenu-admin'
+    });
+
+    $('.overlay-details-button')
+        .overlaymenu({
+            menu: '.overlaymenu-details'
+        })
+        .on('overlaymenuopen', function () {
+            var spinner = new Spinner({
+                left: '0px',
+                top: '0px'
+            }).spin($('.details-overview')[0]);
+            updateDetailsLink(map);
+            updateOwnershipOverview(map);
+        });
+
+    $('.overlay-news-button')
+        .overlaymenu({
+            menu: '.overlaymenu-news'
+        })
+        .on('overlaymenuopen', function () {
+            var spinner = new Spinner({
+                left: '0px',
+                top: '0px'
+            }).spin($('.activity-stream')[0]);
+
+            var url = Django.url('activitystream_activity_list');
+            $('.activity-stream').load(url, function () {
+                $('.action-list').infinitescroll({
+                    loading: {
+                        finishedMsg: 'No more activities to load.'
+                    },
+                    behavior: 'local',
+                    binder: $('.overlaymenu-news .overlaymenu-menu-content'),
+                    itemSelector: 'li.action',
+                    navSelector: '.activity-stream-nav',
+                    nextSelector: '.activity-stream-nav a:first'
+                });
+            });
+        });
+
+    $('.overlay-filter-button').overlaymenu({
+        menu: '.overlaymenu-filter'
+    });
+
+
+}
+
 $(document).ready(function () {
     var params;
     if (window.location.search.length) {
@@ -126,6 +181,8 @@ $(document).ready(function () {
     });
 
     map.addLotsLayer(buildLotFilterParams(map));
+
+    prepareOverlayMenus(map);
 
     $('.details-print').click(function () {
         // TODO This is not a good solution since the map size changes

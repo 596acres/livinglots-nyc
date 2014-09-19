@@ -27015,7 +27015,7 @@ if ($('.lot-detail-page').length > 0) {
     });
 }
 
-},{"./map.styles":32,"./streetview":35,"handlebars":2,"jquery":4,"leaflet":18,"leaflet.dataoptions":14}],30:[function(require,module,exports){
+},{"./map.styles":32,"./streetview":36,"handlebars":2,"jquery":4,"leaflet":18,"leaflet.dataoptions":14}],30:[function(require,module,exports){
 //
 // main.js
 //
@@ -27064,7 +27064,6 @@ $(document).ready(function () {
 /*
  * Page-specific modules
  */
-
 require('./mappage.js');
 require('./lotdetailpage.js');
 
@@ -27171,6 +27170,7 @@ require('jquery.infinitescroll');
 require('leaflet.loading');
 require('./leaflet.lotmap');
 require('./map.search.js');
+require('./overlaymenu');
 
 
 function buildLotFilterParams(map, options) {
@@ -27264,6 +27264,60 @@ function setFilters(params) {
     }
 }
 
+function prepareOverlayMenus(map) {
+    $('.overlay-download-button').overlaymenu({
+        menu: '.overlaymenu-download'
+    });
+
+    $('.overlay-admin-button').overlaymenu({
+        menu: '.overlaymenu-admin'
+    });
+
+    $('.overlay-details-button')
+        .overlaymenu({
+            menu: '.overlaymenu-details'
+        })
+        .on('overlaymenuopen', function () {
+            var spinner = new Spinner({
+                left: '0px',
+                top: '0px'
+            }).spin($('.details-overview')[0]);
+            updateDetailsLink(map);
+            updateOwnershipOverview(map);
+        });
+
+    $('.overlay-news-button')
+        .overlaymenu({
+            menu: '.overlaymenu-news'
+        })
+        .on('overlaymenuopen', function () {
+            var spinner = new Spinner({
+                left: '0px',
+                top: '0px'
+            }).spin($('.activity-stream')[0]);
+
+            var url = Django.url('activitystream_activity_list');
+            $('.activity-stream').load(url, function () {
+                $('.action-list').infinitescroll({
+                    loading: {
+                        finishedMsg: 'No more activities to load.'
+                    },
+                    behavior: 'local',
+                    binder: $('.overlaymenu-news .overlaymenu-menu-content'),
+                    itemSelector: 'li.action',
+                    navSelector: '.activity-stream-nav',
+                    nextSelector: '.activity-stream-nav a:first'
+                });
+            });
+        });
+
+    $('.overlay-filter-button').overlaymenu({
+        menu: '.overlaymenu-filter'
+    });
+
+
+}
+
 $(document).ready(function () {
     var params;
     if (window.location.search.length) {
@@ -27282,6 +27336,8 @@ $(document).ready(function () {
     });
 
     map.addLotsLayer(buildLotFilterParams(map));
+
+    prepareOverlayMenus(map);
 
     $('.details-print').click(function () {
         // TODO This is not a good solution since the map size changes
@@ -27327,7 +27383,76 @@ $(document).ready(function () {
 
 });
 
-},{"./leaflet.lotmap":24,"./map.search.js":31,"./singleminded":34,"handlebars":2,"jquery":4,"jquery.infinitescroll":3,"leaflet":18,"leaflet.loading":16,"spinjs":19,"underscore":20}],34:[function(require,module,exports){
+},{"./leaflet.lotmap":24,"./map.search.js":31,"./overlaymenu":34,"./singleminded":35,"handlebars":2,"jquery":4,"jquery.infinitescroll":3,"leaflet":18,"leaflet.loading":16,"spinjs":19,"underscore":20}],34:[function(require,module,exports){
+//
+// overlaymenu.js
+//
+// Overlay / dropdown menus, like modals but less intrusive
+//
+
+var $ = require('jquery');
+var _ = require('underscore');
+
+
+function show(button, menu) {
+    var offset = button.offset(),
+        outerWidth = button.outerWidth(),
+        outerHeight = button.outerHeight(),
+        menuWidth = menu.outerWidth();
+
+    button.trigger('overlaymenuopen');
+
+    menu
+        .show()
+        .offset({
+            left: offset.left + outerWidth - menuWidth,
+            top: offset.top + outerHeight + 13
+        });
+}
+
+function hide(button, menu) {
+    button.trigger('overlaymenuclose');
+    menu.hide();
+}
+
+function isVisible(menu) {
+    return menu.is(':visible');
+}
+
+function isInMenu(target, menu) {
+    return (target[0] === menu[0] ||
+            _.find(target.parents(), function (ele) { return ele === menu[0]; }));
+}
+
+$.fn.overlaymenu = function (options) {
+    var button = this,
+        menu = $(options.menu);
+
+    $('html').click(function (e) {
+        var target = $(e.target);
+
+        // If user not clicking in menu, consider hiding or showing it
+        if (!isInMenu(target, menu)) {
+            if (target[0] === button[0]) {
+                // If button clicked, show or hide the menu appropriately
+                if (isVisible(menu)) {
+                    hide(button, menu);
+                }
+                else {
+                    show(button, menu);
+                }
+                return false;
+            }
+            else {
+                // Something else was clicked--hide the menu
+                hide(button, menu);
+            }
+        }
+    });
+    return this;
+};
+
+},{"jquery":4,"underscore":20}],35:[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -27359,7 +27484,7 @@ module.exports = {
     remember: remember
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var $ = require('jquery');
 
 

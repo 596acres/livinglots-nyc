@@ -46,6 +46,5 @@ $(document).ready(function () {
 /*
  * Page-specific modules
  */
-
 require('./mappage.js');
 require('./lotdetailpage.js');
