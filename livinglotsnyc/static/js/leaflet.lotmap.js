@@ -143,7 +143,7 @@ L.LotMap = L.Map.extend({
         if (this.centroidsLayer) {
             this.removeLayer(this.centroidsLayer);
         }
-        var url = this.options.lotCentroidsUrl + '?' + $.param(params);
+        var url = this.options.lotCentroidsUrl;
 
         var options = {
             serverZooms: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -159,7 +159,7 @@ L.LotMap = L.Map.extend({
         if (this.polygonsLayer) {
             this.removeLayer(this.polygonsLayer);
         }
-        var url = this.options.lotPolygonsUrl + '?' + $.param(params);
+        var url = this.options.lotPolygonsUrl;
 
         var options = {
             serverZooms: [16],

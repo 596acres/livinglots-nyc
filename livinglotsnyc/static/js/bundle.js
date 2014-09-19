@@ -26414,30 +26414,8 @@ L.TileLayer.Vector.include({
     getTileUrl: function (coords) {
         var x = coords.x,
             y = coords.y,
-            z = this._getZoomForUrl(),
-            bounds = this.getTileBBox(x, y, z);
-        if (this._url.indexOf('?') < 0) {
-            this._url += '?';
-        }
-        return this._url + '&bbox=' + bounds.toBBoxString();
-    },
-
-    getTileBBox: function (x, y, z) {
-        var west = this.getTileLng(x, z),
-            north = this.getTileLat(y, z),
-            east = this.getTileLng(x + 1, z),
-            south = this.getTileLat(y + 1, z),
-            bounds = L.latLngBounds([[south, west], [north, east]]);
-        return bounds;
-    },
-
-    getTileLng: function (x, z) {
-        return (x / Math.pow(2, z) * 360 - 180);
-    },
-
-    getTileLat: function (y, z) {
-        var n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
-        return (180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))));
+            z = this._getZoomForUrl();
+        return this._url + z + '/' + x + '/' + y + '.geojson';
     }
 
 });
@@ -26447,7 +26425,7 @@ var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
 
-require('./leaflet.geojson.bbox');
+require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');
 require('./leaflet.lotpolygon');
 
@@ -26571,7 +26549,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.bbox":22,"./leaflet.lotmultipolygon":26,"./leaflet.lotpolygon":28,"TileLayer.GeoJSON":11,"leaflet":18}],24:[function(require,module,exports){
+},{"./leaflet.geojson.tile":22,"./leaflet.lotmultipolygon":26,"./leaflet.lotpolygon":28,"TileLayer.GeoJSON":11,"leaflet":18}],24:[function(require,module,exports){
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
 
@@ -26717,7 +26695,7 @@ L.LotMap = L.Map.extend({
         if (this.centroidsLayer) {
             this.removeLayer(this.centroidsLayer);
         }
-        var url = this.options.lotCentroidsUrl + '?' + $.param(params);
+        var url = this.options.lotCentroidsUrl;
 
         var options = {
             serverZooms: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -26733,7 +26711,7 @@ L.LotMap = L.Map.extend({
         if (this.polygonsLayer) {
             this.removeLayer(this.polygonsLayer);
         }
-        var url = this.options.lotPolygonsUrl + '?' + $.param(params);
+        var url = this.options.lotPolygonsUrl;
 
         var options = {
             serverZooms: [16],

@@ -2,7 +2,7 @@ var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
 
-require('./leaflet.geojson.bbox');
+require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');
 require('./leaflet.lotpolygon');
 

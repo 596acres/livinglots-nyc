@@ -86,3 +86,6 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOT_CENTROIDS_URL = "http://localhost:8080/lots-centroids/"
+LOT_POLYGONS_URL = "http://localhost:8080/lots-polygons/"

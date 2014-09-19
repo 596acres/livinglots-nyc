@@ -114,8 +114,8 @@
     data-l-loading-control="true"
     data-l-scroll-wheel-zoom="false"
 
-    data-l-lot-centroids-url="{% url "lots:lot_geojson_centroid" %}"
-    data-l-lot-polygons-url="{% url "lots:lot_geojson_polygon" %}"
+    data-l-lot-centroids-url="{% inplace_setting LOT_CENTROIDS_URL %}"
+    data-l-lot-polygons-url="{% inplace_setting LOT_POLYGONS_URL %}"
 >
     <div id="map-legend" class="hidden-print">
         <div>
