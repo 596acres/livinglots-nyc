@@ -1,0 +1,43 @@
+.map-welcome {
+    h1 {
+        font-family: 'Oswald', sans-serif;
+        font-size: 56px;
+        font-weight: 300;
+        margin: 0;
+        padding-left: 35px;
+        text-transform: uppercase;
+    }
+
+    &-close-button,
+    &-close-button:active,
+    &-close-button:hover,
+    &-open-button,
+    &-open-button:active,
+    &-open-button:hover {
+        color: black;
+        float: right;
+        font-size: 16px;
+        margin-right: 50px;
+        margin-top: 10px;
+        text-decoration: none;
+    }
+
+    &.closed .map-welcome-close-button {
+        display: none;
+    }
+
+    .map-welcome-open-button {
+        display: none;
+    }
+
+    &.closed .map-welcome-open-button {
+        display: inline-block;
+    }
+
+    &-body {
+        padding-left: 35px;
+        padding-right: 35px;
+        padding-bottom: 20px;
+        padding-top: 10px;
+    }
+}

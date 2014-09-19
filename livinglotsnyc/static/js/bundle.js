@@ -27165,6 +27165,7 @@ var Handlebars = require('handlebars');
 var L = require('leaflet');
 var Spinner = require('spinjs');
 var singleminded = require('./singleminded');
+var initWelcome = require('./welcome').init;
 
 require('jquery.infinitescroll');
 require('leaflet.loading');
@@ -27381,9 +27382,10 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
+    initWelcome();
 });
 
-},{"./leaflet.lotmap":24,"./map.search.js":31,"./overlaymenu":34,"./singleminded":35,"handlebars":2,"jquery":4,"jquery.infinitescroll":3,"leaflet":18,"leaflet.loading":16,"spinjs":19,"underscore":20}],34:[function(require,module,exports){
+},{"./leaflet.lotmap":24,"./map.search.js":31,"./overlaymenu":34,"./singleminded":35,"./welcome":37,"handlebars":2,"jquery":4,"jquery.infinitescroll":3,"leaflet":18,"leaflet.loading":16,"spinjs":19,"underscore":20}],34:[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -27536,4 +27538,36 @@ module.exports = {
     load_streetview: load_streetview
 };
 
-},{"jquery":4}]},{},[30]);
+},{"jquery":4}],37:[function(require,module,exports){
+//
+// Welcome header
+//
+
+function initClose() {
+    $('.map-welcome-close-button').click(function (e) {
+        $('.map-welcome').addClass('closed');
+        $('.map-welcome h1').animate({ 'font-size': '28px' });
+        $('.map-welcome-body').slideUp();
+        e.preventDefault();
+        return false;
+    });
+}
+
+function initOpen() {
+    $('.map-welcome-open-button').click(function (e) {
+        $('.map-welcome').removeClass('closed');
+        $('.map-welcome h1').animate({ 'font-size': '56px' });
+        $('.map-welcome-body').slideDown();
+        e.preventDefault();
+        return false;
+    });
+}
+
+module.exports = {
+    init: function () {
+        initClose();
+        initOpen();
+    }
+};
+
+},{}]},{},[30]);

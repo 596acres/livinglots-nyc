@@ -10,6 +10,7 @@ var Handlebars = require('handlebars');
 var L = require('leaflet');
 var Spinner = require('spinjs');
 var singleminded = require('./singleminded');
+var initWelcome = require('./welcome').init;
 
 require('jquery.infinitescroll');
 require('leaflet.loading');
@@ -226,4 +227,5 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
+    initWelcome();
 });
