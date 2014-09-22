@@ -3127,6 +3127,42 @@ textarea.input-lg {
 .page-wrapper-row:after {
   clear: both;
 }
+.user-content-list {
+  list-style: none;
+  padding: 0;
+}
+.user-content-list-item {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.user-content-added {
+  font-size: 12px;
+}
+.user-content-added-by-name {
+  color: #58595b;
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 26px;
+}
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+.file-list .file-added-by-name {
+  color: #58595b;
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 26px;
+}
+.file-list-item {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.file-added {
+  font-size: 12px;
+}
 .filter-projects-row {
   margin-left: 0;
   margin-right: 0;
@@ -3276,6 +3312,39 @@ footer .footer-main:after {
     float: left;
     width: 33.33333333%;
   }
+}
+.note-list {
+  list-style: none;
+  padding: 0;
+}
+.note-list-item {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.note-list .note-added-by-name {
+  color: #58595b;
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 26px;
+}
+.note-added {
+  font-size: 12px;
+}
+.organizer-list {
+  list-style: none;
+  padding: 0;
+}
+.organizer-list-item {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.organizer-list-item .organizer-name {
+  color: #58595b;
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 26px;
 }
 .overlaymenu {
   background: rgba(255, 255, 255, 0.95);
