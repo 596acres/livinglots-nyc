@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "bootstrap": "~3.0.0",
-    "jquery": "~2.0.3",
     "fancybox": "~2.1.5",
     "leaflet.usermarker": "git://github.com/heyman/leaflet-usermarker.git#master",
     "tinymce": "~4.0.6",
