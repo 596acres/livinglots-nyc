@@ -24,9 +24,19 @@
  * Global properties
  */
 
+.page-wrapper {
+    .make-sm-column(10);
+    .make-sm-column-offset(1);
+
+    &-row {
+        .make-row(0);
+    }
+}
+
 @import "filters.less";
 @import "footer.less";
 @import "header.less";
+@import "lot_detail.less";
 @import "map.less";
 @import "overlaymenu.less";
 @import "welcome.less";
