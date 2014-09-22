@@ -41,8 +41,8 @@ function addLotsLayer(map) {
     });
 }
 
-if ($('.lot-detail-page').length > 0) {
-    $(document).ready(function () {
+$(document).ready(function () {
+    if ($('.lot-detail-page').length > 0) {
         var map = L.map('lot-detail-map');
         addBaseLayer(map);
         addLotsLayer(map);
@@ -52,5 +52,5 @@ if ($('.lot-detail-page').length > 0) {
             $('.lot-detail-header-image'),
             $('.lot-detail-header-streetview-error')
         );
-    });
-}
+    }
+});

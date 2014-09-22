@@ -164,67 +164,69 @@ function prepareOverlayMenus(map) {
 }
 
 $(document).ready(function () {
-    var params;
-    if (window.location.search.length) {
-        params = deparam();
-        setFilters(params);
-    }
-
-    var map = L.lotMap('map', {
-
-        onMouseOverFeature: function (feature) {
-        },
-
-        onMouseOutFeature: function (feature) {
+    if ($('.map-page').length > 0) {
+        var params;
+        if (window.location.search.length) {
+            params = deparam();
+            setFilters(params);
         }
 
-    });
+        var map = L.lotMap('map', {
 
-    map.addLotsLayer(buildLotFilterParams(map));
+            onMouseOverFeature: function (feature) {
+            },
 
-    prepareOverlayMenus(map);
+            onMouseOutFeature: function (feature) {
+            }
 
-    $('.details-print').click(function () {
-        // TODO This is not a good solution since the map size changes
-        // on print. Look into taking screenshots like:
-        //   https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
-        //   http://html2canvas.hertzen.com
-        window.print();
-    });
-
-    $('form.map-search-form').mapsearch()
-        .on('searchstart', function (e) {
-            map.removeUserLayer();
-        })
-        .on('searchresultfound', function (e, result) {
-            map.addUserLayer([result.latitude, result.longitude]);
         });
 
-    $('.filter').change(function () {
-        var params = buildLotFilterParams(map);
-        map.updateDisplayedLots(params);
+        map.addLotsLayer(buildLotFilterParams(map));
+
+        prepareOverlayMenus(map);
+
+        $('.details-print').click(function () {
+            // TODO This is not a good solution since the map size changes
+            // on print. Look into taking screenshots like:
+            //   https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
+            //   http://html2canvas.hertzen.com
+            window.print();
+        });
+
+        $('form.map-search-form').mapsearch()
+            .on('searchstart', function (e) {
+                map.removeUserLayer();
+            })
+            .on('searchresultfound', function (e, result) {
+                map.addUserLayer([result.latitude, result.longitude]);
+            });
+
+        $('.filter').change(function () {
+            var params = buildLotFilterParams(map);
+            map.updateDisplayedLots(params);
+            updateLotCount(map);
+        });
+
         updateLotCount(map);
-    });
+        map.on({
+            'moveend': function () {
+                updateLotCount(map);
+            },
+            'zoomend': function () {
+                updateLotCount(map);
+            },
+            'lotlayertransition': function (e) {
+                map.addLotsLayer(buildLotFilterParams(map));
+            }
+        });
 
-    updateLotCount(map);
-    map.on({
-        'moveend': function () {
-            updateLotCount(map);
-        },
-        'zoomend': function () {
-            updateLotCount(map);
-        },
-        'lotlayertransition': function (e) {
-            map.addLotsLayer(buildLotFilterParams(map));
-        }
-    });
+        $('.export').click(function (e) {
+            var url = $(this).data('baseurl') + 
+                $.param(buildLotFilterParams(map, { bbox: true }));
+            window.location.href = url;
+            e.preventDefault();
+        });
 
-    $('.export').click(function (e) {
-        var url = $(this).data('baseurl') + 
-            $.param(buildLotFilterParams(map, { bbox: true }));
-        window.location.href = url;
-        e.preventDefault();
-    });
-
-    initWelcome();
+        initWelcome();
+    }
 });
