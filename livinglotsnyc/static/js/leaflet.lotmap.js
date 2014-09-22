@@ -24,8 +24,8 @@ L.LotMap = L.Map.extend({
     lotLayerOptions: {
         onEachFeature: function (feature, layer) {
             layer.on({
-                'click': function (layer) {
-                    var latlng = layer.latlng,
+                'click': function (event) {
+                    var latlng = event.latlng,
                         x = this._map.latLngToContainerPoint(latlng).x,
                         y = this._map.latLngToContainerPoint(latlng).y - 100,
                         point = this._map.containerPointToLatLng([x, y]);
@@ -71,7 +71,7 @@ L.LotMap = L.Map.extend({
             }
             return {
                 detailUrl: Django.url('lots:lot_detail', {
-                    pk: layer.feature.id
+                    pk: layer.feature.properties.id
                 }),
                 feature: layer.feature
             };

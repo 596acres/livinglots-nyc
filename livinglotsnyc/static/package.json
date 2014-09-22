@@ -30,7 +30,6 @@
     "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
     "fancybox": "./bower_components/fancybox/source/jquery.fancybox.js",
     "handlebars": "./bower_components/handlebars/handlebars.js",
-    "jquery": "./bower_components/jquery/jquery.js",
     "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
     "leaflet": "./bower_components/leaflet/dist/leaflet-src.js",
     "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",

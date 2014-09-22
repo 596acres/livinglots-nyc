@@ -1,4 +1,3 @@
-var $ = require('jquery');
 
 
 function get_heading(lon0, lat0, lon1, lat1) {

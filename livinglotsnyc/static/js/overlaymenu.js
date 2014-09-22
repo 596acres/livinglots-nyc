@@ -4,7 +4,6 @@
 // Overlay / dropdown menus, like modals but less intrusive
 //
 
-var $ = require('jquery');
 var _ = require('underscore');
 
 

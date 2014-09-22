@@ -4,7 +4,6 @@
 // Scripts that should run on every page.
 //
 
-var $ = require('jquery');
 require('fancybox');
 
 
@@ -22,17 +21,15 @@ $(document).ready(function () {
     /*
      * Collapse the collapsible sections
      */
-    require(['jquery'], function () {
-        // Slide up those sections not initially expanded
-        $('.collapsible-section:not(.is-expanded) .collapsible-section-text').slideUp();
+    // Slide up those sections not initially expanded
+    $('.collapsible-section:not(.is-expanded) .collapsible-section-text').slideUp();
 
-        // Prepare headers for clicking
-        $('.collapsible-section-header').click(function () {
-            var $section = $(this).parent(),
-                $sectionText = $section.find('.collapsible-section-text');
-            $section.toggleClass('is-expanded');
-            $sectionText.slideToggle();
-        });
+    // Prepare headers for clicking
+    $('.collapsible-section-header').click(function () {
+        var $section = $(this).parent(),
+            $sectionText = $section.find('.collapsible-section-text');
+        $section.toggleClass('is-expanded');
+        $sectionText.slideToggle();
     });
 
     /*

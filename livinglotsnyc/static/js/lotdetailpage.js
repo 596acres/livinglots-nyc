@@ -4,7 +4,6 @@
 // Scripts that only run on the lot detail page.
 //
 
-var $ = require('jquery');
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 

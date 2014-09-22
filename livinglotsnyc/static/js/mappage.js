@@ -4,7 +4,6 @@
 // Scripts that only run on the map page.
 //
 
-var $ = require('jquery');
 var _ = require('underscore');
 var Handlebars = require('handlebars');
 var L = require('leaflet');
