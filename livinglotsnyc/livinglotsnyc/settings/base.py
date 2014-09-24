@@ -182,6 +182,7 @@ INSTALLED_APPS = (
     #
     # first-party, project-specific
     #
+    'activities',
     'blog',
     'cms',
     'contact',
@@ -225,15 +226,6 @@ ORGANIZE_PARTICIPANT_SALT = get_env_variable('ORGANIZE_PARTICIPANT_SALT')
 
 ACTSTREAM_SETTINGS = {
     'MANAGER': 'inplace_activity_stream.managers.PlaceActionManager',
-    'MODELS': (
-        'auth.user',
-        'files.file',
-        'lots.lot',
-        'notes.note',
-        'organize.organizer',
-        'photos.photo',
-    ),
-    'USE_JSONFIELD': True,
 }
 ACTIVITY_STREAM_DEFAULT_ACTOR_PK = get_env_variable('ACTSTREAM_DEFAULT_ACTOR_PK')
 

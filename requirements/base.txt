@@ -46,6 +46,7 @@ django-widget-tweaks==1.3
 
 # Living Lots
 git+git://github.com/596acres/django-livinglots/@master
+git+git://github.com/596acres/django-livinglots-activities/@master
 git+git://github.com/596acres/django-livinglots-forms/@master
 git+git://github.com/596acres/django-livinglots-generictags/@master
 git+git://github.com/596acres/django-livinglots-genericviews/@master

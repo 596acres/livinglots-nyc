@@ -28,6 +28,9 @@ urlpatterns += patterns('',
         include('organize.urls', 'organize')),
     url(r'^lots/', include('lots.urls', 'lots')),
 
+    # Activity stream
+    url('^activity/', include('activities.urls')),
+
     # Django.js
     url(r'^djangojs/', include('djangojs.urls')),
 

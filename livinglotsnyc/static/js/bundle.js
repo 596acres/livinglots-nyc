@@ -18461,7 +18461,7 @@ function prepareOverlayMenus(map) {
                 top: '0px'
             }).spin($('.activity-stream')[0]);
 
-            var url = Django.url('activitystream_activity_list');
+            var url = Django.url('activity_list');
             $('.activity-stream').load(url, function () {
                 $('.action-list').infinitescroll({
                     loading: {
