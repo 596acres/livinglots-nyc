@@ -33,7 +33,7 @@
                     data-l-zoom="16" 
                     data-l-center="[{{ lot.centroid.y }}, {{ lot.centroid.x }}]"
                     data-l-zoom-control="false"
-                    data-l-lotsurl="{% url "lots:lot_geojson_polygon" %}"
+                    data-l-lotsurl="{% inplace_setting LOT_POLYGONS_URL %}"
                     data-l-lot-pk="{{ lot.pk }}"
                 ></div>
             </a>

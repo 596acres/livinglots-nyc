@@ -7,38 +7,60 @@
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 
+require('leaflet.dataoptions');
+
+require('./leaflet.lotlayer');
+require('./leaflet.lotmarker');
 var mapstyles = require('./map.styles');
 var StreetView = require('./streetview');
 
-require('leaflet.dataoptions');
 
+var vectorLayerOptions = {
+    serverZooms: [16],
+    unique: function (feature) {
+        return feature.id;
+    }
+};
+
+function getLotLayerOptions(lotPk) {
+    return {
+        pointToLayer: function (feature, latlng) {
+            var options = {};
+            if (feature.properties.has_organizers) {
+                options.hasOrganizers = true;
+            }
+            return L.lotMarker(latlng, options);
+        },
+        style: function (feature) {
+            var style = {
+                fillColor: '#000000',
+                fillOpacity: 1,
+                stroke: 0
+            };
+
+            // Style this lot distinctly
+            if (feature.properties.id === lotPk) {
+                style.stroke = true;
+                style.color = '#FF0000';
+            }
+
+            style.fillColor = mapstyles[feature.properties.layer];
+            if (!style.fillColor) {
+                style.fillColor = '#000000';
+            }
+            return style;
+        }
+    };
+}
 
 function addBaseLayer(map) {
     var streets = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
 }
 
 function addLotsLayer(map) {
-    var url = map.options.lotsurl + '?' + 
-        $.param({ lot_center: map.options.lotPk });
-    $.getJSON(url, function (data) {
-        var lotsLayer = L.geoJson(data, {
-            style: function (feature) {
-                var style = {
-                    color: mapstyles[feature.properties.layer],
-                    fillColor: mapstyles[feature.properties.layer],
-                    fillOpacity: 0.5,
-                    opacity: 0.5,
-                    weight: 1
-                };
-                if (feature.properties.pk === map.options.lotPk) {
-                    style.color = '#000';
-                    style.opacity = 1;
-                }
-                return style;
-            }
-        });
-        lotsLayer.addTo(map);
-    });
+    var url = map.options.lotsurl,
+        lotLayerOptions = getLotLayerOptions(map.options.lotPk);
+    var lotsLayer = L.lotLayer(url, vectorLayerOptions, lotLayerOptions).addTo(map);
 }
 
 $(document).ready(function () {
