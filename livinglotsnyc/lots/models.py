@@ -101,8 +101,11 @@ class LotMixin(models.Model):
     area = property(_area)
 
     def _area_acres(self):
-        area = self.area * (ureg.feet ** 2)
-        return area.to(ureg.acre).magnitude
+        try:
+            area = self.area * (ureg.feet ** 2)
+            return area.to(ureg.acre).magnitude
+        except ValueError:
+            return None
 
     area_acres = property(_area_acres)
 
