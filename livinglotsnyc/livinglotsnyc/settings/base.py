@@ -180,6 +180,11 @@ INSTALLED_APPS = (
     'livinglots_usercontent.photos',
 
     #
+    # nycdata
+    #
+    'nycdata',
+
+    #
     # first-party, project-specific
     #
     'activities',

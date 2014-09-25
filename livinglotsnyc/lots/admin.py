@@ -11,6 +11,7 @@ class LotAdmin(BaseLotAdmin):
             'fields': ('owner',),
         }),
     )
+    list_display = ('bbl', 'address_line1', 'borough', 'known_use')
 
 
 admin.site.unregister(Lot)

@@ -57,6 +57,7 @@ class LotGroupLotMixin(models.Model):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
+        related_name='lotgroup',
         verbose_name=_('group'),
     )
 
@@ -65,8 +66,20 @@ class LotGroupLotMixin(models.Model):
 
 
 class LotMixin(models.Model):
-
+    accessible = models.BooleanField(default=True)
+    bbl = models.CharField(max_length=10, unique=True)
+    block = models.IntegerField()
+    borough =  models.CharField(max_length=25)
+    lot = models.IntegerField()
     organizers = generic.GenericRelation(Organizer)
+
+    BOROUGH_CHOICES = (
+        ('Bronx', 'Bronx'),
+        ('Brooklyn', 'Brooklyn'),
+        ('Manhattan', 'Manhattan'),
+        ('Queens', 'Queens'),
+        ('Staten Island', 'Staten Island'),
+    )
 
     @classmethod
     def get_filter(cls):
