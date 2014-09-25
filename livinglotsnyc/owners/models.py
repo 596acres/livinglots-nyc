@@ -1,5 +1,8 @@
-from livinglots_owners.models import BaseOwner
+from livinglots_owners.models import BaseOwner, BaseOwnerContact
 
 
 class Owner(BaseOwner):
+    pass
+
+class OwnerContact(BaseOwnerContact):
     pass

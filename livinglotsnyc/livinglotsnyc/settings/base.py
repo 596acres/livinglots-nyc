@@ -289,6 +289,7 @@ LIVING_LOTS = {
         'lotgroup': 'lots.LotGroup',
         'organizer': 'organize.Organizer',
         'owner': 'owners.Owner',
+        'owner_contact': 'owners.OwnerContact',
         'pathway': 'pathways.Pathway',
     },
 }
