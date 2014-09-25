@@ -38,7 +38,7 @@ class StewardProject(BaseStewardProject):
     )
 
     def __unicode__(self):
-        return self.name or '%d' % self.pk
+        return self.project_name or '%d' % self.pk
 
 
 class StewardNotification(BaseStewardNotification):
