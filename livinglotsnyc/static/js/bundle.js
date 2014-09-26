@@ -17773,7 +17773,7 @@ L.LotMap = L.Map.extend({
                 fillOpacity: 1,
                 stroke: 0
             };
-            style.fillColor = mapstyles[feature.properties.layer];
+            style.fillColor = mapstyles[feature.properties.layers];
             if (!style.fillColor) {
                 style.fillColor = '#000000';
             }
@@ -18335,7 +18335,6 @@ $.fn.mapsearch = function (options) {
 module.exports = {
     in_use: '#97b03d',
     private: '#ea292e',
-    private_blight_liens: '#faa43e',
     public: '#812683'
 };
 

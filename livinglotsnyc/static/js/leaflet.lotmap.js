@@ -52,7 +52,7 @@ L.LotMap = L.Map.extend({
                 fillOpacity: 1,
                 stroke: 0
             };
-            style.fillColor = mapstyles[feature.properties.layer];
+            style.fillColor = mapstyles[feature.properties.layers];
             if (!style.fillColor) {
                 style.fillColor = '#000000';
             }

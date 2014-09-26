@@ -2,9 +2,11 @@ from pint import UnitRegistry
 
 from django.contrib.contenttypes import generic
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
-from livinglots_lots.models import BaseLot, BaseLotGroup, BaseLotManager
+from livinglots_lots.models import (BaseLot, BaseLotGroup, BaseLotLayer,
+                                    BaseLotManager)
 
 from organize.models import Organizer
 from .exceptions import ParcelAlreadyInLot
@@ -125,3 +127,20 @@ class Lot(LotMixin, LotGroupLotMixin, BaseLot):
 
 class LotGroup(BaseLotGroup, Lot):
     objects = models.Manager()
+
+
+class LotLayer(BaseLotLayer):
+
+    @classmethod
+    def get_layer_filters(cls):
+        return {
+            'in_use': Q(known_use__visible=True),
+            'public': Q(
+                Q(known_use=None) | Q(known_use__visible=True),
+                Q(owner__owner_type='public')
+            ),
+            'private': Q(
+                Q(known_use=None) | Q(known_use__visible=True),
+                Q(owner__owner_type='private')
+            ),
+        }
