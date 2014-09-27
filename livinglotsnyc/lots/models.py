@@ -75,6 +75,8 @@ class LotMixin(models.Model):
     lot = models.IntegerField()
     organizers = generic.GenericRelation(Organizer)
 
+    owner_opt_in = models.BooleanField(default=False)
+
     BOROUGH_CHOICES = (
         ('Bronx', 'Bronx'),
         ('Brooklyn', 'Brooklyn'),
@@ -135,6 +137,7 @@ class LotLayer(BaseLotLayer):
     def get_layer_filters(cls):
         return {
             'in_use': Q(known_use__visible=True),
+            'organizing': ~Q(organizers=None),
             'public': Q(
                 Q(known_use=None) | Q(known_use__visible=True),
                 Q(owner__owner_type='public')
@@ -143,4 +146,9 @@ class LotLayer(BaseLotLayer):
                 Q(known_use=None) | Q(known_use__visible=True),
                 Q(owner__owner_type='private')
             ),
+            'private_opt_in': Q(
+                Q(owner__owner_type='private'),
+                Q(owner_opt_in=True)
+            ),
+            'hidden': Q(known_use__visible=False),
         }
