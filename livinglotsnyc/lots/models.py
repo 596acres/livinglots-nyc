@@ -59,7 +59,6 @@ class LotGroupLotMixin(models.Model):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='lotgroup',
         verbose_name=_('group'),
     )
 
@@ -72,7 +71,7 @@ class LotMixin(models.Model):
     bbl = models.CharField(max_length=10, unique=True)
     block = models.IntegerField()
     borough =  models.CharField(max_length=25)
-    lot = models.IntegerField()
+    lot_number = models.IntegerField()
     organizers = generic.GenericRelation(Organizer)
 
     owner_opt_in = models.BooleanField(default=False)
