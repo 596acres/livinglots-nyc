@@ -1,17 +1,19 @@
 {% load i18n imagekit %}
 
 {% for photo in photos %}
-    {% thumbnail '100x100' photo.original_image %}
+    <a href="{{ photo.original_image.url }}" class="fancybox">
+        {% thumbnail '100x100' photo.original_image %}
+    </a>
 
     {% if "photos" in perms %}
         <div class="admin-only">
 
             {% if "photos.change_photo" in perms %}
-                <a href="{% url "admin:photos_photo_change" photo.pk %}">{% trans "Edit this photo" %}</a>
+                <a class="btn btn-small btn-warning" href="{% url "admin:photos_photo_change" photo.pk %}">{% trans "Edit this photo" %}</a>
             {% endif %}
 
             {% if "photos.delete_photo" in perms %}
-                <a href="{% url "admin:photos_photo_delete" photo.pk %}">{% trans "Delete this photo" %}</a>
+                <a class="btn btn-small btn-warning" href="{% url "admin:photos_photo_delete" photo.pk %}">{% trans "Delete this photo" %}</a>
             {% endif %}
 
         </div>
