@@ -17719,6 +17719,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
 };
 
 },{"./leaflet.geojson.tile":21,"./leaflet.lotmultipolygon":25,"./leaflet.lotpolygon":27,"TileLayer.GeoJSON":10,"leaflet":17}],23:[function(require,module,exports){
+var _ = require('underscore');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
 
@@ -17743,6 +17744,16 @@ L.LotMap = L.Map.extend({
     userLocationZoom: 16,
 
     lotLayerOptions: {
+        filter: function (feature, layer) {
+            var layers = feature.properties.layers.split(',');
+            if (_.contains(layers, 'hidden')) {
+                return false;
+            }
+            if (_.contains(layers, 'private') && !_.contains(layer, 'private_opt_in')) {
+                return false;
+            }
+            return true;
+        },
         onEachFeature: function (feature, layer) {
             layer.on({
                 'click': function (event) {
@@ -17762,7 +17773,8 @@ L.LotMap = L.Map.extend({
         },
         pointToLayer: function (feature, latlng) {
             var options = {};
-            if (feature.properties.has_organizers) {
+            var layers = feature.properties.layers.split(',');
+            if (_.contains(layers, 'organizing')) {
                 options.hasOrganizers = true;
             }
             return L.lotMarker(latlng, options);
@@ -17773,10 +17785,7 @@ L.LotMap = L.Map.extend({
                 fillOpacity: 1,
                 stroke: 0
             };
-            style.fillColor = mapstyles[feature.properties.layers];
-            if (!style.fillColor) {
-                style.fillColor = '#000000';
-            }
+            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
             return style;
         },
         popupOptions: {
@@ -17930,7 +17939,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./leaflet.lotlayer":22,"./leaflet.lotmarker":24,"./map.styles":31,"leaflet":17,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.handlebars":14,"leaflet.hash":4,"leaflet.usermarker":16}],24:[function(require,module,exports){
+},{"./leaflet.lotlayer":22,"./leaflet.lotmarker":24,"./map.styles":31,"leaflet":17,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.handlebars":14,"leaflet.hash":4,"leaflet.usermarker":16,"underscore":19}],24:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -18331,14 +18340,33 @@ $.fn.mapsearch = function (options) {
 //
 // Lot map styles by layer for maps
 //
+var _ = require('underscore');
 
-module.exports = {
+var fillColors = {
+    default: '#000000',
     in_use: '#97b03d',
     private: '#ea292e',
     public: '#812683'
 };
 
-},{}],32:[function(require,module,exports){
+module.exports = {
+    fillColors: fillColors,
+
+    getLayerColor: function (layers) {
+        if (_.contains(layers, 'in_use')) {
+            return fillColors.in_use;
+        }
+        if (_.contains(layers, 'public')) {
+            return fillColors.public;
+        }
+        if (_.contains(layers, 'private')) {
+            return fillColors.private;
+        }
+        return fillColors.default;
+    }
+};
+
+},{"underscore":19}],32:[function(require,module,exports){
 //
 // mappage.js
 //

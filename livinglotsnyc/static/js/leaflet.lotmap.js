@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
 
@@ -22,6 +23,16 @@ L.LotMap = L.Map.extend({
     userLocationZoom: 16,
 
     lotLayerOptions: {
+        filter: function (feature, layer) {
+            var layers = feature.properties.layers.split(',');
+            if (_.contains(layers, 'hidden')) {
+                return false;
+            }
+            if (_.contains(layers, 'private') && !_.contains(layer, 'private_opt_in')) {
+                return false;
+            }
+            return true;
+        },
         onEachFeature: function (feature, layer) {
             layer.on({
                 'click': function (event) {
@@ -41,7 +52,8 @@ L.LotMap = L.Map.extend({
         },
         pointToLayer: function (feature, latlng) {
             var options = {};
-            if (feature.properties.has_organizers) {
+            var layers = feature.properties.layers.split(',');
+            if (_.contains(layers, 'organizing')) {
                 options.hasOrganizers = true;
             }
             return L.lotMarker(latlng, options);
@@ -52,10 +64,7 @@ L.LotMap = L.Map.extend({
                 fillOpacity: 1,
                 stroke: 0
             };
-            style.fillColor = mapstyles[feature.properties.layers];
-            if (!style.fillColor) {
-                style.fillColor = '#000000';
-            }
+            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
             return style;
         },
         popupOptions: {
