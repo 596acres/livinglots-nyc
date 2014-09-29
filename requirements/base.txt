@@ -36,7 +36,7 @@ django-jsonfield==0.9.12
 django-model-utils==1.4.0
 git+git://github.com/ebrelsford/Django-monitor/@master
 django-mptt==0.6.1
-django-reversion==1.7.1
+django-reversion==1.8.4
 git+git://github.com/ebrelsford/django-reversion-compare/@master
 django.js==0.8.1
 feincms-cleanse==2
