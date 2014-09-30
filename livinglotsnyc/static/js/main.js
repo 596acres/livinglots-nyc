@@ -35,7 +35,18 @@ $(document).ready(function () {
     /*
      * Fancy the fancyboxes
      */
-    $('.fancybox').fancybox();
+    $('.fancybox').fancybox({
+        beforeShow: function () {
+            var $link = this.element,
+                $img = $link.find('img'),
+                alt = $img.attr('alt'),
+                addedBy = $link.data('added-by'),
+                description = $link.data('description');
+
+            this.inner.find('img').attr('alt', alt);
+            this.title = alt + ' by ' + addedBy + '<p>' + description + '</p>';
+        }
+    });
 
 });
 

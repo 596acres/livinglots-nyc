@@ -1,8 +1,8 @@
 {% load i18n imagekit %}
 
 {% for photo in photos %}
-    <a href="{{ photo.original_image.url }}" class="fancybox">
-        {% thumbnail '100x100' photo.original_image %}
+    <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
+        {% thumbnail '100x100' photo.original_image -- alt=photo.name %}
     </a>
 
     {% if "photos" in perms %}
