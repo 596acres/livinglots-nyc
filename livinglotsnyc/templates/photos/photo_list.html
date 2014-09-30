@@ -1,21 +1,23 @@
 {% load i18n imagekit %}
 
-{% for photo in photos %}
-    <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
-        {% thumbnail '100x100' photo.original_image -- alt=photo.name %}
-    </a>
+<div class="photo-list">
+    {% for photo in photos %}
+        <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-list-item" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
+            {% thumbnail '100x100' photo.original_image -- alt=photo.name %}
+        </a>
 
-    {% if "photos" in perms %}
-        <div class="admin-only">
+        {% if "photos" in perms %}
+            <div class="photo-list-admin-actions admin-only">
 
-            {% if "photos.change_photo" in perms %}
-                <a class="btn btn-small btn-warning" href="{% url "admin:photos_photo_change" photo.pk %}">{% trans "Edit this photo" %}</a>
-            {% endif %}
+                {% if "photos.change_photo" in perms %}
+                    <a class="btn" href="{% url "admin:photos_photo_change" photo.pk %}">{% trans "Edit this photo" %}</a>
+                {% endif %}
 
-            {% if "photos.delete_photo" in perms %}
-                <a class="btn btn-small btn-warning" href="{% url "admin:photos_photo_delete" photo.pk %}">{% trans "Delete this photo" %}</a>
-            {% endif %}
+                {% if "photos.delete_photo" in perms %}
+                    <a class="btn" href="{% url "admin:photos_photo_delete" photo.pk %}">{% trans "Delete this photo" %}</a>
+                {% endif %}
 
-        </div>
-    {% endif %}
-{% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

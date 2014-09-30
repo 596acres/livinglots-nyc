@@ -278,9 +278,9 @@
 {% block sidebar %}
     <aside id="aside-right" class="col-sm-3">
 
-        <section id="photos" class="lot-detail-side-section photos">
+        <section class="lot-detail-side-section photos">
             <h2>{% trans "Photos" %}</h2>
-            <div>
+            <div class="photos-actions">
                 <a class="btn btn-default" href="{% url "usercontent:add_photo" pk=lot.pk %}">
                     {% trans "Submit a photo" %}
                 </a>

@@ -1,0 +1,24 @@
+.photos {
+    &-actions {
+        margin-bottom: 25px;
+    }
+}
+
+.photo-list {
+    .make-row(0);
+
+    &-item {
+        .make-sm-column(6);
+        .thumbnail();
+    }
+
+    &-admin-actions {
+        .make-sm-column(6);
+
+        .btn {
+            .btn-xs();
+            .btn-warning();
+            margin-bottom: 5px;
+        }
+    }
+}
