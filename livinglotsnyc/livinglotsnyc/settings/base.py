@@ -183,6 +183,7 @@ INSTALLED_APPS = (
     # nycdata
     #
     'nycdata',
+    'nycdata.parcels',
 
     #
     # first-party, project-specific
