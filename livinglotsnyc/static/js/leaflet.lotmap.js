@@ -80,7 +80,7 @@ L.LotMap = L.Map.extend({
             }
             return {
                 detailUrl: Django.url('lots:lot_detail', {
-                    pk: layer.feature.properties.id
+                    pk: layer.feature.properties.bbl
                 }),
                 feature: layer.feature
             };

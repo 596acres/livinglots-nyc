@@ -15,6 +15,8 @@ urlpatterns = llurls.urlpatterns + patterns('',
             content_type_model=Lot,
             form_class=OrganizerForm,
             model=get_organizer_model(),
+            object_slug_key='bbl',
+            object_slug_field_name='bbl',
         ),
         name='add_organizer'),
 

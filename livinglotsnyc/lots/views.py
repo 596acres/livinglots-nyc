@@ -12,12 +12,18 @@ from caching.base import cached
 from inplace.views import GeoJSONListView
 from livinglots_genericviews.views import JSONResponseView
 from livinglots_lots.views import FilteredLotsMixin, LotsCountView
+from livinglots_lots.views import LotDetailView as BaseLotDetailView
 from livinglots_lots.views import LotsCSV as BaseLotsCSV
 from livinglots_lots.views import LotsKML as BaseLotsKML
 from livinglots_lots.views import LotsGeoJSON as BaseLotsGeoJSON
 
 
 ureg = UnitRegistry()
+
+
+class LotBBLAddGeneric(object):
+    object_slug_key = 'bbl'
+    object_slug_field_name = 'bbl'
 
 
 class LotGeoJSONMixin(object):
@@ -117,6 +123,11 @@ class LotsGeoJSONPolygon(LotGeoJSONMixin, FilteredLotsMixin, GeoJSONListView):
         def _get_value():
             return super(LotsGeoJSONPolygon, self).get_features()
         return cached(_get_value, key, 60 * 15)
+
+
+class LotDetailView(BaseLotDetailView):
+    slug_field = 'bbl'
+    slug_url_kwarg = 'bbl'
 
 
 class LotsOwnershipOverview(FilteredLotsMixin, JSONResponseView):

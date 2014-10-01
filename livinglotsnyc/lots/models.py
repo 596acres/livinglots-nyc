@@ -125,6 +125,10 @@ class Lot(LotMixin, LotGroupLotMixin, BaseLot):
 
     objects = LotManager()
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('lots:lot_detail', (), { 'bbl': self.bbl, })
+
     class Meta:
         permissions = (
             ('view_preview', 'Can view preview map'),

@@ -16,17 +16,18 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT,
 
 urlpatterns += staticfiles_urlpatterns()
 
+# URLs that expect to act on an individual lot
+lotpatterns = patterns('',
+    url(r'^content/', include('usercontent.urls', 'usercontent')),
+    url(r'^groundtruth/', include('groundtruth.urls', 'groundtruth')),
+    url(r'^grow-community/steward/', include('steward.urls', 'steward')),
+    url(r'^grow-community/', include('organize.urls', 'organize')),
+)
+
 urlpatterns += patterns('',
     # Living Lots
-    url(r'^lots/(?P<pk>\d+)/content/',
-        include('usercontent.urls', 'usercontent')),
-    url(r'^lots/(?P<pk>\d+)/groundtruth/',
-        include('groundtruth.urls', 'groundtruth')),
-    url(r'^lots/(?P<pk>\d+)/grow-community/steward/',
-        include('steward.urls', 'steward')),
-    url(r'^lots/(?P<pk>\d+)/grow-community/',
-        include('organize.urls', 'organize')),
-    url(r'^lots/', include('lots.urls', 'lots')),
+    url(r'^lot/(?P<bbl>\d{10})/', include(lotpatterns)),
+    url(r'^lot/', include('lots.urls', 'lots')),
 
     # Activity stream
     url('^activity/', include('activities.urls')),

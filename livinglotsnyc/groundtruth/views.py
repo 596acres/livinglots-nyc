@@ -1,10 +1,11 @@
 from livinglots import get_lot_model
 from livinglots_groundtruth.views import BaseAddGroundtruthRecordView
 
+from lots.views import LotBBLAddGeneric
 from .forms import GroundtruthRecordForm
 
 
-class AddGroundtruthRecordView(BaseAddGroundtruthRecordView):
+class AddGroundtruthRecordView(LotBBLAddGeneric, BaseAddGroundtruthRecordView):
     content_type_model = get_lot_model()
     form_class = GroundtruthRecordForm
 

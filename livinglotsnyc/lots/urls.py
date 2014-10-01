@@ -2,13 +2,14 @@ from django.conf.urls import patterns, url
 
 import livinglots_lots.urls as llurls
 
-from .views import (LotsCountViewWithAcres, LotsGeoJSONCentroid,
+from .views import (LotsCountViewWithAcres, LotDetailView, LotsGeoJSONCentroid,
                     LotsGeoJSONPolygon, LotsOwnershipOverview, LotsCSV,
                     LotsKML, LotsGeoJSON)
 
 
 urlpatterns = patterns('',
 
+    url(r'^(?P<bbl>\d{10})/$', LotDetailView.as_view(), name='lot_detail'),
     url(r'^geojson-centroid/', LotsGeoJSONCentroid.as_view(),
         name='nola_lot_geojson_centroid'),
     url(r'^geojson-polygon/', LotsGeoJSONPolygon.as_view(),
