@@ -70,7 +70,7 @@ class LotMixin(models.Model):
     accessible = models.BooleanField(default=True)
     bbl = models.CharField(max_length=10, unique=True)
     block = models.IntegerField()
-    borough =  models.CharField(max_length=25)
+    borough = models.CharField(max_length=25)
     lot_number = models.IntegerField()
     organizers = generic.GenericRelation(Organizer)
     parcel = models.ForeignKey('parcels.Parcel',
