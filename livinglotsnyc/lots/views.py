@@ -138,7 +138,7 @@ class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
     def get(self, request, *args, **kwargs):
         lot = self.object = self.get_object()
 
-        return self.render_json_response({
+        context = {
             'area_acres': round(lot.area_acres, 3),
             'bbl': lot.bbl,
             'centroid': {
@@ -147,10 +147,13 @@ class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
             },
             'name': lot.display_name,
             'number_of_lots': lot.number_of_lots,
-            'owner': lot.owner.name,
             'part_of_group': lot.group is not None,
             'url': lot.get_absolute_url(),
-        })
+        }
+        if lot.owner:
+            context['owner'] = lot.owner.name
+
+        return self.render_json_response(context)
 
 
 class LotsOwnershipOverview(FilteredLotsMixin, JSONResponseView):
