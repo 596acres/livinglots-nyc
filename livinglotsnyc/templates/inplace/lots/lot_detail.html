@@ -41,10 +41,7 @@
 
         <div class="col-md-9">
             <h1>
-                {{ lot.display_name|title|default:"unknown" }}
-                {% if lot.postal_code %}
-                    <span class="postal-code">{{ lot.postal_code }}</span>
-                {% endif %}
+                {{ lot.display_name|default:"unknown" }}
             </h1>
         </div>
     </div>
@@ -89,18 +86,6 @@
                 <h2 style="margin-top: 0;">Information about this lot</h2>
                 <div class="lot-detail-details">
 
-                    <div>
-                        {% trans "Owner" %}: {{ lot.owner|default:"unknown" }}
-
-                        {% if lot.owner and "owners.change_owner" in perms %}
-                            <span class="lot-detail-admin admin-only">
-                                <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_changelist" %}?owner={{ lot.owner.pk }}">
-                                    {% trans "View all lots this owner owns" %}
-                                </a>
-                            </span>
-                        {% endif %}
-                    </div>
-
                     {% if lot.number_of_lots > 1 %}
                         <div>
                             {% trans "Number of Lots" %}: {{ lot.number_of_lots }}
@@ -114,10 +99,44 @@
                     {% endif %}
 
                     <div>
+                        {% trans "Address" %}:
+                        {{ lot.address_line1|default:"unknown" }}, {{ lot.borough }}, {{ lot.postal_code }}
+                    </div>
+
+                    <div>
                         {% trans "Area" %}:
                         {{ lot.area_acres|floatformat:"2"|default:"unknown" }} acres
                     </div>
 
+                    <div>
+                        {% trans "More information about this lot at" %}
+                        <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
+                            {% trans "OASIS" %}
+                        </a>
+                    </div>
+
+                    <div>
+                        {% trans "Find elected officials for this lot at" %}
+                        <a href="http://www.mygovnyc.org/?levelofgovt=city&latlng={{ lot.centroid.y }}%2C{{ lot.centroid.x }}" target="_blank">
+                            {% trans "Who Represents Me? NYC" %}
+                        </a>
+                    </div>
+
+                </div>
+            </section>
+
+            <section>
+                <h2>Owner</h2>
+                <div class="lot-detail-details">
+                    {{ lot.owner|default:"unknown" }}
+
+                    {% if lot.owner and "owners.change_owner" in perms %}
+                        <div class="lot-detail-admin admin-only">
+                            <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_changelist" %}?owner={{ lot.owner.pk }}">
+                                {% trans "View all lots this owner owns" %}
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             </section>
 

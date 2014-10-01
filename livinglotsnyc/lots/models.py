@@ -89,6 +89,14 @@ class LotMixin(models.Model):
         ('Staten Island', 'Staten Island'),
     )
 
+    def _get_display_name(self):
+        if self.name:
+            return self.name
+        else:
+            return '%s block %d, lot %d' % (self.borough, self.block,
+                                            self.lot_number)
+    display_name = property(_get_display_name)
+
     @classmethod
     def get_filter(cls):
         from .filters import LotFilter
