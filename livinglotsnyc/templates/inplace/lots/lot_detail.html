@@ -130,6 +130,37 @@
                 <div class="lot-detail-details">
                     {{ lot.owner|default:"unknown" }}
 
+                    {% if lot.owner_contact %}
+                        <div class="owner-contact">
+                            <div class="owner-contact-name">
+                                <span class="owner-contact-label">{% trans "Contact" %}:</span>
+                                <span>
+                                    {{lot.owner_contact.name}}
+                                    {% if lot.owner_contact.phone or lot.owner_contact.email %}
+                                        {% spaceless %}
+                                            <span>(</span>
+                                                {% if lot.owner_contact.phone %}
+                                                    <span class="owner-contact-phone">{{ lot.owner_contact.phone }}</span>
+                                                {% endif %}
+
+                                                {% if lot.owner_contact.phone and lot.owner_contact.email %} / {% endif %}
+
+                                                {% if lot.owner_contact.email %}
+                                                    <span class="owner-contact-email">{{ lot.owner_contact.email }}</span>
+                                                {% endif %}
+                                            <span>)</span>
+                                        {% endspaceless %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if lot.owner_contact.notes %}
+                                <div class="owner-contact-notes">
+                                    {{ lot.owner_contact.notes|urlize|linebreaks }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
                     {% if lot.owner and "owners.change_owner" in perms %}
                         <div class="lot-detail-admin admin-only">
                             <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_changelist" %}?owner={{ lot.owner.pk }}">
