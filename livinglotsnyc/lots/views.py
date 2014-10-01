@@ -6,7 +6,6 @@ from pint import UnitRegistry
 from random import shuffle
 
 from django.db.models import Count, Sum
-from django.views.generic import DetailView
 
 from braces.views import JSONResponseMixin
 from caching.base import cached
