@@ -35,7 +35,6 @@
     "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",
     "leaflet.bing": "./bower_components/leaflet-plugins/layer/tile/Bing.js",
     "leaflet.dataoptions": "./bower_components/leaflet.dataoptions/src/leaflet.dataoptions.js",
-    "leaflet.handlebars": "./bower_components/leaflet.handlebars/src/leaflet.handlebars.js",
     "leaflet.hash": "./bower_components/leaflet-hash/leaflet-hash.js",
     "leaflet.loading": "./bower_components/leaflet.loading/src/Control.Loading.js",
     "leaflet.usermarker": "./bower_components/leaflet.usermarker/src/leaflet.usermarker.js",
@@ -65,7 +64,6 @@
         ]
     },
     "handlebars": "Handlebars",
-    "leaflet.handlebars": { "depends": [ "handlebars:Handlebars" ] },
     "spinjs": "Spinner",
     "TileLayer.GeoJSON": {
         "depends": [

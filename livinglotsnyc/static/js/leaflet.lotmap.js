@@ -1,10 +1,11 @@
 var _ = require('underscore');
+var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
+var Spinner = require('spinjs');
 
 require('leaflet.bing');
 require('leaflet.dataoptions');
-require('leaflet.handlebars');
 require('leaflet.hash');
 require('leaflet.usermarker');
 
@@ -21,6 +22,17 @@ L.LotMap = L.Map.extend({
     previousZoom: null,
     userLayer: null,
     userLocationZoom: 16,
+
+    compiledPopupTemplate: null,
+
+    getPopupTemplate: function () {
+        if (this.compiledPopupTemplate) {
+            return this.compiledPopupTemplate;
+        }
+        var source = $("#popup-template").html();
+        this.compiledPopupTemplate = Handlebars.compile(source);
+        return this.compiledPopupTemplate;
+    },
 
     lotLayerOptions: {
         filter: function (feature, layer) {
@@ -39,7 +51,14 @@ L.LotMap = L.Map.extend({
                     var latlng = event.latlng,
                         x = this._map.latLngToContainerPoint(latlng).x,
                         y = this._map.latLngToContainerPoint(latlng).y - 100,
-                        point = this._map.containerPointToLatLng([x, y]);
+                        point = this._map.containerPointToLatLng([x, y]),
+                        template = this._map.getPopupTemplate();
+                    this.bindPopup('<div id="popup"></div>').openPopup();
+                    var spinner = new Spinner().spin($('#popup')[0]);
+                    $.getJSON(Django.url('lots:lot_detail_json', { bbl: this.feature.properties.bbl }), function (data) {
+                        spinner.stop();
+                        $('#popup').append(template(data));
+                    });
                     return this._map.setView(point, this._map._zoom);
                 },
                 'mouseover': function (event) {
@@ -73,7 +92,6 @@ L.LotMap = L.Map.extend({
             minWidth: 250,
             offset: [0, 0]
         },
-        handlebarsTemplateSelector: '#popup-template',
         getTemplateContext: function (layer) {
             if (!layer.feature) {
                 throw 'noFeatureForContext';

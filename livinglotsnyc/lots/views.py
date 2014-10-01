@@ -6,7 +6,9 @@ from pint import UnitRegistry
 from random import shuffle
 
 from django.db.models import Count, Sum
+from django.views.generic import DetailView
 
+from braces.views import JSONResponseMixin
 from caching.base import cached
 
 from inplace.views import GeoJSONListView
@@ -128,6 +130,28 @@ class LotsGeoJSONPolygon(LotGeoJSONMixin, FilteredLotsMixin, GeoJSONListView):
 class LotDetailView(BaseLotDetailView):
     slug_field = 'bbl'
     slug_url_kwarg = 'bbl'
+
+
+class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
+    slug_field = 'bbl'
+    slug_url_kwarg = 'bbl'
+
+    def get(self, request, *args, **kwargs):
+        lot = self.object = self.get_object()
+
+        return self.render_json_response({
+            'area_acres': round(lot.area_acres, 3),
+            'bbl': lot.bbl,
+            'centroid': {
+                'x': lot.centroid.x,
+                'y': lot.centroid.y,
+            },
+            'name': lot.display_name,
+            'number_of_lots': lot.number_of_lots,
+            'owner': lot.owner.name,
+            'part_of_group': lot.group is not None,
+            'url': lot.get_absolute_url(),
+        })
 
 
 class LotsOwnershipOverview(FilteredLotsMixin, JSONResponseView):

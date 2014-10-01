@@ -3694,6 +3694,10 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   color: #f0ad4e;
   background-color: #fff;
 }
+#popup {
+  height: 150px;
+  width: 225px;
+}
 .map-welcome h1 {
   font-family: 'Oswald', sans-serif;
   font-size: 56px;

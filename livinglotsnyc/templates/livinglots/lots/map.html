@@ -4,33 +4,26 @@
     {% verbatim %}
         <section class="lotpopup">
             <header>
-                <a target="_blank" href="{{detailUrl}}">
-                    {{feature.properties.address_line1}}
-                </a>
+                <a target="_blank" href="{{url}}">{{name}}</a>
             </header>
             <div class="row">
                 <div class="popup-streetview col-xs-6">
                     <div>
-                        {{#if feature.properties.centroid}}
-                            <img src="http://maps.googleapis.com/maps/api/streetview?location={{feature.properties.centroid.[1]}},{{feature.properties.centroid.[0]}}&size=105x110&sensor=false&fov=45" />
-                        {{else}}
-                            <img src="http://maps.googleapis.com/maps/api/streetview?location={{feature.geometry.coordinates.[1]}},{{feature.geometry.coordinates.[0]}}&size=105x110&sensor=false&fov=45" />
-                        {{/if}}
+                        <img src="http://maps.googleapis.com/maps/api/streetview?location={{centroid.y}},{{centroid.x}}&size=105x110&sensor=false&fov=45" />
                     </div>
                 </div>
                 <div class="popup-lot-details col-xs-6">
-                    {{#if feature.properties.number_of_lots_plural}}
+                    {{#if part_of_group}}
                         <div class="lot-count">
-                            {{feature.properties.number_of_lots}}
-                            lots
+                            {{number_of_lots}} lots
                         </div>
                     {{/if}}
-                    <div class="size">Size: {{feature.properties.size}} acres</div>
-                    <div class="owner">Owner: {{feature.properties.owner}}</div>
+                    <div class="size">Size: {{area_acres}} acres</div>
+                    <div class="owner">Owner: {{owner}}</div>
                     <!--
                         <div class="recent-activity">Someone just posted a note</div>
                     -->
-                    <a target="_blank" href="{{detailUrl}}" class="btn btn-default">learn more</a>
+                    <a target="_blank" href="{{url}}" class="btn btn-default">learn more</a>
                 </div>
             </div>
         </section>
