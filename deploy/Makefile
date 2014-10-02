@@ -29,7 +29,7 @@ install_admin:
 	cat templates/start_gunicorn.sh | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g; s/<PROJECT_NAME>/$(PROJECT_NAME)/g;" > ../start_gunicorn.sh
 
 	mkdir -p $(HOME)/var/supervisor
-	cat templates/supervisord.conf | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g; s/<USER>/$(USER)/g; s/<REPO_NAME>/$(REPO_NAME)/g; s/<PROJECT_NAME>/$(PROJECT_NAME)/g; s/<TILESTACHE_WEBAPP_NAME>/$(TILESTACHE_WEBAPP_NAME)" > $(HOME)/var/supervisor/supervisord.conf
+	cat templates/supervisord.conf | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g; s/<USER>/$(USER)/g; s/<REPO_NAME>/$(REPO_NAME)/g; s/<PROJECT_NAME>/$(PROJECT_NAME)/g; s/<TILESTACHE_WEBAPP_NAME>/$(TILESTACHE_WEBAPP_NAME)/g;" > $(HOME)/var/supervisor/supervisord.conf
 
 install_tilestache:
 	mkdir -p $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/logs
