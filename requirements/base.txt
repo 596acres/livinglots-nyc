@@ -15,7 +15,7 @@ geojson==1.0.1
 
 # Django-specific requirements
 Django>=1.7
-FeinCMS==1.10.1
+git+git://github.com/feincms/feincms/@next
 django-activity-stream>=0.5.1
 django-admin-enhancer==0.1.2
 django-admin-tools==0.5.1
@@ -40,7 +40,7 @@ django-reversion==1.8.4
 git+git://github.com/ebrelsford/django-reversion-compare/@master
 django.js==0.8.1
 feincms-cleanse==2
-git+git://github.com/feincms/feincms-elephantblog/@465b30bf727bc456f44e7f64a0738efadd845618
+feincms-elephantblog==1.0.0
 git+git://github.com/ebrelsford/feincms-pagepermissions@master
 django-widget-tweaks==1.3
 
