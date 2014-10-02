@@ -16,6 +16,8 @@ class GroundtruthRecordForm(GroundtruthRecordFormMixin, forms.ModelForm):
             self.fields['use'].widget = forms.HiddenInput()
 
     class Meta:
+        fields = ('actual_use', 'content_type', 'object_id', 'contact_name',
+                  'contact_email', 'contact_phone', 'use',)
         model = GroundtruthRecord
         widgets = {
             'content_type': forms.HiddenInput(),
