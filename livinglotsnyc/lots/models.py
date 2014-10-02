@@ -68,10 +68,10 @@ class LotGroupLotMixin(models.Model):
 
 class LotMixin(models.Model):
     accessible = models.BooleanField(default=True)
-    bbl = models.CharField(max_length=10, unique=True)
-    block = models.IntegerField()
+    bbl = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    block = models.IntegerField(blank=True, null=True)
     borough = models.CharField(max_length=25)
-    lot_number = models.IntegerField()
+    lot_number = models.IntegerField(blank=True, null=True)
     organizers = generic.GenericRelation(Organizer)
     parcel = models.ForeignKey('parcels.Parcel',
         blank=True,
@@ -93,8 +93,11 @@ class LotMixin(models.Model):
         if self.name:
             return self.name
         else:
-            return '%s block %d, lot %d' % (self.borough, self.block,
-                                            self.lot_number)
+            try:
+                return '%s block %d, lot %d' % (self.borough, self.block,
+                                                self.lot_number)
+            except TypeError:
+                return self.address_line1
     display_name = property(_get_display_name)
 
     @classmethod
@@ -135,7 +138,10 @@ class Lot(LotMixin, LotGroupLotMixin, BaseLot):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('lots:lot_detail', (), { 'bbl': self.bbl, })
+        try:
+            return ('lots:lot_detail', (), { 'pk': self.lotgroup.pk, })
+        except Lot.DoesNotExist:
+            return ('lots:lot_detail', (), { 'bbl': self.bbl, })
 
     class Meta:
         permissions = (

@@ -26,7 +26,7 @@ lotpatterns = patterns('',
 
 urlpatterns += patterns('',
     # Living Lots
-    url(r'^lot/(?P<bbl>\d{10})/', include(lotpatterns)),
+    url(r'^lot/(?P<pk>\d+)/', include(lotpatterns)),
     url(r'^lot/', include('lots.urls', 'lots')),
 
     # Activity stream

@@ -55,7 +55,7 @@
             </a>
         {% endif %}
 
-        <a class="btn btn-default build-community-button lot-page-tooltip" href="{% url "organize:add_organizer" bbl=lot.bbl %}" data-toggle="tooltip" title="{% trans "Get involved with this lot or let people know you are already working towards growing community here." %}">
+        <a class="btn btn-default build-community-button lot-page-tooltip" href="{% url "organize:add_organizer" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Get involved with this lot or let people know you are already working towards growing community here." %}">
             {% trans "organize" %}
         </a>
 
@@ -66,11 +66,11 @@
         {% endif %}
 
         {% if not lot.known_use %}
-            <a class="btn btn-default lot-page-tooltip" href="{% url "steward:add_stewardnotification" bbl=lot.bbl %}" data-toggle="tooltip" title="{% trans "Tell us more about your project." %}">
+            <a class="btn btn-default lot-page-tooltip" href="{% url "steward:add_stewardnotification" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Tell us more about your project." %}">
                 {% trans "Is this an active project?" %}
             </a>
 
-            <a class="btn btn-default lot-page-tooltip" href="{% url "groundtruth:add_groundtruthrecord" bbl=lot.bbl %}" data-toggle="tooltip" title="{% trans "Let us know that this lot's actual use is not correctly identified." %}">
+            <a class="btn btn-default lot-page-tooltip" href="{% url "groundtruth:add_groundtruthrecord" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Let us know that this lot's actual use is not correctly identified." %}">
                 {% trans "Have we made a mistake?" %}
             </a>
         {% endif %}
@@ -306,7 +306,7 @@
             <h2>
                 {% trans "Notes" %}
             </h2>
-            <a class="btn btn-default" href="{% url "usercontent:add_note" bbl=lot.bbl %}">
+            <a class="btn btn-default" href="{% url "usercontent:add_note" pk=lot.pk %}">
                 {% trans "Add your note" %}
             </a>
             {% render_note_list for lot %}
@@ -316,7 +316,7 @@
             <h2>
                 {% trans "Files" %}
             </h2>
-            <a class="btn btn-default" href="{% url "usercontent:add_file" bbl=lot.bbl %}">
+            <a class="btn btn-default" href="{% url "usercontent:add_file" pk=lot.pk %}">
                 {% trans "Add a file" %}
             </a>
             {% render_file_list for lot %}
@@ -331,7 +331,7 @@
         <section class="lot-detail-side-section photos">
             <h2>{% trans "Photos" %}</h2>
             <div class="photos-actions">
-                <a class="btn btn-default" href="{% url "usercontent:add_photo" bbl=lot.bbl %}">
+                <a class="btn btn-default" href="{% url "usercontent:add_photo" pk=lot.pk %}">
                     {% trans "Submit a photo" %}
                 </a>
             </div>

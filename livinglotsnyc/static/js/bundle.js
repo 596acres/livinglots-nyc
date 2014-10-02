@@ -17691,7 +17691,7 @@ L.LotMap = L.Map.extend({
                         template = this._map.getPopupTemplate();
                     this.bindPopup('<div id="popup"></div>').openPopup();
                     var spinner = new Spinner().spin($('#popup')[0]);
-                    $.getJSON(Django.url('lots:lot_detail_json', { bbl: this.feature.properties.bbl }), function (data) {
+                    $.getJSON(Django.url('lots:lot_detail_json', { pk: this.feature.properties.id }), function (data) {
                         spinner.stop();
                         $('#popup').append(template(data));
                     });
@@ -17727,17 +17727,6 @@ L.LotMap = L.Map.extend({
             maxWidth: 250,
             minWidth: 250,
             offset: [0, 0]
-        },
-        getTemplateContext: function (layer) {
-            if (!layer.feature) {
-                throw 'noFeatureForContext';
-            }
-            return {
-                detailUrl: Django.url('lots:lot_detail', {
-                    pk: layer.feature.properties.bbl
-                }),
-                feature: layer.feature
-            };
         }
     },
 

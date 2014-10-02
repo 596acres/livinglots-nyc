@@ -10,7 +10,7 @@ from .views import (LotsCountViewWithAcres, LotDetailView, LotDetailViewJSON,
 urlpatterns = patterns('',
 
     url(r'^(?P<bbl>\d{10})/$', LotDetailView.as_view(), name='lot_detail'),
-    url(r'^(?P<bbl>\d{10})/json/$', LotDetailViewJSON.as_view(),
+    url(r'^(?P<pk>\d+)/json/$', LotDetailViewJSON.as_view(),
         name='lot_detail_json'),
     url(r'^geojson-centroid/', LotsGeoJSONCentroid.as_view(),
         name='lot_geojson_centroid'),

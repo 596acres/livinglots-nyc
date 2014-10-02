@@ -8,3 +8,4 @@ class LotsAppConfig(AppConfig):
 
     def ready(self):
         registry.register(self.get_model('Lot'))
+        registry.register(self.get_model('LotGroup'))
