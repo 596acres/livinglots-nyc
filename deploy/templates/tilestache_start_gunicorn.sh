@@ -12,8 +12,9 @@ LOGDIR=$HOME/webapps/$WEBAPP_NAME/logs
 echo "Starting $WEBAPP_NAME"
 
 # Activate the virtual environment
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2.7
 source ~/bin/virtualenvwrapper.sh
-workon $VIRTUALENV
+workon <VIRTUALENV>
 
 cd $HOME/webapps/$WEBAPP_NAME
 
