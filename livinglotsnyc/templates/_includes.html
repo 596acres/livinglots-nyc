@@ -9,9 +9,4 @@
 
 <script src="//maps.googleapis.com/maps/api/js?sensor=false"></script>
 
-{# Load requirejs main, built if in production #}
-{% if not debug %}
-    <script src="{% static "main-built.js" %}"></script>
-{% else %}
-    <script src="{% static "js/bundle.js" %}"></script>
-{% endif %}
+<script src="{% static "js/bundle.js" %}"></script>
