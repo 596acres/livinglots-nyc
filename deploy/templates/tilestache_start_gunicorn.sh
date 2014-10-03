@@ -5,7 +5,6 @@ PORT=<PORT>
 USER=$USER
 GROUP=$USER
 NUM_WORKERS=3
-DJANGO_WSGI_MODULE=$DJANGO_PROJECT_NAME.wsgi
 VIRTUALENV=$WEBAPP_NAME
 LOGDIR=$HOME/webapps/$WEBAPP_NAME/logs
 
@@ -18,7 +17,6 @@ workon <VIRTUALENV>
 
 cd $HOME/webapps/$WEBAPP_NAME
 
-# Start Django Unicorn
 exec gunicorn \
   --name $WEBAPP_NAME \
   --workers $NUM_WORKERS \
