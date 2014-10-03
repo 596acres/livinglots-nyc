@@ -100,3 +100,6 @@ LOGGING = {
 # TODO uncomment for SSL
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = True
+
+LOT_CENTROIDS_URL = get_env_variable('TILES_BASE') + '/lots-centroids/'
+LOT_POLYGONS_URL = get_env_variable('TILES_BASE') + '/lots-polygons/'
