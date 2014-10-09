@@ -233,10 +233,11 @@ class LotsCountViewWithAcres(LotsCountView):
 
 
 class LotsCSV(BaseLotsCSV):
+    def get_fields(self):
+        return super(LotsCSV, self).get_fields() + ('bbl',)
 
     def get_sitename(self):
-        # TODO replace with site name
-        return ''
+        return 'Living Lots NYC'
 
 
 class LotsKML(BaseLotsKML):
