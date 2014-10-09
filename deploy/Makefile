@@ -34,5 +34,5 @@ install_admin:
 install_tilestache:
 	mkdir -p $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/logs
 	cat templates/gunicorn.cfg | sed "s/<PORT>/$(TILESTACHE_PORT)/g; s/<WEBAPP_NAME>/$(TILESTACHE_WEBAPP_NAME)/g; s/<USER>/$(USER)/g;" > $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/gunicorn.cfg
-	cat templates/tilestache_start_gunicorn.sh | sed "s/<PORT>/$(TILESTACHE_PORT)/g; s/<WEBAPP_NAME>/$(TILESTACHE_WEBAPP_NAME)/g; s/<VIRTUALENV>/$(WEBAPP_NAME)" > $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/start_gunicorn.sh
+	cat templates/tilestache_start_gunicorn.sh | sed "s/<PORT>/$(TILESTACHE_PORT)/g; s/<WEBAPP_NAME>/$(TILESTACHE_WEBAPP_NAME)/g; s/<VIRTUALENV>/$(WEBAPP_NAME)/g;" > $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/start_gunicorn.sh
 	cat templates/tilestache.cfg | sed "s/<ALLOWED_ORIGIN>/$(TILESTACHE_ALLOWED_ORIGIN)/g; s/<DB_NAME>/$(DB_NAME)/g; s/<DB_USER>/$(DB_USER)/g; s/<DB_PASSWORD>/$(DB_PASSWORD)/g;" > $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/tilestache.cfg
