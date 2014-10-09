@@ -283,6 +283,7 @@ LIVING_LOTS = {
         'owner': 'owners.Owner',
         'owner_contact': 'owners.OwnerContact',
         'pathway': 'pathways.Pathway',
+        'stewardproject': 'steward.StewardProject',
     },
 }
 

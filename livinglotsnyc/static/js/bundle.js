@@ -17434,6 +17434,11 @@ module.exports = {
         else if (filters.projects === 'only' && !_.contains(lotLayers, 'in_use')) {
             return false;
         }
+        else if (filters.projects === 'started_here') {
+            if (_.contains(lotLayers, 'in_use') && !_.contains(lotLayers, 'in_use_started_here')) {
+                return false;
+            }
+        }
 
         return true;
     },

@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+from livinglots import get_stewardproject_model
 from livinglots_lots.models import (BaseLot, BaseLotGroup, BaseLotLayer,
                                     BaseLotManager)
 
@@ -157,8 +158,16 @@ class LotLayer(BaseLotLayer):
 
     @classmethod
     def get_layer_filters(cls):
+        started_here_pks = get_stewardproject_model().objects.filter(
+            started_here=True
+        ).values_list('object_id', flat=True)
+
         return {
             'in_use': Q(known_use__visible=True),
+            'in_use_started_here': Q(
+                known_use__visible=True,
+                pk__in=started_here_pks
+            ),
             'organizing': ~Q(organizers=None),
             'public': Q(
                 Q(known_use=None) | Q(known_use__visible=True),
