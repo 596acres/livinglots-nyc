@@ -2,18 +2,19 @@
 
 <script id="details-template" type="text/x-handlebars-template">
     {% verbatim %}
-        <ul>
+        <ul class="details-layer-list">
             {{#each lottypes}}
                 <li>
                     <span class="legend-marker legend-marker-{{type}}"></span>
                     {{label}}
-                    <ul>
+                    <ul class="details-owner-list details-owner-list-{{type}}">
                         {{#each owners}}
                             <li>
                                 {{count}} lots {{label}}
                             </li>
                         {{/each}}
                     </ul>
+                    <span class="details-total">({{total}} lots)</span>
                 </li>
             {{/each}}
         </ul>

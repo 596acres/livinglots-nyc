@@ -14,3 +14,41 @@
         }
     }
 }
+
+.overlaymenu {
+    &-admin .overlaymenu-menu-content {
+        min-height: 10px;
+    }
+
+    &-details,
+    &-filter,
+    &-news {
+        width: 350px;
+    }
+
+    &-details .overlaymenu-tip-container,
+    &-filter .overlaymenu-tip-container,
+    &-news .overlaymenu-tip-container {
+        left: 140px;
+    }
+
+    &-news .activity-stream-container {
+        min-height: 200px;
+    }
+
+    &-details {
+        .details-overview {
+            min-height: 100px;
+            width: 100%;
+
+            .details-layer-list {
+                list-style: none;
+                padding-left: 0;
+            }
+
+            .details-owner-list {
+                display: none;
+            }
+        }
+    }
+}

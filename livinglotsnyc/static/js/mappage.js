@@ -58,7 +58,7 @@ function updateOwnershipOverview(map) {
     $.getJSON(url + '?' + $.param(params), function (data) {
         var template = Handlebars.compile($('#details-template').html());
         var content = template({
-            lottypes: data
+            lottypes: data.owners
         });
         $('.details-overview').html(content);
     });
@@ -124,8 +124,8 @@ function prepareOverlayMenus(map) {
         })
         .on('overlaymenuopen', function () {
             var spinner = new Spinner({
-                left: '0px',
-                top: '0px'
+                left: '50%',
+                top: '50%'
             }).spin($('.details-overview')[0]);
             updateDetailsLink(map);
             updateOwnershipOverview(map);

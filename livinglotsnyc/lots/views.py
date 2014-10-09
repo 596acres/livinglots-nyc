@@ -178,28 +178,31 @@ class LotsOwnershipOverview(FilteredLotsMixin, JSONResponseView):
 
     def get_layers(self, lots):
         return OrderedDict({
-            'public': lots.filter(owner__owner_type='public'),
-            'private': lots.filter(
-                owner__owner_type='private',
-            ),
+            'public': lots.filter(lotlayer__name='public'),
+            'private': lots.filter(lotlayer__name='private_opt_in'),
         })
 
     def get_layer_counts(self, layers):
         counts = []
         for layer, qs in layers.items():
+            count = {
+                'label': self.layer_labels[layer],
+                'total': qs.count(),
+                'sites': qs.filter().count(),
+                'type': layer,
+            }
             owners = self.get_owners(qs)
             if owners:
-                counts.append({
-                    'label': self.layer_labels[layer],
-                    'owners': owners,
-                    'type': layer,
-                })
+                count['owners'] = owners
+            counts.append(count)
         return counts
 
     def get_context_data(self, **kwargs):
         lots = self.get_lots().qs
         layers = self.get_layers(lots)
-        return self.get_layer_counts(layers)
+        return {
+            'owners': self.get_layer_counts(layers)
+        }
 
 
 class LotsCountViewWithAcres(LotsCountView):
