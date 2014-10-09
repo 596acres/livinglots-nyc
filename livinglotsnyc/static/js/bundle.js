@@ -18203,21 +18203,16 @@ function getLotLayerOptions(lotPk) {
         },
         style: function (feature) {
             var style = {
-                fillColor: '#000000',
-                fillOpacity: 1,
-                stroke: 0
+                fillOpacity: 0.2,
+                stroke: false
             };
+            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
 
             // Style this lot distinctly
             if (feature.properties.id === lotPk) {
-                style.stroke = true;
-                style.color = '#FF0000';
+                style.fillOpacity = 1;
             }
-
-            style.fillColor = mapstyles[feature.properties.layer];
-            if (!style.fillColor) {
-                style.fillColor = '#000000';
-            }
+            console.log(style);
             return style;
         }
     };
