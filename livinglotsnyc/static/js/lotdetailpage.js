@@ -65,7 +65,12 @@ function addLotsLayer(map) {
 
 $(document).ready(function () {
     if ($('.lot-detail-page').length > 0) {
-        var map = L.map('lot-detail-map');
+        var map = L.map('lot-detail-map', {
+            doubleClickZoom: false,
+            dragging: false,
+            scrollWheelZoom: false,
+            touchZoom: false
+        });
         addBaseLayer(map);
         addLotsLayer(map);
         StreetView.load_streetview(
