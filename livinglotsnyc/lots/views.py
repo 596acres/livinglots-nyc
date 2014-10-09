@@ -243,12 +243,10 @@ class LotsCSV(BaseLotsCSV):
 class LotsKML(BaseLotsKML):
 
     def get_sitename(self):
-        # TODO replace with site name
-        return ''
+        return 'Living Lots NYC'
 
 
 class LotsGeoJSON(BaseLotsGeoJSON):
 
     def get_sitename(self):
-        # TODO replace with site name
-        return ''
+        return 'Living Lots NYC'
