@@ -3,6 +3,22 @@ var L = require('leaflet');
 
 L.LotPathMixin = {
 
+    hide: function () {
+        if (!this._path) return;
+        this._path.style.display = 'none';
+        if (this._actionPath) {
+            this._actionPath.style.display = 'none';
+        }
+    },
+
+    show: function () {
+        if (!this._path) return;
+        this._path.style.display = 'block';
+        if (this._actionPath) {
+            this._actionPath.style.display = 'block';
+        }
+    },
+
     initActionPath: function() {
         if (this.options.hasOrganizers) {
             this._actionPath = this._createElement('path');

@@ -172,6 +172,7 @@ $(document).ready(function () {
         }
 
         var map = L.lotMap('map', {
+            filterParams: buildLotFilterParams(null),
 
             onMouseOverFeature: function (feature) {
             },
@@ -181,7 +182,7 @@ $(document).ready(function () {
 
         });
 
-        map.addLotsLayer(buildLotFilterParams(map));
+        map.addLotsLayer();
 
         prepareOverlayMenus(map);
 
@@ -203,7 +204,7 @@ $(document).ready(function () {
 
         $('.filter').change(function () {
             var params = buildLotFilterParams(map);
-            map.updateDisplayedLots(params);
+            map.updateFilters(params);
             updateLotCount(map);
         });
 

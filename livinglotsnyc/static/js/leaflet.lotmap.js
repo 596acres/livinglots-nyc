@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var filters = require('./filters');
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
@@ -13,6 +14,8 @@ require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 
 
+var currentFilters = {};
+
 L.LotMap = L.Map.extend({
 
     boundariesLayer: null,
@@ -22,6 +25,8 @@ L.LotMap = L.Map.extend({
     previousZoom: null,
     userLayer: null,
     userLocationZoom: 16,
+
+    filters: null,
 
     compiledPopupTemplate: null,
 
@@ -36,6 +41,8 @@ L.LotMap = L.Map.extend({
 
     lotLayerOptions: {
         filter: function (feature, layer) {
+            // TODO have this informed by filters when loaded OR filter after
+            // adding
             var layers = feature.properties.layers.split(',');
             if (_.contains(layers, 'hidden')) {
                 return false;
@@ -99,10 +106,30 @@ L.LotMap = L.Map.extend({
         this.addBaseLayer();
         var hash = new L.Hash(this);
 
+        if (options.filterParams) {
+            currentFilters = filters.paramsToFilters(options.filterParams);
+        }
+
         this.boundariesLayer = L.geoJson(null, {
             color: '#58595b',
             fill: false
         }).addTo(this);
+
+        // When new lots are added ensure they should be displayed
+        this.on('layeradd', function (event) {
+            // Dig through the layers of layers
+            event.layer.on('layeradd', function (event) {
+                event.layer.eachLayer(function (lot) {
+                    if (!lot.feature) return;
+                    if (filters.lotShouldAppear(lot, currentFilters)) {
+                        lot.show();
+                    }
+                    else {
+                        lot.hide();
+                    }
+                });
+            });
+        });
 
         this.on('zoomend', function () {
             var currentZoom = this.getZoom();
@@ -142,9 +169,9 @@ L.LotMap = L.Map.extend({
         }).addTo(this);
     },
 
-    addLotsLayer: function (params) {
-        this.addCentroidsLayer(params);
-        this.addPolygonsLayer(params);
+    addLotsLayer: function () {
+        this.addCentroidsLayer();
+        this.addPolygonsLayer();
         if (this.getZoom() <= this.lotLayerTransitionPoint) {
             this.addLayer(this.centroidsLayer);
             this.removeLayer(this.polygonsLayer);
@@ -155,7 +182,7 @@ L.LotMap = L.Map.extend({
         }
     },
 
-    addCentroidsLayer: function (params) {
+    addCentroidsLayer: function () {
         if (this.centroidsLayer) {
             this.removeLayer(this.centroidsLayer);
         }
@@ -171,7 +198,7 @@ L.LotMap = L.Map.extend({
         this.centroidsLayer = L.lotLayer(url, options, this.lotLayerOptions);
     },
 
-    addPolygonsLayer: function (params) {
+    addPolygonsLayer: function () {
         if (this.polygonsLayer) {
             this.removeLayer(this.polygonsLayer);
         }
@@ -188,10 +215,31 @@ L.LotMap = L.Map.extend({
         this.polygonsLayer = L.lotLayer(url, options, layerOptions);
     },
 
-    updateDisplayedLots: function (params) {
-        this.removeLayer(this.centroidsLayer);
-        this.removeLayer(this.polygonsLayer);
-        this.addLotsLayer(params);
+    updateFilters: function (params) {
+        currentFilters = filters.paramsToFilters(params);
+        this.updateDisplayedLots();
+    },
+
+    updateDisplayedLots: function () {
+        function updateDisplayedLotsForLayer(layer) {
+            if (layer.vectorLayer) {
+                // Lots are nested in tiles so we need to do two layers of 
+                // eachLayer to get to them all
+                layer.vectorLayer.eachLayer(function (tileLayer) {
+                    tileLayer.eachLayer(function (lot) {
+                        if (filters.lotShouldAppear(lot, currentFilters)) {
+                            lot.show();
+                        }
+                        else {
+                            lot.hide();
+                        }
+                    });
+                });
+            }
+        }
+
+        updateDisplayedLotsForLayer(this.centroidsLayer);
+        updateDisplayedLotsForLayer(this.polygonsLayer);
     },
 
     addUserLayer: function (latlng) {

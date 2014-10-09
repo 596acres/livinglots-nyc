@@ -38,5 +38,17 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
         });
 
         return latlngs;
+    },
+
+    show: function () {
+        this.eachLayer(function (layer) {
+            layer.show();
+        });
+    },
+
+    hide: function () {
+        this.eachLayer(function (layer) {
+            layer.hide();
+        });
     }
 });

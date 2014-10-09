@@ -3351,6 +3351,49 @@ a.thumbnail.active {
 .filter-projects-row:after {
   clear: both;
 }
+.filter-projects-row .control-label {
+  position: relative;
+  float: left;
+  width: 41.66666667%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: left;
+}
+.filter-projects-row .form-control {
+  position: relative;
+  float: left;
+  width: 58.33333333%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.filter-owner {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.filter-owner-list {
+  list-style: none;
+  padding-left: 0;
+}
+.filter-owner input[type=checkbox] {
+  vertical-align: middle;
+}
+.filter-owner .legend-marker {
+  vertical-align: middle;
+}
+.filter-owner-label {
+  width: 90%;
+}
+.filter-owner-label-text {
+  display: inline-block;
+  vertical-align: middle;
+  width: 80%;
+}
+.filter-owner-public {
+  margin-left: 10%;
+  width: 80%;
+}
 footer .footer-main {
   margin-left: 0;
   margin-right: 0;

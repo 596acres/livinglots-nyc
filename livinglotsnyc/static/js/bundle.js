@@ -17416,6 +17416,36 @@ L.Map.include({
 }).call(this);
 
 },{}],19:[function(require,module,exports){
+var _ = require('underscore');
+
+
+module.exports = {
+    lotShouldAppear: function (lot, filters) {
+        // Layers
+        var lotLayers = lot.feature.properties.layers.split(',');
+        if (_.isEmpty(_.intersection(lotLayers, filters.layers))) {
+            return false;
+        }
+
+        // Projects
+        if (filters.projects === 'exclude' && _.contains(lotLayers, 'in_use')) {
+            return false;
+        }
+        else if (filters.projects === 'only' && !_.contains(lotLayers, 'in_use')) {
+            return false;
+        }
+
+        return true;
+    },
+
+    paramsToFilters: function (params) {
+        var filters = _.extend({}, params);
+        filters.layers = filters.layers.split(',');
+        return filters;
+    }
+};
+
+},{"underscore":18}],20:[function(require,module,exports){
 var geocoder = new google.maps.Geocoder();
 
 function geocode(address, bounds, state, f) {
@@ -17488,7 +17518,7 @@ module.exports = {
     geocode: geocode
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
@@ -17504,7 +17534,7 @@ L.TileLayer.Vector.include({
 
 });
 
-},{"TileLayer.GeoJSON":10,"leaflet":16}],21:[function(require,module,exports){
+},{"TileLayer.GeoJSON":10,"leaflet":16}],22:[function(require,module,exports){
 var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
@@ -17586,7 +17616,7 @@ L.LotGeoJson = L.GeoJSON.extend({
                 throw new Error('Invalid GeoJSON object.');
             }
             latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
-            return new L.LotPolygon(latlngs, options);
+            return L.lotPolygon(latlngs, options);
 
         case 'MultiLineString':
             latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
@@ -17633,8 +17663,9 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":10,"leaflet":16}],22:[function(require,module,exports){
+},{"./leaflet.geojson.tile":21,"./leaflet.lotmultipolygon":25,"./leaflet.lotpolygon":27,"TileLayer.GeoJSON":10,"leaflet":16}],23:[function(require,module,exports){
 var _ = require('underscore');
+var filters = require('./filters');
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
@@ -17649,6 +17680,8 @@ require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 
 
+var currentFilters = {};
+
 L.LotMap = L.Map.extend({
 
     boundariesLayer: null,
@@ -17658,6 +17691,8 @@ L.LotMap = L.Map.extend({
     previousZoom: null,
     userLayer: null,
     userLocationZoom: 16,
+
+    filters: null,
 
     compiledPopupTemplate: null,
 
@@ -17672,6 +17707,8 @@ L.LotMap = L.Map.extend({
 
     lotLayerOptions: {
         filter: function (feature, layer) {
+            // TODO have this informed by filters when loaded OR filter after
+            // adding
             var layers = feature.properties.layers.split(',');
             if (_.contains(layers, 'hidden')) {
                 return false;
@@ -17735,10 +17772,30 @@ L.LotMap = L.Map.extend({
         this.addBaseLayer();
         var hash = new L.Hash(this);
 
+        if (options.filterParams) {
+            currentFilters = filters.paramsToFilters(options.filterParams);
+        }
+
         this.boundariesLayer = L.geoJson(null, {
             color: '#58595b',
             fill: false
         }).addTo(this);
+
+        // When new lots are added ensure they should be displayed
+        this.on('layeradd', function (event) {
+            // Dig through the layers of layers
+            event.layer.on('layeradd', function (event) {
+                event.layer.eachLayer(function (lot) {
+                    if (!lot.feature) return;
+                    if (filters.lotShouldAppear(lot, currentFilters)) {
+                        lot.show();
+                    }
+                    else {
+                        lot.hide();
+                    }
+                });
+            });
+        });
 
         this.on('zoomend', function () {
             var currentZoom = this.getZoom();
@@ -17778,9 +17835,9 @@ L.LotMap = L.Map.extend({
         }).addTo(this);
     },
 
-    addLotsLayer: function (params) {
-        this.addCentroidsLayer(params);
-        this.addPolygonsLayer(params);
+    addLotsLayer: function () {
+        this.addCentroidsLayer();
+        this.addPolygonsLayer();
         if (this.getZoom() <= this.lotLayerTransitionPoint) {
             this.addLayer(this.centroidsLayer);
             this.removeLayer(this.polygonsLayer);
@@ -17791,7 +17848,7 @@ L.LotMap = L.Map.extend({
         }
     },
 
-    addCentroidsLayer: function (params) {
+    addCentroidsLayer: function () {
         if (this.centroidsLayer) {
             this.removeLayer(this.centroidsLayer);
         }
@@ -17807,7 +17864,7 @@ L.LotMap = L.Map.extend({
         this.centroidsLayer = L.lotLayer(url, options, this.lotLayerOptions);
     },
 
-    addPolygonsLayer: function (params) {
+    addPolygonsLayer: function () {
         if (this.polygonsLayer) {
             this.removeLayer(this.polygonsLayer);
         }
@@ -17824,10 +17881,31 @@ L.LotMap = L.Map.extend({
         this.polygonsLayer = L.lotLayer(url, options, layerOptions);
     },
 
-    updateDisplayedLots: function (params) {
-        this.removeLayer(this.centroidsLayer);
-        this.removeLayer(this.polygonsLayer);
-        this.addLotsLayer(params);
+    updateFilters: function (params) {
+        currentFilters = filters.paramsToFilters(params);
+        this.updateDisplayedLots();
+    },
+
+    updateDisplayedLots: function () {
+        function updateDisplayedLotsForLayer(layer) {
+            if (layer.vectorLayer) {
+                // Lots are nested in tiles so we need to do two layers of 
+                // eachLayer to get to them all
+                layer.vectorLayer.eachLayer(function (tileLayer) {
+                    tileLayer.eachLayer(function (lot) {
+                        if (filters.lotShouldAppear(lot, currentFilters)) {
+                            lot.show();
+                        }
+                        else {
+                            lot.hide();
+                        }
+                    });
+                });
+            }
+        }
+
+        updateDisplayedLotsForLayer(this.centroidsLayer);
+        updateDisplayedLotsForLayer(this.polygonsLayer);
     },
 
     addUserLayer: function (latlng) {
@@ -17861,7 +17939,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"handlebars":2,"leaflet":16,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.hash":4,"leaflet.usermarker":15,"spinjs":17,"underscore":18}],23:[function(require,module,exports){
+},{"./filters":19,"./leaflet.lotlayer":22,"./leaflet.lotmarker":24,"./map.styles":31,"handlebars":2,"leaflet":16,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.hash":4,"leaflet.usermarker":15,"spinjs":17,"underscore":18}],24:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -17929,7 +18007,7 @@ L.lotMarker = function (latlng, options) {
     return new L.LotMarker(latlng, options);
 };
 
-},{"./leaflet.lotpath":25,"leaflet":16}],24:[function(require,module,exports){
+},{"./leaflet.lotpath":26,"leaflet":16}],25:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpolygon');
@@ -17970,14 +18048,42 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
         });
 
         return latlngs;
+    },
+
+    show: function () {
+        this.eachLayer(function (layer) {
+            layer.show();
+        });
+    },
+
+    hide: function () {
+        this.eachLayer(function (layer) {
+            layer.hide();
+        });
     }
 });
 
-},{"./leaflet.lotpolygon":26,"leaflet":16}],25:[function(require,module,exports){
+},{"./leaflet.lotpolygon":27,"leaflet":16}],26:[function(require,module,exports){
 var L = require('leaflet');
 
 
 L.LotPathMixin = {
+
+    hide: function () {
+        if (!this._path) return;
+        this._path.style.display = 'none';
+        if (this._actionPath) {
+            this._actionPath.style.display = 'none';
+        }
+    },
+
+    show: function () {
+        if (!this._path) return;
+        this._path.style.display = 'block';
+        if (this._actionPath) {
+            this._actionPath.style.display = 'block';
+        }
+    },
 
     initActionPath: function() {
         if (this.options.hasOrganizers) {
@@ -18013,7 +18119,7 @@ L.LotPathMixin = {
 
 };
 
-},{"leaflet":16}],26:[function(require,module,exports){
+},{"leaflet":16}],27:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -18056,7 +18162,7 @@ L.lotPolygon = function (latlngs, options) {
     return new L.LotPolygon(latlngs, options);
 };
 
-},{"./leaflet.lotpath":25,"leaflet":16}],27:[function(require,module,exports){
+},{"./leaflet.lotpath":26,"leaflet":16}],28:[function(require,module,exports){
 //
 // lotdetailpage.js
 //
@@ -18136,7 +18242,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"./streetview":34,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],28:[function(require,module,exports){
+},{"./leaflet.lotlayer":22,"./leaflet.lotmarker":24,"./map.styles":31,"./streetview":35,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],29:[function(require,module,exports){
 //
 // main.js
 //
@@ -18196,7 +18302,7 @@ $(document).ready(function () {
 require('./mappage.js');
 require('./lotdetailpage.js');
 
-},{"./lotdetailpage.js":27,"./mappage.js":31,"fancybox":1}],29:[function(require,module,exports){
+},{"./lotdetailpage.js":28,"./mappage.js":32,"fancybox":1}],30:[function(require,module,exports){
 var L = require('leaflet');
 
 var geocode = require('./geocode').geocode;
@@ -18269,7 +18375,7 @@ $.fn.mapsearch = function (options) {
     return this;
 };
 
-},{"./geocode":19,"leaflet":16}],30:[function(require,module,exports){
+},{"./geocode":20,"leaflet":16}],31:[function(require,module,exports){
 //
 // Lot map styles by layer for maps
 //
@@ -18299,7 +18405,7 @@ module.exports = {
     }
 };
 
-},{"underscore":18}],31:[function(require,module,exports){
+},{"underscore":18}],32:[function(require,module,exports){
 //
 // mappage.js
 //
@@ -18474,6 +18580,7 @@ $(document).ready(function () {
         }
 
         var map = L.lotMap('map', {
+            filterParams: buildLotFilterParams(null),
 
             onMouseOverFeature: function (feature) {
             },
@@ -18483,7 +18590,7 @@ $(document).ready(function () {
 
         });
 
-        map.addLotsLayer(buildLotFilterParams(map));
+        map.addLotsLayer();
 
         prepareOverlayMenus(map);
 
@@ -18505,7 +18612,7 @@ $(document).ready(function () {
 
         $('.filter').change(function () {
             var params = buildLotFilterParams(map);
-            map.updateDisplayedLots(params);
+            map.updateFilters(params);
             updateLotCount(map);
         });
 
@@ -18533,7 +18640,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./leaflet.lotmap":22,"./map.search.js":29,"./overlaymenu":32,"./singleminded":33,"./welcome":35,"handlebars":2,"jquery.infinitescroll":3,"leaflet":16,"leaflet.loading":14,"spinjs":17,"underscore":18}],32:[function(require,module,exports){
+},{"./leaflet.lotmap":23,"./map.search.js":30,"./overlaymenu":33,"./singleminded":34,"./welcome":36,"handlebars":2,"jquery.infinitescroll":3,"leaflet":16,"leaflet.loading":14,"spinjs":17,"underscore":18}],33:[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -18601,7 +18708,7 @@ $.fn.overlaymenu = function (options) {
     return this;
 };
 
-},{"underscore":18}],33:[function(require,module,exports){
+},{"underscore":18}],34:[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -18633,7 +18740,7 @@ module.exports = {
     remember: remember
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 
 
 function get_heading(lon0, lat0, lon1, lat1) {
@@ -18684,7 +18791,7 @@ module.exports = {
     load_streetview: load_streetview
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 //
 // Welcome header
 //
@@ -18716,4 +18823,4 @@ module.exports = {
     }
 };
 
-},{}]},{},[28]);
+},{}]},{},[29]);

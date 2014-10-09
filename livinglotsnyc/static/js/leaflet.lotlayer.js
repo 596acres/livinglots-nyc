@@ -79,7 +79,7 @@ L.LotGeoJson = L.GeoJSON.extend({
                 throw new Error('Invalid GeoJSON object.');
             }
             latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
-            return new L.LotPolygon(latlngs, options);
+            return L.lotPolygon(latlngs, options);
 
         case 'MultiLineString':
             latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);

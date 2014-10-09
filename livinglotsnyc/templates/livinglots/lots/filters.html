@@ -4,48 +4,47 @@
     <div class="overlaymenu-tip"></div>
 </div>
 <div class="overlaymenu-menu-content">
-    <ul class="filters-list">
-        <li>
+    <ul class="filter-owner-list">
+        <li class="filter-owner">
             <input id="layer-public" type="checkbox" class="filter filter-layer" name="public" checked />
-            <label for="layer-public">
+            <label class="filter-owner-label" for="layer-public">
                 <span class="legend-marker legend-marker-public"></span>
-                {% trans "publicly owned land" %}
+                <span class="filter-owner-label-text">{% trans "publicly owned land" %}</span>
             </label>
 
-            <ul class="owners-list owners-list-public">
+            <select class="filter filter-owner-public form-control">
+                <option value="">all owners</option>
+
                 {% get_owners type "public" as owners %}
                 {% for owner in owners %}
-                    <li>
-                        <input type="checkbox" class="filter filter-owner-public" id="owner-public-{{ owner.pk }}" data-owner-pk="{{ owner.pk }}" checked />
-                        <label for="owner-public-{{owner.pk }}">{{ owner.name }}</label>
-                    </li>
+                    <option value="{{ owner.pk }}">
+                        {{ owner.name }}
+                    </option>
                 {% endfor %}
-            </ul>
+            </select>
         </li>
-        <li>
+        <li class="filter-owner">
             <input id="layer-private" type="checkbox" class="filter filter-layer" name="private" checked />
-            <label for="layer-private">
+            <label class="filter-owner-label" for="layer-private">
                 <span class="legend-marker legend-marker-private"></span>
-                {% trans "private land belonging to an owner who wants to see it used" %}
+                <span class="filter-owner-label-text">{% trans "private land belonging to an owner who wants to see it used" %}</span>
             </label>
         </li>
     </ul>
 
     <section class="filter-section filter-section-projects">
-        <div class="row form-horizontal filter-projects-row">
-            <div class="col-xs-5 control-label">
+        <div class="form-horizontal filter-projects-row">
+            <div class="control-label">
                 <label for="projects" class="">
                     <span class="legend-marker legend-marker-project"></span>
                     {% trans "projects" %}
                 </label>
             </div>
-            <div class="col-xs-7">
-                <select class="filter filter-projects form-control" id="projects">
-                    <option value="include">{% trans "include" %}</option>
-                    <option value="exclude">{% trans "exclude" %}</option>
-                    <option value="only">{% trans "show only projects" %}</option>
-                </select>
-            </div>
+            <select class="filter filter-projects form-control" id="projects">
+                <option value="include">{% trans "include" %}</option>
+                <option value="exclude">{% trans "exclude" %}</option>
+                <option value="only">{% trans "show only projects" %}</option>
+            </select>
         </div>
     </section>
 
