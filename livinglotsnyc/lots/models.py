@@ -168,7 +168,10 @@ class LotLayer(BaseLotLayer):
                 known_use__visible=True,
                 pk__in=started_here_pks
             ),
-            'organizing': ~Q(organizers=None),
+            'organizing': Q(
+                known_use=None,
+                organizers__post_publicly=True
+            ),
             'public': Q(
                 Q(known_use=None) | Q(known_use__visible=True),
                 Q(owner__owner_type='public')
