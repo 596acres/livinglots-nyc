@@ -20,21 +20,7 @@ class BoundingBoxFilter(django_filters.Filter):
 class LayerFilter(django_filters.Filter):
 
     def filter(self, qs, value):
-        layers = value.split(',')
-        layer_filter = Q()
-
-        for layer in layers:
-            if layer == 'public':
-                layer_filter = layer_filter | Q(
-                    Q(known_use=None) | Q(known_use__visible=True),
-                    owner__owner_type='public',
-                )
-            elif layer == 'private':
-                layer_filter = layer_filter | Q(
-                    Q(known_use=None) | Q(known_use__visible=True),
-                    owner__owner_type='private',
-                )
-        return qs.filter(layer_filter)
+        return qs.filter(lotlayer__name__in=value.split(','))
 
 
 class LotGroupParentFilter(django_filters.Filter):
@@ -88,12 +74,18 @@ class ProjectFilter(django_filters.Filter):
             return qs.filter(~has_project_filter)
         elif value == 'only':
             return qs.filter(has_project_filter)
+        elif value == 'started_here':
+            return qs.filter(
+                ~Q(lotlayer__name='in_use') | 
+                Q(lotlayer__name='in_use_started_here')
+            )
         return qs
 
 
 class LotFilter(django_filters.FilterSet):
 
     bbox = BoundingBoxFilter()
+    layers = LayerFilter()
     lot_center = LotCenterFilter()
     parents_only = LotGroupParentFilter()
     projects = ProjectFilter()
@@ -114,6 +106,7 @@ class LotFilter(django_filters.FilterSet):
             'address_line1',
             'bbox',
             'known_use',
+            'layers',
             'lot_center',
             'parents_only',
             'projects',

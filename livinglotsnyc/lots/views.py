@@ -217,8 +217,9 @@ class LotsCountViewWithAcres(LotsCountView):
 
     def get_context_data(self, **kwargs):
         lots = self.get_lots().qs
-        no_known_use = lots.filter(known_use__isnull=True)
-        in_use = lots.filter(known_use__isnull=False, known_use__visible=True)
+        no_known_use = lots.filter(known_use__isnull=True).distinct()
+        in_use = lots.filter(known_use__isnull=False,
+                             known_use__visible=True).distinct()
 
         context = {
             'lots-count': lots.count(),
