@@ -101,20 +101,15 @@
         {% endif %}
 
         {% if "lots.view_all_details" in perms %}
-        <div class="lot-detail-details lot-detail-main-section">
-            <h2>{% trans "Admin Details" %}</h2>
-            <div class="help-text">(This section is only visible to admins.)</div>
-            <table>
+            <div class="lot-detail-details lot-detail-main-section">
+                <h2>{% trans "Admin Details" %}</h2>
+                <div class="help-text">(This section is only visible to admins.)</div>
 
-                {% if lot.steward_projects.count > 0 %}
-                <tr>
-                    <th>{% trans "steward's land tenure" %}:</th>
-                    <td>{{ lot.steward_projects.all.0.land_tenure_status }}</td>
-                </tr>
+                {% if stewards %}
+                    {% trans "steward's land tenure" %}:
+                    {{ stewards.0.land_tenure_status }}
                 {% endif %}
-
-            </table>
-        </div>
+            </div>
         {% endif %}
 
         {% if not lot.known_use %}
