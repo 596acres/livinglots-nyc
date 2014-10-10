@@ -234,7 +234,7 @@ class LotsCountViewWithAcres(LotsCountView):
 
 class LotsCSV(BaseLotsCSV):
     def get_fields(self):
-        return super(LotsCSV, self).get_fields() + ('bbl',)
+        return super(LotsCSV, self).get_fields() + ('bbl', 'area_acres',)
 
     def get_sitename(self):
         return 'Living Lots NYC'
