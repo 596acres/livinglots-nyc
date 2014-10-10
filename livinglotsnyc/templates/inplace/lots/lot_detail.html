@@ -93,7 +93,7 @@
         {% get_steward_project_list for lot as stewards %}
         {% if stewards %}
             {% include "inplace/lots/_lot_detail_stewardproject.html" with steward=stewards.0 %}
-        {% else %}
+        {% elif lot.lotgroup %}
             {% get_steward_project_list for lot.lotgroup as stewards %}
             {% if stewards %}
                 {% include "inplace/lots/_lot_detail_stewardproject.html" with steward=stewards.0 %}
