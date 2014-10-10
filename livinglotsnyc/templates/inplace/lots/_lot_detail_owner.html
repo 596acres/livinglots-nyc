@@ -1,0 +1,47 @@
+{% load i18n %}
+
+<section>
+    <h2>Owner</h2>
+    <div class="lot-detail-details">
+        {{ owner|default:"unknown" }}
+
+        {% if owner_contact %}
+            <div class="owner-contact">
+                <div class="owner-contact-name">
+                    <span class="owner-contact-label">{% trans "Contact" %}:</span>
+                    <span>
+                        {{owner_contact.name}}
+                        {% if owner_contact.phone or owner_contact.email %}
+                            {% spaceless %}
+                                <span>(</span>
+                                    {% if owner_contact.phone %}
+                                        <span class="owner-contact-phone">{{ owner_contact.phone }}</span>
+                                    {% endif %}
+
+                                    {% if owner_contact.phone and owner_contact.email %} / {% endif %}
+
+                                    {% if owner_contact.email %}
+                                        <span class="owner-contact-email">{{ owner_contact.email }}</span>
+                                    {% endif %}
+                                <span>)</span>
+                            {% endspaceless %}
+                        {% endif %}
+                    </span>
+                </div>
+                {% if owner_contact.notes %}
+                    <div class="owner-contact-notes">
+                        {{ owner_contact.notes|urlize|linebreaks }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if owner and "owners.change_owner" in perms %}
+            <div class="lot-detail-admin admin-only">
+                <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_changelist" %}?owner={{ owner.pk }}">
+                    {% trans "View all lots this owner owns" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>

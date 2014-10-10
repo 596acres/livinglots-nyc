@@ -90,6 +90,23 @@
                         <div>
                             {% trans "Number of Lots" %}: {{ lot.number_of_lots }}
                         </div>
+                        <ul>
+                            {% for child in lot.lots %}
+                                <li>
+                                    <div>
+                                        {{ child.display_name }}
+                                        ({{ child.address_line1 }}).
+                                        {% trans "More details at" %}
+                                        <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">{% trans "OASIS" %}</a>.
+                                    </div>
+                                    {% ifnotequal lot.owners|length 1 %}
+                                        <div>
+                                            {{ child.owner }}
+                                        </div>
+                                    {% endifnotequal %}
+                                </li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
 
                     {% if lot.known_use %}
@@ -108,12 +125,14 @@
                         {{ lot.area_acres|floatformat:"2"|default:"unknown" }} acres
                     </div>
 
-                    <div>
-                        {% trans "More information about this lot at" %}
-                        <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
-                            {% trans "OASIS" %}
-                        </a>
-                    </div>
+                    {% if lot.bbl %}
+                        <div>
+                            {% trans "More information about this lot at" %}
+                            <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
+                                {% trans "OASIS" %}
+                            </a>
+                        </div>
+                    {% endif %}
 
                     <div>
                         {% trans "Find elected officials for this lot at" %}
@@ -125,61 +144,9 @@
                 </div>
             </section>
 
-            <section>
-                <h2>Owner</h2>
-                <div class="lot-detail-details">
-                    {{ lot.owner|default:"unknown" }}
-
-                    {% if lot.owner_contact %}
-                        <div class="owner-contact">
-                            <div class="owner-contact-name">
-                                <span class="owner-contact-label">{% trans "Contact" %}:</span>
-                                <span>
-                                    {{lot.owner_contact.name}}
-                                    {% if lot.owner_contact.phone or lot.owner_contact.email %}
-                                        {% spaceless %}
-                                            <span>(</span>
-                                                {% if lot.owner_contact.phone %}
-                                                    <span class="owner-contact-phone">{{ lot.owner_contact.phone }}</span>
-                                                {% endif %}
-
-                                                {% if lot.owner_contact.phone and lot.owner_contact.email %} / {% endif %}
-
-                                                {% if lot.owner_contact.email %}
-                                                    <span class="owner-contact-email">{{ lot.owner_contact.email }}</span>
-                                                {% endif %}
-                                            <span>)</span>
-                                        {% endspaceless %}
-                                    {% endif %}
-                                </span>
-                            </div>
-                            {% if lot.owner_contact.notes %}
-                                <div class="owner-contact-notes">
-                                    {{ lot.owner_contact.notes|urlize|linebreaks }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-
-                    {% if lot.owner and "owners.change_owner" in perms %}
-                        <div class="lot-detail-admin admin-only">
-                            <a class="btn btn-small btn-warning" href="{% url "admin:lots_lot_changelist" %}?owner={{ lot.owner.pk }}">
-                                {% trans "View all lots this owner owns" %}
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </section>
-
-            {% comment %}
-            <section>
-                <h2>Project Description</h2>
-            </section>
-
-            <section>
-                <h2>Project Contact</h2>
-            </section>
-            {% endcomment %}
+            {% ifequal lot.owners|length 1 %}
+                {% include "inplace/lots/_lot_detail_owner.html" with owner=lot.owners.0 owner_contact=lot.owner_contacts.0 %}
+            {% endifequal %}
 
             <section>
                 <h2>{% trans "Why is this lot here?" %}</h2>
@@ -290,17 +257,19 @@
         </div>
         {% endif %}
 
-        <div id="pathways" class="pathways lot-detail-main-section">
-            <h2>
-                {% trans "Pathways" %}
-            </h2>
-            <div>
-                {% blocktrans %}
-                    Here are some pathways you might follow to use this piece of land legally:
-                {% endblocktrans %}
-                {% render_pathway_summary_list for lot %}
+        {% if not lot.known_use %}
+            <div id="pathways" class="pathways lot-detail-main-section">
+                <h2>
+                    {% trans "Pathways" %}
+                </h2>
+                <div>
+                    {% blocktrans %}
+                        Here are some pathways you might follow to use this piece of land legally:
+                    {% endblocktrans %}
+                    {% render_pathway_summary_list for lot %}
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         <div id="notes" class="notes lot-detail-main-section">
             <h2>

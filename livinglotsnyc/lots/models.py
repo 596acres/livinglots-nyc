@@ -129,6 +129,16 @@ class LotMixin(models.Model):
 
     area_acres = property(_area_acres)
 
+    def _owners(self):
+        return list(set([l.owner for l in self.lots]))
+
+    owners = property(_owners)
+
+    def _owner_contacts(self):
+        return list(set([l.owner_contact for l in self.lots]))
+
+    owner_contacts = property(_owner_contacts)
+
     class Meta:
         abstract = True
 
