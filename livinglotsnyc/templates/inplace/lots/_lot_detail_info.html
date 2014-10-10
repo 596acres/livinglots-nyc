@@ -1,0 +1,63 @@
+{% load i18n %}
+
+<section>
+    <h2 style="margin-top: 0;">Information about this lot</h2>
+    <div class="lot-detail-details">
+
+        {% if lot.number_of_lots > 1 %}
+            <div>
+                {% trans "Number of Lots" %}: {{ lot.number_of_lots }}
+            </div>
+            <ul>
+                {% for child in lot.lots %}
+                    <li>
+                        <div>
+                            {{ child.display_name }}
+                            ({{ child.address_line1 }}).
+                            {% trans "More details at" %}
+                            <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">{% trans "OASIS" %}</a>.
+                        </div>
+                        {% ifnotequal lot.owners|length 1 %}
+                            <div>
+                                {{ child.owner }}
+                            </div>
+                        {% endifnotequal %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if lot.known_use %}
+            <div>
+                {% trans "Known Use" %}: {{ lot.known_use }}
+            </div>
+        {% endif %}
+
+        <div>
+            {% trans "Address" %}:
+            {{ lot.address_line1|default:"unknown" }}, {{ lot.borough }}, {{ lot.postal_code }}
+        </div>
+
+        <div>
+            {% trans "Area" %}:
+            {{ lot.area_acres|floatformat:"2"|default:"unknown" }} acres
+        </div>
+
+        {% if lot.bbl %}
+            <div>
+                {% trans "More information about this lot at" %}
+                <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
+                    {% trans "OASIS" %}
+                </a>
+            </div>
+        {% endif %}
+
+        <div>
+            {% trans "Find elected officials for this lot at" %}
+            <a href="http://www.mygovnyc.org/?levelofgovt=city&latlng={{ lot.centroid.y }}%2C{{ lot.centroid.x }}" target="_blank">
+                {% trans "Who Represents Me? NYC" %}
+            </a>
+        </div>
+
+    </div>
+</section>

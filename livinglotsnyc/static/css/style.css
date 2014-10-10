@@ -3533,6 +3533,13 @@ footer .footer-main:after {
 .lot-detail-organizers .block-lot-detail-organizer-intro {
   font-size: 14px;
 }
+.lot-detail-stewardproject-organizer-name {
+  color: #58595b;
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 26px;
+}
 .map-page #map {
   width: 100%;
   height: 500px;

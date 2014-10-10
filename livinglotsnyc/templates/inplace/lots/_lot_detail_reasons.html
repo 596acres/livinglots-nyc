@@ -1,0 +1,21 @@
+{% load i18n %}
+
+<section>
+    <h2>{% trans "Why is this lot here?" %}</h2>
+    {% if not lot.is_visible %}
+        <p>
+            {% blocktrans %}
+                Actually, it should not be here. Let us know so we can take 
+                care of it.
+            {% endblocktrans %}
+        </p>
+    {% elif not lot.known_use %}
+        <p>{% trans "We think this lot is vacant because:" %}</p>
+        <ul class="lot-detail-reasons">
+        </ul>
+    {% else %}
+        {% blocktrans with use=lot.known_use %}
+            The lot is being used as a {{ use }}.
+        {% endblocktrans %}
+    {% endif %}
+</section>

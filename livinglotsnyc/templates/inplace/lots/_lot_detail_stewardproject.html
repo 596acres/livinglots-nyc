@@ -1,0 +1,55 @@
+{% load i18n %}
+
+{% if steward.organizer %}
+    <section class="lot-detail-stewardproject">
+        <h2>{% trans "Steward" %}</h2>
+        <p>{% trans "This land is being stewarded by the following group" %}:</p>
+
+        <div class="lot-detail-stewardproject-organizer">
+            {% with organizer=steward.organizer %}
+                <div class="lot-detail-stewardproject-organizer-name">
+                    {% if organizer.url %}
+                        <a href="{{ organizer.url }}" target="_blank">
+                            {{ organizer.name }}
+                        </a>
+                    {% else %}
+                        {{ organizer.name }}
+                    {% endif %}
+                </div>
+
+                <div class="lot-detail-stewardproject-organizer-contact">
+                    {% if organizer.email %}
+                        {{ organizer.email }}{% if organizer.phone %},{% endif %}
+                    {% endif %}
+                    {% if organizer.phone %}
+                        {{ organizer.phone }}
+                    {% endif %}
+                </div>
+
+                {% if organizer.notes %}
+                    <div class="lot-detail-stewardproject-organizer-notes">
+                        {{ organizer.notes|urlize|linebreaks }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if steward.support_organization %}
+                <div class="lot-detail-stewardproject-support">
+                    {% trans "supported by" %} {{ steward.support_organization }}
+                </div>
+            {% endif %}
+        </table>
+
+        {% if "steward.change_stewardproject" in perms %}
+            <div class="lot-detail-admin admin-only">
+                <a class="btn btn-small btn-warning" href="{% url "admin:organize_organizer_change" steward.organizer.pk %}">
+                    {% trans "Edit this steward's contact information" %}
+                </a>
+                <a class="btn btn-small btn-warning" href="{% url "admin:steward_stewardproject_change" steward.pk %}">
+                    {% trans "Edit this steward's other information" %}
+                </a>
+            </div>
+        {% endif %}
+
+    </section>
+{% endif %}
