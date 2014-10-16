@@ -68,10 +68,18 @@ class LotGroupLotMixin(models.Model):
 
 
 class LotMixin(models.Model):
+    BOROUGH_CHOICES = (
+        ('Bronx', 'Bronx'),
+        ('Brooklyn', 'Brooklyn'),
+        ('Manhattan', 'Manhattan'),
+        ('Queens', 'Queens'),
+        ('Staten Island', 'Staten Island'),
+    )
+
     accessible = models.BooleanField(default=True)
     bbl = models.CharField(max_length=10, unique=True, blank=True, null=True)
     block = models.IntegerField(blank=True, null=True)
-    borough = models.CharField(max_length=25)
+    borough = models.CharField(max_length=25, choices=BOROUGH_CHOICES)
     lot_number = models.IntegerField(blank=True, null=True)
     organizers = generic.GenericRelation(Organizer)
     parcel = models.ForeignKey('parcels.Parcel',
@@ -81,14 +89,6 @@ class LotMixin(models.Model):
     )
 
     owner_opt_in = models.BooleanField(default=False)
-
-    BOROUGH_CHOICES = (
-        ('Bronx', 'Bronx'),
-        ('Brooklyn', 'Brooklyn'),
-        ('Manhattan', 'Manhattan'),
-        ('Queens', 'Queens'),
-        ('Staten Island', 'Staten Island'),
-    )
 
     def _get_display_name(self):
         if self.name:
