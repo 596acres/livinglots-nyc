@@ -18200,7 +18200,6 @@ function getLotLayerOptions(lotPk) {
             if (feature.properties.id === lotPk) {
                 style.fillOpacity = 1;
             }
-            console.log(style);
             return style;
         }
     };
