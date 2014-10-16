@@ -32,6 +32,7 @@
                 <div id="lot-detail-map"
                     data-l-zoom="16" 
                     data-l-center="[{{ lot.centroid.y }}, {{ lot.centroid.x }}]"
+                    data-l-bbox="{{ lot.bbox }}"
                     data-l-zoom-control="false"
                     data-l-lotsurl="{% inplace_setting LOT_POLYGONS_URL %}"
                     data-l-lot-pk="{{ lot.pk }}"

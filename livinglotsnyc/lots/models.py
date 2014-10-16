@@ -143,6 +143,14 @@ class LotMixin(models.Model):
 
     owner_contacts = property(_owner_contacts)
 
+    def _bbox(self):
+        try:
+            return list(self.polygon.extent)
+        except Exception:
+            return None
+
+    bbox = property(_bbox)
+
     class Meta:
         abstract = True
 

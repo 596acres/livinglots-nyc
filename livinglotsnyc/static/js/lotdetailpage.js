@@ -66,6 +66,15 @@ $(document).ready(function () {
             scrollWheelZoom: false,
             touchZoom: false
         });
+
+        var bbox = map.options.bbox;
+        if (bbox) {
+            map.fitBounds([
+                [bbox[1], bbox[0]],   
+                [bbox[3], bbox[2]]   
+            ], { padding: [20, 20] });
+        }
+
         addBaseLayer(map);
         addLotsLayer(map);
         StreetView.load_streetview(
