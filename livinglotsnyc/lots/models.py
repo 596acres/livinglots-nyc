@@ -130,12 +130,16 @@ class LotMixin(models.Model):
     area_acres = property(_area_acres)
 
     def _owners(self):
-        return list(set([l.owner for l in self.lots]))
+        owners = [self.owner,] + [l.owner for l in self.lots]
+        return [o for o in set(owners) if o]
 
     owners = property(_owners)
 
     def _owner_contacts(self):
-        return list(set([l.owner_contact for l in self.lots]))
+        contacts = [self.owner_contact,]
+        contacts += [l.owner_contact for l in self.lots]
+        contacts += [l.owner.default_contact for l in self.lots if l.owner]
+        return [c for c in set(contacts) if c]
 
     owner_contacts = property(_owner_contacts)
 
