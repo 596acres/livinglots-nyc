@@ -9,6 +9,9 @@ TILESTACHE_PORT = XXX
 TILESTACHE_WEBAPP_NAME = XXX
 WEBAPP_NAME = XXX
 
+centroid_view_sql = "CREATE OR REPLACE VIEW visible_centroids AS WITH compiled_layers AS ( SELECT l.id AS id, array( SELECT name FROM lots_lotlayer ll JOIN lots_lotlayer_lots lll ON lll.lotlayer_id = ll.id AND lll.lot_id=l.id) AS layers FROM lots_lot l) SELECT array_to_string(cl.layers, ',') AS layers, l.id, l.bbl, l.centroid FROM lots_lot l JOIN compiled_layers cl ON cl.id = l.id WHERE l.group_id IS NULL AND l.centroid IS NOT NULL AND 'hidden' != ANY(cl.layers) AND ('private' != ANY(cl.layers) OR 'private_opt_in' = ANY(cl.layers))"
+polygon_view_sql = "CREATE OR REPLACE VIEW visible_polygons AS WITH compiled_layers AS ( SELECT l.id AS id, array( SELECT name FROM lots_lotlayer ll JOIN lots_lotlayer_lots lll ON lll.lotlayer_id = ll.id AND lll.lot_id=l.id) AS layers FROM lots_lot l) SELECT array_to_string(cl.layers, ',') AS layers, l.id, l.bbl, l.polygon FROM lots_lot l JOIN compiled_layers cl ON cl.id = l.id WHERE l.group_id IS NULL AND l.polygon IS NOT NULL AND 'hidden' != ANY(cl.layers) AND ('private' != ANY(cl.layers) OR 'private_opt_in' = ANY(cl.layers))"
+
 env:
 	easy_install-2.7 pip
 	pip2.7 install --user virtualenv
@@ -30,6 +33,25 @@ install_admin:
 
 	mkdir -p $(HOME)/var/supervisor
 	cat templates/supervisord.conf | sed "s/<PORT>/$(PORT)/g; s/<WEBAPP_NAME>/$(WEBAPP_NAME)/g; s/<USER>/$(USER)/g; s/<REPO_NAME>/$(REPO_NAME)/g; s/<PROJECT_NAME>/$(PROJECT_NAME)/g; s/<TILESTACHE_WEBAPP_NAME>/$(TILESTACHE_WEBAPP_NAME)/g;" > $(HOME)/var/supervisor/supervisord.conf
+
+install_tilestache_views:
+	# Create convenience views for tilestache
+    # CREATE OR REPLACE VIEW visible_centroids
+    # WITH compiled_layers AS (
+    #     SELECT l.id AS id, array(
+    #         SELECT name 
+    #         FROM lots_lotlayer ll JOIN lots_lotlayer_lots lll ON lll.lotlayer_id = ll.id 
+    #             AND lll.lot_id=l.id
+    #     ) AS layers FROM lots_lot l
+    # )
+    # SELECT array_to_string(cl.layers, ',') AS layers, l.id, l.bbl, l.centroid 
+    # FROM lots_lot l JOIN compiled_layers cl ON cl.id = l.id 
+    # WHERE l.group_id IS NULL AND
+    #     l.centroid IS NOT NULL AND
+    #     'hidden' != ANY(cl.layers) AND
+    #     ('private' != ANY(cl.layers) OR 'private_opt_in' = ANY(cl.layers))
+	psql -U $(DB_USER) $(DB_NAME) -c $(centroid_view_sql)
+	psql -U $(DB_USER) $(DB_NAME) -c $(polygon_view_sql)
 
 install_tilestache:
 	mkdir -p $(HOME)/webapps/$(TILESTACHE_WEBAPP_NAME)/logs

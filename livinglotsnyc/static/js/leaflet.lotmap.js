@@ -40,18 +40,6 @@ L.LotMap = L.Map.extend({
     },
 
     lotLayerOptions: {
-        filter: function (feature, layer) {
-            // TODO have this informed by filters when loaded OR filter after
-            // adding
-            var layers = feature.properties.layers.split(',');
-            if (_.contains(layers, 'hidden')) {
-                return false;
-            }
-            if (_.contains(layers, 'private') && !_.contains(layer, 'private_opt_in')) {
-                return false;
-            }
-            return true;
-        },
         onEachFeature: function (feature, layer) {
             layer.on({
                 'click': function (event) {
