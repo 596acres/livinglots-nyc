@@ -151,6 +151,13 @@ class LotMixin(models.Model):
 
     bbox = property(_bbox)
 
+    def _get_lots(self):
+        try:
+            return self.lotgroup.lot_set.all().order_by('block', 'lot_number')
+        except Exception:
+            return [self,]
+    lots = property(_get_lots)
+
     class Meta:
         abstract = True
 
