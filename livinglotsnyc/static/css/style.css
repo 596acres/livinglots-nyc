@@ -3368,6 +3368,9 @@ a.thumbnail.active {
   padding-left: 15px;
   padding-right: 15px;
 }
+.filter-layer-checkbox {
+  vertical-align: middle;
+}
 .filter-owner {
   margin-bottom: 5px;
   margin-top: 5px;
@@ -3393,6 +3396,23 @@ a.thumbnail.active {
 .filter-owner-public {
   margin-left: 10%;
   width: 80%;
+}
+.filter-gutterspace {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.filter-gutterspace input[type=checkbox] {
+  vertical-align: middle;
+}
+.filter-gutterspace .legend-marker {
+  vertical-align: middle;
+}
+.filter-gutterspace-label {
+  width: 90%;
+}
+.filter-gutterspace-label-text {
+  display: inline-block;
+  vertical-align: middle;
 }
 footer .footer-main {
   margin-left: 0;
@@ -3451,6 +3471,9 @@ footer .footer-main:after {
 }
 .legend-marker-project {
   background: #97b03d;
+}
+.legend-marker-gutterspace {
+  background: #0000FF;
 }
 .legend-label {
   display: inline;

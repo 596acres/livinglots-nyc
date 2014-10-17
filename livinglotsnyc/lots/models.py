@@ -212,5 +212,9 @@ class LotLayer(BaseLotLayer):
                 Q(owner__owner_type='private'),
                 Q(owner_opt_in=True)
             ),
-            'hidden': Q(known_use__visible=False),
+            'hidden': Q(
+                ~Q(known_use__name='gutterspace'),
+                known_use__visible=False,
+            ),
+            'gutterspace': Q(known_use__name='gutterspace'),
         }

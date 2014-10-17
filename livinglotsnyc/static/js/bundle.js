@@ -18401,7 +18401,8 @@ var fillColors = {
     default: '#000000',
     in_use: '#97b03d',
     private: '#ea292e',
-    public: '#812683'
+    public: '#812683',
+    gutterspace: '#0000FF'
 };
 
 module.exports = {
@@ -18416,6 +18417,9 @@ module.exports = {
         }
         if (_.contains(layers, 'private')) {
             return fillColors.private;
+        }
+        if (_.contains(layers, 'gutterspace')) {
+            return fillColors.gutterspace;
         }
         return fillColors.default;
     }
