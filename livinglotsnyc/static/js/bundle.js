@@ -17440,12 +17440,23 @@ module.exports = {
             }
         }
 
+        // Owners
+        if (filters.public_owners &&
+            !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+            return false;
+        }
+
         return true;
     },
 
     paramsToFilters: function (params) {
         var filters = _.extend({}, params);
         filters.layers = filters.layers.split(',');
+        if (filters.public_owners) {
+            filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
+                return parseInt(ownerPk);
+            });
+        }
         return filters;
     }
 };
@@ -18431,14 +18442,12 @@ function buildLotFilterParams(map, options) {
     var layers = _.map($('.filter-layer:checked'), function (layer) {
         return $(layer).attr('name'); 
     });
-    var publicOwners = _.map($('.filter-owner-public:checked'), function (ownerFilter) {
-        return $(ownerFilter).data('ownerPk');
-    });
+    var publicOwnerPks = [$('.filter-owner-public').val()];
     var params = {
         layers: layers.join(','),
         parents_only: true,
         projects: $('.filter-projects').val(),
-        public_owners: publicOwners.join(',')
+        public_owners: publicOwnerPks.join(',')
     };
 
     if (options && options.bbox) {

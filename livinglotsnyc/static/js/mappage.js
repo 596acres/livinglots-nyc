@@ -22,14 +22,12 @@ function buildLotFilterParams(map, options) {
     var layers = _.map($('.filter-layer:checked'), function (layer) {
         return $(layer).attr('name'); 
     });
-    var publicOwners = _.map($('.filter-owner-public:checked'), function (ownerFilter) {
-        return $(ownerFilter).data('ownerPk');
-    });
+    var publicOwnerPks = [$('.filter-owner-public').val()];
     var params = {
         layers: layers.join(','),
         parents_only: true,
         projects: $('.filter-projects').val(),
-        public_owners: publicOwners.join(',')
+        public_owners: publicOwnerPks.join(',')
     };
 
     if (options && options.bbox) {

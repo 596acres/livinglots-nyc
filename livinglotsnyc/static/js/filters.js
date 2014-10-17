@@ -22,12 +22,23 @@ module.exports = {
             }
         }
 
+        // Owners
+        if (filters.public_owners &&
+            !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+            return false;
+        }
+
         return true;
     },
 
     paramsToFilters: function (params) {
         var filters = _.extend({}, params);
         filters.layers = filters.layers.split(',');
+        if (filters.public_owners) {
+            filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
+                return parseInt(ownerPk);
+            });
+        }
         return filters;
     }
 };

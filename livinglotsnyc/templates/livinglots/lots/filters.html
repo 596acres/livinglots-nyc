@@ -17,7 +17,7 @@
 
                 {% get_owners type "public" as owners %}
                 {% for owner in owners %}
-                    <option value="{{ owner.pk }}">
+                    <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
                         {{ owner.name }}
                     </option>
                 {% endfor %}
