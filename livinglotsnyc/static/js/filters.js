@@ -21,6 +21,10 @@ module.exports = {
                 return false;
             }
         }
+        else if (filters.projects === 'started_here_only' &&
+                 !_.contains(lotLayers, 'in_use_started_here')) {
+            return false;
+        }
 
         // Owners
         if (filters.public_owners &&

@@ -79,6 +79,8 @@ class ProjectFilter(django_filters.Filter):
                 ~Q(lotlayer__name='in_use') | 
                 Q(lotlayer__name='in_use_started_here')
             )
+        elif value == 'started_here_only':
+            return qs.filter(lotlayer__name='in_use_started_here')
         return qs
 
 
