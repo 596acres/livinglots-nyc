@@ -188,7 +188,7 @@
                     {% for nearby in lot.nearby %}
                         <li class="nearby-lots-list-item">
                             <a href="{{ nearby.get_absolute_url }}">
-                                {{ nearby }}
+                                {{ nearby.display_name }}
                             </a>
                         </li>
                     {% endfor %}
