@@ -6,7 +6,7 @@
 
         {% if lot.number_of_lots > 1 %}
             <div>
-                {% trans "Number of Lots" %}: {{ lot.number_of_lots }}
+                {% trans "There are" %} {{ lot.number_of_lots }} {% trans "lots grouped here" %}:
             </div>
             <ul>
                 {% for child in lot.lots %}
