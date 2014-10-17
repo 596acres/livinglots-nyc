@@ -98,7 +98,19 @@ class LotMixin(models.Model):
                 return '%s block %d, lot %d' % (self.borough, self.block,
                                                 self.lot_number)
             except TypeError:
-                return self.address_line1
+                try:
+                    blocks = list(set([l.block for l in self.lots]))
+                    block_strs = []
+                    for block in blocks:
+                        block_strs.append('block %d, %s' % (
+                            block,
+                            'lots %s' % (
+                                ', '.join([str(l.lot_number) for l in self.lots if l.block == block])
+                            )
+                        ))
+                    return '%s %s' % (self.borough, '; '.join(block_strs))
+                except TypeError:
+                    return self.address_line1
     display_name = property(_get_display_name)
 
     @classmethod
