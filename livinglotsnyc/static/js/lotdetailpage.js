@@ -13,6 +13,7 @@ require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 var mapstyles = require('./map.styles');
 var StreetView = require('./streetview');
+require('./overlaymenu');
 
 
 var vectorLayerOptions = {
@@ -83,4 +84,8 @@ $(document).ready(function () {
             $('.lot-detail-header-streetview-error')
         );
     }
+
+    $('.overlay-nearby-button').overlaymenu({
+        menu: '.overlaymenu-nearby'
+    });
 });

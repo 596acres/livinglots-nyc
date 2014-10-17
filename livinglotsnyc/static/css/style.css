@@ -3563,6 +3563,14 @@ footer .footer-main:after {
   font-weight: bold;
   line-height: 26px;
 }
+.nearby-lots-list {
+  list-style: none;
+  padding-left: 0;
+}
+.nearby-lots-list-item {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
 .map-page #map {
   width: 100%;
   height: 500px;

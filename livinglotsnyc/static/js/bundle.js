@@ -18186,6 +18186,7 @@ require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 var mapstyles = require('./map.styles');
 var StreetView = require('./streetview');
+require('./overlaymenu');
 
 
 var vectorLayerOptions = {
@@ -18256,9 +18257,13 @@ $(document).ready(function () {
             $('.lot-detail-header-streetview-error')
         );
     }
+
+    $('.overlay-nearby-button').overlaymenu({
+        menu: '.overlaymenu-nearby'
+    });
 });
 
-},{"./leaflet.lotlayer":22,"./leaflet.lotmarker":24,"./map.styles":31,"./streetview":35,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],29:[function(require,module,exports){
+},{"./leaflet.lotlayer":22,"./leaflet.lotmarker":24,"./map.styles":31,"./overlaymenu":33,"./streetview":35,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],29:[function(require,module,exports){
 //
 // main.js
 //

@@ -61,8 +61,8 @@
         </a>
 
         {% if lot.nearby %}
-            <a class="btn btn-default disabled">
-                {% trans "find lots nearby" %}
+            <a class="btn btn-default overlay-nearby-button">
+                {% trans "Find lots nearby" %}
             </a>
         {% endif %}
 
@@ -176,4 +176,24 @@
             </div>
         </section>
     </aside>
+
+    {% if lot.nearby %}
+        <div class="overlaymenu overlaymenu-nearby">
+            <div class="overlaymenu-tip-container">
+                <div class="overlaymenu-tip"></div>
+            </div>
+
+            <div class="overlaymenu-menu-content">
+                <ul class="nearby-lots-list">
+                    {% for nearby in lot.nearby %}
+                        <li class="nearby-lots-list-item">
+                            <a href="{{ nearby.get_absolute_url }}">
+                                {{ nearby }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
