@@ -1,0 +1,80 @@
+[
+{
+    "fields": {
+        "content": "{% if has_received_this_mailing %}Hello again from the Acres organizing community!{% else %}Welcome to the Acres organizing community!{% endif %}\r\n\r\nYou are now organizing the following lots on Living Lots NYC:\r\n{% for lot in lots %}\r\n * {{ lot.display_name }} (http://{{ BASE_URL }}{{ lot.get_absolute_url }})\r\n{% endfor %}\r\n\r\n{% if not has_received_this_mailing %}This{% else %}As you know, this{% endif %} means that any time someone adds information to the lot's page, you'll get an email like this. And it means that other folks who are interested in this lot can see your contact information on its page and may reach out to you directly.\r\n\r\nSTEP 1: Call the city agency listed above and on the lot's page to ask them about it. Here are some tips for your phone call: http://596acres.org/en/resources/advocacy-resources/\r\n\r\nIt would be great if you would add a note to the lot's page describing what you learned about the city's plans and what you know about the community's plans so that others can build on your knowledge.\r\n\r\nYou can stop organizing lots at any time by going to:\r\n\r\n    http://{{ BASE_URL }}{{ edit_url }}",
+        "header": "",
+        "slug": "organize.mailings.0"
+    },
+    "model": "flatblocks.flatblock",
+    "pk": null
+},
+{
+    "fields": {
+        "content": "Thank you for getting involved in your community.\r\n\r\nBy now, you know what the city's plans are for the lot you are organizing. Sharing what you know is key to getting your community together. If you haven't yet, write a note on the lot's page describing what you have learned.\r\n\r\nNow it's time for STEPS 2 & 3!\r\n\r\nSTEP 2: Make some signs describing what you know and what you want and post them on the fence of the lot.\r\nSTEP 3: Schedule a meeting to talk with the neighbors. Make a flier for that, post it on the fence and get it into the hands of people in the neighborhood. Here's an example flier to get you started: http://596acres.org/media/filer_private/2012/07/23/community_garden__template.pdf\r\n\r\nHere's a review from earlier - STEP 1: Call the city agency listed below and on the lot's page to ask them about it. Here are some tips for your phone call: http://596acres.org/en/resources/advocacy-resources/\r\n\r\nAnd you are an organizer on:\r\n{% for lot in lots %}\r\n * {{ lot.display_name }} (http://{{ BASE_URL }}{{ lot.get_absolute_url }})\r\n{% endfor %}\r\n\r\nYou can stop organizing lots at any time by going to:\r\n\r\n    http://{{ BASE_URL }}{{ edit_url }}",
+        "header": "",
+        "slug": "organize.mailings.14"
+    },
+    "model": "flatblocks.flatblock",
+    "pk": null
+},
+{
+    "fields": {
+        "name": "Organizers Introduction",
+        "target_types": [
+            [
+                "organize",
+                "organizer"
+            ]
+        ],
+        "text_template_name": "livinglots/organize/mailings/0_text.txt",
+        "duplicate_handling": "merge",
+        "last_checked": "2014-10-23T16:33:43Z",
+        "subject_template_name": "livinglots/organize/mailings/0_subject.txt"
+    },
+    "model": "livinglots_mailings.mailing",
+    "pk": null
+},
+{
+    "fields": {
+        "name": "Organizers two weeks",
+        "target_types": [
+            [
+                "organize",
+                "organizer"
+            ]
+        ],
+        "text_template_name": "livinglots/organize/mailings/14_text.txt",
+        "duplicate_handling": "merge",
+        "last_checked": "2014-10-23T17:03:24Z",
+        "subject_template_name": "livinglots/organize/mailings/14_subject.txt"
+    },
+    "model": "livinglots_mailings.mailing",
+    "pk": null
+},
+{
+    "fields": {
+        "days_after_added": 0,
+        "target_types": [
+            [
+                "organize",
+                "organizer"
+            ]
+        ]
+    },
+    "model": "livinglots_mailings.daysafteraddedmailing",
+    "pk": null
+},
+{
+    "fields": {
+        "days_after_added": 14,
+        "target_types": [
+            [
+                "organize",
+                "organizer"
+            ]
+        ]
+    },
+    "model": "livinglots_mailings.daysafteraddedmailing",
+    "pk": null
+}
+]
