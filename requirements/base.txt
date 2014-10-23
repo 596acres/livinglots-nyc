@@ -53,6 +53,7 @@ git+git://github.com/596acres/django-livinglots-generictags/@master
 git+git://github.com/596acres/django-livinglots-genericviews/@master
 git+git://github.com/596acres/django-livinglots-groundtruth/@master
 git+git://github.com/596acres/django-livinglots-lots/@master
+git+git://github.com/596acres/django-livinglots-mailings/@master
 git+git://github.com/596acres/django-livinglots-mailsender/@master
 git+git://github.com/596acres/django-livinglots-notify/@master
 git+git://github.com/596acres/django-livinglots-organize/@master

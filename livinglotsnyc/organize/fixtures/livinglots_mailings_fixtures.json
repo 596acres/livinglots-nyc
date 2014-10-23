@@ -1,0 +1,11 @@
+[
+{
+    "fields": {
+        "content": "{% if has_received_this_mailing %}Hi again!{% else %}Welcome to Living Lots NYC!{% endif %}\r\n\r\nYou are now organizing the following lots on Living Lots NYC:\r\n{% for lot in lots %}\r\n * {{ lot.display_name }} (http://{{ BASE_URL }}{{ lot.get_absolute_url }})\r\n{% endfor %}\r\n\r\nYou can stop organizing lots at any time by going to:\r\n\r\n    http://{{ BASE_URL }}{{ edit_url }}",
+        "header": "",
+        "slug": "organize.mailings.0"
+    },
+    "model": "flatblocks.flatblock",
+    "pk": null
+}
+]
