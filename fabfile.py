@@ -55,17 +55,13 @@ def install_requirements(version='prod'):
 @task
 def build_static(version='prod'):
     with workon(version):
-        run('django-admin.py collectstatic --noinput')
-        with cdversion(version, 'livinglotsnyc/collected_static/'):
-            run('bower install')
-        with cdversion(version, 'livinglotsnyc/collected_static/js/'):
-            run('r.js -o app.build.js')
+        run('django-admin collectstatic --noinput')
 
 
 @task
 def syncdb(version='prod'):
     with workon(version):
-        run('django-admin.py syncdb')
+        run('django-admin syncdb')
 
 
 @task
