@@ -193,6 +193,7 @@ L.LotMap = L.Map.extend({
         var url = this.options.lotPolygonsUrl;
 
         var options = {
+            maxZoom: 19,
             serverZooms: [16],
             unique: function (feature) {
                 return feature.id;
