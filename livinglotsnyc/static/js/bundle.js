@@ -19183,13 +19183,6 @@ var initWelcome = require('./welcome').init;
 
 require('jquery.infinitescroll');
 require('leaflet.loading');
-
-
-/*
- * TODO add to django-livinglots-template
- * TODO checking seems not to work
- */
-
 require('livinglots.map.addlot');
 require('./leaflet.lotmap');
 require('./map.search.js');

@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     url(r'^kml/', LotsKML.as_view(), name='kml'),
     url(r'^geojson/', LotsGeoJSON.as_view(), name='geojson'),
 
-    url(r'^create/by-parcels/', CreateLotView.as_view(),
+    url(r'^create/by-parcels/$', CreateLotView.as_view(),
         name='create_by_parcels'),
 
 ) + llurls.urlpatterns
