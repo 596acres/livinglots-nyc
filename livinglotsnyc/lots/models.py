@@ -5,12 +5,11 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
-from livinglots import get_stewardproject_model
+from livinglots import get_owner_model, get_stewardproject_model
 from livinglots_lots.models import (BaseLot, BaseLotGroup, BaseLotLayer,
                                     BaseLotManager)
 
 from organize.models import Organizer
-from .exceptions import ParcelAlreadyInLot
 
 
 ureg = UnitRegistry()
@@ -18,40 +17,32 @@ ureg = UnitRegistry()
 
 class LotManager(BaseLotManager):
 
-    def create_lot_for_parcels(self, parcels, **lot_kwargs):
-        lots = []
+    def get_lot_kwargs(self, parcel, **defaults):
+        kwargs = {
+            'parcel': parcel,
+            'polygon': parcel.geom,
+            'centroid': parcel.geom.centroid,
+            'address_line1': parcel.address,
+            'bbl': parcel.bbl,
+            'block': parcel.block,
+            'borough': parcel.borough_name,
+            'lot_number': parcel.lot_number,
+            'postal_code': parcel.zipcode,
+            'state_province': 'NY',
+        }
+        kwargs.update(**defaults)
 
-        # Check parcel validity
-        for parcel in parcels:
-            if parcel.lot_set.count():
-                raise ParcelAlreadyInLot()
+        # Create or get owner for parcels
+        if parcel.ownername:
+            (owner, created) = get_owner_model().objects.get_or_create(
+                parcel.ownername,
+                defaults={
+                    'owner_type': 'private',
+                }
+            )
+            kwargs['owner'] = owner
 
-        # Create lots for each parcel
-        for parcel in parcels:
-            kwargs = {
-                'parcel': parcel,
-                'polygon': parcel.geom,
-                'centroid': parcel.geom.centroid,
-                'address_line1': parcel.address,
-                'name': parcel.address,
-            }
-            kwargs.update(**lot_kwargs)
-            lot = Lot(**kwargs)
-            lot.save()
-            lots.append(lot)
-
-        # Multiple lots, create a lot group
-        if len(lots) > 1:
-            example_lot = lots[0]
-            kwargs = {
-                'address_line1': example_lot.address_line1,
-                'name': example_lot.name,
-            }
-            kwargs.update(**lot_kwargs)
-            lot = LotGroup(**kwargs)
-            lot.save()
-            lot.update(lots=lots)
-        return lot
+        return kwargs
 
 
 class LotGroupLotMixin(models.Model):

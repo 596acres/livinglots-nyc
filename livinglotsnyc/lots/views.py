@@ -12,11 +12,13 @@ from caching.base import cached
 
 from inplace.views import GeoJSONListView
 from livinglots_genericviews.views import JSONResponseView
+from livinglots_lots.views import BaseCreateLotView
 from livinglots_lots.views import FilteredLotsMixin, LotsCountView
 from livinglots_lots.views import LotDetailView as BaseLotDetailView
 from livinglots_lots.views import LotsCSV as BaseLotsCSV
 from livinglots_lots.views import LotsKML as BaseLotsKML
 from livinglots_lots.views import LotsGeoJSON as BaseLotsGeoJSON
+from nycdata.parcels.models import Parcel
 
 
 ureg = UnitRegistry()
@@ -250,3 +252,9 @@ class LotsGeoJSON(BaseLotsGeoJSON):
 
     def get_sitename(self):
         return 'Living Lots NYC'
+
+
+class CreateLotView(BaseCreateLotView):
+
+    def get_parcels(self, pks):
+        return Parcel.objects.filter(pk__in=pks)
