@@ -85,7 +85,6 @@ class LotMixin(models.Model):
     parcel = models.ForeignKey('parcels.Parcel',
         blank=True,
         null=True,
-        related_name='lotmodel',
     )
 
     owner_opt_in = models.BooleanField(default=False)
