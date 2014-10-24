@@ -182,7 +182,11 @@ class Lot(LotMixin, LotGroupLotMixin, BaseLot):
         try:
             return ('lots:lot_detail', (), { 'pk': self.lotgroup.pk, })
         except Lot.DoesNotExist:
-            return ('lots:lot_detail', (), { 'bbl': self.bbl, })
+            if self.bbl:
+                return ('lots:lot_detail', (), { 'bbl': self.bbl, })
+            else:
+                return ('lots:lot_detail', (), { 'pk': self.pk, })
+
 
     class Meta:
         permissions = (
