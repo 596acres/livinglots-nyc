@@ -3206,6 +3206,11 @@ a.thumbnail.active {
   padding: 9px;
   color: #333333;
 }
+.map-add-lot-parent {
+  background-color: white;
+  position: absolute;
+  z-index: 5000;
+}
 /*
  * Global properties
  */

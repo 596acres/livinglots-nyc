@@ -109,7 +109,14 @@
 
     data-l-lot-centroids-url="{% inplace_setting LOT_CENTROIDS_URL %}"
     data-l-lot-polygons-url="{% inplace_setting LOT_POLYGONS_URL %}"
+
+    data-l-parcels-url="{% inplace_setting PARCELS_URL %}"
+
+    data-l-add-lot-parent=".map-add-lot-parent"
 >
+
+    <div class="map-add-lot-parent" style="z-index: 5000; background: white;"></div>
+
     <div class="legend hidden-print">
         <div>
             <span class="legend-marker legend-marker-public"></span>

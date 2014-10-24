@@ -1,0 +1,32 @@
+{
+  "name": "livinglots-map",
+  "version": "0.2.0",
+  "homepage": "https://github.com/596acres/livinglots-map",
+  "authors": [
+    "Eric Brelsford <ebrelsford@gmail.com>"
+  ],
+  "description": "Front-end code for Living Lots",
+  "dependencies": {
+    "handlebars": "~1.3.0",
+    "leaflet": ">=0.6",
+    "spin.js": "~1.3.3",
+    "underscore": "~1.5.2"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.2.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.0",
+    "commit": "ca870c97e9dd58d28daf1c4f9d7f39e69c9a71e5"
+  },
+  "_source": "https://github.com/596acres/livinglots-map.git",
+  "_target": "0.2.0",
+  "_originalSource": "https://github.com/596acres/livinglots-map.git",
+  "_direct": true
+}

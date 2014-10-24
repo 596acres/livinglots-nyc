@@ -13,6 +13,7 @@ var initWelcome = require('./welcome').init;
 
 require('jquery.infinitescroll');
 require('leaflet.loading');
+require('livinglots.map.addlot');
 require('./leaflet.lotmap');
 require('./map.search.js');
 require('./overlaymenu');
@@ -227,5 +228,9 @@ $(document).ready(function () {
         });
 
         initWelcome();
+
+        $('.admin-button-add-lot').click(function () {
+            map.enterLotAddMode();
+        });
     }
 });

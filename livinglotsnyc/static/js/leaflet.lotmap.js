@@ -108,7 +108,7 @@ L.LotMap = L.Map.extend({
             // Dig through the layers of layers
             event.layer.on('layeradd', function (event) {
                 event.layer.eachLayer(function (lot) {
-                    if (!lot.feature) return;
+                    if (!lot.feature || !lot.feature.properties.layers) return;
                     if (filters.lotShouldAppear(lot, currentFilters)) {
                         lot.show();
                     }

@@ -1,0 +1,22 @@
+<div class="map-add-lot-mode-container">
+    <h1>You are in add-a-lot mode</h1>
+    <div class="map-add-lot-zoom-message">Zoom in to see parcel outlines</div>
+    <div>
+        Currently over:
+        <span class="map-add-lot-current-parcel"></span>
+    </div>
+    {{#if parcels}}
+        <div>
+            Adding a lot for these {{parcels.length}} selected parcels:
+            <ul>
+                {{#each parcels}}
+                    <li>{{address}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    {{/if}}
+    <div class="map-add-lot-actions">
+        <a href="#" class="add-lot-mode-cancel btn btn-default">cancel</a>
+        <a href="#" class="add-lot-mode-submit btn btn-default {{#unless parcels}}disabled{{/unless}}">add lot</a>
+    </div>
+</div>

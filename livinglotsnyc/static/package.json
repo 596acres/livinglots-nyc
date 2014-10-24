@@ -6,7 +6,8 @@
   "license": "BSD-2-Clause",
   "main": "index.js",
   "dependencies": {
-    "tinymce": "^4.0.28"
+    "tinymce": "^4.0.28",
+    "browserify-handlebars": "~0.2.0"
   },
   "devDependencies": {
     "browserify": "^4.1.10",
@@ -38,9 +39,13 @@
     "leaflet.hash": "./bower_components/leaflet-hash/leaflet-hash.js",
     "leaflet.loading": "./bower_components/leaflet.loading/src/Control.Loading.js",
     "leaflet.usermarker": "./bower_components/leaflet.usermarker/src/leaflet.usermarker.js",
+    "livinglots.map.addlot": "./bower_components/livinglots-map/src/livinglots.addlot.js",
+    "livinglots.map.addlot.exists": "./bower_components/livinglots-map/src/templates/addlot/existspopup.hbs",
+    "livinglots.map.addlot.failure": "./bower_components/livinglots-map/src/templates/addlot/failure.hbs",
+    "livinglots.map.addlot.success": "./bower_components/livinglots-map/src/templates/addlot/success.hbs",
+    "livinglots.map.addlot.window": "./bower_components/livinglots-map/src/templates/addlot/window.hbs",
     "spinjs": "./bower_components/spin.js/spin.js",
     "underscore": "./bower_components/underscore/underscore.js",
-
     "communist": "./bower_components/leaflet-tilelayer-vector/lib/communist.min.js",
     "AbstractWorker": "./bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js",
     "CommunistWorker": "./bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js",
@@ -51,27 +56,28 @@
   },
   "browserify": {
     "transform": [
+      "browserify-handlebars",
       "browserify-shim"
     ]
   },
   "browserify-shim": {
     "communist": "communist",
     "CommunistWorker": {
-        "depends": [
-            "communist:communist",
-            "leaflet",
-            "AbstractWorker"
-        ]
+      "depends": [
+        "communist:communist",
+        "leaflet",
+        "AbstractWorker"
+      ]
     },
     "handlebars": "Handlebars",
     "spinjs": "Spinner",
     "TileLayer.GeoJSON": {
-        "depends": [
-            "CommunistWorker",
-            "TileCache",
-            "TileLayer.Overzoom",
-            "TileQueue"
-        ]
+      "depends": [
+        "CommunistWorker",
+        "TileCache",
+        "TileLayer.Overzoom",
+        "TileQueue"
+      ]
     }
   }
 }
