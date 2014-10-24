@@ -103,4 +103,4 @@ LOGGING = {
 
 LOT_CENTROIDS_URL = get_env_variable('TILES_BASE') + '/lots-centroids/'
 LOT_POLYGONS_URL = get_env_variable('TILES_BASE') + '/lots-polygons/'
-LOT_POLYGONS_URL = get_env_variable('TILES_BASE') + '/parcels/'
+PARCELS_URL = get_env_variable('TILES_BASE') + '/parcels/'
