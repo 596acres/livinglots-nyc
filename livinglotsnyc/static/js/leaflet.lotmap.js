@@ -14,12 +14,11 @@ require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 
 
-var currentFilters = {};
-
 L.LotMap = L.Map.extend({
 
     boundariesLayer: null,
     centroidsLayer: null,
+    currentFilters: {},
     polygonsLayer: null,
     lotLayerTransitionPoint: 15,
     previousZoom: null,
@@ -95,7 +94,7 @@ L.LotMap = L.Map.extend({
         var hash = new L.Hash(this);
 
         if (options.filterParams) {
-            currentFilters = filters.paramsToFilters(options.filterParams);
+            this.currentFilters = filters.paramsToFilters(options.filterParams);
         }
 
         this.boundariesLayer = L.geoJson(null, {
@@ -104,12 +103,13 @@ L.LotMap = L.Map.extend({
         }).addTo(this);
 
         // When new lots are added ensure they should be displayed
+        var map = this;
         this.on('layeradd', function (event) {
             // Dig through the layers of layers
             event.layer.on('layeradd', function (event) {
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) return;
-                    if (filters.lotShouldAppear(lot, currentFilters)) {
+                    if (filters.lotShouldAppear(lot, map.currentFilters)) {
                         lot.show();
                     }
                     else {
@@ -205,8 +205,9 @@ L.LotMap = L.Map.extend({
     },
 
     updateFilters: function (params) {
-        currentFilters = filters.paramsToFilters(params);
+        this.currentFilters = filters.paramsToFilters(params);
         this.updateDisplayedLots();
+        this.fire('filterschanged', this.currentFilters);
     },
 
     updateDisplayedLots: function () {
@@ -214,9 +215,10 @@ L.LotMap = L.Map.extend({
             if (layer.vectorLayer) {
                 // Lots are nested in tiles so we need to do two layers of 
                 // eachLayer to get to them all
+                var map = this;
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
-                        if (filters.lotShouldAppear(lot, currentFilters)) {
+                        if (filters.lotShouldAppear(lot, map.currentFilters)) {
                             lot.show();
                         }
                         else {
