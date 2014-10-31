@@ -7,15 +7,14 @@
 var _ = require('underscore');
 var Handlebars = require('handlebars');
 var L = require('leaflet');
-var Spinner = require('spinjs');
+var Spinner = require('spin.js');
 var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 
 require('jquery.infinitescroll');
 require('leaflet.loading');
-require('livinglots.map.addlot');
-// TODO install as NPM module instead to avoid weird browserify fun
-require('livinglots.map.mail');
+require('livinglots-map/src/livinglots.addlot');
+require('livinglots-map/src/livinglots.mail');
 require('./leaflet.lotmap');
 require('./map.search.js');
 require('./overlaymenu');

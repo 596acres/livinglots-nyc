@@ -2020,2761 +2020,6 @@
 
 }(window, document, jQuery));
 },{}],2:[function(require,module,exports){
-(function (global){
-;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
-/*!
-
- handlebars v1.3.0
-
-Copyright (C) 2011 by Yehuda Katz
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-@license
-*/
-/* exported Handlebars */
-var Handlebars = (function() {
-// handlebars/safe-string.js
-var __module4__ = (function() {
-  "use strict";
-  var __exports__;
-  // Build out our basic SafeString type
-  function SafeString(string) {
-    this.string = string;
-  }
-
-  SafeString.prototype.toString = function() {
-    return "" + this.string;
-  };
-
-  __exports__ = SafeString;
-  return __exports__;
-})();
-
-// handlebars/utils.js
-var __module3__ = (function(__dependency1__) {
-  "use strict";
-  var __exports__ = {};
-  /*jshint -W004 */
-  var SafeString = __dependency1__;
-
-  var escape = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#x27;",
-    "`": "&#x60;"
-  };
-
-  var badChars = /[&<>"'`]/g;
-  var possible = /[&<>"'`]/;
-
-  function escapeChar(chr) {
-    return escape[chr] || "&amp;";
-  }
-
-  function extend(obj, value) {
-    for(var key in value) {
-      if(Object.prototype.hasOwnProperty.call(value, key)) {
-        obj[key] = value[key];
-      }
-    }
-  }
-
-  __exports__.extend = extend;var toString = Object.prototype.toString;
-  __exports__.toString = toString;
-  // Sourced from lodash
-  // https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
-  var isFunction = function(value) {
-    return typeof value === 'function';
-  };
-  // fallback for older versions of Chrome and Safari
-  if (isFunction(/x/)) {
-    isFunction = function(value) {
-      return typeof value === 'function' && toString.call(value) === '[object Function]';
-    };
-  }
-  var isFunction;
-  __exports__.isFunction = isFunction;
-  var isArray = Array.isArray || function(value) {
-    return (value && typeof value === 'object') ? toString.call(value) === '[object Array]' : false;
-  };
-  __exports__.isArray = isArray;
-
-  function escapeExpression(string) {
-    // don't escape SafeStrings, since they're already safe
-    if (string instanceof SafeString) {
-      return string.toString();
-    } else if (!string && string !== 0) {
-      return "";
-    }
-
-    // Force a string conversion as this will be done by the append regardless and
-    // the regex test will do this transparently behind the scenes, causing issues if
-    // an object's to string has escaped characters in it.
-    string = "" + string;
-
-    if(!possible.test(string)) { return string; }
-    return string.replace(badChars, escapeChar);
-  }
-
-  __exports__.escapeExpression = escapeExpression;function isEmpty(value) {
-    if (!value && value !== 0) {
-      return true;
-    } else if (isArray(value) && value.length === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  __exports__.isEmpty = isEmpty;
-  return __exports__;
-})(__module4__);
-
-// handlebars/exception.js
-var __module5__ = (function() {
-  "use strict";
-  var __exports__;
-
-  var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
-
-  function Exception(message, node) {
-    var line;
-    if (node && node.firstLine) {
-      line = node.firstLine;
-
-      message += ' - ' + line + ':' + node.firstColumn;
-    }
-
-    var tmp = Error.prototype.constructor.call(this, message);
-
-    // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
-    for (var idx = 0; idx < errorProps.length; idx++) {
-      this[errorProps[idx]] = tmp[errorProps[idx]];
-    }
-
-    if (line) {
-      this.lineNumber = line;
-      this.column = node.firstColumn;
-    }
-  }
-
-  Exception.prototype = new Error();
-
-  __exports__ = Exception;
-  return __exports__;
-})();
-
-// handlebars/base.js
-var __module2__ = (function(__dependency1__, __dependency2__) {
-  "use strict";
-  var __exports__ = {};
-  var Utils = __dependency1__;
-  var Exception = __dependency2__;
-
-  var VERSION = "1.3.0";
-  __exports__.VERSION = VERSION;var COMPILER_REVISION = 4;
-  __exports__.COMPILER_REVISION = COMPILER_REVISION;
-  var REVISION_CHANGES = {
-    1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
-    2: '== 1.0.0-rc.3',
-    3: '== 1.0.0-rc.4',
-    4: '>= 1.0.0'
-  };
-  __exports__.REVISION_CHANGES = REVISION_CHANGES;
-  var isArray = Utils.isArray,
-      isFunction = Utils.isFunction,
-      toString = Utils.toString,
-      objectType = '[object Object]';
-
-  function HandlebarsEnvironment(helpers, partials) {
-    this.helpers = helpers || {};
-    this.partials = partials || {};
-
-    registerDefaultHelpers(this);
-  }
-
-  __exports__.HandlebarsEnvironment = HandlebarsEnvironment;HandlebarsEnvironment.prototype = {
-    constructor: HandlebarsEnvironment,
-
-    logger: logger,
-    log: log,
-
-    registerHelper: function(name, fn, inverse) {
-      if (toString.call(name) === objectType) {
-        if (inverse || fn) { throw new Exception('Arg not supported with multiple helpers'); }
-        Utils.extend(this.helpers, name);
-      } else {
-        if (inverse) { fn.not = inverse; }
-        this.helpers[name] = fn;
-      }
-    },
-
-    registerPartial: function(name, str) {
-      if (toString.call(name) === objectType) {
-        Utils.extend(this.partials,  name);
-      } else {
-        this.partials[name] = str;
-      }
-    }
-  };
-
-  function registerDefaultHelpers(instance) {
-    instance.registerHelper('helperMissing', function(arg) {
-      if(arguments.length === 2) {
-        return undefined;
-      } else {
-        throw new Exception("Missing helper: '" + arg + "'");
-      }
-    });
-
-    instance.registerHelper('blockHelperMissing', function(context, options) {
-      var inverse = options.inverse || function() {}, fn = options.fn;
-
-      if (isFunction(context)) { context = context.call(this); }
-
-      if(context === true) {
-        return fn(this);
-      } else if(context === false || context == null) {
-        return inverse(this);
-      } else if (isArray(context)) {
-        if(context.length > 0) {
-          return instance.helpers.each(context, options);
-        } else {
-          return inverse(this);
-        }
-      } else {
-        return fn(context);
-      }
-    });
-
-    instance.registerHelper('each', function(context, options) {
-      var fn = options.fn, inverse = options.inverse;
-      var i = 0, ret = "", data;
-
-      if (isFunction(context)) { context = context.call(this); }
-
-      if (options.data) {
-        data = createFrame(options.data);
-      }
-
-      if(context && typeof context === 'object') {
-        if (isArray(context)) {
-          for(var j = context.length; i<j; i++) {
-            if (data) {
-              data.index = i;
-              data.first = (i === 0);
-              data.last  = (i === (context.length-1));
-            }
-            ret = ret + fn(context[i], { data: data });
-          }
-        } else {
-          for(var key in context) {
-            if(context.hasOwnProperty(key)) {
-              if(data) { 
-                data.key = key; 
-                data.index = i;
-                data.first = (i === 0);
-              }
-              ret = ret + fn(context[key], {data: data});
-              i++;
-            }
-          }
-        }
-      }
-
-      if(i === 0){
-        ret = inverse(this);
-      }
-
-      return ret;
-    });
-
-    instance.registerHelper('if', function(conditional, options) {
-      if (isFunction(conditional)) { conditional = conditional.call(this); }
-
-      // Default behavior is to render the positive path if the value is truthy and not empty.
-      // The `includeZero` option may be set to treat the condtional as purely not empty based on the
-      // behavior of isEmpty. Effectively this determines if 0 is handled by the positive path or negative.
-      if ((!options.hash.includeZero && !conditional) || Utils.isEmpty(conditional)) {
-        return options.inverse(this);
-      } else {
-        return options.fn(this);
-      }
-    });
-
-    instance.registerHelper('unless', function(conditional, options) {
-      return instance.helpers['if'].call(this, conditional, {fn: options.inverse, inverse: options.fn, hash: options.hash});
-    });
-
-    instance.registerHelper('with', function(context, options) {
-      if (isFunction(context)) { context = context.call(this); }
-
-      if (!Utils.isEmpty(context)) return options.fn(context);
-    });
-
-    instance.registerHelper('log', function(context, options) {
-      var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
-      instance.log(level, context);
-    });
-  }
-
-  var logger = {
-    methodMap: { 0: 'debug', 1: 'info', 2: 'warn', 3: 'error' },
-
-    // State enum
-    DEBUG: 0,
-    INFO: 1,
-    WARN: 2,
-    ERROR: 3,
-    level: 3,
-
-    // can be overridden in the host environment
-    log: function(level, obj) {
-      if (logger.level <= level) {
-        var method = logger.methodMap[level];
-        if (typeof console !== 'undefined' && console[method]) {
-          console[method].call(console, obj);
-        }
-      }
-    }
-  };
-  __exports__.logger = logger;
-  function log(level, obj) { logger.log(level, obj); }
-
-  __exports__.log = log;var createFrame = function(object) {
-    var obj = {};
-    Utils.extend(obj, object);
-    return obj;
-  };
-  __exports__.createFrame = createFrame;
-  return __exports__;
-})(__module3__, __module5__);
-
-// handlebars/runtime.js
-var __module6__ = (function(__dependency1__, __dependency2__, __dependency3__) {
-  "use strict";
-  var __exports__ = {};
-  var Utils = __dependency1__;
-  var Exception = __dependency2__;
-  var COMPILER_REVISION = __dependency3__.COMPILER_REVISION;
-  var REVISION_CHANGES = __dependency3__.REVISION_CHANGES;
-
-  function checkRevision(compilerInfo) {
-    var compilerRevision = compilerInfo && compilerInfo[0] || 1,
-        currentRevision = COMPILER_REVISION;
-
-    if (compilerRevision !== currentRevision) {
-      if (compilerRevision < currentRevision) {
-        var runtimeVersions = REVISION_CHANGES[currentRevision],
-            compilerVersions = REVISION_CHANGES[compilerRevision];
-        throw new Exception("Template was precompiled with an older version of Handlebars than the current runtime. "+
-              "Please update your precompiler to a newer version ("+runtimeVersions+") or downgrade your runtime to an older version ("+compilerVersions+").");
-      } else {
-        // Use the embedded version info since the runtime doesn't know about this revision yet
-        throw new Exception("Template was precompiled with a newer version of Handlebars than the current runtime. "+
-              "Please update your runtime to a newer version ("+compilerInfo[1]+").");
-      }
-    }
-  }
-
-  __exports__.checkRevision = checkRevision;// TODO: Remove this line and break up compilePartial
-
-  function template(templateSpec, env) {
-    if (!env) {
-      throw new Exception("No environment passed to template");
-    }
-
-    // Note: Using env.VM references rather than local var references throughout this section to allow
-    // for external users to override these as psuedo-supported APIs.
-    var invokePartialWrapper = function(partial, name, context, helpers, partials, data) {
-      var result = env.VM.invokePartial.apply(this, arguments);
-      if (result != null) { return result; }
-
-      if (env.compile) {
-        var options = { helpers: helpers, partials: partials, data: data };
-        partials[name] = env.compile(partial, { data: data !== undefined }, env);
-        return partials[name](context, options);
-      } else {
-        throw new Exception("The partial " + name + " could not be compiled when running in runtime-only mode");
-      }
-    };
-
-    // Just add water
-    var container = {
-      escapeExpression: Utils.escapeExpression,
-      invokePartial: invokePartialWrapper,
-      programs: [],
-      program: function(i, fn, data) {
-        var programWrapper = this.programs[i];
-        if(data) {
-          programWrapper = program(i, fn, data);
-        } else if (!programWrapper) {
-          programWrapper = this.programs[i] = program(i, fn);
-        }
-        return programWrapper;
-      },
-      merge: function(param, common) {
-        var ret = param || common;
-
-        if (param && common && (param !== common)) {
-          ret = {};
-          Utils.extend(ret, common);
-          Utils.extend(ret, param);
-        }
-        return ret;
-      },
-      programWithDepth: env.VM.programWithDepth,
-      noop: env.VM.noop,
-      compilerInfo: null
-    };
-
-    return function(context, options) {
-      options = options || {};
-      var namespace = options.partial ? options : env,
-          helpers,
-          partials;
-
-      if (!options.partial) {
-        helpers = options.helpers;
-        partials = options.partials;
-      }
-      var result = templateSpec.call(
-            container,
-            namespace, context,
-            helpers,
-            partials,
-            options.data);
-
-      if (!options.partial) {
-        env.VM.checkRevision(container.compilerInfo);
-      }
-
-      return result;
-    };
-  }
-
-  __exports__.template = template;function programWithDepth(i, fn, data /*, $depth */) {
-    var args = Array.prototype.slice.call(arguments, 3);
-
-    var prog = function(context, options) {
-      options = options || {};
-
-      return fn.apply(this, [context, options.data || data].concat(args));
-    };
-    prog.program = i;
-    prog.depth = args.length;
-    return prog;
-  }
-
-  __exports__.programWithDepth = programWithDepth;function program(i, fn, data) {
-    var prog = function(context, options) {
-      options = options || {};
-
-      return fn(context, options.data || data);
-    };
-    prog.program = i;
-    prog.depth = 0;
-    return prog;
-  }
-
-  __exports__.program = program;function invokePartial(partial, name, context, helpers, partials, data) {
-    var options = { partial: true, helpers: helpers, partials: partials, data: data };
-
-    if(partial === undefined) {
-      throw new Exception("The partial " + name + " could not be found");
-    } else if(partial instanceof Function) {
-      return partial(context, options);
-    }
-  }
-
-  __exports__.invokePartial = invokePartial;function noop() { return ""; }
-
-  __exports__.noop = noop;
-  return __exports__;
-})(__module3__, __module5__, __module2__);
-
-// handlebars.runtime.js
-var __module1__ = (function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__) {
-  "use strict";
-  var __exports__;
-  /*globals Handlebars: true */
-  var base = __dependency1__;
-
-  // Each of these augment the Handlebars object. No need to setup here.
-  // (This is done to easily share code between commonjs and browse envs)
-  var SafeString = __dependency2__;
-  var Exception = __dependency3__;
-  var Utils = __dependency4__;
-  var runtime = __dependency5__;
-
-  // For compatibility and usage outside of module systems, make the Handlebars object a namespace
-  var create = function() {
-    var hb = new base.HandlebarsEnvironment();
-
-    Utils.extend(hb, base);
-    hb.SafeString = SafeString;
-    hb.Exception = Exception;
-    hb.Utils = Utils;
-
-    hb.VM = runtime;
-    hb.template = function(spec) {
-      return runtime.template(spec, hb);
-    };
-
-    return hb;
-  };
-
-  var Handlebars = create();
-  Handlebars.create = create;
-
-  __exports__ = Handlebars;
-  return __exports__;
-})(__module2__, __module4__, __module5__, __module3__, __module6__);
-
-// handlebars/compiler/ast.js
-var __module7__ = (function(__dependency1__) {
-  "use strict";
-  var __exports__;
-  var Exception = __dependency1__;
-
-  function LocationInfo(locInfo){
-    locInfo = locInfo || {};
-    this.firstLine   = locInfo.first_line;
-    this.firstColumn = locInfo.first_column;
-    this.lastColumn  = locInfo.last_column;
-    this.lastLine    = locInfo.last_line;
-  }
-
-  var AST = {
-    ProgramNode: function(statements, inverseStrip, inverse, locInfo) {
-      var inverseLocationInfo, firstInverseNode;
-      if (arguments.length === 3) {
-        locInfo = inverse;
-        inverse = null;
-      } else if (arguments.length === 2) {
-        locInfo = inverseStrip;
-        inverseStrip = null;
-      }
-
-      LocationInfo.call(this, locInfo);
-      this.type = "program";
-      this.statements = statements;
-      this.strip = {};
-
-      if(inverse) {
-        firstInverseNode = inverse[0];
-        if (firstInverseNode) {
-          inverseLocationInfo = {
-            first_line: firstInverseNode.firstLine,
-            last_line: firstInverseNode.lastLine,
-            last_column: firstInverseNode.lastColumn,
-            first_column: firstInverseNode.firstColumn
-          };
-          this.inverse = new AST.ProgramNode(inverse, inverseStrip, inverseLocationInfo);
-        } else {
-          this.inverse = new AST.ProgramNode(inverse, inverseStrip);
-        }
-        this.strip.right = inverseStrip.left;
-      } else if (inverseStrip) {
-        this.strip.left = inverseStrip.right;
-      }
-    },
-
-    MustacheNode: function(rawParams, hash, open, strip, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "mustache";
-      this.strip = strip;
-
-      // Open may be a string parsed from the parser or a passed boolean flag
-      if (open != null && open.charAt) {
-        // Must use charAt to support IE pre-10
-        var escapeFlag = open.charAt(3) || open.charAt(2);
-        this.escaped = escapeFlag !== '{' && escapeFlag !== '&';
-      } else {
-        this.escaped = !!open;
-      }
-
-      if (rawParams instanceof AST.SexprNode) {
-        this.sexpr = rawParams;
-      } else {
-        // Support old AST API
-        this.sexpr = new AST.SexprNode(rawParams, hash);
-      }
-
-      this.sexpr.isRoot = true;
-
-      // Support old AST API that stored this info in MustacheNode
-      this.id = this.sexpr.id;
-      this.params = this.sexpr.params;
-      this.hash = this.sexpr.hash;
-      this.eligibleHelper = this.sexpr.eligibleHelper;
-      this.isHelper = this.sexpr.isHelper;
-    },
-
-    SexprNode: function(rawParams, hash, locInfo) {
-      LocationInfo.call(this, locInfo);
-
-      this.type = "sexpr";
-      this.hash = hash;
-
-      var id = this.id = rawParams[0];
-      var params = this.params = rawParams.slice(1);
-
-      // a mustache is an eligible helper if:
-      // * its id is simple (a single part, not `this` or `..`)
-      var eligibleHelper = this.eligibleHelper = id.isSimple;
-
-      // a mustache is definitely a helper if:
-      // * it is an eligible helper, and
-      // * it has at least one parameter or hash segment
-      this.isHelper = eligibleHelper && (params.length || hash);
-
-      // if a mustache is an eligible helper but not a definite
-      // helper, it is ambiguous, and will be resolved in a later
-      // pass or at runtime.
-    },
-
-    PartialNode: function(partialName, context, strip, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type         = "partial";
-      this.partialName  = partialName;
-      this.context      = context;
-      this.strip = strip;
-    },
-
-    BlockNode: function(mustache, program, inverse, close, locInfo) {
-      LocationInfo.call(this, locInfo);
-
-      if(mustache.sexpr.id.original !== close.path.original) {
-        throw new Exception(mustache.sexpr.id.original + " doesn't match " + close.path.original, this);
-      }
-
-      this.type = 'block';
-      this.mustache = mustache;
-      this.program  = program;
-      this.inverse  = inverse;
-
-      this.strip = {
-        left: mustache.strip.left,
-        right: close.strip.right
-      };
-
-      (program || inverse).strip.left = mustache.strip.right;
-      (inverse || program).strip.right = close.strip.left;
-
-      if (inverse && !program) {
-        this.isInverse = true;
-      }
-    },
-
-    ContentNode: function(string, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "content";
-      this.string = string;
-    },
-
-    HashNode: function(pairs, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "hash";
-      this.pairs = pairs;
-    },
-
-    IdNode: function(parts, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "ID";
-
-      var original = "",
-          dig = [],
-          depth = 0;
-
-      for(var i=0,l=parts.length; i<l; i++) {
-        var part = parts[i].part;
-        original += (parts[i].separator || '') + part;
-
-        if (part === ".." || part === "." || part === "this") {
-          if (dig.length > 0) {
-            throw new Exception("Invalid path: " + original, this);
-          } else if (part === "..") {
-            depth++;
-          } else {
-            this.isScoped = true;
-          }
-        } else {
-          dig.push(part);
-        }
-      }
-
-      this.original = original;
-      this.parts    = dig;
-      this.string   = dig.join('.');
-      this.depth    = depth;
-
-      // an ID is simple if it only has one part, and that part is not
-      // `..` or `this`.
-      this.isSimple = parts.length === 1 && !this.isScoped && depth === 0;
-
-      this.stringModeValue = this.string;
-    },
-
-    PartialNameNode: function(name, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "PARTIAL_NAME";
-      this.name = name.original;
-    },
-
-    DataNode: function(id, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "DATA";
-      this.id = id;
-    },
-
-    StringNode: function(string, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "STRING";
-      this.original =
-        this.string =
-        this.stringModeValue = string;
-    },
-
-    IntegerNode: function(integer, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "INTEGER";
-      this.original =
-        this.integer = integer;
-      this.stringModeValue = Number(integer);
-    },
-
-    BooleanNode: function(bool, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "BOOLEAN";
-      this.bool = bool;
-      this.stringModeValue = bool === "true";
-    },
-
-    CommentNode: function(comment, locInfo) {
-      LocationInfo.call(this, locInfo);
-      this.type = "comment";
-      this.comment = comment;
-    }
-  };
-
-  // Must be exported as an object rather than the root of the module as the jison lexer
-  // most modify the object to operate properly.
-  __exports__ = AST;
-  return __exports__;
-})(__module5__);
-
-// handlebars/compiler/parser.js
-var __module9__ = (function() {
-  "use strict";
-  var __exports__;
-  /* jshint ignore:start */
-  /* Jison generated parser */
-  var handlebars = (function(){
-  var parser = {trace: function trace() { },
-  yy: {},
-  symbols_: {"error":2,"root":3,"statements":4,"EOF":5,"program":6,"simpleInverse":7,"statement":8,"openInverse":9,"closeBlock":10,"openBlock":11,"mustache":12,"partial":13,"CONTENT":14,"COMMENT":15,"OPEN_BLOCK":16,"sexpr":17,"CLOSE":18,"OPEN_INVERSE":19,"OPEN_ENDBLOCK":20,"path":21,"OPEN":22,"OPEN_UNESCAPED":23,"CLOSE_UNESCAPED":24,"OPEN_PARTIAL":25,"partialName":26,"partial_option0":27,"sexpr_repetition0":28,"sexpr_option0":29,"dataName":30,"param":31,"STRING":32,"INTEGER":33,"BOOLEAN":34,"OPEN_SEXPR":35,"CLOSE_SEXPR":36,"hash":37,"hash_repetition_plus0":38,"hashSegment":39,"ID":40,"EQUALS":41,"DATA":42,"pathSegments":43,"SEP":44,"$accept":0,"$end":1},
-  terminals_: {2:"error",5:"EOF",14:"CONTENT",15:"COMMENT",16:"OPEN_BLOCK",18:"CLOSE",19:"OPEN_INVERSE",20:"OPEN_ENDBLOCK",22:"OPEN",23:"OPEN_UNESCAPED",24:"CLOSE_UNESCAPED",25:"OPEN_PARTIAL",32:"STRING",33:"INTEGER",34:"BOOLEAN",35:"OPEN_SEXPR",36:"CLOSE_SEXPR",40:"ID",41:"EQUALS",42:"DATA",44:"SEP"},
-  productions_: [0,[3,2],[3,1],[6,2],[6,3],[6,2],[6,1],[6,1],[6,0],[4,1],[4,2],[8,3],[8,3],[8,1],[8,1],[8,1],[8,1],[11,3],[9,3],[10,3],[12,3],[12,3],[13,4],[7,2],[17,3],[17,1],[31,1],[31,1],[31,1],[31,1],[31,1],[31,3],[37,1],[39,3],[26,1],[26,1],[26,1],[30,2],[21,1],[43,3],[43,1],[27,0],[27,1],[28,0],[28,2],[29,0],[29,1],[38,1],[38,2]],
-  performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
-
-  var $0 = $$.length - 1;
-  switch (yystate) {
-  case 1: return new yy.ProgramNode($$[$0-1], this._$); 
-  break;
-  case 2: return new yy.ProgramNode([], this._$); 
-  break;
-  case 3:this.$ = new yy.ProgramNode([], $$[$0-1], $$[$0], this._$);
-  break;
-  case 4:this.$ = new yy.ProgramNode($$[$0-2], $$[$0-1], $$[$0], this._$);
-  break;
-  case 5:this.$ = new yy.ProgramNode($$[$0-1], $$[$0], [], this._$);
-  break;
-  case 6:this.$ = new yy.ProgramNode($$[$0], this._$);
-  break;
-  case 7:this.$ = new yy.ProgramNode([], this._$);
-  break;
-  case 8:this.$ = new yy.ProgramNode([], this._$);
-  break;
-  case 9:this.$ = [$$[$0]];
-  break;
-  case 10: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
-  break;
-  case 11:this.$ = new yy.BlockNode($$[$0-2], $$[$0-1].inverse, $$[$0-1], $$[$0], this._$);
-  break;
-  case 12:this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0-1].inverse, $$[$0], this._$);
-  break;
-  case 13:this.$ = $$[$0];
-  break;
-  case 14:this.$ = $$[$0];
-  break;
-  case 15:this.$ = new yy.ContentNode($$[$0], this._$);
-  break;
-  case 16:this.$ = new yy.CommentNode($$[$0], this._$);
-  break;
-  case 17:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], stripFlags($$[$0-2], $$[$0]), this._$);
-  break;
-  case 18:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], stripFlags($$[$0-2], $$[$0]), this._$);
-  break;
-  case 19:this.$ = {path: $$[$0-1], strip: stripFlags($$[$0-2], $$[$0])};
-  break;
-  case 20:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], stripFlags($$[$0-2], $$[$0]), this._$);
-  break;
-  case 21:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], stripFlags($$[$0-2], $$[$0]), this._$);
-  break;
-  case 22:this.$ = new yy.PartialNode($$[$0-2], $$[$0-1], stripFlags($$[$0-3], $$[$0]), this._$);
-  break;
-  case 23:this.$ = stripFlags($$[$0-1], $$[$0]);
-  break;
-  case 24:this.$ = new yy.SexprNode([$$[$0-2]].concat($$[$0-1]), $$[$0], this._$);
-  break;
-  case 25:this.$ = new yy.SexprNode([$$[$0]], null, this._$);
-  break;
-  case 26:this.$ = $$[$0];
-  break;
-  case 27:this.$ = new yy.StringNode($$[$0], this._$);
-  break;
-  case 28:this.$ = new yy.IntegerNode($$[$0], this._$);
-  break;
-  case 29:this.$ = new yy.BooleanNode($$[$0], this._$);
-  break;
-  case 30:this.$ = $$[$0];
-  break;
-  case 31:$$[$0-1].isHelper = true; this.$ = $$[$0-1];
-  break;
-  case 32:this.$ = new yy.HashNode($$[$0], this._$);
-  break;
-  case 33:this.$ = [$$[$0-2], $$[$0]];
-  break;
-  case 34:this.$ = new yy.PartialNameNode($$[$0], this._$);
-  break;
-  case 35:this.$ = new yy.PartialNameNode(new yy.StringNode($$[$0], this._$), this._$);
-  break;
-  case 36:this.$ = new yy.PartialNameNode(new yy.IntegerNode($$[$0], this._$));
-  break;
-  case 37:this.$ = new yy.DataNode($$[$0], this._$);
-  break;
-  case 38:this.$ = new yy.IdNode($$[$0], this._$);
-  break;
-  case 39: $$[$0-2].push({part: $$[$0], separator: $$[$0-1]}); this.$ = $$[$0-2]; 
-  break;
-  case 40:this.$ = [{part: $$[$0]}];
-  break;
-  case 43:this.$ = [];
-  break;
-  case 44:$$[$0-1].push($$[$0]);
-  break;
-  case 47:this.$ = [$$[$0]];
-  break;
-  case 48:$$[$0-1].push($$[$0]);
-  break;
-  }
-  },
-  table: [{3:1,4:2,5:[1,3],8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],22:[1,13],23:[1,14],25:[1,15]},{1:[3]},{5:[1,16],8:17,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],22:[1,13],23:[1,14],25:[1,15]},{1:[2,2]},{5:[2,9],14:[2,9],15:[2,9],16:[2,9],19:[2,9],20:[2,9],22:[2,9],23:[2,9],25:[2,9]},{4:20,6:18,7:19,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,21],20:[2,8],22:[1,13],23:[1,14],25:[1,15]},{4:20,6:22,7:19,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,21],20:[2,8],22:[1,13],23:[1,14],25:[1,15]},{5:[2,13],14:[2,13],15:[2,13],16:[2,13],19:[2,13],20:[2,13],22:[2,13],23:[2,13],25:[2,13]},{5:[2,14],14:[2,14],15:[2,14],16:[2,14],19:[2,14],20:[2,14],22:[2,14],23:[2,14],25:[2,14]},{5:[2,15],14:[2,15],15:[2,15],16:[2,15],19:[2,15],20:[2,15],22:[2,15],23:[2,15],25:[2,15]},{5:[2,16],14:[2,16],15:[2,16],16:[2,16],19:[2,16],20:[2,16],22:[2,16],23:[2,16],25:[2,16]},{17:23,21:24,30:25,40:[1,28],42:[1,27],43:26},{17:29,21:24,30:25,40:[1,28],42:[1,27],43:26},{17:30,21:24,30:25,40:[1,28],42:[1,27],43:26},{17:31,21:24,30:25,40:[1,28],42:[1,27],43:26},{21:33,26:32,32:[1,34],33:[1,35],40:[1,28],43:26},{1:[2,1]},{5:[2,10],14:[2,10],15:[2,10],16:[2,10],19:[2,10],20:[2,10],22:[2,10],23:[2,10],25:[2,10]},{10:36,20:[1,37]},{4:38,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,7],22:[1,13],23:[1,14],25:[1,15]},{7:39,8:17,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,21],20:[2,6],22:[1,13],23:[1,14],25:[1,15]},{17:23,18:[1,40],21:24,30:25,40:[1,28],42:[1,27],43:26},{10:41,20:[1,37]},{18:[1,42]},{18:[2,43],24:[2,43],28:43,32:[2,43],33:[2,43],34:[2,43],35:[2,43],36:[2,43],40:[2,43],42:[2,43]},{18:[2,25],24:[2,25],36:[2,25]},{18:[2,38],24:[2,38],32:[2,38],33:[2,38],34:[2,38],35:[2,38],36:[2,38],40:[2,38],42:[2,38],44:[1,44]},{21:45,40:[1,28],43:26},{18:[2,40],24:[2,40],32:[2,40],33:[2,40],34:[2,40],35:[2,40],36:[2,40],40:[2,40],42:[2,40],44:[2,40]},{18:[1,46]},{18:[1,47]},{24:[1,48]},{18:[2,41],21:50,27:49,40:[1,28],43:26},{18:[2,34],40:[2,34]},{18:[2,35],40:[2,35]},{18:[2,36],40:[2,36]},{5:[2,11],14:[2,11],15:[2,11],16:[2,11],19:[2,11],20:[2,11],22:[2,11],23:[2,11],25:[2,11]},{21:51,40:[1,28],43:26},{8:17,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,3],22:[1,13],23:[1,14],25:[1,15]},{4:52,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,5],22:[1,13],23:[1,14],25:[1,15]},{14:[2,23],15:[2,23],16:[2,23],19:[2,23],20:[2,23],22:[2,23],23:[2,23],25:[2,23]},{5:[2,12],14:[2,12],15:[2,12],16:[2,12],19:[2,12],20:[2,12],22:[2,12],23:[2,12],25:[2,12]},{14:[2,18],15:[2,18],16:[2,18],19:[2,18],20:[2,18],22:[2,18],23:[2,18],25:[2,18]},{18:[2,45],21:56,24:[2,45],29:53,30:60,31:54,32:[1,57],33:[1,58],34:[1,59],35:[1,61],36:[2,45],37:55,38:62,39:63,40:[1,64],42:[1,27],43:26},{40:[1,65]},{18:[2,37],24:[2,37],32:[2,37],33:[2,37],34:[2,37],35:[2,37],36:[2,37],40:[2,37],42:[2,37]},{14:[2,17],15:[2,17],16:[2,17],19:[2,17],20:[2,17],22:[2,17],23:[2,17],25:[2,17]},{5:[2,20],14:[2,20],15:[2,20],16:[2,20],19:[2,20],20:[2,20],22:[2,20],23:[2,20],25:[2,20]},{5:[2,21],14:[2,21],15:[2,21],16:[2,21],19:[2,21],20:[2,21],22:[2,21],23:[2,21],25:[2,21]},{18:[1,66]},{18:[2,42]},{18:[1,67]},{8:17,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,4],22:[1,13],23:[1,14],25:[1,15]},{18:[2,24],24:[2,24],36:[2,24]},{18:[2,44],24:[2,44],32:[2,44],33:[2,44],34:[2,44],35:[2,44],36:[2,44],40:[2,44],42:[2,44]},{18:[2,46],24:[2,46],36:[2,46]},{18:[2,26],24:[2,26],32:[2,26],33:[2,26],34:[2,26],35:[2,26],36:[2,26],40:[2,26],42:[2,26]},{18:[2,27],24:[2,27],32:[2,27],33:[2,27],34:[2,27],35:[2,27],36:[2,27],40:[2,27],42:[2,27]},{18:[2,28],24:[2,28],32:[2,28],33:[2,28],34:[2,28],35:[2,28],36:[2,28],40:[2,28],42:[2,28]},{18:[2,29],24:[2,29],32:[2,29],33:[2,29],34:[2,29],35:[2,29],36:[2,29],40:[2,29],42:[2,29]},{18:[2,30],24:[2,30],32:[2,30],33:[2,30],34:[2,30],35:[2,30],36:[2,30],40:[2,30],42:[2,30]},{17:68,21:24,30:25,40:[1,28],42:[1,27],43:26},{18:[2,32],24:[2,32],36:[2,32],39:69,40:[1,70]},{18:[2,47],24:[2,47],36:[2,47],40:[2,47]},{18:[2,40],24:[2,40],32:[2,40],33:[2,40],34:[2,40],35:[2,40],36:[2,40],40:[2,40],41:[1,71],42:[2,40],44:[2,40]},{18:[2,39],24:[2,39],32:[2,39],33:[2,39],34:[2,39],35:[2,39],36:[2,39],40:[2,39],42:[2,39],44:[2,39]},{5:[2,22],14:[2,22],15:[2,22],16:[2,22],19:[2,22],20:[2,22],22:[2,22],23:[2,22],25:[2,22]},{5:[2,19],14:[2,19],15:[2,19],16:[2,19],19:[2,19],20:[2,19],22:[2,19],23:[2,19],25:[2,19]},{36:[1,72]},{18:[2,48],24:[2,48],36:[2,48],40:[2,48]},{41:[1,71]},{21:56,30:60,31:73,32:[1,57],33:[1,58],34:[1,59],35:[1,61],40:[1,28],42:[1,27],43:26},{18:[2,31],24:[2,31],32:[2,31],33:[2,31],34:[2,31],35:[2,31],36:[2,31],40:[2,31],42:[2,31]},{18:[2,33],24:[2,33],36:[2,33],40:[2,33]}],
-  defaultActions: {3:[2,2],16:[2,1],50:[2,42]},
-  parseError: function parseError(str, hash) {
-      throw new Error(str);
-  },
-  parse: function parse(input) {
-      var self = this, stack = [0], vstack = [null], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-      this.lexer.setInput(input);
-      this.lexer.yy = this.yy;
-      this.yy.lexer = this.lexer;
-      this.yy.parser = this;
-      if (typeof this.lexer.yylloc == "undefined")
-          this.lexer.yylloc = {};
-      var yyloc = this.lexer.yylloc;
-      lstack.push(yyloc);
-      var ranges = this.lexer.options && this.lexer.options.ranges;
-      if (typeof this.yy.parseError === "function")
-          this.parseError = this.yy.parseError;
-      function popStack(n) {
-          stack.length = stack.length - 2 * n;
-          vstack.length = vstack.length - n;
-          lstack.length = lstack.length - n;
-      }
-      function lex() {
-          var token;
-          token = self.lexer.lex() || 1;
-          if (typeof token !== "number") {
-              token = self.symbols_[token] || token;
-          }
-          return token;
-      }
-      var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-      while (true) {
-          state = stack[stack.length - 1];
-          if (this.defaultActions[state]) {
-              action = this.defaultActions[state];
-          } else {
-              if (symbol === null || typeof symbol == "undefined") {
-                  symbol = lex();
-              }
-              action = table[state] && table[state][symbol];
-          }
-          if (typeof action === "undefined" || !action.length || !action[0]) {
-              var errStr = "";
-              if (!recovering) {
-                  expected = [];
-                  for (p in table[state])
-                      if (this.terminals_[p] && p > 2) {
-                          expected.push("'" + this.terminals_[p] + "'");
-                      }
-                  if (this.lexer.showPosition) {
-                      errStr = "Parse error on line " + (yylineno + 1) + ":\n" + this.lexer.showPosition() + "\nExpecting " + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symbol) + "'";
-                  } else {
-                      errStr = "Parse error on line " + (yylineno + 1) + ": Unexpected " + (symbol == 1?"end of input":"'" + (this.terminals_[symbol] || symbol) + "'");
-                  }
-                  this.parseError(errStr, {text: this.lexer.match, token: this.terminals_[symbol] || symbol, line: this.lexer.yylineno, loc: yyloc, expected: expected});
-              }
-          }
-          if (action[0] instanceof Array && action.length > 1) {
-              throw new Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
-          }
-          switch (action[0]) {
-          case 1:
-              stack.push(symbol);
-              vstack.push(this.lexer.yytext);
-              lstack.push(this.lexer.yylloc);
-              stack.push(action[1]);
-              symbol = null;
-              if (!preErrorSymbol) {
-                  yyleng = this.lexer.yyleng;
-                  yytext = this.lexer.yytext;
-                  yylineno = this.lexer.yylineno;
-                  yyloc = this.lexer.yylloc;
-                  if (recovering > 0)
-                      recovering--;
-              } else {
-                  symbol = preErrorSymbol;
-                  preErrorSymbol = null;
-              }
-              break;
-          case 2:
-              len = this.productions_[action[1]][1];
-              yyval.$ = vstack[vstack.length - len];
-              yyval._$ = {first_line: lstack[lstack.length - (len || 1)].first_line, last_line: lstack[lstack.length - 1].last_line, first_column: lstack[lstack.length - (len || 1)].first_column, last_column: lstack[lstack.length - 1].last_column};
-              if (ranges) {
-                  yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
-              }
-              r = this.performAction.call(yyval, yytext, yyleng, yylineno, this.yy, action[1], vstack, lstack);
-              if (typeof r !== "undefined") {
-                  return r;
-              }
-              if (len) {
-                  stack = stack.slice(0, -1 * len * 2);
-                  vstack = vstack.slice(0, -1 * len);
-                  lstack = lstack.slice(0, -1 * len);
-              }
-              stack.push(this.productions_[action[1]][0]);
-              vstack.push(yyval.$);
-              lstack.push(yyval._$);
-              newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-              stack.push(newState);
-              break;
-          case 3:
-              return true;
-          }
-      }
-      return true;
-  }
-  };
-
-
-  function stripFlags(open, close) {
-    return {
-      left: open.charAt(2) === '~',
-      right: close.charAt(0) === '~' || close.charAt(1) === '~'
-    };
-  }
-
-  /* Jison generated lexer */
-  var lexer = (function(){
-  var lexer = ({EOF:1,
-  parseError:function parseError(str, hash) {
-          if (this.yy.parser) {
-              this.yy.parser.parseError(str, hash);
-          } else {
-              throw new Error(str);
-          }
-      },
-  setInput:function (input) {
-          this._input = input;
-          this._more = this._less = this.done = false;
-          this.yylineno = this.yyleng = 0;
-          this.yytext = this.matched = this.match = '';
-          this.conditionStack = ['INITIAL'];
-          this.yylloc = {first_line:1,first_column:0,last_line:1,last_column:0};
-          if (this.options.ranges) this.yylloc.range = [0,0];
-          this.offset = 0;
-          return this;
-      },
-  input:function () {
-          var ch = this._input[0];
-          this.yytext += ch;
-          this.yyleng++;
-          this.offset++;
-          this.match += ch;
-          this.matched += ch;
-          var lines = ch.match(/(?:\r\n?|\n).*/g);
-          if (lines) {
-              this.yylineno++;
-              this.yylloc.last_line++;
-          } else {
-              this.yylloc.last_column++;
-          }
-          if (this.options.ranges) this.yylloc.range[1]++;
-
-          this._input = this._input.slice(1);
-          return ch;
-      },
-  unput:function (ch) {
-          var len = ch.length;
-          var lines = ch.split(/(?:\r\n?|\n)/g);
-
-          this._input = ch + this._input;
-          this.yytext = this.yytext.substr(0, this.yytext.length-len-1);
-          //this.yyleng -= len;
-          this.offset -= len;
-          var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-          this.match = this.match.substr(0, this.match.length-1);
-          this.matched = this.matched.substr(0, this.matched.length-1);
-
-          if (lines.length-1) this.yylineno -= lines.length-1;
-          var r = this.yylloc.range;
-
-          this.yylloc = {first_line: this.yylloc.first_line,
-            last_line: this.yylineno+1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length:
-                this.yylloc.first_column - len
-            };
-
-          if (this.options.ranges) {
-              this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-          }
-          return this;
-      },
-  more:function () {
-          this._more = true;
-          return this;
-      },
-  less:function (n) {
-          this.unput(this.match.slice(n));
-      },
-  pastInput:function () {
-          var past = this.matched.substr(0, this.matched.length - this.match.length);
-          return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-      },
-  upcomingInput:function () {
-          var next = this.match;
-          if (next.length < 20) {
-              next += this._input.substr(0, 20-next.length);
-          }
-          return (next.substr(0,20)+(next.length > 20 ? '...':'')).replace(/\n/g, "");
-      },
-  showPosition:function () {
-          var pre = this.pastInput();
-          var c = new Array(pre.length + 1).join("-");
-          return pre + this.upcomingInput() + "\n" + c+"^";
-      },
-  next:function () {
-          if (this.done) {
-              return this.EOF;
-          }
-          if (!this._input) this.done = true;
-
-          var token,
-              match,
-              tempMatch,
-              index,
-              col,
-              lines;
-          if (!this._more) {
-              this.yytext = '';
-              this.match = '';
-          }
-          var rules = this._currentRules();
-          for (var i=0;i < rules.length; i++) {
-              tempMatch = this._input.match(this.rules[rules[i]]);
-              if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                  match = tempMatch;
-                  index = i;
-                  if (!this.options.flex) break;
-              }
-          }
-          if (match) {
-              lines = match[0].match(/(?:\r\n?|\n).*/g);
-              if (lines) this.yylineno += lines.length;
-              this.yylloc = {first_line: this.yylloc.last_line,
-                             last_line: this.yylineno+1,
-                             first_column: this.yylloc.last_column,
-                             last_column: lines ? lines[lines.length-1].length-lines[lines.length-1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length};
-              this.yytext += match[0];
-              this.match += match[0];
-              this.matches = match;
-              this.yyleng = this.yytext.length;
-              if (this.options.ranges) {
-                  this.yylloc.range = [this.offset, this.offset += this.yyleng];
-              }
-              this._more = false;
-              this._input = this._input.slice(match[0].length);
-              this.matched += match[0];
-              token = this.performAction.call(this, this.yy, this, rules[index],this.conditionStack[this.conditionStack.length-1]);
-              if (this.done && this._input) this.done = false;
-              if (token) return token;
-              else return;
-          }
-          if (this._input === "") {
-              return this.EOF;
-          } else {
-              return this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(),
-                      {text: "", token: null, line: this.yylineno});
-          }
-      },
-  lex:function lex() {
-          var r = this.next();
-          if (typeof r !== 'undefined') {
-              return r;
-          } else {
-              return this.lex();
-          }
-      },
-  begin:function begin(condition) {
-          this.conditionStack.push(condition);
-      },
-  popState:function popState() {
-          return this.conditionStack.pop();
-      },
-  _currentRules:function _currentRules() {
-          return this.conditions[this.conditionStack[this.conditionStack.length-1]].rules;
-      },
-  topState:function () {
-          return this.conditionStack[this.conditionStack.length-2];
-      },
-  pushState:function begin(condition) {
-          this.begin(condition);
-      }});
-  lexer.options = {};
-  lexer.performAction = function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-
-
-  function strip(start, end) {
-    return yy_.yytext = yy_.yytext.substr(start, yy_.yyleng-end);
-  }
-
-
-  var YYSTATE=YY_START
-  switch($avoiding_name_collisions) {
-  case 0:
-                                     if(yy_.yytext.slice(-2) === "\\\\") {
-                                       strip(0,1);
-                                       this.begin("mu");
-                                     } else if(yy_.yytext.slice(-1) === "\\") {
-                                       strip(0,1);
-                                       this.begin("emu");
-                                     } else {
-                                       this.begin("mu");
-                                     }
-                                     if(yy_.yytext) return 14;
-                                   
-  break;
-  case 1:return 14;
-  break;
-  case 2:
-                                     this.popState();
-                                     return 14;
-                                   
-  break;
-  case 3:strip(0,4); this.popState(); return 15;
-  break;
-  case 4:return 35;
-  break;
-  case 5:return 36;
-  break;
-  case 6:return 25;
-  break;
-  case 7:return 16;
-  break;
-  case 8:return 20;
-  break;
-  case 9:return 19;
-  break;
-  case 10:return 19;
-  break;
-  case 11:return 23;
-  break;
-  case 12:return 22;
-  break;
-  case 13:this.popState(); this.begin('com');
-  break;
-  case 14:strip(3,5); this.popState(); return 15;
-  break;
-  case 15:return 22;
-  break;
-  case 16:return 41;
-  break;
-  case 17:return 40;
-  break;
-  case 18:return 40;
-  break;
-  case 19:return 44;
-  break;
-  case 20:// ignore whitespace
-  break;
-  case 21:this.popState(); return 24;
-  break;
-  case 22:this.popState(); return 18;
-  break;
-  case 23:yy_.yytext = strip(1,2).replace(/\\"/g,'"'); return 32;
-  break;
-  case 24:yy_.yytext = strip(1,2).replace(/\\'/g,"'"); return 32;
-  break;
-  case 25:return 42;
-  break;
-  case 26:return 34;
-  break;
-  case 27:return 34;
-  break;
-  case 28:return 33;
-  break;
-  case 29:return 40;
-  break;
-  case 30:yy_.yytext = strip(1,2); return 40;
-  break;
-  case 31:return 'INVALID';
-  break;
-  case 32:return 5;
-  break;
-  }
-  };
-  lexer.rules = [/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|\\\{\{|\\\\\{\{|$)))/,/^(?:[\s\S]*?--\}\})/,/^(?:\()/,/^(?:\))/,/^(?:\{\{(~)?>)/,/^(?:\{\{(~)?#)/,/^(?:\{\{(~)?\/)/,/^(?:\{\{(~)?\^)/,/^(?:\{\{(~)?\s*else\b)/,/^(?:\{\{(~)?\{)/,/^(?:\{\{(~)?&)/,/^(?:\{\{!--)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{(~)?)/,/^(?:=)/,/^(?:\.\.)/,/^(?:\.(?=([=~}\s\/.)])))/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}(~)?\}\})/,/^(?:(~)?\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@)/,/^(?:true(?=([~}\s)])))/,/^(?:false(?=([~}\s)])))/,/^(?:-?[0-9]+(?=([~}\s)])))/,/^(?:([^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=([=~}\s\/.)]))))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:$)/];
-  lexer.conditions = {"mu":{"rules":[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32],"inclusive":false},"emu":{"rules":[2],"inclusive":false},"com":{"rules":[3],"inclusive":false},"INITIAL":{"rules":[0,1,32],"inclusive":true}};
-  return lexer;})()
-  parser.lexer = lexer;
-  function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
-  return new Parser;
-  })();__exports__ = handlebars;
-  /* jshint ignore:end */
-  return __exports__;
-})();
-
-// handlebars/compiler/base.js
-var __module8__ = (function(__dependency1__, __dependency2__) {
-  "use strict";
-  var __exports__ = {};
-  var parser = __dependency1__;
-  var AST = __dependency2__;
-
-  __exports__.parser = parser;
-
-  function parse(input) {
-    // Just return if an already-compile AST was passed in.
-    if(input.constructor === AST.ProgramNode) { return input; }
-
-    parser.yy = AST;
-    return parser.parse(input);
-  }
-
-  __exports__.parse = parse;
-  return __exports__;
-})(__module9__, __module7__);
-
-// handlebars/compiler/compiler.js
-var __module10__ = (function(__dependency1__) {
-  "use strict";
-  var __exports__ = {};
-  var Exception = __dependency1__;
-
-  function Compiler() {}
-
-  __exports__.Compiler = Compiler;// the foundHelper register will disambiguate helper lookup from finding a
-  // function in a context. This is necessary for mustache compatibility, which
-  // requires that context functions in blocks are evaluated by blockHelperMissing,
-  // and then proceed as if the resulting value was provided to blockHelperMissing.
-
-  Compiler.prototype = {
-    compiler: Compiler,
-
-    disassemble: function() {
-      var opcodes = this.opcodes, opcode, out = [], params, param;
-
-      for (var i=0, l=opcodes.length; i<l; i++) {
-        opcode = opcodes[i];
-
-        if (opcode.opcode === 'DECLARE') {
-          out.push("DECLARE " + opcode.name + "=" + opcode.value);
-        } else {
-          params = [];
-          for (var j=0; j<opcode.args.length; j++) {
-            param = opcode.args[j];
-            if (typeof param === "string") {
-              param = "\"" + param.replace("\n", "\\n") + "\"";
-            }
-            params.push(param);
-          }
-          out.push(opcode.opcode + " " + params.join(" "));
-        }
-      }
-
-      return out.join("\n");
-    },
-
-    equals: function(other) {
-      var len = this.opcodes.length;
-      if (other.opcodes.length !== len) {
-        return false;
-      }
-
-      for (var i = 0; i < len; i++) {
-        var opcode = this.opcodes[i],
-            otherOpcode = other.opcodes[i];
-        if (opcode.opcode !== otherOpcode.opcode || opcode.args.length !== otherOpcode.args.length) {
-          return false;
-        }
-        for (var j = 0; j < opcode.args.length; j++) {
-          if (opcode.args[j] !== otherOpcode.args[j]) {
-            return false;
-          }
-        }
-      }
-
-      len = this.children.length;
-      if (other.children.length !== len) {
-        return false;
-      }
-      for (i = 0; i < len; i++) {
-        if (!this.children[i].equals(other.children[i])) {
-          return false;
-        }
-      }
-
-      return true;
-    },
-
-    guid: 0,
-
-    compile: function(program, options) {
-      this.opcodes = [];
-      this.children = [];
-      this.depths = {list: []};
-      this.options = options;
-
-      // These changes will propagate to the other compiler components
-      var knownHelpers = this.options.knownHelpers;
-      this.options.knownHelpers = {
-        'helperMissing': true,
-        'blockHelperMissing': true,
-        'each': true,
-        'if': true,
-        'unless': true,
-        'with': true,
-        'log': true
-      };
-      if (knownHelpers) {
-        for (var name in knownHelpers) {
-          this.options.knownHelpers[name] = knownHelpers[name];
-        }
-      }
-
-      return this.accept(program);
-    },
-
-    accept: function(node) {
-      var strip = node.strip || {},
-          ret;
-      if (strip.left) {
-        this.opcode('strip');
-      }
-
-      ret = this[node.type](node);
-
-      if (strip.right) {
-        this.opcode('strip');
-      }
-
-      return ret;
-    },
-
-    program: function(program) {
-      var statements = program.statements;
-
-      for(var i=0, l=statements.length; i<l; i++) {
-        this.accept(statements[i]);
-      }
-      this.isSimple = l === 1;
-
-      this.depths.list = this.depths.list.sort(function(a, b) {
-        return a - b;
-      });
-
-      return this;
-    },
-
-    compileProgram: function(program) {
-      var result = new this.compiler().compile(program, this.options);
-      var guid = this.guid++, depth;
-
-      this.usePartial = this.usePartial || result.usePartial;
-
-      this.children[guid] = result;
-
-      for(var i=0, l=result.depths.list.length; i<l; i++) {
-        depth = result.depths.list[i];
-
-        if(depth < 2) { continue; }
-        else { this.addDepth(depth - 1); }
-      }
-
-      return guid;
-    },
-
-    block: function(block) {
-      var mustache = block.mustache,
-          program = block.program,
-          inverse = block.inverse;
-
-      if (program) {
-        program = this.compileProgram(program);
-      }
-
-      if (inverse) {
-        inverse = this.compileProgram(inverse);
-      }
-
-      var sexpr = mustache.sexpr;
-      var type = this.classifySexpr(sexpr);
-
-      if (type === "helper") {
-        this.helperSexpr(sexpr, program, inverse);
-      } else if (type === "simple") {
-        this.simpleSexpr(sexpr);
-
-        // now that the simple mustache is resolved, we need to
-        // evaluate it by executing `blockHelperMissing`
-        this.opcode('pushProgram', program);
-        this.opcode('pushProgram', inverse);
-        this.opcode('emptyHash');
-        this.opcode('blockValue');
-      } else {
-        this.ambiguousSexpr(sexpr, program, inverse);
-
-        // now that the simple mustache is resolved, we need to
-        // evaluate it by executing `blockHelperMissing`
-        this.opcode('pushProgram', program);
-        this.opcode('pushProgram', inverse);
-        this.opcode('emptyHash');
-        this.opcode('ambiguousBlockValue');
-      }
-
-      this.opcode('append');
-    },
-
-    hash: function(hash) {
-      var pairs = hash.pairs, pair, val;
-
-      this.opcode('pushHash');
-
-      for(var i=0, l=pairs.length; i<l; i++) {
-        pair = pairs[i];
-        val  = pair[1];
-
-        if (this.options.stringParams) {
-          if(val.depth) {
-            this.addDepth(val.depth);
-          }
-          this.opcode('getContext', val.depth || 0);
-          this.opcode('pushStringParam', val.stringModeValue, val.type);
-
-          if (val.type === 'sexpr') {
-            // Subexpressions get evaluated and passed in
-            // in string params mode.
-            this.sexpr(val);
-          }
-        } else {
-          this.accept(val);
-        }
-
-        this.opcode('assignToHash', pair[0]);
-      }
-      this.opcode('popHash');
-    },
-
-    partial: function(partial) {
-      var partialName = partial.partialName;
-      this.usePartial = true;
-
-      if(partial.context) {
-        this.ID(partial.context);
-      } else {
-        this.opcode('push', 'depth0');
-      }
-
-      this.opcode('invokePartial', partialName.name);
-      this.opcode('append');
-    },
-
-    content: function(content) {
-      this.opcode('appendContent', content.string);
-    },
-
-    mustache: function(mustache) {
-      this.sexpr(mustache.sexpr);
-
-      if(mustache.escaped && !this.options.noEscape) {
-        this.opcode('appendEscaped');
-      } else {
-        this.opcode('append');
-      }
-    },
-
-    ambiguousSexpr: function(sexpr, program, inverse) {
-      var id = sexpr.id,
-          name = id.parts[0],
-          isBlock = program != null || inverse != null;
-
-      this.opcode('getContext', id.depth);
-
-      this.opcode('pushProgram', program);
-      this.opcode('pushProgram', inverse);
-
-      this.opcode('invokeAmbiguous', name, isBlock);
-    },
-
-    simpleSexpr: function(sexpr) {
-      var id = sexpr.id;
-
-      if (id.type === 'DATA') {
-        this.DATA(id);
-      } else if (id.parts.length) {
-        this.ID(id);
-      } else {
-        // Simplified ID for `this`
-        this.addDepth(id.depth);
-        this.opcode('getContext', id.depth);
-        this.opcode('pushContext');
-      }
-
-      this.opcode('resolvePossibleLambda');
-    },
-
-    helperSexpr: function(sexpr, program, inverse) {
-      var params = this.setupFullMustacheParams(sexpr, program, inverse),
-          name = sexpr.id.parts[0];
-
-      if (this.options.knownHelpers[name]) {
-        this.opcode('invokeKnownHelper', params.length, name);
-      } else if (this.options.knownHelpersOnly) {
-        throw new Exception("You specified knownHelpersOnly, but used the unknown helper " + name, sexpr);
-      } else {
-        this.opcode('invokeHelper', params.length, name, sexpr.isRoot);
-      }
-    },
-
-    sexpr: function(sexpr) {
-      var type = this.classifySexpr(sexpr);
-
-      if (type === "simple") {
-        this.simpleSexpr(sexpr);
-      } else if (type === "helper") {
-        this.helperSexpr(sexpr);
-      } else {
-        this.ambiguousSexpr(sexpr);
-      }
-    },
-
-    ID: function(id) {
-      this.addDepth(id.depth);
-      this.opcode('getContext', id.depth);
-
-      var name = id.parts[0];
-      if (!name) {
-        this.opcode('pushContext');
-      } else {
-        this.opcode('lookupOnContext', id.parts[0]);
-      }
-
-      for(var i=1, l=id.parts.length; i<l; i++) {
-        this.opcode('lookup', id.parts[i]);
-      }
-    },
-
-    DATA: function(data) {
-      this.options.data = true;
-      if (data.id.isScoped || data.id.depth) {
-        throw new Exception('Scoped data references are not supported: ' + data.original, data);
-      }
-
-      this.opcode('lookupData');
-      var parts = data.id.parts;
-      for(var i=0, l=parts.length; i<l; i++) {
-        this.opcode('lookup', parts[i]);
-      }
-    },
-
-    STRING: function(string) {
-      this.opcode('pushString', string.string);
-    },
-
-    INTEGER: function(integer) {
-      this.opcode('pushLiteral', integer.integer);
-    },
-
-    BOOLEAN: function(bool) {
-      this.opcode('pushLiteral', bool.bool);
-    },
-
-    comment: function() {},
-
-    // HELPERS
-    opcode: function(name) {
-      this.opcodes.push({ opcode: name, args: [].slice.call(arguments, 1) });
-    },
-
-    declare: function(name, value) {
-      this.opcodes.push({ opcode: 'DECLARE', name: name, value: value });
-    },
-
-    addDepth: function(depth) {
-      if(depth === 0) { return; }
-
-      if(!this.depths[depth]) {
-        this.depths[depth] = true;
-        this.depths.list.push(depth);
-      }
-    },
-
-    classifySexpr: function(sexpr) {
-      var isHelper   = sexpr.isHelper;
-      var isEligible = sexpr.eligibleHelper;
-      var options    = this.options;
-
-      // if ambiguous, we can possibly resolve the ambiguity now
-      if (isEligible && !isHelper) {
-        var name = sexpr.id.parts[0];
-
-        if (options.knownHelpers[name]) {
-          isHelper = true;
-        } else if (options.knownHelpersOnly) {
-          isEligible = false;
-        }
-      }
-
-      if (isHelper) { return "helper"; }
-      else if (isEligible) { return "ambiguous"; }
-      else { return "simple"; }
-    },
-
-    pushParams: function(params) {
-      var i = params.length, param;
-
-      while(i--) {
-        param = params[i];
-
-        if(this.options.stringParams) {
-          if(param.depth) {
-            this.addDepth(param.depth);
-          }
-
-          this.opcode('getContext', param.depth || 0);
-          this.opcode('pushStringParam', param.stringModeValue, param.type);
-
-          if (param.type === 'sexpr') {
-            // Subexpressions get evaluated and passed in
-            // in string params mode.
-            this.sexpr(param);
-          }
-        } else {
-          this[param.type](param);
-        }
-      }
-    },
-
-    setupFullMustacheParams: function(sexpr, program, inverse) {
-      var params = sexpr.params;
-      this.pushParams(params);
-
-      this.opcode('pushProgram', program);
-      this.opcode('pushProgram', inverse);
-
-      if (sexpr.hash) {
-        this.hash(sexpr.hash);
-      } else {
-        this.opcode('emptyHash');
-      }
-
-      return params;
-    }
-  };
-
-  function precompile(input, options, env) {
-    if (input == null || (typeof input !== 'string' && input.constructor !== env.AST.ProgramNode)) {
-      throw new Exception("You must pass a string or Handlebars AST to Handlebars.precompile. You passed " + input);
-    }
-
-    options = options || {};
-    if (!('data' in options)) {
-      options.data = true;
-    }
-
-    var ast = env.parse(input);
-    var environment = new env.Compiler().compile(ast, options);
-    return new env.JavaScriptCompiler().compile(environment, options);
-  }
-
-  __exports__.precompile = precompile;function compile(input, options, env) {
-    if (input == null || (typeof input !== 'string' && input.constructor !== env.AST.ProgramNode)) {
-      throw new Exception("You must pass a string or Handlebars AST to Handlebars.compile. You passed " + input);
-    }
-
-    options = options || {};
-
-    if (!('data' in options)) {
-      options.data = true;
-    }
-
-    var compiled;
-
-    function compileInput() {
-      var ast = env.parse(input);
-      var environment = new env.Compiler().compile(ast, options);
-      var templateSpec = new env.JavaScriptCompiler().compile(environment, options, undefined, true);
-      return env.template(templateSpec);
-    }
-
-    // Template is only compiled on first use and cached after that point.
-    return function(context, options) {
-      if (!compiled) {
-        compiled = compileInput();
-      }
-      return compiled.call(this, context, options);
-    };
-  }
-
-  __exports__.compile = compile;
-  return __exports__;
-})(__module5__);
-
-// handlebars/compiler/javascript-compiler.js
-var __module11__ = (function(__dependency1__, __dependency2__) {
-  "use strict";
-  var __exports__;
-  var COMPILER_REVISION = __dependency1__.COMPILER_REVISION;
-  var REVISION_CHANGES = __dependency1__.REVISION_CHANGES;
-  var log = __dependency1__.log;
-  var Exception = __dependency2__;
-
-  function Literal(value) {
-    this.value = value;
-  }
-
-  function JavaScriptCompiler() {}
-
-  JavaScriptCompiler.prototype = {
-    // PUBLIC API: You can override these methods in a subclass to provide
-    // alternative compiled forms for name lookup and buffering semantics
-    nameLookup: function(parent, name /* , type*/) {
-      var wrap,
-          ret;
-      if (parent.indexOf('depth') === 0) {
-        wrap = true;
-      }
-
-      if (/^[0-9]+$/.test(name)) {
-        ret = parent + "[" + name + "]";
-      } else if (JavaScriptCompiler.isValidJavaScriptVariableName(name)) {
-        ret = parent + "." + name;
-      }
-      else {
-        ret = parent + "['" + name + "']";
-      }
-
-      if (wrap) {
-        return '(' + parent + ' && ' + ret + ')';
-      } else {
-        return ret;
-      }
-    },
-
-    compilerInfo: function() {
-      var revision = COMPILER_REVISION,
-          versions = REVISION_CHANGES[revision];
-      return "this.compilerInfo = ["+revision+",'"+versions+"'];\n";
-    },
-
-    appendToBuffer: function(string) {
-      if (this.environment.isSimple) {
-        return "return " + string + ";";
-      } else {
-        return {
-          appendToBuffer: true,
-          content: string,
-          toString: function() { return "buffer += " + string + ";"; }
-        };
-      }
-    },
-
-    initializeBuffer: function() {
-      return this.quotedString("");
-    },
-
-    namespace: "Handlebars",
-    // END PUBLIC API
-
-    compile: function(environment, options, context, asObject) {
-      this.environment = environment;
-      this.options = options || {};
-
-      log('debug', this.environment.disassemble() + "\n\n");
-
-      this.name = this.environment.name;
-      this.isChild = !!context;
-      this.context = context || {
-        programs: [],
-        environments: [],
-        aliases: { }
-      };
-
-      this.preamble();
-
-      this.stackSlot = 0;
-      this.stackVars = [];
-      this.registers = { list: [] };
-      this.hashes = [];
-      this.compileStack = [];
-      this.inlineStack = [];
-
-      this.compileChildren(environment, options);
-
-      var opcodes = environment.opcodes, opcode;
-
-      this.i = 0;
-
-      for(var l=opcodes.length; this.i<l; this.i++) {
-        opcode = opcodes[this.i];
-
-        if(opcode.opcode === 'DECLARE') {
-          this[opcode.name] = opcode.value;
-        } else {
-          this[opcode.opcode].apply(this, opcode.args);
-        }
-
-        // Reset the stripNext flag if it was not set by this operation.
-        if (opcode.opcode !== this.stripNext) {
-          this.stripNext = false;
-        }
-      }
-
-      // Flush any trailing content that might be pending.
-      this.pushSource('');
-
-      if (this.stackSlot || this.inlineStack.length || this.compileStack.length) {
-        throw new Exception('Compile completed with content left on stack');
-      }
-
-      return this.createFunctionContext(asObject);
-    },
-
-    preamble: function() {
-      var out = [];
-
-      if (!this.isChild) {
-        var namespace = this.namespace;
-
-        var copies = "helpers = this.merge(helpers, " + namespace + ".helpers);";
-        if (this.environment.usePartial) { copies = copies + " partials = this.merge(partials, " + namespace + ".partials);"; }
-        if (this.options.data) { copies = copies + " data = data || {};"; }
-        out.push(copies);
-      } else {
-        out.push('');
-      }
-
-      if (!this.environment.isSimple) {
-        out.push(", buffer = " + this.initializeBuffer());
-      } else {
-        out.push("");
-      }
-
-      // track the last context pushed into place to allow skipping the
-      // getContext opcode when it would be a noop
-      this.lastContext = 0;
-      this.source = out;
-    },
-
-    createFunctionContext: function(asObject) {
-      var locals = this.stackVars.concat(this.registers.list);
-
-      if(locals.length > 0) {
-        this.source[1] = this.source[1] + ", " + locals.join(", ");
-      }
-
-      // Generate minimizer alias mappings
-      if (!this.isChild) {
-        for (var alias in this.context.aliases) {
-          if (this.context.aliases.hasOwnProperty(alias)) {
-            this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
-          }
-        }
-      }
-
-      if (this.source[1]) {
-        this.source[1] = "var " + this.source[1].substring(2) + ";";
-      }
-
-      // Merge children
-      if (!this.isChild) {
-        this.source[1] += '\n' + this.context.programs.join('\n') + '\n';
-      }
-
-      if (!this.environment.isSimple) {
-        this.pushSource("return buffer;");
-      }
-
-      var params = this.isChild ? ["depth0", "data"] : ["Handlebars", "depth0", "helpers", "partials", "data"];
-
-      for(var i=0, l=this.environment.depths.list.length; i<l; i++) {
-        params.push("depth" + this.environment.depths.list[i]);
-      }
-
-      // Perform a second pass over the output to merge content when possible
-      var source = this.mergeSource();
-
-      if (!this.isChild) {
-        source = this.compilerInfo()+source;
-      }
-
-      if (asObject) {
-        params.push(source);
-
-        return Function.apply(this, params);
-      } else {
-        var functionSource = 'function ' + (this.name || '') + '(' + params.join(',') + ') {\n  ' + source + '}';
-        log('debug', functionSource + "\n\n");
-        return functionSource;
-      }
-    },
-    mergeSource: function() {
-      // WARN: We are not handling the case where buffer is still populated as the source should
-      // not have buffer append operations as their final action.
-      var source = '',
-          buffer;
-      for (var i = 0, len = this.source.length; i < len; i++) {
-        var line = this.source[i];
-        if (line.appendToBuffer) {
-          if (buffer) {
-            buffer = buffer + '\n    + ' + line.content;
-          } else {
-            buffer = line.content;
-          }
-        } else {
-          if (buffer) {
-            source += 'buffer += ' + buffer + ';\n  ';
-            buffer = undefined;
-          }
-          source += line + '\n  ';
-        }
-      }
-      return source;
-    },
-
-    // [blockValue]
-    //
-    // On stack, before: hash, inverse, program, value
-    // On stack, after: return value of blockHelperMissing
-    //
-    // The purpose of this opcode is to take a block of the form
-    // `{{#foo}}...{{/foo}}`, resolve the value of `foo`, and
-    // replace it on the stack with the result of properly
-    // invoking blockHelperMissing.
-    blockValue: function() {
-      this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
-
-      var params = ["depth0"];
-      this.setupParams(0, params);
-
-      this.replaceStack(function(current) {
-        params.splice(1, 0, current);
-        return "blockHelperMissing.call(" + params.join(", ") + ")";
-      });
-    },
-
-    // [ambiguousBlockValue]
-    //
-    // On stack, before: hash, inverse, program, value
-    // Compiler value, before: lastHelper=value of last found helper, if any
-    // On stack, after, if no lastHelper: same as [blockValue]
-    // On stack, after, if lastHelper: value
-    ambiguousBlockValue: function() {
-      this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
-
-      var params = ["depth0"];
-      this.setupParams(0, params);
-
-      var current = this.topStack();
-      params.splice(1, 0, current);
-
-      this.pushSource("if (!" + this.lastHelper + ") { " + current + " = blockHelperMissing.call(" + params.join(", ") + "); }");
-    },
-
-    // [appendContent]
-    //
-    // On stack, before: ...
-    // On stack, after: ...
-    //
-    // Appends the string value of `content` to the current buffer
-    appendContent: function(content) {
-      if (this.pendingContent) {
-        content = this.pendingContent + content;
-      }
-      if (this.stripNext) {
-        content = content.replace(/^\s+/, '');
-      }
-
-      this.pendingContent = content;
-    },
-
-    // [strip]
-    //
-    // On stack, before: ...
-    // On stack, after: ...
-    //
-    // Removes any trailing whitespace from the prior content node and flags
-    // the next operation for stripping if it is a content node.
-    strip: function() {
-      if (this.pendingContent) {
-        this.pendingContent = this.pendingContent.replace(/\s+$/, '');
-      }
-      this.stripNext = 'strip';
-    },
-
-    // [append]
-    //
-    // On stack, before: value, ...
-    // On stack, after: ...
-    //
-    // Coerces `value` to a String and appends it to the current buffer.
-    //
-    // If `value` is truthy, or 0, it is coerced into a string and appended
-    // Otherwise, the empty string is appended
-    append: function() {
-      // Force anything that is inlined onto the stack so we don't have duplication
-      // when we examine local
-      this.flushInline();
-      var local = this.popStack();
-      this.pushSource("if(" + local + " || " + local + " === 0) { " + this.appendToBuffer(local) + " }");
-      if (this.environment.isSimple) {
-        this.pushSource("else { " + this.appendToBuffer("''") + " }");
-      }
-    },
-
-    // [appendEscaped]
-    //
-    // On stack, before: value, ...
-    // On stack, after: ...
-    //
-    // Escape `value` and append it to the buffer
-    appendEscaped: function() {
-      this.context.aliases.escapeExpression = 'this.escapeExpression';
-
-      this.pushSource(this.appendToBuffer("escapeExpression(" + this.popStack() + ")"));
-    },
-
-    // [getContext]
-    //
-    // On stack, before: ...
-    // On stack, after: ...
-    // Compiler value, after: lastContext=depth
-    //
-    // Set the value of the `lastContext` compiler value to the depth
-    getContext: function(depth) {
-      if(this.lastContext !== depth) {
-        this.lastContext = depth;
-      }
-    },
-
-    // [lookupOnContext]
-    //
-    // On stack, before: ...
-    // On stack, after: currentContext[name], ...
-    //
-    // Looks up the value of `name` on the current context and pushes
-    // it onto the stack.
-    lookupOnContext: function(name) {
-      this.push(this.nameLookup('depth' + this.lastContext, name, 'context'));
-    },
-
-    // [pushContext]
-    //
-    // On stack, before: ...
-    // On stack, after: currentContext, ...
-    //
-    // Pushes the value of the current context onto the stack.
-    pushContext: function() {
-      this.pushStackLiteral('depth' + this.lastContext);
-    },
-
-    // [resolvePossibleLambda]
-    //
-    // On stack, before: value, ...
-    // On stack, after: resolved value, ...
-    //
-    // If the `value` is a lambda, replace it on the stack by
-    // the return value of the lambda
-    resolvePossibleLambda: function() {
-      this.context.aliases.functionType = '"function"';
-
-      this.replaceStack(function(current) {
-        return "typeof " + current + " === functionType ? " + current + ".apply(depth0) : " + current;
-      });
-    },
-
-    // [lookup]
-    //
-    // On stack, before: value, ...
-    // On stack, after: value[name], ...
-    //
-    // Replace the value on the stack with the result of looking
-    // up `name` on `value`
-    lookup: function(name) {
-      this.replaceStack(function(current) {
-        return current + " == null || " + current + " === false ? " + current + " : " + this.nameLookup(current, name, 'context');
-      });
-    },
-
-    // [lookupData]
-    //
-    // On stack, before: ...
-    // On stack, after: data, ...
-    //
-    // Push the data lookup operator
-    lookupData: function() {
-      this.pushStackLiteral('data');
-    },
-
-    // [pushStringParam]
-    //
-    // On stack, before: ...
-    // On stack, after: string, currentContext, ...
-    //
-    // This opcode is designed for use in string mode, which
-    // provides the string value of a parameter along with its
-    // depth rather than resolving it immediately.
-    pushStringParam: function(string, type) {
-      this.pushStackLiteral('depth' + this.lastContext);
-
-      this.pushString(type);
-
-      // If it's a subexpression, the string result
-      // will be pushed after this opcode.
-      if (type !== 'sexpr') {
-        if (typeof string === 'string') {
-          this.pushString(string);
-        } else {
-          this.pushStackLiteral(string);
-        }
-      }
-    },
-
-    emptyHash: function() {
-      this.pushStackLiteral('{}');
-
-      if (this.options.stringParams) {
-        this.push('{}'); // hashContexts
-        this.push('{}'); // hashTypes
-      }
-    },
-    pushHash: function() {
-      if (this.hash) {
-        this.hashes.push(this.hash);
-      }
-      this.hash = {values: [], types: [], contexts: []};
-    },
-    popHash: function() {
-      var hash = this.hash;
-      this.hash = this.hashes.pop();
-
-      if (this.options.stringParams) {
-        this.push('{' + hash.contexts.join(',') + '}');
-        this.push('{' + hash.types.join(',') + '}');
-      }
-
-      this.push('{\n    ' + hash.values.join(',\n    ') + '\n  }');
-    },
-
-    // [pushString]
-    //
-    // On stack, before: ...
-    // On stack, after: quotedString(string), ...
-    //
-    // Push a quoted version of `string` onto the stack
-    pushString: function(string) {
-      this.pushStackLiteral(this.quotedString(string));
-    },
-
-    // [push]
-    //
-    // On stack, before: ...
-    // On stack, after: expr, ...
-    //
-    // Push an expression onto the stack
-    push: function(expr) {
-      this.inlineStack.push(expr);
-      return expr;
-    },
-
-    // [pushLiteral]
-    //
-    // On stack, before: ...
-    // On stack, after: value, ...
-    //
-    // Pushes a value onto the stack. This operation prevents
-    // the compiler from creating a temporary variable to hold
-    // it.
-    pushLiteral: function(value) {
-      this.pushStackLiteral(value);
-    },
-
-    // [pushProgram]
-    //
-    // On stack, before: ...
-    // On stack, after: program(guid), ...
-    //
-    // Push a program expression onto the stack. This takes
-    // a compile-time guid and converts it into a runtime-accessible
-    // expression.
-    pushProgram: function(guid) {
-      if (guid != null) {
-        this.pushStackLiteral(this.programExpression(guid));
-      } else {
-        this.pushStackLiteral(null);
-      }
-    },
-
-    // [invokeHelper]
-    //
-    // On stack, before: hash, inverse, program, params..., ...
-    // On stack, after: result of helper invocation
-    //
-    // Pops off the helper's parameters, invokes the helper,
-    // and pushes the helper's return value onto the stack.
-    //
-    // If the helper is not found, `helperMissing` is called.
-    invokeHelper: function(paramSize, name, isRoot) {
-      this.context.aliases.helperMissing = 'helpers.helperMissing';
-      this.useRegister('helper');
-
-      var helper = this.lastHelper = this.setupHelper(paramSize, name, true);
-      var nonHelper = this.nameLookup('depth' + this.lastContext, name, 'context');
-
-      var lookup = 'helper = ' + helper.name + ' || ' + nonHelper;
-      if (helper.paramsInit) {
-        lookup += ',' + helper.paramsInit;
-      }
-
-      this.push(
-        '('
-          + lookup
-          + ',helper '
-            + '? helper.call(' + helper.callParams + ') '
-            + ': helperMissing.call(' + helper.helperMissingParams + '))');
-
-      // Always flush subexpressions. This is both to prevent the compounding size issue that
-      // occurs when the code has to be duplicated for inlining and also to prevent errors
-      // due to the incorrect options object being passed due to the shared register.
-      if (!isRoot) {
-        this.flushInline();
-      }
-    },
-
-    // [invokeKnownHelper]
-    //
-    // On stack, before: hash, inverse, program, params..., ...
-    // On stack, after: result of helper invocation
-    //
-    // This operation is used when the helper is known to exist,
-    // so a `helperMissing` fallback is not required.
-    invokeKnownHelper: function(paramSize, name) {
-      var helper = this.setupHelper(paramSize, name);
-      this.push(helper.name + ".call(" + helper.callParams + ")");
-    },
-
-    // [invokeAmbiguous]
-    //
-    // On stack, before: hash, inverse, program, params..., ...
-    // On stack, after: result of disambiguation
-    //
-    // This operation is used when an expression like `{{foo}}`
-    // is provided, but we don't know at compile-time whether it
-    // is a helper or a path.
-    //
-    // This operation emits more code than the other options,
-    // and can be avoided by passing the `knownHelpers` and
-    // `knownHelpersOnly` flags at compile-time.
-    invokeAmbiguous: function(name, helperCall) {
-      this.context.aliases.functionType = '"function"';
-      this.useRegister('helper');
-
-      this.emptyHash();
-      var helper = this.setupHelper(0, name, helperCall);
-
-      var helperName = this.lastHelper = this.nameLookup('helpers', name, 'helper');
-
-      var nonHelper = this.nameLookup('depth' + this.lastContext, name, 'context');
-      var nextStack = this.nextStack();
-
-      if (helper.paramsInit) {
-        this.pushSource(helper.paramsInit);
-      }
-      this.pushSource('if (helper = ' + helperName + ') { ' + nextStack + ' = helper.call(' + helper.callParams + '); }');
-      this.pushSource('else { helper = ' + nonHelper + '; ' + nextStack + ' = typeof helper === functionType ? helper.call(' + helper.callParams + ') : helper; }');
-    },
-
-    // [invokePartial]
-    //
-    // On stack, before: context, ...
-    // On stack after: result of partial invocation
-    //
-    // This operation pops off a context, invokes a partial with that context,
-    // and pushes the result of the invocation back.
-    invokePartial: function(name) {
-      var params = [this.nameLookup('partials', name, 'partial'), "'" + name + "'", this.popStack(), "helpers", "partials"];
-
-      if (this.options.data) {
-        params.push("data");
-      }
-
-      this.context.aliases.self = "this";
-      this.push("self.invokePartial(" + params.join(", ") + ")");
-    },
-
-    // [assignToHash]
-    //
-    // On stack, before: value, hash, ...
-    // On stack, after: hash, ...
-    //
-    // Pops a value and hash off the stack, assigns `hash[key] = value`
-    // and pushes the hash back onto the stack.
-    assignToHash: function(key) {
-      var value = this.popStack(),
-          context,
-          type;
-
-      if (this.options.stringParams) {
-        type = this.popStack();
-        context = this.popStack();
-      }
-
-      var hash = this.hash;
-      if (context) {
-        hash.contexts.push("'" + key + "': " + context);
-      }
-      if (type) {
-        hash.types.push("'" + key + "': " + type);
-      }
-      hash.values.push("'" + key + "': (" + value + ")");
-    },
-
-    // HELPERS
-
-    compiler: JavaScriptCompiler,
-
-    compileChildren: function(environment, options) {
-      var children = environment.children, child, compiler;
-
-      for(var i=0, l=children.length; i<l; i++) {
-        child = children[i];
-        compiler = new this.compiler();
-
-        var index = this.matchExistingProgram(child);
-
-        if (index == null) {
-          this.context.programs.push('');     // Placeholder to prevent name conflicts for nested children
-          index = this.context.programs.length;
-          child.index = index;
-          child.name = 'program' + index;
-          this.context.programs[index] = compiler.compile(child, options, this.context);
-          this.context.environments[index] = child;
-        } else {
-          child.index = index;
-          child.name = 'program' + index;
-        }
-      }
-    },
-    matchExistingProgram: function(child) {
-      for (var i = 0, len = this.context.environments.length; i < len; i++) {
-        var environment = this.context.environments[i];
-        if (environment && environment.equals(child)) {
-          return i;
-        }
-      }
-    },
-
-    programExpression: function(guid) {
-      this.context.aliases.self = "this";
-
-      if(guid == null) {
-        return "self.noop";
-      }
-
-      var child = this.environment.children[guid],
-          depths = child.depths.list, depth;
-
-      var programParams = [child.index, child.name, "data"];
-
-      for(var i=0, l = depths.length; i<l; i++) {
-        depth = depths[i];
-
-        if(depth === 1) { programParams.push("depth0"); }
-        else { programParams.push("depth" + (depth - 1)); }
-      }
-
-      return (depths.length === 0 ? "self.program(" : "self.programWithDepth(") + programParams.join(", ") + ")";
-    },
-
-    register: function(name, val) {
-      this.useRegister(name);
-      this.pushSource(name + " = " + val + ";");
-    },
-
-    useRegister: function(name) {
-      if(!this.registers[name]) {
-        this.registers[name] = true;
-        this.registers.list.push(name);
-      }
-    },
-
-    pushStackLiteral: function(item) {
-      return this.push(new Literal(item));
-    },
-
-    pushSource: function(source) {
-      if (this.pendingContent) {
-        this.source.push(this.appendToBuffer(this.quotedString(this.pendingContent)));
-        this.pendingContent = undefined;
-      }
-
-      if (source) {
-        this.source.push(source);
-      }
-    },
-
-    pushStack: function(item) {
-      this.flushInline();
-
-      var stack = this.incrStack();
-      if (item) {
-        this.pushSource(stack + " = " + item + ";");
-      }
-      this.compileStack.push(stack);
-      return stack;
-    },
-
-    replaceStack: function(callback) {
-      var prefix = '',
-          inline = this.isInline(),
-          stack,
-          createdStack,
-          usedLiteral;
-
-      // If we are currently inline then we want to merge the inline statement into the
-      // replacement statement via ','
-      if (inline) {
-        var top = this.popStack(true);
-
-        if (top instanceof Literal) {
-          // Literals do not need to be inlined
-          stack = top.value;
-          usedLiteral = true;
-        } else {
-          // Get or create the current stack name for use by the inline
-          createdStack = !this.stackSlot;
-          var name = !createdStack ? this.topStackName() : this.incrStack();
-
-          prefix = '(' + this.push(name) + ' = ' + top + '),';
-          stack = this.topStack();
-        }
-      } else {
-        stack = this.topStack();
-      }
-
-      var item = callback.call(this, stack);
-
-      if (inline) {
-        if (!usedLiteral) {
-          this.popStack();
-        }
-        if (createdStack) {
-          this.stackSlot--;
-        }
-        this.push('(' + prefix + item + ')');
-      } else {
-        // Prevent modification of the context depth variable. Through replaceStack
-        if (!/^stack/.test(stack)) {
-          stack = this.nextStack();
-        }
-
-        this.pushSource(stack + " = (" + prefix + item + ");");
-      }
-      return stack;
-    },
-
-    nextStack: function() {
-      return this.pushStack();
-    },
-
-    incrStack: function() {
-      this.stackSlot++;
-      if(this.stackSlot > this.stackVars.length) { this.stackVars.push("stack" + this.stackSlot); }
-      return this.topStackName();
-    },
-    topStackName: function() {
-      return "stack" + this.stackSlot;
-    },
-    flushInline: function() {
-      var inlineStack = this.inlineStack;
-      if (inlineStack.length) {
-        this.inlineStack = [];
-        for (var i = 0, len = inlineStack.length; i < len; i++) {
-          var entry = inlineStack[i];
-          if (entry instanceof Literal) {
-            this.compileStack.push(entry);
-          } else {
-            this.pushStack(entry);
-          }
-        }
-      }
-    },
-    isInline: function() {
-      return this.inlineStack.length;
-    },
-
-    popStack: function(wrapped) {
-      var inline = this.isInline(),
-          item = (inline ? this.inlineStack : this.compileStack).pop();
-
-      if (!wrapped && (item instanceof Literal)) {
-        return item.value;
-      } else {
-        if (!inline) {
-          if (!this.stackSlot) {
-            throw new Exception('Invalid stack pop');
-          }
-          this.stackSlot--;
-        }
-        return item;
-      }
-    },
-
-    topStack: function(wrapped) {
-      var stack = (this.isInline() ? this.inlineStack : this.compileStack),
-          item = stack[stack.length - 1];
-
-      if (!wrapped && (item instanceof Literal)) {
-        return item.value;
-      } else {
-        return item;
-      }
-    },
-
-    quotedString: function(str) {
-      return '"' + str
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r')
-        .replace(/\u2028/g, '\\u2028')   // Per Ecma-262 7.3 + 7.8.4
-        .replace(/\u2029/g, '\\u2029') + '"';
-    },
-
-    setupHelper: function(paramSize, name, missingParams) {
-      var params = [],
-          paramsInit = this.setupParams(paramSize, params, missingParams);
-      var foundHelper = this.nameLookup('helpers', name, 'helper');
-
-      return {
-        params: params,
-        paramsInit: paramsInit,
-        name: foundHelper,
-        callParams: ["depth0"].concat(params).join(", "),
-        helperMissingParams: missingParams && ["depth0", this.quotedString(name)].concat(params).join(", ")
-      };
-    },
-
-    setupOptions: function(paramSize, params) {
-      var options = [], contexts = [], types = [], param, inverse, program;
-
-      options.push("hash:" + this.popStack());
-
-      if (this.options.stringParams) {
-        options.push("hashTypes:" + this.popStack());
-        options.push("hashContexts:" + this.popStack());
-      }
-
-      inverse = this.popStack();
-      program = this.popStack();
-
-      // Avoid setting fn and inverse if neither are set. This allows
-      // helpers to do a check for `if (options.fn)`
-      if (program || inverse) {
-        if (!program) {
-          this.context.aliases.self = "this";
-          program = "self.noop";
-        }
-
-        if (!inverse) {
-          this.context.aliases.self = "this";
-          inverse = "self.noop";
-        }
-
-        options.push("inverse:" + inverse);
-        options.push("fn:" + program);
-      }
-
-      for(var i=0; i<paramSize; i++) {
-        param = this.popStack();
-        params.push(param);
-
-        if(this.options.stringParams) {
-          types.push(this.popStack());
-          contexts.push(this.popStack());
-        }
-      }
-
-      if (this.options.stringParams) {
-        options.push("contexts:[" + contexts.join(",") + "]");
-        options.push("types:[" + types.join(",") + "]");
-      }
-
-      if(this.options.data) {
-        options.push("data:data");
-      }
-
-      return options;
-    },
-
-    // the params and contexts arguments are passed in arrays
-    // to fill in
-    setupParams: function(paramSize, params, useRegister) {
-      var options = '{' + this.setupOptions(paramSize, params).join(',') + '}';
-
-      if (useRegister) {
-        this.useRegister('options');
-        params.push('options');
-        return 'options=' + options;
-      } else {
-        params.push(options);
-        return '';
-      }
-    }
-  };
-
-  var reservedWords = (
-    "break else new var" +
-    " case finally return void" +
-    " catch for switch while" +
-    " continue function this with" +
-    " default if throw" +
-    " delete in try" +
-    " do instanceof typeof" +
-    " abstract enum int short" +
-    " boolean export interface static" +
-    " byte extends long super" +
-    " char final native synchronized" +
-    " class float package throws" +
-    " const goto private transient" +
-    " debugger implements protected volatile" +
-    " double import public let yield"
-  ).split(" ");
-
-  var compilerWords = JavaScriptCompiler.RESERVED_WORDS = {};
-
-  for(var i=0, l=reservedWords.length; i<l; i++) {
-    compilerWords[reservedWords[i]] = true;
-  }
-
-  JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
-    if(!JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(name)) {
-      return true;
-    }
-    return false;
-  };
-
-  __exports__ = JavaScriptCompiler;
-  return __exports__;
-})(__module2__, __module5__);
-
-// handlebars.js
-var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__) {
-  "use strict";
-  var __exports__;
-  /*globals Handlebars: true */
-  var Handlebars = __dependency1__;
-
-  // Compiler imports
-  var AST = __dependency2__;
-  var Parser = __dependency3__.parser;
-  var parse = __dependency3__.parse;
-  var Compiler = __dependency4__.Compiler;
-  var compile = __dependency4__.compile;
-  var precompile = __dependency4__.precompile;
-  var JavaScriptCompiler = __dependency5__;
-
-  var _create = Handlebars.create;
-  var create = function() {
-    var hb = _create();
-
-    hb.compile = function(input, options) {
-      return compile(input, options, hb);
-    };
-    hb.precompile = function (input, options) {
-      return precompile(input, options, hb);
-    };
-
-    hb.AST = AST;
-    hb.Compiler = Compiler;
-    hb.JavaScriptCompiler = JavaScriptCompiler;
-    hb.Parser = Parser;
-    hb.parse = parse;
-
-    return hb;
-  };
-
-  Handlebars = create();
-  Handlebars.create = create;
-
-  __exports__ = Handlebars;
-  return __exports__;
-})(__module1__, __module7__, __module8__, __module10__, __module11__);
-
-  return __module0__;
-})();
-
-; browserify_shim__define__module__export__(typeof Handlebars != "undefined" ? Handlebars : window.Handlebars);
-
-}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
 /*jshint undef: true */
 /*global jQuery: true */
 
@@ -5590,7 +2835,7 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
 
 })(window, jQuery);
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 (function(window) {
 	var HAS_HASHCHANGE = (function() {
 		var doc_mode = window.documentMode;
@@ -5754,7 +2999,7 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
 	};
 })(window);
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
@@ -5879,7 +3124,7 @@ L.bingLayer = function (key, options) {
     return new L.BingLayer(key, options);
 };
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*! communist 2013-05-30*/
@@ -5892,7 +3137,7 @@ L.bingLayer = function (key, options) {
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 
 (function () {
 
@@ -5937,11 +3182,11 @@ L.bingLayer = function (key, options) {
 
 })();
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (global){
 
 ; communist = global.communist = require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js");
-require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet/dist/leaflet-src.js");
+require("leaflet");
 require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js");
 ;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
 
@@ -6031,7 +3276,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":6,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":7,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet/dist/leaflet-src.js":16}],9:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":5,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":6,"leaflet":50}],8:[function(require,module,exports){
 /**
  * Simple tile cache to keep tiles while zooming with overzoom
  */
@@ -6143,7 +3388,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (global){
 
 ; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js");
@@ -6410,7 +3655,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":8,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":9,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js":11,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":12}],11:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":7,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":8,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js":10,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":11}],10:[function(require,module,exports){
 (function () {
 
     function defineOverzoom(L) {
@@ -6528,7 +3773,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function () {
 
     function defineTileQueue(L) {
@@ -6607,7 +3852,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 //
 // leaflet.dataoptions
 //
@@ -6692,7 +3937,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*
  * L.Control.Loading is a control that shows a loading indicator when tiles are
  * loading or when map-related AJAX requests are taking place.
@@ -6956,7 +4201,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * Leaflet.UserMarker v1.0
  * 
@@ -7062,7 +4307,4612 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
     };
 })(window);
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+var _ = require('underscore');
+
+
+module.exports = {
+    lotShouldAppear: function (lot, filters) {
+        // Layers
+        var lotLayers = lot.feature.properties.layers.split(',');
+        if (_.isEmpty(_.intersection(lotLayers, filters.layers))) {
+            return false;
+        }
+
+        // Projects
+        if (filters.projects === 'exclude' && _.contains(lotLayers, 'in_use')) {
+            return false;
+        }
+        else if (filters.projects === 'only' && !_.contains(lotLayers, 'in_use')) {
+            return false;
+        }
+        else if (filters.projects === 'started_here') {
+            if (_.contains(lotLayers, 'in_use') && !_.contains(lotLayers, 'in_use_started_here')) {
+                return false;
+            }
+        }
+        else if (filters.projects === 'started_here_only' &&
+                 !_.contains(lotLayers, 'in_use_started_here')) {
+            return false;
+        }
+
+        // Owners
+        if (filters.public_owners &&
+            !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+            return false;
+        }
+
+        return true;
+    },
+
+    paramsToFilters: function (params) {
+        var filters = _.extend({}, params);
+        filters.layers = filters.layers.split(',');
+        if (filters.public_owners) {
+            filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
+                return parseInt(ownerPk);
+            });
+        }
+        return filters;
+    }
+};
+
+},{"underscore":74}],16:[function(require,module,exports){
+var geocoder = new google.maps.Geocoder();
+
+function geocode(address, bounds, state, f) {
+    geocoder.geocode({
+        'address': address,
+        'bounds': to_google_bounds(bounds),
+    }, function (results, status) {
+        for (var i = 0; i < results.length; i++) {
+            var result_state = get_component(results[i], 'administrative_area_level_1');
+            if (result_state === state) {
+                return f(results[i], status);
+            }
+        }
+        return f(null, status);
+    });
+}
+
+function get_component(result, desired_type) {
+    var matches = $.grep(result.address_components, function (component, i) {
+        return ($.inArray(desired_type, component.types) >= 0);
+    });
+    if (matches.length >= 0 && matches[0] !== null) {
+        return matches[0].short_name;
+    }
+    return null;
+}
+
+function get_street(result) {
+    var street_number = get_component(result, 'street_number');
+    var route = get_component(result, 'route');
+    if (street_number === null || route === null) {
+        return null;
+    }
+    return street_number + ' ' + route;
+}
+
+function get_city(result) {
+    var city = get_component(result, 'sublocality');
+    if (city === null) {
+        city = get_component(result, 'locality');
+    }
+    return city;
+}
+
+function get_state(result) {
+    return get_component(result, 'administrative_area_level_1');
+}
+
+function get_zip(result) {
+    return get_component(result, 'postal_code');
+}
+
+function get_longitude(result) {
+    return result.geometry.location.lng();
+}
+
+function get_latitude(result) {
+    return result.geometry.location.lat();
+}
+
+function to_google_bounds(bounds) {
+    // bounds: left, bottom, right, top
+    return new google.maps.LatLngBounds(
+        new google.maps.LatLng(bounds[1], bounds[0]),
+        new google.maps.LatLng(bounds[3], bounds[2])
+    );
+}
+
+module.exports = {
+    geocode: geocode
+};
+
+},{}],17:[function(require,module,exports){
+var L = require('leaflet');
+
+require('TileLayer.GeoJSON');
+
+L.TileLayer.Vector.include({
+
+    getTileUrl: function (coords) {
+        var x = coords.x,
+            y = coords.y,
+            z = this._getZoomForUrl();
+        return this._url + z + '/' + x + '/' + y + '.geojson';
+    }
+
+});
+
+},{"TileLayer.GeoJSON":9,"leaflet":50}],18:[function(require,module,exports){
+var L = require('leaflet');
+
+require('TileLayer.GeoJSON');
+
+require('./leaflet.geojson.tile');
+require('./leaflet.lotmultipolygon');
+require('./leaflet.lotpolygon');
+
+
+L.LotGeoJson = L.GeoJSON.extend({
+
+    initialize: function (geojson, options) {
+        L.GeoJSON.prototype.initialize.call(this, geojson, options);
+    },
+
+    addData: function (geojson) {
+        var features = L.Util.isArray(geojson) ? geojson : geojson.features,
+            i, len, feature;
+
+        if (features) {
+            for (i = 0, len = features.length; i < len; i++) {
+                // Only add this if geometry or geometries are set and not null
+                feature = features[i];
+                if (feature.geometries || feature.geometry || feature.features || feature.coordinates) {
+                    this.addData(features[i]);
+                }
+            }
+            return this;
+        }
+
+        var options = this.options;
+
+        if (options.filter && !options.filter(geojson)) { return; }
+
+        var layer = this.geometryToLotLayer(geojson, options.pointToLayer, options.coordsToLatLng, options);
+        layer.feature = L.GeoJSON.asFeature(geojson);
+
+        layer.defaultOptions = layer.options;
+        this.resetStyle(layer);
+
+        if (options.onEachFeature) {
+            options.onEachFeature(geojson, layer);
+        }
+
+        return this.addLayer(layer);
+    },
+
+    geometryToLotLayer: function (geojson, pointToLayer, coordsToLatLng, vectorOptions) {
+        var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
+            coords = geometry.coordinates,
+            layers = [],
+            latlng, latlngs, i, len;
+
+        var options = L.extend({}, vectorOptions);
+        if (geojson.properties.has_organizers) {
+            options.hasOrganizers = true;
+        }
+
+        coordsToLatLng = coordsToLatLng || L.GeoJSON.coordsToLatLng;
+
+        switch (geometry.type) {
+        case 'Point':
+            latlng = coordsToLatLng(coords);
+            return pointToLayer ? pointToLayer(geojson, latlng) : new L.Marker(latlng);
+
+        case 'MultiPoint':
+            for (i = 0, len = coords.length; i < len; i++) {
+                latlng = coordsToLatLng(coords[i]);
+                layers.push(pointToLayer ? pointToLayer(geojson, latlng) : new L.Marker(latlng));
+            }
+            return new L.FeatureGroup(layers);
+
+        case 'LineString':
+            latlngs = L.GeoJSON.coordsToLatLngs(coords, 0, coordsToLatLng);
+            return new L.Polyline(latlngs, options);
+
+        case 'Polygon':
+            if (coords.length === 2 && !coords[1].length) {
+                throw new Error('Invalid GeoJSON object.');
+            }
+            latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
+            return L.lotPolygon(latlngs, options);
+
+        case 'MultiLineString':
+            latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
+            return new L.MultiPolyline(latlngs, options);
+
+        case 'MultiPolygon':
+            latlngs = L.GeoJSON.coordsToLatLngs(coords, 2, coordsToLatLng);
+            return new L.LotMultiPolygon(latlngs, options);
+
+        case 'GeometryCollection':
+            for (i = 0, len = geometry.geometries.length; i < len; i++) {
+
+                layers.push(L.GeoJSON.geometryToLayer({
+                    geometry: geometry.geometries[i],
+                    type: 'Feature',
+                    properties: geojson.properties
+                }, pointToLayer, coordsToLatLng, options));
+            }
+            return new L.FeatureGroup(layers);
+
+        default:
+            throw new Error('Invalid GeoJSON object.');
+        }
+    }
+
+});
+
+L.lotGeoJson = function (geojson, options) {
+    return new L.LotGeoJson(geojson, options);
+};
+
+L.LotLayer = L.TileLayer.Vector.extend({
+
+    initialize: function (url, options, geojsonOptions) {
+        options.tileCacheFactory = L.tileCache;
+        options.layerFactory = L.lotGeoJson;
+        L.TileLayer.Vector.prototype.initialize.call(this, url, options,
+                                                      geojsonOptions);
+    },
+
+});
+
+L.lotLayer = function (url, options, geojsonOptions) {
+    return new L.LotLayer(url, options, geojsonOptions);
+};
+
+},{"./leaflet.geojson.tile":17,"./leaflet.lotmultipolygon":21,"./leaflet.lotpolygon":23,"TileLayer.GeoJSON":9,"leaflet":50}],19:[function(require,module,exports){
+var _ = require('underscore');
+var filters = require('./filters');
+var Handlebars = require('handlebars');
+var L = require('leaflet');
+var mapstyles = require('./map.styles');
+var Spinner = require('spin.js');
+
+require('leaflet.bing');
+require('leaflet.dataoptions');
+require('leaflet.hash');
+require('leaflet.usermarker');
+
+require('./leaflet.lotlayer');
+require('./leaflet.lotmarker');
+
+
+L.LotMap = L.Map.extend({
+
+    boundariesLayer: null,
+    centroidsLayer: null,
+    currentFilters: {},
+    polygonsLayer: null,
+    lotLayerTransitionPoint: 15,
+    previousZoom: null,
+    userLayer: null,
+    userLocationZoom: 16,
+
+    filters: null,
+
+    compiledPopupTemplate: null,
+
+    getPopupTemplate: function () {
+        if (this.compiledPopupTemplate) {
+            return this.compiledPopupTemplate;
+        }
+        var source = $("#popup-template").html();
+        this.compiledPopupTemplate = Handlebars.compile(source);
+        return this.compiledPopupTemplate;
+    },
+
+    lotLayerOptions: {
+        onEachFeature: function (feature, layer) {
+            layer.on({
+                'click': function (event) {
+                    var latlng = event.latlng,
+                        x = this._map.latLngToContainerPoint(latlng).x,
+                        y = this._map.latLngToContainerPoint(latlng).y - 100,
+                        point = this._map.containerPointToLatLng([x, y]),
+                        template = this._map.getPopupTemplate();
+                    this.bindPopup('<div id="popup"></div>').openPopup();
+                    var spinner = new Spinner().spin($('#popup')[0]);
+                    $.getJSON(Django.url('lots:lot_detail_json', { pk: this.feature.properties.id }), function (data) {
+                        spinner.stop();
+                        $('#popup').append(template(data));
+                    });
+                    return this._map.setView(point, this._map._zoom);
+                },
+                'mouseover': function (event) {
+                    this._map.options.onMouseOverFeature(event.target.feature);
+                },
+                'mouseout': function (event) {
+                    this._map.options.onMouseOutFeature(event.target.feature);
+                }
+            });
+        },
+        pointToLayer: function (feature, latlng) {
+            var options = {};
+            var layers = feature.properties.layers.split(',');
+            if (_.contains(layers, 'organizing')) {
+                options.hasOrganizers = true;
+            }
+            return L.lotMarker(latlng, options);
+        },
+        style: function (feature) {
+            var style = {
+                fillColor: '#000000',
+                fillOpacity: 1,
+                stroke: 0
+            };
+            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
+            return style;
+        },
+        popupOptions: {
+            autoPan: false,
+            maxWidth: 250,
+            minWidth: 250,
+            offset: [0, 0]
+        }
+    },
+
+    initialize: function (id, options) {
+        L.Map.prototype.initialize.call(this, id, options);
+        this.addBaseLayer();
+        var hash = new L.Hash(this);
+
+        if (options.filterParams) {
+            this.currentFilters = filters.paramsToFilters(options.filterParams);
+        }
+
+        this.boundariesLayer = L.geoJson(null, {
+            color: '#58595b',
+            fill: false
+        }).addTo(this);
+
+        // When new lots are added ensure they should be displayed
+        var map = this;
+        this.on('layeradd', function (event) {
+            // Dig through the layers of layers
+            event.layer.on('layeradd', function (event) {
+                event.layer.eachLayer(function (lot) {
+                    if (!lot.feature || !lot.feature.properties.layers) return;
+                    if (filters.lotShouldAppear(lot, map.currentFilters)) {
+                        lot.show();
+                    }
+                    else {
+                        lot.hide();
+                    }
+                });
+            });
+        });
+
+        this.on('zoomend', function () {
+            var currentZoom = this.getZoom();
+            if (this.previousZoom) {
+                // Switch to centroids
+                if (currentZoom <= this.lotLayerTransitionPoint && 
+                    this.previousZoom > this.lotLayerTransitionPoint) {
+                    this.fire('lotlayertransition', { details: false });
+                }
+                // Switch to polygons
+                else if (currentZoom > this.lotLayerTransitionPoint &&
+                         this.previousZoom <= this.lotLayerTransitionPoint) {
+                    this.fire('lotlayertransition', { details: true });
+                }
+            }
+            else {
+                // Start with centroids
+                if (currentZoom <= this.lotLayerTransitionPoint) {
+                    this.fire('lotlayertransition', { details: false });
+                }
+                // Start with polygons
+                else if (currentZoom > this.lotLayerTransitionPoint) {
+                    this.fire('lotlayertransition', { details: true });
+                }
+            }
+            this.previousZoom = currentZoom;
+        });
+    },
+
+    addBaseLayer: function () {
+        var streets = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(this);
+        var bing = new L.BingLayer('Ajio1n0EgmAAvT3zLndCpHrYR_LHJDgfDU6B0tV_1RClr7OFLzy4RnkLXlSdkJ_x');
+
+        L.control.layers({
+            streets: streets,
+            satellite: bing
+        }).addTo(this);
+    },
+
+    addLotsLayer: function () {
+        this.addCentroidsLayer();
+        this.addPolygonsLayer();
+        if (this.getZoom() <= this.lotLayerTransitionPoint) {
+            this.addLayer(this.centroidsLayer);
+            this.removeLayer(this.polygonsLayer);
+        }
+        else {
+            this.removeLayer(this.centroidsLayer);
+            this.addLayer(this.polygonsLayer);
+        }
+    },
+
+    addCentroidsLayer: function () {
+        if (this.centroidsLayer) {
+            this.removeLayer(this.centroidsLayer);
+        }
+        var url = this.options.lotCentroidsUrl;
+
+        var options = {
+            serverZooms: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            unique: function (feature) {
+                return feature.id;
+            }
+        };
+
+        this.centroidsLayer = L.lotLayer(url, options, this.lotLayerOptions);
+    },
+
+    addPolygonsLayer: function () {
+        if (this.polygonsLayer) {
+            this.removeLayer(this.polygonsLayer);
+        }
+        var url = this.options.lotPolygonsUrl;
+
+        var options = {
+            maxZoom: 19,
+            serverZooms: [16],
+            unique: function (feature) {
+                return feature.id;
+            }
+        };
+
+        var layerOptions = L.extend({}, this.lotLayerOptions);
+        this.polygonsLayer = L.lotLayer(url, options, layerOptions);
+    },
+
+    updateFilters: function (params) {
+        this.currentFilters = filters.paramsToFilters(params);
+        this.updateDisplayedLots();
+        this.fire('filterschanged', this.currentFilters);
+    },
+
+    updateDisplayedLots: function () {
+        var map = this;
+        function updateDisplayedLotsForLayer(layer) {
+            if (layer.vectorLayer) {
+                // Lots are nested in tiles so we need to do two layers of 
+                // eachLayer to get to them all
+                layer.vectorLayer.eachLayer(function (tileLayer) {
+                    tileLayer.eachLayer(function (lot) {
+                        if (filters.lotShouldAppear(lot, map.currentFilters)) {
+                            lot.show();
+                        }
+                        else {
+                            lot.hide();
+                        }
+                    });
+                });
+            }
+        }
+
+        updateDisplayedLotsForLayer(this.centroidsLayer);
+        updateDisplayedLotsForLayer(this.polygonsLayer);
+    },
+
+    addUserLayer: function (latlng) {
+        this.userLayer = L.userMarker(latlng, {
+            smallIcon: true,
+        }).addTo(this);
+        this.setView(latlng, this.userLocationZoom);
+    },
+
+    removeUserLayer: function () {
+        if (this.userLayer) {
+            this.removeLayer(this.userLayer);
+        }
+    },
+
+    removeBoundaries: function (data, options) {
+        this.boundariesLayer.clearLayers();
+    },
+
+    updateBoundaries: function (data, options) {
+        this.boundariesLayer.clearLayers();
+        this.boundariesLayer.addData(data);
+        if (options.zoomToBounds) {
+            this.fitBounds(this.boundariesLayer.getBounds());
+        }
+    }
+
+});
+
+L.lotMap = function (id, options) {
+    return new L.LotMap(id, options);
+};
+
+},{"./filters":15,"./leaflet.lotlayer":18,"./leaflet.lotmarker":20,"./map.styles":27,"handlebars":49,"leaflet":50,"leaflet.bing":4,"leaflet.dataoptions":12,"leaflet.hash":3,"leaflet.usermarker":14,"spin.js":73,"underscore":74}],20:[function(require,module,exports){
+var L = require('leaflet');
+
+require('./leaflet.lotpath');
+
+
+L.LotMarker = L.CircleMarker.extend({
+
+    onZoomEnd: function () {
+        if (this._map && this.feature.properties.has_organizers) {
+            this.bringToFront();
+        }
+    },
+
+    _pickRadius: function (zoom) {
+        var radius = 4;   
+        if (zoom >= 13) {
+            radius = 6;
+        }
+        if (zoom >= 14) {
+            radius = 9;
+        }
+        if (zoom >= 15) {
+            radius = 12;
+        }
+        if (zoom >= 16) {
+            radius = 15;
+        }
+        return radius;
+    },
+
+    _updatePath: function () {
+        var zoom = this._map.getZoom();
+
+        // Update the circle's radius according to the map's zoom level
+        this.options.radius = this._radius = this._pickRadius(zoom);
+
+        this.updateActionPathScale();
+        L.CircleMarker.prototype._updatePath.call(this);
+    }
+
+});
+
+L.LotMarker.include(L.LotPathMixin);
+
+L.LotMarker.addInitHook(function () {
+    this.on({
+        'add': function () {
+            this.initActionPath();
+
+            if (this.feature && this.feature.properties.has_organizers) {
+                var layer = this;
+                this._map.on('zoomend', this.onZoomEnd, layer);
+            }
+        },
+        'remove': function () {
+            if (this.feature && this.feature.properties.has_organizers) {
+                var layer = this;
+                this._map.off('zoomend', this.onZoomEnd, layer);
+            }
+        }
+    });
+});
+
+L.lotMarker = function (latlng, options) {
+    return new L.LotMarker(latlng, options);
+};
+
+},{"./leaflet.lotpath":22,"leaflet":50}],21:[function(require,module,exports){
+var L = require('leaflet');
+
+require('./leaflet.lotpolygon');
+
+
+L.LotMultiPolygon = L.FeatureGroup.extend({
+
+    initialize: function (latlngs, options) {
+        this._layers = {};
+        this._options = options;
+        this.setLatLngs(latlngs);
+    },
+
+    setLatLngs: function (latlngs) {
+        var i = 0,
+            len = latlngs.length;
+
+        this.eachLayer(function (layer) {
+            if (i < len) {
+                layer.setLatLngs(latlngs[i++]);
+            } else {
+                this.removeLayer(layer);
+            }
+        }, this);
+
+        while (i < len) {
+            this.addLayer(new L.LotPolygon(latlngs[i++], this._options));
+        }
+
+        return this;
+    },
+
+    getLatLngs: function () {
+        var latlngs = [];
+
+        this.eachLayer(function (layer) {
+            latlngs.push(layer.getLatLngs());
+        });
+
+        return latlngs;
+    },
+
+    show: function () {
+        this.eachLayer(function (layer) {
+            layer.show();
+        });
+    },
+
+    hide: function () {
+        this.eachLayer(function (layer) {
+            layer.hide();
+        });
+    }
+});
+
+},{"./leaflet.lotpolygon":23,"leaflet":50}],22:[function(require,module,exports){
+var L = require('leaflet');
+
+
+L.LotPathMixin = {
+
+    hide: function () {
+        if (!this._path) return;
+        this._path.style.display = 'none';
+        if (this._actionPath) {
+            this._actionPath.style.display = 'none';
+        }
+    },
+
+    show: function () {
+        if (!this._path) return;
+        this._path.style.display = 'block';
+        if (this._actionPath) {
+            this._actionPath.style.display = 'block';
+        }
+    },
+
+    initActionPath: function() {
+        if (this.options.hasOrganizers) {
+            this._actionPath = this._createElement('path');
+            this._actionPath.setAttribute('style', 'fill:#eec619; fill-opacity:1;');
+            this._actionPath.setAttribute('d', this.getActionPathSvgStr());
+            this._container.insertBefore(this._actionPath, this._path);
+
+            this.updateActionPathScale();
+        }
+    },
+
+    getActionPathSvgStr: function () {
+        return 'M 0,-39 c -0.6 0 -2.2 3.4 -3.5 7.6 -1.3 4.2 -3 7.8 -3.7 8.1 -0.7 0.3 -4.2 -1.6 -7.7 -4.1 -5.8 -4.1 -8.6 -5.5 -8.6 -4.2 0 0.2 1.1 4.1 2.6 8.6 1.4 4.5 2.4 8.3 2.1 8.6 -0.2 0.2 -4.3 0.7 -9.1 1.1 -4.7 0.3 -8.6 1 -8.6 1.5 0 0.5 2.9 3 6.5 5.5 3.6 2.6 6.5 5.2 6.5 5.8 0 0.6 -2.9 3.2 -6.5 5.8 -3.6 2.6 -6.5 5.1 -6.5 5.5 0 0.5 3.9 1.1 8.6 1.5 4.7 0.3 8.8 0.8 9.1 1.1 0.2 0.2 -0.7 4.1 -2.1 8.6 -1.4 4.5 -2.6 8.3 -2.6 8.6 0 1.3 2.8 -0 8.6 -4.2 3.5 -2.5 7 -4.4 7.7 -4.1 0.7 0.3 2.3 3.9 3.7 8.1 1.3 4.2 2.9 7.6 3.5 7.6 0.6 0 2.2 -3.4 3.5 -7.6 1.3 -4.2 3 -7.8 3.7 -8.1 0.7 -0.3 4.2 1.6 7.7 4.1 5.8 4.1 8.6 5.5 8.6 4.2 0 -0.2 -1.1 -4.1 -2.6 -8.6 -1.4 -4.5 -2.4 -8.3 -2.1 -8.6 0.2 -0.2 4.3 -0.7 9.1 -1.1 4.7 -0.3 8.6 -1 8.6 -1.5 0 -0.5 -2.9 -3 -6.5 -5.5 -3.6 -2.6 -6.5 -5.2 -6.5 -5.8 0 -0.6 2.9 -3.2 6.5 -5.8 3.6 -2.6 6.5 -5.1 6.5 -5.5 0 -0.5 -3.9 -1.1 -8.6 -1.5 -4.7 -0.3 -8.8 -0.8 -9.1 -1.1 -0.2 -0.2 0.7 -4.1 2.1 -8.6 1.4 -4.5 2.6 -8.3 2.6 -8.6 0 -1.3 -2.8 0 -8.6 4.2 -3.5 2.5 -7 4.4 -7.7 4.1 -0.7 -0.3 -2.3 -3.9 -3.7 -8.1 -1.3 -4.2 -2.9 -7.6 -3.5 -7.6 z';
+    },
+
+    updateActionPathScale: function () {
+        if (this._actionPath) {
+            var point = this._map.latLngToLayerPoint(this.getBounds().getCenter()),
+                zoom = this._map.getZoom(),
+                scale = 0.5;
+
+            // Translate and scale around the layer's point
+            if (zoom >= 18) {
+                scale = 1.5;
+            }
+            else if (zoom >= 15) {
+                scale = 0.75;
+            }
+            this._actionPath.setAttribute('transform', 'translate(' + point.x + ',' + point.y + ') scale(' + scale + ')');
+        }
+    }
+
+};
+
+},{"leaflet":50}],23:[function(require,module,exports){
+var L = require('leaflet');
+
+require('./leaflet.lotpath');
+
+
+L.LotPolygon = L.Polygon.extend({
+
+    _pickOpacity: function (zoom) {
+        if (zoom >= 18) {
+            return 0.65;
+        }
+        if (zoom >= 17) {
+            return 0.85;
+        }
+        return 1;
+    },
+
+    _updatePath: function () {
+        // Update opacity
+        this.options.fillOpacity = this._pickOpacity(this._map.getZoom());
+        this._updateStyle();
+
+        this.updateActionPathScale();
+        L.Polygon.prototype._updatePath.call(this);
+    }
+
+});
+
+L.LotPolygon.include(L.LotPathMixin);
+
+L.LotPolygon.addInitHook(function () {
+    this.on({
+        'add': function () {
+            this.initActionPath();
+        }
+    });
+});
+
+L.lotPolygon = function (latlngs, options) {
+    return new L.LotPolygon(latlngs, options);
+};
+
+},{"./leaflet.lotpath":22,"leaflet":50}],24:[function(require,module,exports){
+//
+// lotdetailpage.js
+//
+// Scripts that only run on the lot detail page.
+//
+
+var Handlebars = require('handlebars');
+var L = require('leaflet');
+
+require('leaflet.dataoptions');
+
+require('./leaflet.lotlayer');
+require('./leaflet.lotmarker');
+var mapstyles = require('./map.styles');
+var StreetView = require('./streetview');
+require('./overlaymenu');
+
+
+var vectorLayerOptions = {
+    serverZooms: [16],
+    unique: function (feature) {
+        return feature.id;
+    }
+};
+
+function getLotLayerOptions(lotPk) {
+    return {
+        pointToLayer: function (feature, latlng) {
+            var options = {};
+            if (feature.properties.has_organizers) {
+                options.hasOrganizers = true;
+            }
+            return L.lotMarker(latlng, options);
+        },
+        style: function (feature) {
+            var style = {
+                fillOpacity: 0.2,
+                stroke: false
+            };
+            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
+
+            // Style this lot distinctly
+            if (feature.properties.id === lotPk) {
+                style.fillOpacity = 1;
+            }
+            return style;
+        }
+    };
+}
+
+function addBaseLayer(map) {
+    var streets = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+}
+
+function addLotsLayer(map) {
+    var url = map.options.lotsurl,
+        lotLayerOptions = getLotLayerOptions(map.options.lotPk);
+    var lotsLayer = L.lotLayer(url, vectorLayerOptions, lotLayerOptions).addTo(map);
+}
+
+$(document).ready(function () {
+    if ($('.lot-detail-page').length > 0) {
+        var map = L.map('lot-detail-map', {
+            doubleClickZoom: false,
+            dragging: false,
+            scrollWheelZoom: false,
+            touchZoom: false
+        });
+
+        var bbox = map.options.bbox;
+        if (bbox) {
+            map.fitBounds([
+                [bbox[1], bbox[0]],   
+                [bbox[3], bbox[2]]   
+            ], { padding: [20, 20] });
+        }
+
+        addBaseLayer(map);
+        addLotsLayer(map);
+        StreetView.load_streetview(
+            $('.lot-detail-header-image').data('lon'),
+            $('.lot-detail-header-image').data('lat'),
+            $('.lot-detail-header-image'),
+            $('.lot-detail-header-streetview-error')
+        );
+    }
+
+    $('.overlay-nearby-button').overlaymenu({
+        menu: '.overlaymenu-nearby'
+    });
+});
+
+},{"./leaflet.lotlayer":18,"./leaflet.lotmarker":20,"./map.styles":27,"./overlaymenu":29,"./streetview":31,"handlebars":49,"leaflet":50,"leaflet.dataoptions":12}],25:[function(require,module,exports){
+//
+// main.js
+//
+// Scripts that should run on every page.
+//
+
+require('fancybox');
+
+
+/*
+ * Global form-related scripts
+ */
+$(document).ready(function () {
+    /*
+     * Disable submit buttons on forms once they have been submitted once.
+     */
+    $('form').submit(function () {
+        $(this).find('input[type="submit"]').attr('disabled', 'disabled');
+    });
+
+    /*
+     * Collapse the collapsible sections
+     */
+    // Slide up those sections not initially expanded
+    $('.collapsible-section:not(.is-expanded) .collapsible-section-text').slideUp();
+
+    // Prepare headers for clicking
+    $('.collapsible-section-header').click(function () {
+        var $section = $(this).parent(),
+            $sectionText = $section.find('.collapsible-section-text');
+        $section.toggleClass('is-expanded');
+        $sectionText.slideToggle();
+    });
+
+    /*
+     * Fancy the fancyboxes
+     */
+    $('.fancybox').fancybox({
+        beforeShow: function () {
+            var $link = this.element,
+                $img = $link.find('img'),
+                alt = $img.attr('alt'),
+                addedBy = $link.data('added-by'),
+                description = $link.data('description');
+
+            this.inner.find('img').attr('alt', alt);
+            this.title = alt + ' by ' + addedBy + '<p>' + description + '</p>';
+        }
+    });
+
+});
+
+
+/*
+ * Page-specific modules
+ */
+require('./mappage.js');
+require('./lotdetailpage.js');
+
+},{"./lotdetailpage.js":24,"./mappage.js":28,"fancybox":1}],26:[function(require,module,exports){
+var L = require('leaflet');
+
+var geocode = require('./geocode').geocode;
+
+
+function addCityAndState(query, city, state) {
+    if (query.toLowerCase().indexOf(city) <= 0) {
+        query += ', ' + city;
+    }
+    if (query.toLowerCase().indexOf(state) <= 0) {
+        query += ', ' + state;
+    }
+    return query;
+}
+
+function searchByAddress(form) {
+    form = $(form);
+    form.trigger('searchstart');
+    var warningSelector = form.data('warningSelector'),
+        bounds = form.data('bounds'),
+        city = form.data('city'),
+        state = form.data('state'),
+        query = form.find('input[type="text"]').val();
+
+    form.find(warningSelector).hide();
+    form.find(':input[type=submit]')
+        .attr('disabled', 'disabled');
+
+    query = addCityAndState(query, city, state);
+
+    geocode(query, bounds, state, function (result, status) {
+        // Done searching
+        form.find(':input[type=submit]')
+            .removeAttr('disabled');
+
+        // Is result valid?
+        if (result === null) {
+            form.find(warningSelector)
+                .text(form.data('errorMessage'))
+                .show();
+            return;
+        }
+
+        // Let the world know!
+        var found_location = result.geometry.location;
+        form.trigger('searchresultfound', [{
+            longitude: found_location.lng(),
+            latitude: found_location.lat(),
+            query_address: query,
+            found_address: result.formatted_address,
+        }]);
+    });
+}
+
+$.fn.mapsearch = function (options) {
+
+    this.keypress(function (e) {
+        if (e.keyCode === '13') {
+            e.preventDefault();
+            searchByAddress(this);
+            return false;
+        }
+    });
+    this.submit(function (e) {
+        e.preventDefault();
+        searchByAddress(this);
+        return false;
+    });
+
+    return this;
+};
+
+},{"./geocode":16,"leaflet":50}],27:[function(require,module,exports){
+//
+// Lot map styles by layer for maps
+//
+var _ = require('underscore');
+
+var fillColors = {
+    default: '#000000',
+    in_use: '#97b03d',
+    private: '#ea292e',
+    public: '#812683',
+    gutterspace: '#0000FF'
+};
+
+module.exports = {
+    fillColors: fillColors,
+
+    getLayerColor: function (layers) {
+        if (_.contains(layers, 'in_use')) {
+            return fillColors.in_use;
+        }
+        if (_.contains(layers, 'public')) {
+            return fillColors.public;
+        }
+        if (_.contains(layers, 'private')) {
+            return fillColors.private;
+        }
+        if (_.contains(layers, 'gutterspace')) {
+            return fillColors.gutterspace;
+        }
+        return fillColors.default;
+    }
+};
+
+},{"underscore":74}],28:[function(require,module,exports){
+//
+// mappage.js
+//
+// Scripts that only run on the map page.
+//
+
+var _ = require('underscore');
+var Handlebars = require('handlebars');
+var L = require('leaflet');
+var Spinner = require('spin.js');
+var singleminded = require('./singleminded');
+var initWelcome = require('./welcome').init;
+
+require('jquery.infinitescroll');
+require('leaflet.loading');
+require('livinglots-map/src/livinglots.addlot');
+require('livinglots-map/src/livinglots.mail');
+require('./leaflet.lotmap');
+require('./map.search.js');
+require('./overlaymenu');
+
+
+function buildLotFilterParams(map, options) {
+    var layers = _.map($('.filter-layer:checked'), function (layer) {
+        return $(layer).attr('name'); 
+    });
+    var publicOwnerPks = [$('.filter-owner-public').val()];
+    var params = {
+        layers: layers.join(','),
+        parents_only: true,
+        projects: $('.filter-projects').val(),
+        public_owners: publicOwnerPks.join(',')
+    };
+
+    if (options && options.bbox) {
+        params.bbox = map.getBounds().toBBoxString();
+    }
+
+    return params;
+}
+
+function updateLotCount(map) {
+    var url = Django.url('lots:lot_count') + '?' +
+        $.param(buildLotFilterParams(map, { bbox: true }));
+    singleminded.remember({
+        name: 'updateLotCount',
+        jqxhr: $.getJSON(url, function (data) {
+            _.each(data, function (value, key) {
+                $('#' + key).text(value);
+            });
+        })
+    });
+}
+
+function updateOwnershipOverview(map) {
+    var url = Django.url('lots:lot_ownership_overview'),
+        params = buildLotFilterParams(map, { bbox: true });
+    $.getJSON(url + '?' + $.param(params), function (data) {
+        var template = Handlebars.compile($('#details-template').html());
+        var content = template({
+            lottypes: data.owners
+        });
+        $('.details-overview').html(content);
+    });
+}
+
+function updateDetailsLink(map) {
+    var params = buildLotFilterParams(map);
+    delete params.parents_only;
+
+    var l = window.location,
+        query = '?' + $.param(params),
+        url = l.protocol + '//' + l.host + l.pathname + query + l.hash;
+    $('a.details-link').attr('href', url);
+}
+
+function deparam() {
+    var vars = {},
+        param,
+        params = window.location.search.slice(1).split('&');
+    for(var i = 0; i < params.length; i++) {
+        param = params[i].split('=');
+        vars[param[0]] = decodeURIComponent(param[1]);
+    }
+    return vars;
+}
+
+function setFilters(params) {
+    // Clear checkbox filters
+    $('.filter[type=checkbox]').prop('checked', false);
+
+    // Set layers filters
+    var layers = params.layers.split(',');
+    _.each(layers, function (layer) {
+        $('.filter-layer[name=' + layer +']').prop('checked', true);
+    });
+
+    // Set owners filters
+    var publicOwners = params.public_owners.split(',');
+    _.each(publicOwners, function (pk) {
+        $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
+    });
+
+    // Set boundaries filters
+
+    var projects = params.projects;
+    if (projects !== '') {
+        $('.filter-projects').val(projects);
+    }
+}
+
+function prepareOverlayMenus(map) {
+    $('.overlay-download-button').overlaymenu({
+        menu: '.overlaymenu-download'
+    });
+
+    $('.overlay-admin-button').overlaymenu({
+        menu: '.overlaymenu-admin'
+    });
+
+    $('.overlay-details-button')
+        .overlaymenu({
+            menu: '.overlaymenu-details'
+        })
+        .on('overlaymenuopen', function () {
+            var spinner = new Spinner({
+                left: '50%',
+                top: '50%'
+            }).spin($('.details-overview')[0]);
+            updateDetailsLink(map);
+            updateOwnershipOverview(map);
+        });
+
+    $('.overlay-news-button')
+        .overlaymenu({
+            menu: '.overlaymenu-news'
+        })
+        .on('overlaymenuopen', function () {
+            var spinner = new Spinner({
+                left: '0px',
+                top: '0px'
+            }).spin($('.activity-stream')[0]);
+
+            var url = Django.url('activity_list');
+            $('.activity-stream').load(url, function () {
+                $('.action-list').infinitescroll({
+                    loading: {
+                        finishedMsg: 'No more activities to load.'
+                    },
+                    behavior: 'local',
+                    binder: $('.overlaymenu-news .overlaymenu-menu-content'),
+                    itemSelector: 'li.action',
+                    navSelector: '.activity-stream-nav',
+                    nextSelector: '.activity-stream-nav a:first'
+                });
+            });
+        });
+
+    $('.overlay-filter-button').overlaymenu({
+        menu: '.overlaymenu-filter'
+    });
+
+
+}
+
+$(document).ready(function () {
+    if ($('.map-page').length > 0) {
+        var params;
+        if (window.location.search.length) {
+            params = deparam();
+            setFilters(params);
+        }
+
+        var map = L.lotMap('map', {
+            filterParams: buildLotFilterParams(null),
+
+            onMouseOverFeature: function (feature) {
+            },
+
+            onMouseOutFeature: function (feature) {
+            }
+
+        });
+
+        map.addLotsLayer();
+
+        prepareOverlayMenus(map);
+
+        $('.details-print').click(function () {
+            // TODO This is not a good solution since the map size changes
+            // on print. Look into taking screenshots like:
+            //   https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
+            //   http://html2canvas.hertzen.com
+            window.print();
+        });
+
+        $('form.map-search-form').mapsearch()
+            .on('searchstart', function (e) {
+                map.removeUserLayer();
+            })
+            .on('searchresultfound', function (e, result) {
+                map.addUserLayer([result.latitude, result.longitude]);
+            });
+
+        $('.filter').change(function () {
+            var params = buildLotFilterParams(map);
+            map.updateFilters(params);
+            updateLotCount(map);
+        });
+
+        updateLotCount(map);
+        map.on({
+            'moveend': function () {
+                updateLotCount(map);
+            },
+            'zoomend': function () {
+                updateLotCount(map);
+            },
+            'lotlayertransition': function (e) {
+                map.addLotsLayer(buildLotFilterParams(map));
+            }
+        });
+
+        $('.export').click(function (e) {
+            var url = $(this).data('baseurl') + 
+                $.param(buildLotFilterParams(map, { bbox: true }));
+            window.location.href = url;
+            e.preventDefault();
+        });
+
+        initWelcome();
+
+        $('.admin-button-add-lot').click(function () {
+            map.enterLotAddMode();
+        });
+
+        $('.admin-button-email').click(function () {
+            map.enterMailMode();
+        });
+    }
+});
+
+},{"./leaflet.lotmap":19,"./map.search.js":26,"./overlaymenu":29,"./singleminded":30,"./welcome":32,"handlebars":49,"jquery.infinitescroll":2,"leaflet":50,"leaflet.loading":13,"livinglots-map/src/livinglots.addlot":70,"livinglots-map/src/livinglots.mail":71,"spin.js":73,"underscore":74}],29:[function(require,module,exports){
+//
+// overlaymenu.js
+//
+// Overlay / dropdown menus, like modals but less intrusive
+//
+
+var _ = require('underscore');
+
+
+function show(button, menu) {
+    var offset = button.offset(),
+        outerWidth = button.outerWidth(),
+        outerHeight = button.outerHeight(),
+        menuWidth = menu.outerWidth();
+
+    button.trigger('overlaymenuopen');
+
+    menu
+        .show()
+        .offset({
+            left: offset.left + outerWidth - menuWidth,
+            top: offset.top + outerHeight + 13
+        });
+}
+
+function hide(button, menu) {
+    button.trigger('overlaymenuclose');
+    menu.hide();
+}
+
+function isVisible(menu) {
+    return menu.is(':visible');
+}
+
+function isInMenu(target, menu) {
+    return (target[0] === menu[0] ||
+            _.find(target.parents(), function (ele) { return ele === menu[0]; }));
+}
+
+$.fn.overlaymenu = function (options) {
+    var button = this,
+        menu = $(options.menu);
+
+    $('html').click(function (e) {
+        var target = $(e.target);
+
+        // If user not clicking in menu, consider hiding or showing it
+        if (!isInMenu(target, menu)) {
+            if (target[0] === button[0]) {
+                // If button clicked, show or hide the menu appropriately
+                if (isVisible(menu)) {
+                    hide(button, menu);
+                }
+                else {
+                    show(button, menu);
+                }
+                return false;
+            }
+            else {
+                // Something else was clicked--hide the menu
+                hide(button, menu);
+            }
+        }
+    });
+    return this;
+};
+
+},{"underscore":74}],30:[function(require,module,exports){
+var thoughts = {};
+
+function forget(name) {
+    var request = thoughts[name];
+
+    // If request exists and does not have a DONE state, abort it
+    if (request && request.readyState != 4) {
+        request.abort();
+    }
+
+    thoughts[name] = null;
+}
+
+function remember(params) {
+    var name = params.name,
+        jqxhr = params.jqxhr;
+
+    forget(name);
+
+    jqxhr.done(function() {
+        // Don't bother remembering requests we've finished
+        forget(name);
+    });
+    thoughts[name] = jqxhr;
+}
+
+module.exports = {
+    forget: forget,
+    remember: remember
+};
+
+},{}],31:[function(require,module,exports){
+
+
+function get_heading(lon0, lat0, lon1, lat1) {
+    // Don't bother with great-circle calculations--should be close!
+    var r = Math.atan2(-(lon1 - lon0), (lat1 - lat0));
+    if (r < 0) {
+        r += 2 * Math.PI;
+    }
+    var d = r * (180 / Math.PI);
+
+    // Convert to google's heading: "True north is 0°, east is 90°,
+    // south is 180°, west is 270°."
+    if (d >= 45 && d < 135) { d += 180; }
+    else if (d >= 225 && d < 315) { d -= 180; }
+    return d;
+}
+
+function load_streetview(lon, lat, $elem, $errorBox) {
+    var service = new google.maps.StreetViewService();
+
+    if (!(lon && lat)) {
+        return;
+    }
+    var latLng = new google.maps.LatLng(lat, lon);
+
+    service.getPanoramaByLocation(latLng, 50, function (result, status) {
+        // TODO result.imageDate could be useful
+
+        if (status === google.maps.StreetViewStatus.OK) {
+            var lon0 = result.location.latLng.lng(),
+                lat0 = result.location.latLng.lat();
+
+            var pano = new google.maps.StreetViewPanorama($elem[0], {
+                pano: result.location.pano,
+                pov: {
+                    heading: get_heading(lon0, lat0, lon, lat),
+                    pitch: 0,
+                },
+            });
+        }
+        else {
+            $errorBox.show();
+        }
+    });
+}
+
+module.exports = {
+    load_streetview: load_streetview
+};
+
+},{}],32:[function(require,module,exports){
+//
+// Welcome header
+//
+
+function initClose() {
+    $('.map-welcome-close-button').click(function (e) {
+        $('.map-welcome').addClass('closed');
+        $('.map-welcome h1').animate({ 'font-size': '28px' });
+        $('.map-welcome-body').slideUp();
+        e.preventDefault();
+        return false;
+    });
+}
+
+function initOpen() {
+    $('.map-welcome-open-button').click(function (e) {
+        $('.map-welcome').removeClass('closed');
+        $('.map-welcome h1').animate({ 'font-size': '56px' });
+        $('.map-welcome-body').slideDown();
+        e.preventDefault();
+        return false;
+    });
+}
+
+module.exports = {
+    init: function () {
+        initClose();
+        initOpen();
+    }
+};
+
+},{}],33:[function(require,module,exports){
+
+},{}],34:[function(require,module,exports){
+"use strict";
+/*globals Handlebars: true */
+var Handlebars = require("./handlebars.runtime")["default"];
+
+// Compiler imports
+var AST = require("./handlebars/compiler/ast")["default"];
+var Parser = require("./handlebars/compiler/base").parser;
+var parse = require("./handlebars/compiler/base").parse;
+var Compiler = require("./handlebars/compiler/compiler").Compiler;
+var compile = require("./handlebars/compiler/compiler").compile;
+var precompile = require("./handlebars/compiler/compiler").precompile;
+var JavaScriptCompiler = require("./handlebars/compiler/javascript-compiler")["default"];
+
+var _create = Handlebars.create;
+var create = function() {
+  var hb = _create();
+
+  hb.compile = function(input, options) {
+    return compile(input, options, hb);
+  };
+  hb.precompile = function (input, options) {
+    return precompile(input, options, hb);
+  };
+
+  hb.AST = AST;
+  hb.Compiler = Compiler;
+  hb.JavaScriptCompiler = JavaScriptCompiler;
+  hb.Parser = Parser;
+  hb.parse = parse;
+
+  return hb;
+};
+
+Handlebars = create();
+Handlebars.create = create;
+
+Handlebars['default'] = Handlebars;
+
+exports["default"] = Handlebars;
+},{"./handlebars.runtime":35,"./handlebars/compiler/ast":37,"./handlebars/compiler/base":38,"./handlebars/compiler/compiler":39,"./handlebars/compiler/javascript-compiler":41}],35:[function(require,module,exports){
+"use strict";
+/*globals Handlebars: true */
+var base = require("./handlebars/base");
+
+// Each of these augment the Handlebars object. No need to setup here.
+// (This is done to easily share code between commonjs and browse envs)
+var SafeString = require("./handlebars/safe-string")["default"];
+var Exception = require("./handlebars/exception")["default"];
+var Utils = require("./handlebars/utils");
+var runtime = require("./handlebars/runtime");
+
+// For compatibility and usage outside of module systems, make the Handlebars object a namespace
+var create = function() {
+  var hb = new base.HandlebarsEnvironment();
+
+  Utils.extend(hb, base);
+  hb.SafeString = SafeString;
+  hb.Exception = Exception;
+  hb.Utils = Utils;
+  hb.escapeExpression = Utils.escapeExpression;
+
+  hb.VM = runtime;
+  hb.template = function(spec) {
+    return runtime.template(spec, hb);
+  };
+
+  return hb;
+};
+
+var Handlebars = create();
+Handlebars.create = create;
+
+Handlebars['default'] = Handlebars;
+
+exports["default"] = Handlebars;
+},{"./handlebars/base":36,"./handlebars/exception":45,"./handlebars/runtime":46,"./handlebars/safe-string":47,"./handlebars/utils":48}],36:[function(require,module,exports){
+"use strict";
+var Utils = require("./utils");
+var Exception = require("./exception")["default"];
+
+var VERSION = "2.0.0";
+exports.VERSION = VERSION;var COMPILER_REVISION = 6;
+exports.COMPILER_REVISION = COMPILER_REVISION;
+var REVISION_CHANGES = {
+  1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
+  2: '== 1.0.0-rc.3',
+  3: '== 1.0.0-rc.4',
+  4: '== 1.x.x',
+  5: '== 2.0.0-alpha.x',
+  6: '>= 2.0.0-beta.1'
+};
+exports.REVISION_CHANGES = REVISION_CHANGES;
+var isArray = Utils.isArray,
+    isFunction = Utils.isFunction,
+    toString = Utils.toString,
+    objectType = '[object Object]';
+
+function HandlebarsEnvironment(helpers, partials) {
+  this.helpers = helpers || {};
+  this.partials = partials || {};
+
+  registerDefaultHelpers(this);
+}
+
+exports.HandlebarsEnvironment = HandlebarsEnvironment;HandlebarsEnvironment.prototype = {
+  constructor: HandlebarsEnvironment,
+
+  logger: logger,
+  log: log,
+
+  registerHelper: function(name, fn) {
+    if (toString.call(name) === objectType) {
+      if (fn) { throw new Exception('Arg not supported with multiple helpers'); }
+      Utils.extend(this.helpers, name);
+    } else {
+      this.helpers[name] = fn;
+    }
+  },
+  unregisterHelper: function(name) {
+    delete this.helpers[name];
+  },
+
+  registerPartial: function(name, partial) {
+    if (toString.call(name) === objectType) {
+      Utils.extend(this.partials,  name);
+    } else {
+      this.partials[name] = partial;
+    }
+  },
+  unregisterPartial: function(name) {
+    delete this.partials[name];
+  }
+};
+
+function registerDefaultHelpers(instance) {
+  instance.registerHelper('helperMissing', function(/* [args, ]options */) {
+    if(arguments.length === 1) {
+      // A missing field in a {{foo}} constuct.
+      return undefined;
+    } else {
+      // Someone is actually trying to call something, blow up.
+      throw new Exception("Missing helper: '" + arguments[arguments.length-1].name + "'");
+    }
+  });
+
+  instance.registerHelper('blockHelperMissing', function(context, options) {
+    var inverse = options.inverse,
+        fn = options.fn;
+
+    if(context === true) {
+      return fn(this);
+    } else if(context === false || context == null) {
+      return inverse(this);
+    } else if (isArray(context)) {
+      if(context.length > 0) {
+        if (options.ids) {
+          options.ids = [options.name];
+        }
+
+        return instance.helpers.each(context, options);
+      } else {
+        return inverse(this);
+      }
+    } else {
+      if (options.data && options.ids) {
+        var data = createFrame(options.data);
+        data.contextPath = Utils.appendContextPath(options.data.contextPath, options.name);
+        options = {data: data};
+      }
+
+      return fn(context, options);
+    }
+  });
+
+  instance.registerHelper('each', function(context, options) {
+    if (!options) {
+      throw new Exception('Must pass iterator to #each');
+    }
+
+    var fn = options.fn, inverse = options.inverse;
+    var i = 0, ret = "", data;
+
+    var contextPath;
+    if (options.data && options.ids) {
+      contextPath = Utils.appendContextPath(options.data.contextPath, options.ids[0]) + '.';
+    }
+
+    if (isFunction(context)) { context = context.call(this); }
+
+    if (options.data) {
+      data = createFrame(options.data);
+    }
+
+    if(context && typeof context === 'object') {
+      if (isArray(context)) {
+        for(var j = context.length; i<j; i++) {
+          if (data) {
+            data.index = i;
+            data.first = (i === 0);
+            data.last  = (i === (context.length-1));
+
+            if (contextPath) {
+              data.contextPath = contextPath + i;
+            }
+          }
+          ret = ret + fn(context[i], { data: data });
+        }
+      } else {
+        for(var key in context) {
+          if(context.hasOwnProperty(key)) {
+            if(data) {
+              data.key = key;
+              data.index = i;
+              data.first = (i === 0);
+
+              if (contextPath) {
+                data.contextPath = contextPath + key;
+              }
+            }
+            ret = ret + fn(context[key], {data: data});
+            i++;
+          }
+        }
+      }
+    }
+
+    if(i === 0){
+      ret = inverse(this);
+    }
+
+    return ret;
+  });
+
+  instance.registerHelper('if', function(conditional, options) {
+    if (isFunction(conditional)) { conditional = conditional.call(this); }
+
+    // Default behavior is to render the positive path if the value is truthy and not empty.
+    // The `includeZero` option may be set to treat the condtional as purely not empty based on the
+    // behavior of isEmpty. Effectively this determines if 0 is handled by the positive path or negative.
+    if ((!options.hash.includeZero && !conditional) || Utils.isEmpty(conditional)) {
+      return options.inverse(this);
+    } else {
+      return options.fn(this);
+    }
+  });
+
+  instance.registerHelper('unless', function(conditional, options) {
+    return instance.helpers['if'].call(this, conditional, {fn: options.inverse, inverse: options.fn, hash: options.hash});
+  });
+
+  instance.registerHelper('with', function(context, options) {
+    if (isFunction(context)) { context = context.call(this); }
+
+    var fn = options.fn;
+
+    if (!Utils.isEmpty(context)) {
+      if (options.data && options.ids) {
+        var data = createFrame(options.data);
+        data.contextPath = Utils.appendContextPath(options.data.contextPath, options.ids[0]);
+        options = {data:data};
+      }
+
+      return fn(context, options);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  instance.registerHelper('log', function(message, options) {
+    var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
+    instance.log(level, message);
+  });
+
+  instance.registerHelper('lookup', function(obj, field) {
+    return obj && obj[field];
+  });
+}
+
+var logger = {
+  methodMap: { 0: 'debug', 1: 'info', 2: 'warn', 3: 'error' },
+
+  // State enum
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3,
+  level: 3,
+
+  // can be overridden in the host environment
+  log: function(level, message) {
+    if (logger.level <= level) {
+      var method = logger.methodMap[level];
+      if (typeof console !== 'undefined' && console[method]) {
+        console[method].call(console, message);
+      }
+    }
+  }
+};
+exports.logger = logger;
+var log = logger.log;
+exports.log = log;
+var createFrame = function(object) {
+  var frame = Utils.extend({}, object);
+  frame._parent = object;
+  return frame;
+};
+exports.createFrame = createFrame;
+},{"./exception":45,"./utils":48}],37:[function(require,module,exports){
+"use strict";
+var Exception = require("../exception")["default"];
+
+function LocationInfo(locInfo) {
+  locInfo = locInfo || {};
+  this.firstLine   = locInfo.first_line;
+  this.firstColumn = locInfo.first_column;
+  this.lastColumn  = locInfo.last_column;
+  this.lastLine    = locInfo.last_line;
+}
+
+var AST = {
+  ProgramNode: function(statements, strip, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "program";
+    this.statements = statements;
+    this.strip = strip;
+  },
+
+  MustacheNode: function(rawParams, hash, open, strip, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "mustache";
+    this.strip = strip;
+
+    // Open may be a string parsed from the parser or a passed boolean flag
+    if (open != null && open.charAt) {
+      // Must use charAt to support IE pre-10
+      var escapeFlag = open.charAt(3) || open.charAt(2);
+      this.escaped = escapeFlag !== '{' && escapeFlag !== '&';
+    } else {
+      this.escaped = !!open;
+    }
+
+    if (rawParams instanceof AST.SexprNode) {
+      this.sexpr = rawParams;
+    } else {
+      // Support old AST API
+      this.sexpr = new AST.SexprNode(rawParams, hash);
+    }
+
+    // Support old AST API that stored this info in MustacheNode
+    this.id = this.sexpr.id;
+    this.params = this.sexpr.params;
+    this.hash = this.sexpr.hash;
+    this.eligibleHelper = this.sexpr.eligibleHelper;
+    this.isHelper = this.sexpr.isHelper;
+  },
+
+  SexprNode: function(rawParams, hash, locInfo) {
+    LocationInfo.call(this, locInfo);
+
+    this.type = "sexpr";
+    this.hash = hash;
+
+    var id = this.id = rawParams[0];
+    var params = this.params = rawParams.slice(1);
+
+    // a mustache is definitely a helper if:
+    // * it is an eligible helper, and
+    // * it has at least one parameter or hash segment
+    this.isHelper = !!(params.length || hash);
+
+    // a mustache is an eligible helper if:
+    // * its id is simple (a single part, not `this` or `..`)
+    this.eligibleHelper = this.isHelper || id.isSimple;
+
+    // if a mustache is an eligible helper but not a definite
+    // helper, it is ambiguous, and will be resolved in a later
+    // pass or at runtime.
+  },
+
+  PartialNode: function(partialName, context, hash, strip, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type         = "partial";
+    this.partialName  = partialName;
+    this.context      = context;
+    this.hash = hash;
+    this.strip = strip;
+
+    this.strip.inlineStandalone = true;
+  },
+
+  BlockNode: function(mustache, program, inverse, strip, locInfo) {
+    LocationInfo.call(this, locInfo);
+
+    this.type = 'block';
+    this.mustache = mustache;
+    this.program  = program;
+    this.inverse  = inverse;
+    this.strip = strip;
+
+    if (inverse && !program) {
+      this.isInverse = true;
+    }
+  },
+
+  RawBlockNode: function(mustache, content, close, locInfo) {
+    LocationInfo.call(this, locInfo);
+
+    if (mustache.sexpr.id.original !== close) {
+      throw new Exception(mustache.sexpr.id.original + " doesn't match " + close, this);
+    }
+
+    content = new AST.ContentNode(content, locInfo);
+
+    this.type = 'block';
+    this.mustache = mustache;
+    this.program = new AST.ProgramNode([content], {}, locInfo);
+  },
+
+  ContentNode: function(string, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "content";
+    this.original = this.string = string;
+  },
+
+  HashNode: function(pairs, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "hash";
+    this.pairs = pairs;
+  },
+
+  IdNode: function(parts, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "ID";
+
+    var original = "",
+        dig = [],
+        depth = 0,
+        depthString = '';
+
+    for(var i=0,l=parts.length; i<l; i++) {
+      var part = parts[i].part;
+      original += (parts[i].separator || '') + part;
+
+      if (part === ".." || part === "." || part === "this") {
+        if (dig.length > 0) {
+          throw new Exception("Invalid path: " + original, this);
+        } else if (part === "..") {
+          depth++;
+          depthString += '../';
+        } else {
+          this.isScoped = true;
+        }
+      } else {
+        dig.push(part);
+      }
+    }
+
+    this.original = original;
+    this.parts    = dig;
+    this.string   = dig.join('.');
+    this.depth    = depth;
+    this.idName   = depthString + this.string;
+
+    // an ID is simple if it only has one part, and that part is not
+    // `..` or `this`.
+    this.isSimple = parts.length === 1 && !this.isScoped && depth === 0;
+
+    this.stringModeValue = this.string;
+  },
+
+  PartialNameNode: function(name, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "PARTIAL_NAME";
+    this.name = name.original;
+  },
+
+  DataNode: function(id, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "DATA";
+    this.id = id;
+    this.stringModeValue = id.stringModeValue;
+    this.idName = '@' + id.stringModeValue;
+  },
+
+  StringNode: function(string, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "STRING";
+    this.original =
+      this.string =
+      this.stringModeValue = string;
+  },
+
+  NumberNode: function(number, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "NUMBER";
+    this.original =
+      this.number = number;
+    this.stringModeValue = Number(number);
+  },
+
+  BooleanNode: function(bool, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "BOOLEAN";
+    this.bool = bool;
+    this.stringModeValue = bool === "true";
+  },
+
+  CommentNode: function(comment, locInfo) {
+    LocationInfo.call(this, locInfo);
+    this.type = "comment";
+    this.comment = comment;
+
+    this.strip = {
+      inlineStandalone: true
+    };
+  }
+};
+
+
+// Must be exported as an object rather than the root of the module as the jison lexer
+// most modify the object to operate properly.
+exports["default"] = AST;
+},{"../exception":45}],38:[function(require,module,exports){
+"use strict";
+var parser = require("./parser")["default"];
+var AST = require("./ast")["default"];
+var Helpers = require("./helpers");
+var extend = require("../utils").extend;
+
+exports.parser = parser;
+
+var yy = {};
+extend(yy, Helpers, AST);
+
+function parse(input) {
+  // Just return if an already-compile AST was passed in.
+  if (input.constructor === AST.ProgramNode) { return input; }
+
+  parser.yy = yy;
+
+  return parser.parse(input);
+}
+
+exports.parse = parse;
+},{"../utils":48,"./ast":37,"./helpers":40,"./parser":42}],39:[function(require,module,exports){
+"use strict";
+var Exception = require("../exception")["default"];
+var isArray = require("../utils").isArray;
+
+var slice = [].slice;
+
+function Compiler() {}
+
+exports.Compiler = Compiler;// the foundHelper register will disambiguate helper lookup from finding a
+// function in a context. This is necessary for mustache compatibility, which
+// requires that context functions in blocks are evaluated by blockHelperMissing,
+// and then proceed as if the resulting value was provided to blockHelperMissing.
+
+Compiler.prototype = {
+  compiler: Compiler,
+
+  equals: function(other) {
+    var len = this.opcodes.length;
+    if (other.opcodes.length !== len) {
+      return false;
+    }
+
+    for (var i = 0; i < len; i++) {
+      var opcode = this.opcodes[i],
+          otherOpcode = other.opcodes[i];
+      if (opcode.opcode !== otherOpcode.opcode || !argEquals(opcode.args, otherOpcode.args)) {
+        return false;
+      }
+    }
+
+    // We know that length is the same between the two arrays because they are directly tied
+    // to the opcode behavior above.
+    len = this.children.length;
+    for (i = 0; i < len; i++) {
+      if (!this.children[i].equals(other.children[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+
+  guid: 0,
+
+  compile: function(program, options) {
+    this.opcodes = [];
+    this.children = [];
+    this.depths = {list: []};
+    this.options = options;
+    this.stringParams = options.stringParams;
+    this.trackIds = options.trackIds;
+
+    // These changes will propagate to the other compiler components
+    var knownHelpers = this.options.knownHelpers;
+    this.options.knownHelpers = {
+      'helperMissing': true,
+      'blockHelperMissing': true,
+      'each': true,
+      'if': true,
+      'unless': true,
+      'with': true,
+      'log': true,
+      'lookup': true
+    };
+    if (knownHelpers) {
+      for (var name in knownHelpers) {
+        this.options.knownHelpers[name] = knownHelpers[name];
+      }
+    }
+
+    return this.accept(program);
+  },
+
+  accept: function(node) {
+    return this[node.type](node);
+  },
+
+  program: function(program) {
+    var statements = program.statements;
+
+    for(var i=0, l=statements.length; i<l; i++) {
+      this.accept(statements[i]);
+    }
+    this.isSimple = l === 1;
+
+    this.depths.list = this.depths.list.sort(function(a, b) {
+      return a - b;
+    });
+
+    return this;
+  },
+
+  compileProgram: function(program) {
+    var result = new this.compiler().compile(program, this.options);
+    var guid = this.guid++, depth;
+
+    this.usePartial = this.usePartial || result.usePartial;
+
+    this.children[guid] = result;
+
+    for(var i=0, l=result.depths.list.length; i<l; i++) {
+      depth = result.depths.list[i];
+
+      if(depth < 2) { continue; }
+      else { this.addDepth(depth - 1); }
+    }
+
+    return guid;
+  },
+
+  block: function(block) {
+    var mustache = block.mustache,
+        program = block.program,
+        inverse = block.inverse;
+
+    if (program) {
+      program = this.compileProgram(program);
+    }
+
+    if (inverse) {
+      inverse = this.compileProgram(inverse);
+    }
+
+    var sexpr = mustache.sexpr;
+    var type = this.classifySexpr(sexpr);
+
+    if (type === "helper") {
+      this.helperSexpr(sexpr, program, inverse);
+    } else if (type === "simple") {
+      this.simpleSexpr(sexpr);
+
+      // now that the simple mustache is resolved, we need to
+      // evaluate it by executing `blockHelperMissing`
+      this.opcode('pushProgram', program);
+      this.opcode('pushProgram', inverse);
+      this.opcode('emptyHash');
+      this.opcode('blockValue', sexpr.id.original);
+    } else {
+      this.ambiguousSexpr(sexpr, program, inverse);
+
+      // now that the simple mustache is resolved, we need to
+      // evaluate it by executing `blockHelperMissing`
+      this.opcode('pushProgram', program);
+      this.opcode('pushProgram', inverse);
+      this.opcode('emptyHash');
+      this.opcode('ambiguousBlockValue');
+    }
+
+    this.opcode('append');
+  },
+
+  hash: function(hash) {
+    var pairs = hash.pairs, i, l;
+
+    this.opcode('pushHash');
+
+    for(i=0, l=pairs.length; i<l; i++) {
+      this.pushParam(pairs[i][1]);
+    }
+    while(i--) {
+      this.opcode('assignToHash', pairs[i][0]);
+    }
+    this.opcode('popHash');
+  },
+
+  partial: function(partial) {
+    var partialName = partial.partialName;
+    this.usePartial = true;
+
+    if (partial.hash) {
+      this.accept(partial.hash);
+    } else {
+      this.opcode('push', 'undefined');
+    }
+
+    if (partial.context) {
+      this.accept(partial.context);
+    } else {
+      this.opcode('getContext', 0);
+      this.opcode('pushContext');
+    }
+
+    this.opcode('invokePartial', partialName.name, partial.indent || '');
+    this.opcode('append');
+  },
+
+  content: function(content) {
+    if (content.string) {
+      this.opcode('appendContent', content.string);
+    }
+  },
+
+  mustache: function(mustache) {
+    this.sexpr(mustache.sexpr);
+
+    if(mustache.escaped && !this.options.noEscape) {
+      this.opcode('appendEscaped');
+    } else {
+      this.opcode('append');
+    }
+  },
+
+  ambiguousSexpr: function(sexpr, program, inverse) {
+    var id = sexpr.id,
+        name = id.parts[0],
+        isBlock = program != null || inverse != null;
+
+    this.opcode('getContext', id.depth);
+
+    this.opcode('pushProgram', program);
+    this.opcode('pushProgram', inverse);
+
+    this.ID(id);
+
+    this.opcode('invokeAmbiguous', name, isBlock);
+  },
+
+  simpleSexpr: function(sexpr) {
+    var id = sexpr.id;
+
+    if (id.type === 'DATA') {
+      this.DATA(id);
+    } else if (id.parts.length) {
+      this.ID(id);
+    } else {
+      // Simplified ID for `this`
+      this.addDepth(id.depth);
+      this.opcode('getContext', id.depth);
+      this.opcode('pushContext');
+    }
+
+    this.opcode('resolvePossibleLambda');
+  },
+
+  helperSexpr: function(sexpr, program, inverse) {
+    var params = this.setupFullMustacheParams(sexpr, program, inverse),
+        id = sexpr.id,
+        name = id.parts[0];
+
+    if (this.options.knownHelpers[name]) {
+      this.opcode('invokeKnownHelper', params.length, name);
+    } else if (this.options.knownHelpersOnly) {
+      throw new Exception("You specified knownHelpersOnly, but used the unknown helper " + name, sexpr);
+    } else {
+      id.falsy = true;
+
+      this.ID(id);
+      this.opcode('invokeHelper', params.length, id.original, id.isSimple);
+    }
+  },
+
+  sexpr: function(sexpr) {
+    var type = this.classifySexpr(sexpr);
+
+    if (type === "simple") {
+      this.simpleSexpr(sexpr);
+    } else if (type === "helper") {
+      this.helperSexpr(sexpr);
+    } else {
+      this.ambiguousSexpr(sexpr);
+    }
+  },
+
+  ID: function(id) {
+    this.addDepth(id.depth);
+    this.opcode('getContext', id.depth);
+
+    var name = id.parts[0];
+    if (!name) {
+      // Context reference, i.e. `{{foo .}}` or `{{foo ..}}`
+      this.opcode('pushContext');
+    } else {
+      this.opcode('lookupOnContext', id.parts, id.falsy, id.isScoped);
+    }
+  },
+
+  DATA: function(data) {
+    this.options.data = true;
+    this.opcode('lookupData', data.id.depth, data.id.parts);
+  },
+
+  STRING: function(string) {
+    this.opcode('pushString', string.string);
+  },
+
+  NUMBER: function(number) {
+    this.opcode('pushLiteral', number.number);
+  },
+
+  BOOLEAN: function(bool) {
+    this.opcode('pushLiteral', bool.bool);
+  },
+
+  comment: function() {},
+
+  // HELPERS
+  opcode: function(name) {
+    this.opcodes.push({ opcode: name, args: slice.call(arguments, 1) });
+  },
+
+  addDepth: function(depth) {
+    if(depth === 0) { return; }
+
+    if(!this.depths[depth]) {
+      this.depths[depth] = true;
+      this.depths.list.push(depth);
+    }
+  },
+
+  classifySexpr: function(sexpr) {
+    var isHelper   = sexpr.isHelper;
+    var isEligible = sexpr.eligibleHelper;
+    var options    = this.options;
+
+    // if ambiguous, we can possibly resolve the ambiguity now
+    // An eligible helper is one that does not have a complex path, i.e. `this.foo`, `../foo` etc.
+    if (isEligible && !isHelper) {
+      var name = sexpr.id.parts[0];
+
+      if (options.knownHelpers[name]) {
+        isHelper = true;
+      } else if (options.knownHelpersOnly) {
+        isEligible = false;
+      }
+    }
+
+    if (isHelper) { return "helper"; }
+    else if (isEligible) { return "ambiguous"; }
+    else { return "simple"; }
+  },
+
+  pushParams: function(params) {
+    for(var i=0, l=params.length; i<l; i++) {
+      this.pushParam(params[i]);
+    }
+  },
+
+  pushParam: function(val) {
+    if (this.stringParams) {
+      if(val.depth) {
+        this.addDepth(val.depth);
+      }
+      this.opcode('getContext', val.depth || 0);
+      this.opcode('pushStringParam', val.stringModeValue, val.type);
+
+      if (val.type === 'sexpr') {
+        // Subexpressions get evaluated and passed in
+        // in string params mode.
+        this.sexpr(val);
+      }
+    } else {
+      if (this.trackIds) {
+        this.opcode('pushId', val.type, val.idName || val.stringModeValue);
+      }
+      this.accept(val);
+    }
+  },
+
+  setupFullMustacheParams: function(sexpr, program, inverse) {
+    var params = sexpr.params;
+    this.pushParams(params);
+
+    this.opcode('pushProgram', program);
+    this.opcode('pushProgram', inverse);
+
+    if (sexpr.hash) {
+      this.hash(sexpr.hash);
+    } else {
+      this.opcode('emptyHash');
+    }
+
+    return params;
+  }
+};
+
+function precompile(input, options, env) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== env.AST.ProgramNode)) {
+    throw new Exception("You must pass a string or Handlebars AST to Handlebars.precompile. You passed " + input);
+  }
+
+  options = options || {};
+  if (!('data' in options)) {
+    options.data = true;
+  }
+  if (options.compat) {
+    options.useDepths = true;
+  }
+
+  var ast = env.parse(input);
+  var environment = new env.Compiler().compile(ast, options);
+  return new env.JavaScriptCompiler().compile(environment, options);
+}
+
+exports.precompile = precompile;function compile(input, options, env) {
+  if (input == null || (typeof input !== 'string' && input.constructor !== env.AST.ProgramNode)) {
+    throw new Exception("You must pass a string or Handlebars AST to Handlebars.compile. You passed " + input);
+  }
+
+  options = options || {};
+
+  if (!('data' in options)) {
+    options.data = true;
+  }
+  if (options.compat) {
+    options.useDepths = true;
+  }
+
+  var compiled;
+
+  function compileInput() {
+    var ast = env.parse(input);
+    var environment = new env.Compiler().compile(ast, options);
+    var templateSpec = new env.JavaScriptCompiler().compile(environment, options, undefined, true);
+    return env.template(templateSpec);
+  }
+
+  // Template is only compiled on first use and cached after that point.
+  var ret = function(context, options) {
+    if (!compiled) {
+      compiled = compileInput();
+    }
+    return compiled.call(this, context, options);
+  };
+  ret._setup = function(options) {
+    if (!compiled) {
+      compiled = compileInput();
+    }
+    return compiled._setup(options);
+  };
+  ret._child = function(i, data, depths) {
+    if (!compiled) {
+      compiled = compileInput();
+    }
+    return compiled._child(i, data, depths);
+  };
+  return ret;
+}
+
+exports.compile = compile;function argEquals(a, b) {
+  if (a === b) {
+    return true;
+  }
+
+  if (isArray(a) && isArray(b) && a.length === b.length) {
+    for (var i = 0; i < a.length; i++) {
+      if (!argEquals(a[i], b[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+},{"../exception":45,"../utils":48}],40:[function(require,module,exports){
+"use strict";
+var Exception = require("../exception")["default"];
+
+function stripFlags(open, close) {
+  return {
+    left: open.charAt(2) === '~',
+    right: close.charAt(close.length-3) === '~'
+  };
+}
+
+exports.stripFlags = stripFlags;
+function prepareBlock(mustache, program, inverseAndProgram, close, inverted, locInfo) {
+  /*jshint -W040 */
+  if (mustache.sexpr.id.original !== close.path.original) {
+    throw new Exception(mustache.sexpr.id.original + ' doesn\'t match ' + close.path.original, mustache);
+  }
+
+  var inverse = inverseAndProgram && inverseAndProgram.program;
+
+  var strip = {
+    left: mustache.strip.left,
+    right: close.strip.right,
+
+    // Determine the standalone candiacy. Basically flag our content as being possibly standalone
+    // so our parent can determine if we actually are standalone
+    openStandalone: isNextWhitespace(program.statements),
+    closeStandalone: isPrevWhitespace((inverse || program).statements)
+  };
+
+  if (mustache.strip.right) {
+    omitRight(program.statements, null, true);
+  }
+
+  if (inverse) {
+    var inverseStrip = inverseAndProgram.strip;
+
+    if (inverseStrip.left) {
+      omitLeft(program.statements, null, true);
+    }
+    if (inverseStrip.right) {
+      omitRight(inverse.statements, null, true);
+    }
+    if (close.strip.left) {
+      omitLeft(inverse.statements, null, true);
+    }
+
+    // Find standalone else statments
+    if (isPrevWhitespace(program.statements)
+        && isNextWhitespace(inverse.statements)) {
+
+      omitLeft(program.statements);
+      omitRight(inverse.statements);
+    }
+  } else {
+    if (close.strip.left) {
+      omitLeft(program.statements, null, true);
+    }
+  }
+
+  if (inverted) {
+    return new this.BlockNode(mustache, inverse, program, strip, locInfo);
+  } else {
+    return new this.BlockNode(mustache, program, inverse, strip, locInfo);
+  }
+}
+
+exports.prepareBlock = prepareBlock;
+function prepareProgram(statements, isRoot) {
+  for (var i = 0, l = statements.length; i < l; i++) {
+    var current = statements[i],
+        strip = current.strip;
+
+    if (!strip) {
+      continue;
+    }
+
+    var _isPrevWhitespace = isPrevWhitespace(statements, i, isRoot, current.type === 'partial'),
+        _isNextWhitespace = isNextWhitespace(statements, i, isRoot),
+
+        openStandalone = strip.openStandalone && _isPrevWhitespace,
+        closeStandalone = strip.closeStandalone && _isNextWhitespace,
+        inlineStandalone = strip.inlineStandalone && _isPrevWhitespace && _isNextWhitespace;
+
+    if (strip.right) {
+      omitRight(statements, i, true);
+    }
+    if (strip.left) {
+      omitLeft(statements, i, true);
+    }
+
+    if (inlineStandalone) {
+      omitRight(statements, i);
+
+      if (omitLeft(statements, i)) {
+        // If we are on a standalone node, save the indent info for partials
+        if (current.type === 'partial') {
+          current.indent = (/([ \t]+$)/).exec(statements[i-1].original) ? RegExp.$1 : '';
+        }
+      }
+    }
+    if (openStandalone) {
+      omitRight((current.program || current.inverse).statements);
+
+      // Strip out the previous content node if it's whitespace only
+      omitLeft(statements, i);
+    }
+    if (closeStandalone) {
+      // Always strip the next node
+      omitRight(statements, i);
+
+      omitLeft((current.inverse || current.program).statements);
+    }
+  }
+
+  return statements;
+}
+
+exports.prepareProgram = prepareProgram;function isPrevWhitespace(statements, i, isRoot) {
+  if (i === undefined) {
+    i = statements.length;
+  }
+
+  // Nodes that end with newlines are considered whitespace (but are special
+  // cased for strip operations)
+  var prev = statements[i-1],
+      sibling = statements[i-2];
+  if (!prev) {
+    return isRoot;
+  }
+
+  if (prev.type === 'content') {
+    return (sibling || !isRoot ? (/\r?\n\s*?$/) : (/(^|\r?\n)\s*?$/)).test(prev.original);
+  }
+}
+function isNextWhitespace(statements, i, isRoot) {
+  if (i === undefined) {
+    i = -1;
+  }
+
+  var next = statements[i+1],
+      sibling = statements[i+2];
+  if (!next) {
+    return isRoot;
+  }
+
+  if (next.type === 'content') {
+    return (sibling || !isRoot ? (/^\s*?\r?\n/) : (/^\s*?(\r?\n|$)/)).test(next.original);
+  }
+}
+
+// Marks the node to the right of the position as omitted.
+// I.e. {{foo}}' ' will mark the ' ' node as omitted.
+//
+// If i is undefined, then the first child will be marked as such.
+//
+// If mulitple is truthy then all whitespace will be stripped out until non-whitespace
+// content is met.
+function omitRight(statements, i, multiple) {
+  var current = statements[i == null ? 0 : i + 1];
+  if (!current || current.type !== 'content' || (!multiple && current.rightStripped)) {
+    return;
+  }
+
+  var original = current.string;
+  current.string = current.string.replace(multiple ? (/^\s+/) : (/^[ \t]*\r?\n?/), '');
+  current.rightStripped = current.string !== original;
+}
+
+// Marks the node to the left of the position as omitted.
+// I.e. ' '{{foo}} will mark the ' ' node as omitted.
+//
+// If i is undefined then the last child will be marked as such.
+//
+// If mulitple is truthy then all whitespace will be stripped out until non-whitespace
+// content is met.
+function omitLeft(statements, i, multiple) {
+  var current = statements[i == null ? statements.length - 1 : i - 1];
+  if (!current || current.type !== 'content' || (!multiple && current.leftStripped)) {
+    return;
+  }
+
+  // We omit the last node if it's whitespace only and not preceeded by a non-content node.
+  var original = current.string;
+  current.string = current.string.replace(multiple ? (/\s+$/) : (/[ \t]+$/), '');
+  current.leftStripped = current.string !== original;
+  return current.leftStripped;
+}
+},{"../exception":45}],41:[function(require,module,exports){
+"use strict";
+var COMPILER_REVISION = require("../base").COMPILER_REVISION;
+var REVISION_CHANGES = require("../base").REVISION_CHANGES;
+var Exception = require("../exception")["default"];
+
+function Literal(value) {
+  this.value = value;
+}
+
+function JavaScriptCompiler() {}
+
+JavaScriptCompiler.prototype = {
+  // PUBLIC API: You can override these methods in a subclass to provide
+  // alternative compiled forms for name lookup and buffering semantics
+  nameLookup: function(parent, name /* , type*/) {
+    if (JavaScriptCompiler.isValidJavaScriptVariableName(name)) {
+      return parent + "." + name;
+    } else {
+      return parent + "['" + name + "']";
+    }
+  },
+  depthedLookup: function(name) {
+    this.aliases.lookup = 'this.lookup';
+
+    return 'lookup(depths, "' + name + '")';
+  },
+
+  compilerInfo: function() {
+    var revision = COMPILER_REVISION,
+        versions = REVISION_CHANGES[revision];
+    return [revision, versions];
+  },
+
+  appendToBuffer: function(string) {
+    if (this.environment.isSimple) {
+      return "return " + string + ";";
+    } else {
+      return {
+        appendToBuffer: true,
+        content: string,
+        toString: function() { return "buffer += " + string + ";"; }
+      };
+    }
+  },
+
+  initializeBuffer: function() {
+    return this.quotedString("");
+  },
+
+  namespace: "Handlebars",
+  // END PUBLIC API
+
+  compile: function(environment, options, context, asObject) {
+    this.environment = environment;
+    this.options = options;
+    this.stringParams = this.options.stringParams;
+    this.trackIds = this.options.trackIds;
+    this.precompile = !asObject;
+
+    this.name = this.environment.name;
+    this.isChild = !!context;
+    this.context = context || {
+      programs: [],
+      environments: []
+    };
+
+    this.preamble();
+
+    this.stackSlot = 0;
+    this.stackVars = [];
+    this.aliases = {};
+    this.registers = { list: [] };
+    this.hashes = [];
+    this.compileStack = [];
+    this.inlineStack = [];
+
+    this.compileChildren(environment, options);
+
+    this.useDepths = this.useDepths || environment.depths.list.length || this.options.compat;
+
+    var opcodes = environment.opcodes,
+        opcode,
+        i,
+        l;
+
+    for (i = 0, l = opcodes.length; i < l; i++) {
+      opcode = opcodes[i];
+
+      this[opcode.opcode].apply(this, opcode.args);
+    }
+
+    // Flush any trailing content that might be pending.
+    this.pushSource('');
+
+    /* istanbul ignore next */
+    if (this.stackSlot || this.inlineStack.length || this.compileStack.length) {
+      throw new Exception('Compile completed with content left on stack');
+    }
+
+    var fn = this.createFunctionContext(asObject);
+    if (!this.isChild) {
+      var ret = {
+        compiler: this.compilerInfo(),
+        main: fn
+      };
+      var programs = this.context.programs;
+      for (i = 0, l = programs.length; i < l; i++) {
+        if (programs[i]) {
+          ret[i] = programs[i];
+        }
+      }
+
+      if (this.environment.usePartial) {
+        ret.usePartial = true;
+      }
+      if (this.options.data) {
+        ret.useData = true;
+      }
+      if (this.useDepths) {
+        ret.useDepths = true;
+      }
+      if (this.options.compat) {
+        ret.compat = true;
+      }
+
+      if (!asObject) {
+        ret.compiler = JSON.stringify(ret.compiler);
+        ret = this.objectLiteral(ret);
+      }
+
+      return ret;
+    } else {
+      return fn;
+    }
+  },
+
+  preamble: function() {
+    // track the last context pushed into place to allow skipping the
+    // getContext opcode when it would be a noop
+    this.lastContext = 0;
+    this.source = [];
+  },
+
+  createFunctionContext: function(asObject) {
+    var varDeclarations = '';
+
+    var locals = this.stackVars.concat(this.registers.list);
+    if(locals.length > 0) {
+      varDeclarations += ", " + locals.join(", ");
+    }
+
+    // Generate minimizer alias mappings
+    for (var alias in this.aliases) {
+      if (this.aliases.hasOwnProperty(alias)) {
+        varDeclarations += ', ' + alias + '=' + this.aliases[alias];
+      }
+    }
+
+    var params = ["depth0", "helpers", "partials", "data"];
+
+    if (this.useDepths) {
+      params.push('depths');
+    }
+
+    // Perform a second pass over the output to merge content when possible
+    var source = this.mergeSource(varDeclarations);
+
+    if (asObject) {
+      params.push(source);
+
+      return Function.apply(this, params);
+    } else {
+      return 'function(' + params.join(',') + ') {\n  ' + source + '}';
+    }
+  },
+  mergeSource: function(varDeclarations) {
+    var source = '',
+        buffer,
+        appendOnly = !this.forceBuffer,
+        appendFirst;
+
+    for (var i = 0, len = this.source.length; i < len; i++) {
+      var line = this.source[i];
+      if (line.appendToBuffer) {
+        if (buffer) {
+          buffer = buffer + '\n    + ' + line.content;
+        } else {
+          buffer = line.content;
+        }
+      } else {
+        if (buffer) {
+          if (!source) {
+            appendFirst = true;
+            source = buffer + ';\n  ';
+          } else {
+            source += 'buffer += ' + buffer + ';\n  ';
+          }
+          buffer = undefined;
+        }
+        source += line + '\n  ';
+
+        if (!this.environment.isSimple) {
+          appendOnly = false;
+        }
+      }
+    }
+
+    if (appendOnly) {
+      if (buffer || !source) {
+        source += 'return ' + (buffer || '""') + ';\n';
+      }
+    } else {
+      varDeclarations += ", buffer = " + (appendFirst ? '' : this.initializeBuffer());
+      if (buffer) {
+        source += 'return buffer + ' + buffer + ';\n';
+      } else {
+        source += 'return buffer;\n';
+      }
+    }
+
+    if (varDeclarations) {
+      source = 'var ' + varDeclarations.substring(2) + (appendFirst ? '' : ';\n  ') + source;
+    }
+
+    return source;
+  },
+
+  // [blockValue]
+  //
+  // On stack, before: hash, inverse, program, value
+  // On stack, after: return value of blockHelperMissing
+  //
+  // The purpose of this opcode is to take a block of the form
+  // `{{#this.foo}}...{{/this.foo}}`, resolve the value of `foo`, and
+  // replace it on the stack with the result of properly
+  // invoking blockHelperMissing.
+  blockValue: function(name) {
+    this.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
+
+    var params = [this.contextName(0)];
+    this.setupParams(name, 0, params);
+
+    var blockName = this.popStack();
+    params.splice(1, 0, blockName);
+
+    this.push('blockHelperMissing.call(' + params.join(', ') + ')');
+  },
+
+  // [ambiguousBlockValue]
+  //
+  // On stack, before: hash, inverse, program, value
+  // Compiler value, before: lastHelper=value of last found helper, if any
+  // On stack, after, if no lastHelper: same as [blockValue]
+  // On stack, after, if lastHelper: value
+  ambiguousBlockValue: function() {
+    this.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
+
+    // We're being a bit cheeky and reusing the options value from the prior exec
+    var params = [this.contextName(0)];
+    this.setupParams('', 0, params, true);
+
+    this.flushInline();
+
+    var current = this.topStack();
+    params.splice(1, 0, current);
+
+    this.pushSource("if (!" + this.lastHelper + ") { " + current + " = blockHelperMissing.call(" + params.join(", ") + "); }");
+  },
+
+  // [appendContent]
+  //
+  // On stack, before: ...
+  // On stack, after: ...
+  //
+  // Appends the string value of `content` to the current buffer
+  appendContent: function(content) {
+    if (this.pendingContent) {
+      content = this.pendingContent + content;
+    }
+
+    this.pendingContent = content;
+  },
+
+  // [append]
+  //
+  // On stack, before: value, ...
+  // On stack, after: ...
+  //
+  // Coerces `value` to a String and appends it to the current buffer.
+  //
+  // If `value` is truthy, or 0, it is coerced into a string and appended
+  // Otherwise, the empty string is appended
+  append: function() {
+    // Force anything that is inlined onto the stack so we don't have duplication
+    // when we examine local
+    this.flushInline();
+    var local = this.popStack();
+    this.pushSource('if (' + local + ' != null) { ' + this.appendToBuffer(local) + ' }');
+    if (this.environment.isSimple) {
+      this.pushSource("else { " + this.appendToBuffer("''") + " }");
+    }
+  },
+
+  // [appendEscaped]
+  //
+  // On stack, before: value, ...
+  // On stack, after: ...
+  //
+  // Escape `value` and append it to the buffer
+  appendEscaped: function() {
+    this.aliases.escapeExpression = 'this.escapeExpression';
+
+    this.pushSource(this.appendToBuffer("escapeExpression(" + this.popStack() + ")"));
+  },
+
+  // [getContext]
+  //
+  // On stack, before: ...
+  // On stack, after: ...
+  // Compiler value, after: lastContext=depth
+  //
+  // Set the value of the `lastContext` compiler value to the depth
+  getContext: function(depth) {
+    this.lastContext = depth;
+  },
+
+  // [pushContext]
+  //
+  // On stack, before: ...
+  // On stack, after: currentContext, ...
+  //
+  // Pushes the value of the current context onto the stack.
+  pushContext: function() {
+    this.pushStackLiteral(this.contextName(this.lastContext));
+  },
+
+  // [lookupOnContext]
+  //
+  // On stack, before: ...
+  // On stack, after: currentContext[name], ...
+  //
+  // Looks up the value of `name` on the current context and pushes
+  // it onto the stack.
+  lookupOnContext: function(parts, falsy, scoped) {
+    /*jshint -W083 */
+    var i = 0,
+        len = parts.length;
+
+    if (!scoped && this.options.compat && !this.lastContext) {
+      // The depthed query is expected to handle the undefined logic for the root level that
+      // is implemented below, so we evaluate that directly in compat mode
+      this.push(this.depthedLookup(parts[i++]));
+    } else {
+      this.pushContext();
+    }
+
+    for (; i < len; i++) {
+      this.replaceStack(function(current) {
+        var lookup = this.nameLookup(current, parts[i], 'context');
+        // We want to ensure that zero and false are handled properly if the context (falsy flag)
+        // needs to have the special handling for these values.
+        if (!falsy) {
+          return ' != null ? ' + lookup + ' : ' + current;
+        } else {
+          // Otherwise we can use generic falsy handling
+          return ' && ' + lookup;
+        }
+      });
+    }
+  },
+
+  // [lookupData]
+  //
+  // On stack, before: ...
+  // On stack, after: data, ...
+  //
+  // Push the data lookup operator
+  lookupData: function(depth, parts) {
+    /*jshint -W083 */
+    if (!depth) {
+      this.pushStackLiteral('data');
+    } else {
+      this.pushStackLiteral('this.data(data, ' + depth + ')');
+    }
+
+    var len = parts.length;
+    for (var i = 0; i < len; i++) {
+      this.replaceStack(function(current) {
+        return ' && ' + this.nameLookup(current, parts[i], 'data');
+      });
+    }
+  },
+
+  // [resolvePossibleLambda]
+  //
+  // On stack, before: value, ...
+  // On stack, after: resolved value, ...
+  //
+  // If the `value` is a lambda, replace it on the stack by
+  // the return value of the lambda
+  resolvePossibleLambda: function() {
+    this.aliases.lambda = 'this.lambda';
+
+    this.push('lambda(' + this.popStack() + ', ' + this.contextName(0) + ')');
+  },
+
+  // [pushStringParam]
+  //
+  // On stack, before: ...
+  // On stack, after: string, currentContext, ...
+  //
+  // This opcode is designed for use in string mode, which
+  // provides the string value of a parameter along with its
+  // depth rather than resolving it immediately.
+  pushStringParam: function(string, type) {
+    this.pushContext();
+    this.pushString(type);
+
+    // If it's a subexpression, the string result
+    // will be pushed after this opcode.
+    if (type !== 'sexpr') {
+      if (typeof string === 'string') {
+        this.pushString(string);
+      } else {
+        this.pushStackLiteral(string);
+      }
+    }
+  },
+
+  emptyHash: function() {
+    this.pushStackLiteral('{}');
+
+    if (this.trackIds) {
+      this.push('{}'); // hashIds
+    }
+    if (this.stringParams) {
+      this.push('{}'); // hashContexts
+      this.push('{}'); // hashTypes
+    }
+  },
+  pushHash: function() {
+    if (this.hash) {
+      this.hashes.push(this.hash);
+    }
+    this.hash = {values: [], types: [], contexts: [], ids: []};
+  },
+  popHash: function() {
+    var hash = this.hash;
+    this.hash = this.hashes.pop();
+
+    if (this.trackIds) {
+      this.push('{' + hash.ids.join(',') + '}');
+    }
+    if (this.stringParams) {
+      this.push('{' + hash.contexts.join(',') + '}');
+      this.push('{' + hash.types.join(',') + '}');
+    }
+
+    this.push('{\n    ' + hash.values.join(',\n    ') + '\n  }');
+  },
+
+  // [pushString]
+  //
+  // On stack, before: ...
+  // On stack, after: quotedString(string), ...
+  //
+  // Push a quoted version of `string` onto the stack
+  pushString: function(string) {
+    this.pushStackLiteral(this.quotedString(string));
+  },
+
+  // [push]
+  //
+  // On stack, before: ...
+  // On stack, after: expr, ...
+  //
+  // Push an expression onto the stack
+  push: function(expr) {
+    this.inlineStack.push(expr);
+    return expr;
+  },
+
+  // [pushLiteral]
+  //
+  // On stack, before: ...
+  // On stack, after: value, ...
+  //
+  // Pushes a value onto the stack. This operation prevents
+  // the compiler from creating a temporary variable to hold
+  // it.
+  pushLiteral: function(value) {
+    this.pushStackLiteral(value);
+  },
+
+  // [pushProgram]
+  //
+  // On stack, before: ...
+  // On stack, after: program(guid), ...
+  //
+  // Push a program expression onto the stack. This takes
+  // a compile-time guid and converts it into a runtime-accessible
+  // expression.
+  pushProgram: function(guid) {
+    if (guid != null) {
+      this.pushStackLiteral(this.programExpression(guid));
+    } else {
+      this.pushStackLiteral(null);
+    }
+  },
+
+  // [invokeHelper]
+  //
+  // On stack, before: hash, inverse, program, params..., ...
+  // On stack, after: result of helper invocation
+  //
+  // Pops off the helper's parameters, invokes the helper,
+  // and pushes the helper's return value onto the stack.
+  //
+  // If the helper is not found, `helperMissing` is called.
+  invokeHelper: function(paramSize, name, isSimple) {
+    this.aliases.helperMissing = 'helpers.helperMissing';
+
+    var nonHelper = this.popStack();
+    var helper = this.setupHelper(paramSize, name);
+
+    var lookup = (isSimple ? helper.name + ' || ' : '') + nonHelper + ' || helperMissing';
+    this.push('((' + lookup + ').call(' + helper.callParams + '))');
+  },
+
+  // [invokeKnownHelper]
+  //
+  // On stack, before: hash, inverse, program, params..., ...
+  // On stack, after: result of helper invocation
+  //
+  // This operation is used when the helper is known to exist,
+  // so a `helperMissing` fallback is not required.
+  invokeKnownHelper: function(paramSize, name) {
+    var helper = this.setupHelper(paramSize, name);
+    this.push(helper.name + ".call(" + helper.callParams + ")");
+  },
+
+  // [invokeAmbiguous]
+  //
+  // On stack, before: hash, inverse, program, params..., ...
+  // On stack, after: result of disambiguation
+  //
+  // This operation is used when an expression like `{{foo}}`
+  // is provided, but we don't know at compile-time whether it
+  // is a helper or a path.
+  //
+  // This operation emits more code than the other options,
+  // and can be avoided by passing the `knownHelpers` and
+  // `knownHelpersOnly` flags at compile-time.
+  invokeAmbiguous: function(name, helperCall) {
+    this.aliases.functionType = '"function"';
+    this.aliases.helperMissing = 'helpers.helperMissing';
+    this.useRegister('helper');
+
+    var nonHelper = this.popStack();
+
+    this.emptyHash();
+    var helper = this.setupHelper(0, name, helperCall);
+
+    var helperName = this.lastHelper = this.nameLookup('helpers', name, 'helper');
+
+    this.push(
+      '((helper = (helper = ' + helperName + ' || ' + nonHelper + ') != null ? helper : helperMissing'
+        + (helper.paramsInit ? '),(' + helper.paramsInit : '') + '),'
+      + '(typeof helper === functionType ? helper.call(' + helper.callParams + ') : helper))');
+  },
+
+  // [invokePartial]
+  //
+  // On stack, before: context, ...
+  // On stack after: result of partial invocation
+  //
+  // This operation pops off a context, invokes a partial with that context,
+  // and pushes the result of the invocation back.
+  invokePartial: function(name, indent) {
+    var params = [this.nameLookup('partials', name, 'partial'), "'" + indent + "'", "'" + name + "'", this.popStack(), this.popStack(), "helpers", "partials"];
+
+    if (this.options.data) {
+      params.push("data");
+    } else if (this.options.compat) {
+      params.push('undefined');
+    }
+    if (this.options.compat) {
+      params.push('depths');
+    }
+
+    this.push("this.invokePartial(" + params.join(", ") + ")");
+  },
+
+  // [assignToHash]
+  //
+  // On stack, before: value, ..., hash, ...
+  // On stack, after: ..., hash, ...
+  //
+  // Pops a value off the stack and assigns it to the current hash
+  assignToHash: function(key) {
+    var value = this.popStack(),
+        context,
+        type,
+        id;
+
+    if (this.trackIds) {
+      id = this.popStack();
+    }
+    if (this.stringParams) {
+      type = this.popStack();
+      context = this.popStack();
+    }
+
+    var hash = this.hash;
+    if (context) {
+      hash.contexts.push("'" + key + "': " + context);
+    }
+    if (type) {
+      hash.types.push("'" + key + "': " + type);
+    }
+    if (id) {
+      hash.ids.push("'" + key + "': " + id);
+    }
+    hash.values.push("'" + key + "': (" + value + ")");
+  },
+
+  pushId: function(type, name) {
+    if (type === 'ID' || type === 'DATA') {
+      this.pushString(name);
+    } else if (type === 'sexpr') {
+      this.pushStackLiteral('true');
+    } else {
+      this.pushStackLiteral('null');
+    }
+  },
+
+  // HELPERS
+
+  compiler: JavaScriptCompiler,
+
+  compileChildren: function(environment, options) {
+    var children = environment.children, child, compiler;
+
+    for(var i=0, l=children.length; i<l; i++) {
+      child = children[i];
+      compiler = new this.compiler();
+
+      var index = this.matchExistingProgram(child);
+
+      if (index == null) {
+        this.context.programs.push('');     // Placeholder to prevent name conflicts for nested children
+        index = this.context.programs.length;
+        child.index = index;
+        child.name = 'program' + index;
+        this.context.programs[index] = compiler.compile(child, options, this.context, !this.precompile);
+        this.context.environments[index] = child;
+
+        this.useDepths = this.useDepths || compiler.useDepths;
+      } else {
+        child.index = index;
+        child.name = 'program' + index;
+      }
+    }
+  },
+  matchExistingProgram: function(child) {
+    for (var i = 0, len = this.context.environments.length; i < len; i++) {
+      var environment = this.context.environments[i];
+      if (environment && environment.equals(child)) {
+        return i;
+      }
+    }
+  },
+
+  programExpression: function(guid) {
+    var child = this.environment.children[guid],
+        depths = child.depths.list,
+        useDepths = this.useDepths,
+        depth;
+
+    var programParams = [child.index, 'data'];
+
+    if (useDepths) {
+      programParams.push('depths');
+    }
+
+    return 'this.program(' + programParams.join(', ') + ')';
+  },
+
+  useRegister: function(name) {
+    if(!this.registers[name]) {
+      this.registers[name] = true;
+      this.registers.list.push(name);
+    }
+  },
+
+  pushStackLiteral: function(item) {
+    return this.push(new Literal(item));
+  },
+
+  pushSource: function(source) {
+    if (this.pendingContent) {
+      this.source.push(this.appendToBuffer(this.quotedString(this.pendingContent)));
+      this.pendingContent = undefined;
+    }
+
+    if (source) {
+      this.source.push(source);
+    }
+  },
+
+  pushStack: function(item) {
+    this.flushInline();
+
+    var stack = this.incrStack();
+    this.pushSource(stack + " = " + item + ";");
+    this.compileStack.push(stack);
+    return stack;
+  },
+
+  replaceStack: function(callback) {
+    var prefix = '',
+        inline = this.isInline(),
+        stack,
+        createdStack,
+        usedLiteral;
+
+    /* istanbul ignore next */
+    if (!this.isInline()) {
+      throw new Exception('replaceStack on non-inline');
+    }
+
+    // We want to merge the inline statement into the replacement statement via ','
+    var top = this.popStack(true);
+
+    if (top instanceof Literal) {
+      // Literals do not need to be inlined
+      prefix = stack = top.value;
+      usedLiteral = true;
+    } else {
+      // Get or create the current stack name for use by the inline
+      createdStack = !this.stackSlot;
+      var name = !createdStack ? this.topStackName() : this.incrStack();
+
+      prefix = '(' + this.push(name) + ' = ' + top + ')';
+      stack = this.topStack();
+    }
+
+    var item = callback.call(this, stack);
+
+    if (!usedLiteral) {
+      this.popStack();
+    }
+    if (createdStack) {
+      this.stackSlot--;
+    }
+    this.push('(' + prefix + item + ')');
+  },
+
+  incrStack: function() {
+    this.stackSlot++;
+    if(this.stackSlot > this.stackVars.length) { this.stackVars.push("stack" + this.stackSlot); }
+    return this.topStackName();
+  },
+  topStackName: function() {
+    return "stack" + this.stackSlot;
+  },
+  flushInline: function() {
+    var inlineStack = this.inlineStack;
+    if (inlineStack.length) {
+      this.inlineStack = [];
+      for (var i = 0, len = inlineStack.length; i < len; i++) {
+        var entry = inlineStack[i];
+        if (entry instanceof Literal) {
+          this.compileStack.push(entry);
+        } else {
+          this.pushStack(entry);
+        }
+      }
+    }
+  },
+  isInline: function() {
+    return this.inlineStack.length;
+  },
+
+  popStack: function(wrapped) {
+    var inline = this.isInline(),
+        item = (inline ? this.inlineStack : this.compileStack).pop();
+
+    if (!wrapped && (item instanceof Literal)) {
+      return item.value;
+    } else {
+      if (!inline) {
+        /* istanbul ignore next */
+        if (!this.stackSlot) {
+          throw new Exception('Invalid stack pop');
+        }
+        this.stackSlot--;
+      }
+      return item;
+    }
+  },
+
+  topStack: function() {
+    var stack = (this.isInline() ? this.inlineStack : this.compileStack),
+        item = stack[stack.length - 1];
+
+    if (item instanceof Literal) {
+      return item.value;
+    } else {
+      return item;
+    }
+  },
+
+  contextName: function(context) {
+    if (this.useDepths && context) {
+      return 'depths[' + context + ']';
+    } else {
+      return 'depth' + context;
+    }
+  },
+
+  quotedString: function(str) {
+    return '"' + str
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\u2028/g, '\\u2028')   // Per Ecma-262 7.3 + 7.8.4
+      .replace(/\u2029/g, '\\u2029') + '"';
+  },
+
+  objectLiteral: function(obj) {
+    var pairs = [];
+
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        pairs.push(this.quotedString(key) + ':' + obj[key]);
+      }
+    }
+
+    return '{' + pairs.join(',') + '}';
+  },
+
+  setupHelper: function(paramSize, name, blockHelper) {
+    var params = [],
+        paramsInit = this.setupParams(name, paramSize, params, blockHelper);
+    var foundHelper = this.nameLookup('helpers', name, 'helper');
+
+    return {
+      params: params,
+      paramsInit: paramsInit,
+      name: foundHelper,
+      callParams: [this.contextName(0)].concat(params).join(", ")
+    };
+  },
+
+  setupOptions: function(helper, paramSize, params) {
+    var options = {}, contexts = [], types = [], ids = [], param, inverse, program;
+
+    options.name = this.quotedString(helper);
+    options.hash = this.popStack();
+
+    if (this.trackIds) {
+      options.hashIds = this.popStack();
+    }
+    if (this.stringParams) {
+      options.hashTypes = this.popStack();
+      options.hashContexts = this.popStack();
+    }
+
+    inverse = this.popStack();
+    program = this.popStack();
+
+    // Avoid setting fn and inverse if neither are set. This allows
+    // helpers to do a check for `if (options.fn)`
+    if (program || inverse) {
+      if (!program) {
+        program = 'this.noop';
+      }
+
+      if (!inverse) {
+        inverse = 'this.noop';
+      }
+
+      options.fn = program;
+      options.inverse = inverse;
+    }
+
+    // The parameters go on to the stack in order (making sure that they are evaluated in order)
+    // so we need to pop them off the stack in reverse order
+    var i = paramSize;
+    while (i--) {
+      param = this.popStack();
+      params[i] = param;
+
+      if (this.trackIds) {
+        ids[i] = this.popStack();
+      }
+      if (this.stringParams) {
+        types[i] = this.popStack();
+        contexts[i] = this.popStack();
+      }
+    }
+
+    if (this.trackIds) {
+      options.ids = "[" + ids.join(",") + "]";
+    }
+    if (this.stringParams) {
+      options.types = "[" + types.join(",") + "]";
+      options.contexts = "[" + contexts.join(",") + "]";
+    }
+
+    if (this.options.data) {
+      options.data = "data";
+    }
+
+    return options;
+  },
+
+  // the params and contexts arguments are passed in arrays
+  // to fill in
+  setupParams: function(helperName, paramSize, params, useRegister) {
+    var options = this.objectLiteral(this.setupOptions(helperName, paramSize, params));
+
+    if (useRegister) {
+      this.useRegister('options');
+      params.push('options');
+      return 'options=' + options;
+    } else {
+      params.push(options);
+      return '';
+    }
+  }
+};
+
+var reservedWords = (
+  "break else new var" +
+  " case finally return void" +
+  " catch for switch while" +
+  " continue function this with" +
+  " default if throw" +
+  " delete in try" +
+  " do instanceof typeof" +
+  " abstract enum int short" +
+  " boolean export interface static" +
+  " byte extends long super" +
+  " char final native synchronized" +
+  " class float package throws" +
+  " const goto private transient" +
+  " debugger implements protected volatile" +
+  " double import public let yield"
+).split(" ");
+
+var compilerWords = JavaScriptCompiler.RESERVED_WORDS = {};
+
+for(var i=0, l=reservedWords.length; i<l; i++) {
+  compilerWords[reservedWords[i]] = true;
+}
+
+JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
+  return !JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(name);
+};
+
+exports["default"] = JavaScriptCompiler;
+},{"../base":36,"../exception":45}],42:[function(require,module,exports){
+"use strict";
+/* jshint ignore:start */
+/* istanbul ignore next */
+/* Jison generated parser */
+var handlebars = (function(){
+var parser = {trace: function trace() { },
+yy: {},
+symbols_: {"error":2,"root":3,"program":4,"EOF":5,"program_repetition0":6,"statement":7,"mustache":8,"block":9,"rawBlock":10,"partial":11,"CONTENT":12,"COMMENT":13,"openRawBlock":14,"END_RAW_BLOCK":15,"OPEN_RAW_BLOCK":16,"sexpr":17,"CLOSE_RAW_BLOCK":18,"openBlock":19,"block_option0":20,"closeBlock":21,"openInverse":22,"block_option1":23,"OPEN_BLOCK":24,"CLOSE":25,"OPEN_INVERSE":26,"inverseAndProgram":27,"INVERSE":28,"OPEN_ENDBLOCK":29,"path":30,"OPEN":31,"OPEN_UNESCAPED":32,"CLOSE_UNESCAPED":33,"OPEN_PARTIAL":34,"partialName":35,"param":36,"partial_option0":37,"partial_option1":38,"sexpr_repetition0":39,"sexpr_option0":40,"dataName":41,"STRING":42,"NUMBER":43,"BOOLEAN":44,"OPEN_SEXPR":45,"CLOSE_SEXPR":46,"hash":47,"hash_repetition_plus0":48,"hashSegment":49,"ID":50,"EQUALS":51,"DATA":52,"pathSegments":53,"SEP":54,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",12:"CONTENT",13:"COMMENT",15:"END_RAW_BLOCK",16:"OPEN_RAW_BLOCK",18:"CLOSE_RAW_BLOCK",24:"OPEN_BLOCK",25:"CLOSE",26:"OPEN_INVERSE",28:"INVERSE",29:"OPEN_ENDBLOCK",31:"OPEN",32:"OPEN_UNESCAPED",33:"CLOSE_UNESCAPED",34:"OPEN_PARTIAL",42:"STRING",43:"NUMBER",44:"BOOLEAN",45:"OPEN_SEXPR",46:"CLOSE_SEXPR",50:"ID",51:"EQUALS",52:"DATA",54:"SEP"},
+productions_: [0,[3,2],[4,1],[7,1],[7,1],[7,1],[7,1],[7,1],[7,1],[10,3],[14,3],[9,4],[9,4],[19,3],[22,3],[27,2],[21,3],[8,3],[8,3],[11,5],[11,4],[17,3],[17,1],[36,1],[36,1],[36,1],[36,1],[36,1],[36,3],[47,1],[49,3],[35,1],[35,1],[35,1],[41,2],[30,1],[53,3],[53,1],[6,0],[6,2],[20,0],[20,1],[23,0],[23,1],[37,0],[37,1],[38,0],[38,1],[39,0],[39,2],[40,0],[40,1],[48,1],[48,2]],
+performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
+
+var $0 = $$.length - 1;
+switch (yystate) {
+case 1: yy.prepareProgram($$[$0-1].statements, true); return $$[$0-1]; 
+break;
+case 2:this.$ = new yy.ProgramNode(yy.prepareProgram($$[$0]), {}, this._$);
+break;
+case 3:this.$ = $$[$0];
+break;
+case 4:this.$ = $$[$0];
+break;
+case 5:this.$ = $$[$0];
+break;
+case 6:this.$ = $$[$0];
+break;
+case 7:this.$ = new yy.ContentNode($$[$0], this._$);
+break;
+case 8:this.$ = new yy.CommentNode($$[$0], this._$);
+break;
+case 9:this.$ = new yy.RawBlockNode($$[$0-2], $$[$0-1], $$[$0], this._$);
+break;
+case 10:this.$ = new yy.MustacheNode($$[$0-1], null, '', '', this._$);
+break;
+case 11:this.$ = yy.prepareBlock($$[$0-3], $$[$0-2], $$[$0-1], $$[$0], false, this._$);
+break;
+case 12:this.$ = yy.prepareBlock($$[$0-3], $$[$0-2], $$[$0-1], $$[$0], true, this._$);
+break;
+case 13:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], yy.stripFlags($$[$0-2], $$[$0]), this._$);
+break;
+case 14:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], yy.stripFlags($$[$0-2], $$[$0]), this._$);
+break;
+case 15:this.$ = { strip: yy.stripFlags($$[$0-1], $$[$0-1]), program: $$[$0] };
+break;
+case 16:this.$ = {path: $$[$0-1], strip: yy.stripFlags($$[$0-2], $$[$0])};
+break;
+case 17:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], yy.stripFlags($$[$0-2], $$[$0]), this._$);
+break;
+case 18:this.$ = new yy.MustacheNode($$[$0-1], null, $$[$0-2], yy.stripFlags($$[$0-2], $$[$0]), this._$);
+break;
+case 19:this.$ = new yy.PartialNode($$[$0-3], $$[$0-2], $$[$0-1], yy.stripFlags($$[$0-4], $$[$0]), this._$);
+break;
+case 20:this.$ = new yy.PartialNode($$[$0-2], undefined, $$[$0-1], yy.stripFlags($$[$0-3], $$[$0]), this._$);
+break;
+case 21:this.$ = new yy.SexprNode([$$[$0-2]].concat($$[$0-1]), $$[$0], this._$);
+break;
+case 22:this.$ = new yy.SexprNode([$$[$0]], null, this._$);
+break;
+case 23:this.$ = $$[$0];
+break;
+case 24:this.$ = new yy.StringNode($$[$0], this._$);
+break;
+case 25:this.$ = new yy.NumberNode($$[$0], this._$);
+break;
+case 26:this.$ = new yy.BooleanNode($$[$0], this._$);
+break;
+case 27:this.$ = $$[$0];
+break;
+case 28:$$[$0-1].isHelper = true; this.$ = $$[$0-1];
+break;
+case 29:this.$ = new yy.HashNode($$[$0], this._$);
+break;
+case 30:this.$ = [$$[$0-2], $$[$0]];
+break;
+case 31:this.$ = new yy.PartialNameNode($$[$0], this._$);
+break;
+case 32:this.$ = new yy.PartialNameNode(new yy.StringNode($$[$0], this._$), this._$);
+break;
+case 33:this.$ = new yy.PartialNameNode(new yy.NumberNode($$[$0], this._$));
+break;
+case 34:this.$ = new yy.DataNode($$[$0], this._$);
+break;
+case 35:this.$ = new yy.IdNode($$[$0], this._$);
+break;
+case 36: $$[$0-2].push({part: $$[$0], separator: $$[$0-1]}); this.$ = $$[$0-2]; 
+break;
+case 37:this.$ = [{part: $$[$0]}];
+break;
+case 38:this.$ = [];
+break;
+case 39:$$[$0-1].push($$[$0]);
+break;
+case 48:this.$ = [];
+break;
+case 49:$$[$0-1].push($$[$0]);
+break;
+case 52:this.$ = [$$[$0]];
+break;
+case 53:$$[$0-1].push($$[$0]);
+break;
+}
+},
+table: [{3:1,4:2,5:[2,38],6:3,12:[2,38],13:[2,38],16:[2,38],24:[2,38],26:[2,38],31:[2,38],32:[2,38],34:[2,38]},{1:[3]},{5:[1,4]},{5:[2,2],7:5,8:6,9:7,10:8,11:9,12:[1,10],13:[1,11],14:16,16:[1,20],19:14,22:15,24:[1,18],26:[1,19],28:[2,2],29:[2,2],31:[1,12],32:[1,13],34:[1,17]},{1:[2,1]},{5:[2,39],12:[2,39],13:[2,39],16:[2,39],24:[2,39],26:[2,39],28:[2,39],29:[2,39],31:[2,39],32:[2,39],34:[2,39]},{5:[2,3],12:[2,3],13:[2,3],16:[2,3],24:[2,3],26:[2,3],28:[2,3],29:[2,3],31:[2,3],32:[2,3],34:[2,3]},{5:[2,4],12:[2,4],13:[2,4],16:[2,4],24:[2,4],26:[2,4],28:[2,4],29:[2,4],31:[2,4],32:[2,4],34:[2,4]},{5:[2,5],12:[2,5],13:[2,5],16:[2,5],24:[2,5],26:[2,5],28:[2,5],29:[2,5],31:[2,5],32:[2,5],34:[2,5]},{5:[2,6],12:[2,6],13:[2,6],16:[2,6],24:[2,6],26:[2,6],28:[2,6],29:[2,6],31:[2,6],32:[2,6],34:[2,6]},{5:[2,7],12:[2,7],13:[2,7],16:[2,7],24:[2,7],26:[2,7],28:[2,7],29:[2,7],31:[2,7],32:[2,7],34:[2,7]},{5:[2,8],12:[2,8],13:[2,8],16:[2,8],24:[2,8],26:[2,8],28:[2,8],29:[2,8],31:[2,8],32:[2,8],34:[2,8]},{17:21,30:22,41:23,50:[1,26],52:[1,25],53:24},{17:27,30:22,41:23,50:[1,26],52:[1,25],53:24},{4:28,6:3,12:[2,38],13:[2,38],16:[2,38],24:[2,38],26:[2,38],28:[2,38],29:[2,38],31:[2,38],32:[2,38],34:[2,38]},{4:29,6:3,12:[2,38],13:[2,38],16:[2,38],24:[2,38],26:[2,38],28:[2,38],29:[2,38],31:[2,38],32:[2,38],34:[2,38]},{12:[1,30]},{30:32,35:31,42:[1,33],43:[1,34],50:[1,26],53:24},{17:35,30:22,41:23,50:[1,26],52:[1,25],53:24},{17:36,30:22,41:23,50:[1,26],52:[1,25],53:24},{17:37,30:22,41:23,50:[1,26],52:[1,25],53:24},{25:[1,38]},{18:[2,48],25:[2,48],33:[2,48],39:39,42:[2,48],43:[2,48],44:[2,48],45:[2,48],46:[2,48],50:[2,48],52:[2,48]},{18:[2,22],25:[2,22],33:[2,22],46:[2,22]},{18:[2,35],25:[2,35],33:[2,35],42:[2,35],43:[2,35],44:[2,35],45:[2,35],46:[2,35],50:[2,35],52:[2,35],54:[1,40]},{30:41,50:[1,26],53:24},{18:[2,37],25:[2,37],33:[2,37],42:[2,37],43:[2,37],44:[2,37],45:[2,37],46:[2,37],50:[2,37],52:[2,37],54:[2,37]},{33:[1,42]},{20:43,27:44,28:[1,45],29:[2,40]},{23:46,27:47,28:[1,45],29:[2,42]},{15:[1,48]},{25:[2,46],30:51,36:49,38:50,41:55,42:[1,52],43:[1,53],44:[1,54],45:[1,56],47:57,48:58,49:60,50:[1,59],52:[1,25],53:24},{25:[2,31],42:[2,31],43:[2,31],44:[2,31],45:[2,31],50:[2,31],52:[2,31]},{25:[2,32],42:[2,32],43:[2,32],44:[2,32],45:[2,32],50:[2,32],52:[2,32]},{25:[2,33],42:[2,33],43:[2,33],44:[2,33],45:[2,33],50:[2,33],52:[2,33]},{25:[1,61]},{25:[1,62]},{18:[1,63]},{5:[2,17],12:[2,17],13:[2,17],16:[2,17],24:[2,17],26:[2,17],28:[2,17],29:[2,17],31:[2,17],32:[2,17],34:[2,17]},{18:[2,50],25:[2,50],30:51,33:[2,50],36:65,40:64,41:55,42:[1,52],43:[1,53],44:[1,54],45:[1,56],46:[2,50],47:66,48:58,49:60,50:[1,59],52:[1,25],53:24},{50:[1,67]},{18:[2,34],25:[2,34],33:[2,34],42:[2,34],43:[2,34],44:[2,34],45:[2,34],46:[2,34],50:[2,34],52:[2,34]},{5:[2,18],12:[2,18],13:[2,18],16:[2,18],24:[2,18],26:[2,18],28:[2,18],29:[2,18],31:[2,18],32:[2,18],34:[2,18]},{21:68,29:[1,69]},{29:[2,41]},{4:70,6:3,12:[2,38],13:[2,38],16:[2,38],24:[2,38],26:[2,38],29:[2,38],31:[2,38],32:[2,38],34:[2,38]},{21:71,29:[1,69]},{29:[2,43]},{5:[2,9],12:[2,9],13:[2,9],16:[2,9],24:[2,9],26:[2,9],28:[2,9],29:[2,9],31:[2,9],32:[2,9],34:[2,9]},{25:[2,44],37:72,47:73,48:58,49:60,50:[1,74]},{25:[1,75]},{18:[2,23],25:[2,23],33:[2,23],42:[2,23],43:[2,23],44:[2,23],45:[2,23],46:[2,23],50:[2,23],52:[2,23]},{18:[2,24],25:[2,24],33:[2,24],42:[2,24],43:[2,24],44:[2,24],45:[2,24],46:[2,24],50:[2,24],52:[2,24]},{18:[2,25],25:[2,25],33:[2,25],42:[2,25],43:[2,25],44:[2,25],45:[2,25],46:[2,25],50:[2,25],52:[2,25]},{18:[2,26],25:[2,26],33:[2,26],42:[2,26],43:[2,26],44:[2,26],45:[2,26],46:[2,26],50:[2,26],52:[2,26]},{18:[2,27],25:[2,27],33:[2,27],42:[2,27],43:[2,27],44:[2,27],45:[2,27],46:[2,27],50:[2,27],52:[2,27]},{17:76,30:22,41:23,50:[1,26],52:[1,25],53:24},{25:[2,47]},{18:[2,29],25:[2,29],33:[2,29],46:[2,29],49:77,50:[1,74]},{18:[2,37],25:[2,37],33:[2,37],42:[2,37],43:[2,37],44:[2,37],45:[2,37],46:[2,37],50:[2,37],51:[1,78],52:[2,37],54:[2,37]},{18:[2,52],25:[2,52],33:[2,52],46:[2,52],50:[2,52]},{12:[2,13],13:[2,13],16:[2,13],24:[2,13],26:[2,13],28:[2,13],29:[2,13],31:[2,13],32:[2,13],34:[2,13]},{12:[2,14],13:[2,14],16:[2,14],24:[2,14],26:[2,14],28:[2,14],29:[2,14],31:[2,14],32:[2,14],34:[2,14]},{12:[2,10]},{18:[2,21],25:[2,21],33:[2,21],46:[2,21]},{18:[2,49],25:[2,49],33:[2,49],42:[2,49],43:[2,49],44:[2,49],45:[2,49],46:[2,49],50:[2,49],52:[2,49]},{18:[2,51],25:[2,51],33:[2,51],46:[2,51]},{18:[2,36],25:[2,36],33:[2,36],42:[2,36],43:[2,36],44:[2,36],45:[2,36],46:[2,36],50:[2,36],52:[2,36],54:[2,36]},{5:[2,11],12:[2,11],13:[2,11],16:[2,11],24:[2,11],26:[2,11],28:[2,11],29:[2,11],31:[2,11],32:[2,11],34:[2,11]},{30:79,50:[1,26],53:24},{29:[2,15]},{5:[2,12],12:[2,12],13:[2,12],16:[2,12],24:[2,12],26:[2,12],28:[2,12],29:[2,12],31:[2,12],32:[2,12],34:[2,12]},{25:[1,80]},{25:[2,45]},{51:[1,78]},{5:[2,20],12:[2,20],13:[2,20],16:[2,20],24:[2,20],26:[2,20],28:[2,20],29:[2,20],31:[2,20],32:[2,20],34:[2,20]},{46:[1,81]},{18:[2,53],25:[2,53],33:[2,53],46:[2,53],50:[2,53]},{30:51,36:82,41:55,42:[1,52],43:[1,53],44:[1,54],45:[1,56],50:[1,26],52:[1,25],53:24},{25:[1,83]},{5:[2,19],12:[2,19],13:[2,19],16:[2,19],24:[2,19],26:[2,19],28:[2,19],29:[2,19],31:[2,19],32:[2,19],34:[2,19]},{18:[2,28],25:[2,28],33:[2,28],42:[2,28],43:[2,28],44:[2,28],45:[2,28],46:[2,28],50:[2,28],52:[2,28]},{18:[2,30],25:[2,30],33:[2,30],46:[2,30],50:[2,30]},{5:[2,16],12:[2,16],13:[2,16],16:[2,16],24:[2,16],26:[2,16],28:[2,16],29:[2,16],31:[2,16],32:[2,16],34:[2,16]}],
+defaultActions: {4:[2,1],44:[2,41],47:[2,43],57:[2,47],63:[2,10],70:[2,15],73:[2,45]},
+parseError: function parseError(str, hash) {
+    throw new Error(str);
+},
+parse: function parse(input) {
+    var self = this, stack = [0], vstack = [null], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
+    this.lexer.setInput(input);
+    this.lexer.yy = this.yy;
+    this.yy.lexer = this.lexer;
+    this.yy.parser = this;
+    if (typeof this.lexer.yylloc == "undefined")
+        this.lexer.yylloc = {};
+    var yyloc = this.lexer.yylloc;
+    lstack.push(yyloc);
+    var ranges = this.lexer.options && this.lexer.options.ranges;
+    if (typeof this.yy.parseError === "function")
+        this.parseError = this.yy.parseError;
+    function popStack(n) {
+        stack.length = stack.length - 2 * n;
+        vstack.length = vstack.length - n;
+        lstack.length = lstack.length - n;
+    }
+    function lex() {
+        var token;
+        token = self.lexer.lex() || 1;
+        if (typeof token !== "number") {
+            token = self.symbols_[token] || token;
+        }
+        return token;
+    }
+    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
+    while (true) {
+        state = stack[stack.length - 1];
+        if (this.defaultActions[state]) {
+            action = this.defaultActions[state];
+        } else {
+            if (symbol === null || typeof symbol == "undefined") {
+                symbol = lex();
+            }
+            action = table[state] && table[state][symbol];
+        }
+        if (typeof action === "undefined" || !action.length || !action[0]) {
+            var errStr = "";
+            if (!recovering) {
+                expected = [];
+                for (p in table[state])
+                    if (this.terminals_[p] && p > 2) {
+                        expected.push("'" + this.terminals_[p] + "'");
+                    }
+                if (this.lexer.showPosition) {
+                    errStr = "Parse error on line " + (yylineno + 1) + ":\n" + this.lexer.showPosition() + "\nExpecting " + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symbol) + "'";
+                } else {
+                    errStr = "Parse error on line " + (yylineno + 1) + ": Unexpected " + (symbol == 1?"end of input":"'" + (this.terminals_[symbol] || symbol) + "'");
+                }
+                this.parseError(errStr, {text: this.lexer.match, token: this.terminals_[symbol] || symbol, line: this.lexer.yylineno, loc: yyloc, expected: expected});
+            }
+        }
+        if (action[0] instanceof Array && action.length > 1) {
+            throw new Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
+        }
+        switch (action[0]) {
+        case 1:
+            stack.push(symbol);
+            vstack.push(this.lexer.yytext);
+            lstack.push(this.lexer.yylloc);
+            stack.push(action[1]);
+            symbol = null;
+            if (!preErrorSymbol) {
+                yyleng = this.lexer.yyleng;
+                yytext = this.lexer.yytext;
+                yylineno = this.lexer.yylineno;
+                yyloc = this.lexer.yylloc;
+                if (recovering > 0)
+                    recovering--;
+            } else {
+                symbol = preErrorSymbol;
+                preErrorSymbol = null;
+            }
+            break;
+        case 2:
+            len = this.productions_[action[1]][1];
+            yyval.$ = vstack[vstack.length - len];
+            yyval._$ = {first_line: lstack[lstack.length - (len || 1)].first_line, last_line: lstack[lstack.length - 1].last_line, first_column: lstack[lstack.length - (len || 1)].first_column, last_column: lstack[lstack.length - 1].last_column};
+            if (ranges) {
+                yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
+            }
+            r = this.performAction.call(yyval, yytext, yyleng, yylineno, this.yy, action[1], vstack, lstack);
+            if (typeof r !== "undefined") {
+                return r;
+            }
+            if (len) {
+                stack = stack.slice(0, -1 * len * 2);
+                vstack = vstack.slice(0, -1 * len);
+                lstack = lstack.slice(0, -1 * len);
+            }
+            stack.push(this.productions_[action[1]][0]);
+            vstack.push(yyval.$);
+            lstack.push(yyval._$);
+            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+            stack.push(newState);
+            break;
+        case 3:
+            return true;
+        }
+    }
+    return true;
+}
+};
+/* Jison generated lexer */
+var lexer = (function(){
+var lexer = ({EOF:1,
+parseError:function parseError(str, hash) {
+        if (this.yy.parser) {
+            this.yy.parser.parseError(str, hash);
+        } else {
+            throw new Error(str);
+        }
+    },
+setInput:function (input) {
+        this._input = input;
+        this._more = this._less = this.done = false;
+        this.yylineno = this.yyleng = 0;
+        this.yytext = this.matched = this.match = '';
+        this.conditionStack = ['INITIAL'];
+        this.yylloc = {first_line:1,first_column:0,last_line:1,last_column:0};
+        if (this.options.ranges) this.yylloc.range = [0,0];
+        this.offset = 0;
+        return this;
+    },
+input:function () {
+        var ch = this._input[0];
+        this.yytext += ch;
+        this.yyleng++;
+        this.offset++;
+        this.match += ch;
+        this.matched += ch;
+        var lines = ch.match(/(?:\r\n?|\n).*/g);
+        if (lines) {
+            this.yylineno++;
+            this.yylloc.last_line++;
+        } else {
+            this.yylloc.last_column++;
+        }
+        if (this.options.ranges) this.yylloc.range[1]++;
+
+        this._input = this._input.slice(1);
+        return ch;
+    },
+unput:function (ch) {
+        var len = ch.length;
+        var lines = ch.split(/(?:\r\n?|\n)/g);
+
+        this._input = ch + this._input;
+        this.yytext = this.yytext.substr(0, this.yytext.length-len-1);
+        //this.yyleng -= len;
+        this.offset -= len;
+        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+        this.match = this.match.substr(0, this.match.length-1);
+        this.matched = this.matched.substr(0, this.matched.length-1);
+
+        if (lines.length-1) this.yylineno -= lines.length-1;
+        var r = this.yylloc.range;
+
+        this.yylloc = {first_line: this.yylloc.first_line,
+          last_line: this.yylineno+1,
+          first_column: this.yylloc.first_column,
+          last_column: lines ?
+              (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length:
+              this.yylloc.first_column - len
+          };
+
+        if (this.options.ranges) {
+            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+        }
+        return this;
+    },
+more:function () {
+        this._more = true;
+        return this;
+    },
+less:function (n) {
+        this.unput(this.match.slice(n));
+    },
+pastInput:function () {
+        var past = this.matched.substr(0, this.matched.length - this.match.length);
+        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
+    },
+upcomingInput:function () {
+        var next = this.match;
+        if (next.length < 20) {
+            next += this._input.substr(0, 20-next.length);
+        }
+        return (next.substr(0,20)+(next.length > 20 ? '...':'')).replace(/\n/g, "");
+    },
+showPosition:function () {
+        var pre = this.pastInput();
+        var c = new Array(pre.length + 1).join("-");
+        return pre + this.upcomingInput() + "\n" + c+"^";
+    },
+next:function () {
+        if (this.done) {
+            return this.EOF;
+        }
+        if (!this._input) this.done = true;
+
+        var token,
+            match,
+            tempMatch,
+            index,
+            col,
+            lines;
+        if (!this._more) {
+            this.yytext = '';
+            this.match = '';
+        }
+        var rules = this._currentRules();
+        for (var i=0;i < rules.length; i++) {
+            tempMatch = this._input.match(this.rules[rules[i]]);
+            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                match = tempMatch;
+                index = i;
+                if (!this.options.flex) break;
+            }
+        }
+        if (match) {
+            lines = match[0].match(/(?:\r\n?|\n).*/g);
+            if (lines) this.yylineno += lines.length;
+            this.yylloc = {first_line: this.yylloc.last_line,
+                           last_line: this.yylineno+1,
+                           first_column: this.yylloc.last_column,
+                           last_column: lines ? lines[lines.length-1].length-lines[lines.length-1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length};
+            this.yytext += match[0];
+            this.match += match[0];
+            this.matches = match;
+            this.yyleng = this.yytext.length;
+            if (this.options.ranges) {
+                this.yylloc.range = [this.offset, this.offset += this.yyleng];
+            }
+            this._more = false;
+            this._input = this._input.slice(match[0].length);
+            this.matched += match[0];
+            token = this.performAction.call(this, this.yy, this, rules[index],this.conditionStack[this.conditionStack.length-1]);
+            if (this.done && this._input) this.done = false;
+            if (token) return token;
+            else return;
+        }
+        if (this._input === "") {
+            return this.EOF;
+        } else {
+            return this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(),
+                    {text: "", token: null, line: this.yylineno});
+        }
+    },
+lex:function lex() {
+        var r = this.next();
+        if (typeof r !== 'undefined') {
+            return r;
+        } else {
+            return this.lex();
+        }
+    },
+begin:function begin(condition) {
+        this.conditionStack.push(condition);
+    },
+popState:function popState() {
+        return this.conditionStack.pop();
+    },
+_currentRules:function _currentRules() {
+        return this.conditions[this.conditionStack[this.conditionStack.length-1]].rules;
+    },
+topState:function () {
+        return this.conditionStack[this.conditionStack.length-2];
+    },
+pushState:function begin(condition) {
+        this.begin(condition);
+    }});
+lexer.options = {};
+lexer.performAction = function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
+
+
+function strip(start, end) {
+  return yy_.yytext = yy_.yytext.substr(start, yy_.yyleng-end);
+}
+
+
+var YYSTATE=YY_START
+switch($avoiding_name_collisions) {
+case 0:
+                                   if(yy_.yytext.slice(-2) === "\\\\") {
+                                     strip(0,1);
+                                     this.begin("mu");
+                                   } else if(yy_.yytext.slice(-1) === "\\") {
+                                     strip(0,1);
+                                     this.begin("emu");
+                                   } else {
+                                     this.begin("mu");
+                                   }
+                                   if(yy_.yytext) return 12;
+                                 
+break;
+case 1:return 12;
+break;
+case 2:
+                                   this.popState();
+                                   return 12;
+                                 
+break;
+case 3:
+                                  yy_.yytext = yy_.yytext.substr(5, yy_.yyleng-9);
+                                  this.popState();
+                                  return 15;
+                                 
+break;
+case 4: return 12; 
+break;
+case 5:strip(0,4); this.popState(); return 13;
+break;
+case 6:return 45;
+break;
+case 7:return 46;
+break;
+case 8: return 16; 
+break;
+case 9:
+                                  this.popState();
+                                  this.begin('raw');
+                                  return 18;
+                                 
+break;
+case 10:return 34;
+break;
+case 11:return 24;
+break;
+case 12:return 29;
+break;
+case 13:this.popState(); return 28;
+break;
+case 14:this.popState(); return 28;
+break;
+case 15:return 26;
+break;
+case 16:return 26;
+break;
+case 17:return 32;
+break;
+case 18:return 31;
+break;
+case 19:this.popState(); this.begin('com');
+break;
+case 20:strip(3,5); this.popState(); return 13;
+break;
+case 21:return 31;
+break;
+case 22:return 51;
+break;
+case 23:return 50;
+break;
+case 24:return 50;
+break;
+case 25:return 54;
+break;
+case 26:// ignore whitespace
+break;
+case 27:this.popState(); return 33;
+break;
+case 28:this.popState(); return 25;
+break;
+case 29:yy_.yytext = strip(1,2).replace(/\\"/g,'"'); return 42;
+break;
+case 30:yy_.yytext = strip(1,2).replace(/\\'/g,"'"); return 42;
+break;
+case 31:return 52;
+break;
+case 32:return 44;
+break;
+case 33:return 44;
+break;
+case 34:return 43;
+break;
+case 35:return 50;
+break;
+case 36:yy_.yytext = strip(1,2); return 50;
+break;
+case 37:return 'INVALID';
+break;
+case 38:return 5;
+break;
+}
+};
+lexer.rules = [/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|\\\{\{|\\\\\{\{|$)))/,/^(?:\{\{\{\{\/[^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=[=}\s\/.])\}\}\}\})/,/^(?:[^\x00]*?(?=(\{\{\{\{\/)))/,/^(?:[\s\S]*?--\}\})/,/^(?:\()/,/^(?:\))/,/^(?:\{\{\{\{)/,/^(?:\}\}\}\})/,/^(?:\{\{(~)?>)/,/^(?:\{\{(~)?#)/,/^(?:\{\{(~)?\/)/,/^(?:\{\{(~)?\^\s*(~)?\}\})/,/^(?:\{\{(~)?\s*else\s*(~)?\}\})/,/^(?:\{\{(~)?\^)/,/^(?:\{\{(~)?\s*else\b)/,/^(?:\{\{(~)?\{)/,/^(?:\{\{(~)?&)/,/^(?:\{\{!--)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{(~)?)/,/^(?:=)/,/^(?:\.\.)/,/^(?:\.(?=([=~}\s\/.)])))/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}(~)?\}\})/,/^(?:(~)?\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@)/,/^(?:true(?=([~}\s)])))/,/^(?:false(?=([~}\s)])))/,/^(?:-?[0-9]+(?:\.[0-9]+)?(?=([~}\s)])))/,/^(?:([^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=([=~}\s\/.)]))))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:$)/];
+lexer.conditions = {"mu":{"rules":[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":false},"emu":{"rules":[2],"inclusive":false},"com":{"rules":[5],"inclusive":false},"raw":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,1,38],"inclusive":true}};
+return lexer;})()
+parser.lexer = lexer;
+function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
+return new Parser;
+})();exports["default"] = handlebars;
+/* jshint ignore:end */
+},{}],43:[function(require,module,exports){
+"use strict";
+var Visitor = require("./visitor")["default"];
+
+function print(ast) {
+  return new PrintVisitor().accept(ast);
+}
+
+exports.print = print;function PrintVisitor() {
+  this.padding = 0;
+}
+
+exports.PrintVisitor = PrintVisitor;PrintVisitor.prototype = new Visitor();
+
+PrintVisitor.prototype.pad = function(string) {
+  var out = "";
+
+  for(var i=0,l=this.padding; i<l; i++) {
+    out = out + "  ";
+  }
+
+  out = out + string + "\n";
+  return out;
+};
+
+PrintVisitor.prototype.program = function(program) {
+  var out = "",
+      statements = program.statements,
+      i, l;
+
+  for(i=0, l=statements.length; i<l; i++) {
+    out = out + this.accept(statements[i]);
+  }
+
+  this.padding--;
+
+  return out;
+};
+
+PrintVisitor.prototype.block = function(block) {
+  var out = "";
+
+  out = out + this.pad("BLOCK:");
+  this.padding++;
+  out = out + this.accept(block.mustache);
+  if (block.program) {
+    out = out + this.pad("PROGRAM:");
+    this.padding++;
+    out = out + this.accept(block.program);
+    this.padding--;
+  }
+  if (block.inverse) {
+    if (block.program) { this.padding++; }
+    out = out + this.pad("{{^}}");
+    this.padding++;
+    out = out + this.accept(block.inverse);
+    this.padding--;
+    if (block.program) { this.padding--; }
+  }
+  this.padding--;
+
+  return out;
+};
+
+PrintVisitor.prototype.sexpr = function(sexpr) {
+  var params = sexpr.params, paramStrings = [], hash;
+
+  for(var i=0, l=params.length; i<l; i++) {
+    paramStrings.push(this.accept(params[i]));
+  }
+
+  params = "[" + paramStrings.join(", ") + "]";
+
+  hash = sexpr.hash ? " " + this.accept(sexpr.hash) : "";
+
+  return this.accept(sexpr.id) + " " + params + hash;
+};
+
+PrintVisitor.prototype.mustache = function(mustache) {
+  return this.pad("{{ " + this.accept(mustache.sexpr) + " }}");
+};
+
+PrintVisitor.prototype.partial = function(partial) {
+  var content = this.accept(partial.partialName);
+  if(partial.context) {
+    content += " " + this.accept(partial.context);
+  }
+  if (partial.hash) {
+    content += " " + this.accept(partial.hash);
+  }
+  return this.pad("{{> " + content + " }}");
+};
+
+PrintVisitor.prototype.hash = function(hash) {
+  var pairs = hash.pairs;
+  var joinedPairs = [], left, right;
+
+  for(var i=0, l=pairs.length; i<l; i++) {
+    left = pairs[i][0];
+    right = this.accept(pairs[i][1]);
+    joinedPairs.push( left + "=" + right );
+  }
+
+  return "HASH{" + joinedPairs.join(", ") + "}";
+};
+
+PrintVisitor.prototype.STRING = function(string) {
+  return '"' + string.string + '"';
+};
+
+PrintVisitor.prototype.NUMBER = function(number) {
+  return "NUMBER{" + number.number + "}";
+};
+
+PrintVisitor.prototype.BOOLEAN = function(bool) {
+  return "BOOLEAN{" + bool.bool + "}";
+};
+
+PrintVisitor.prototype.ID = function(id) {
+  var path = id.parts.join("/");
+  if(id.parts.length > 1) {
+    return "PATH:" + path;
+  } else {
+    return "ID:" + path;
+  }
+};
+
+PrintVisitor.prototype.PARTIAL_NAME = function(partialName) {
+    return "PARTIAL:" + partialName.name;
+};
+
+PrintVisitor.prototype.DATA = function(data) {
+  return "@" + this.accept(data.id);
+};
+
+PrintVisitor.prototype.content = function(content) {
+  return this.pad("CONTENT[ '" + content.string + "' ]");
+};
+
+PrintVisitor.prototype.comment = function(comment) {
+  return this.pad("{{! '" + comment.comment + "' }}");
+};
+},{"./visitor":44}],44:[function(require,module,exports){
+"use strict";
+function Visitor() {}
+
+Visitor.prototype = {
+  constructor: Visitor,
+
+  accept: function(object) {
+    return this[object.type](object);
+  }
+};
+
+exports["default"] = Visitor;
+},{}],45:[function(require,module,exports){
+"use strict";
+
+var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
+
+function Exception(message, node) {
+  var line;
+  if (node && node.firstLine) {
+    line = node.firstLine;
+
+    message += ' - ' + line + ':' + node.firstColumn;
+  }
+
+  var tmp = Error.prototype.constructor.call(this, message);
+
+  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
+  for (var idx = 0; idx < errorProps.length; idx++) {
+    this[errorProps[idx]] = tmp[errorProps[idx]];
+  }
+
+  if (line) {
+    this.lineNumber = line;
+    this.column = node.firstColumn;
+  }
+}
+
+Exception.prototype = new Error();
+
+exports["default"] = Exception;
+},{}],46:[function(require,module,exports){
+"use strict";
+var Utils = require("./utils");
+var Exception = require("./exception")["default"];
+var COMPILER_REVISION = require("./base").COMPILER_REVISION;
+var REVISION_CHANGES = require("./base").REVISION_CHANGES;
+var createFrame = require("./base").createFrame;
+
+function checkRevision(compilerInfo) {
+  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
+      currentRevision = COMPILER_REVISION;
+
+  if (compilerRevision !== currentRevision) {
+    if (compilerRevision < currentRevision) {
+      var runtimeVersions = REVISION_CHANGES[currentRevision],
+          compilerVersions = REVISION_CHANGES[compilerRevision];
+      throw new Exception("Template was precompiled with an older version of Handlebars than the current runtime. "+
+            "Please update your precompiler to a newer version ("+runtimeVersions+") or downgrade your runtime to an older version ("+compilerVersions+").");
+    } else {
+      // Use the embedded version info since the runtime doesn't know about this revision yet
+      throw new Exception("Template was precompiled with a newer version of Handlebars than the current runtime. "+
+            "Please update your runtime to a newer version ("+compilerInfo[1]+").");
+    }
+  }
+}
+
+exports.checkRevision = checkRevision;// TODO: Remove this line and break up compilePartial
+
+function template(templateSpec, env) {
+  /* istanbul ignore next */
+  if (!env) {
+    throw new Exception("No environment passed to template");
+  }
+  if (!templateSpec || !templateSpec.main) {
+    throw new Exception('Unknown template object: ' + typeof templateSpec);
+  }
+
+  // Note: Using env.VM references rather than local var references throughout this section to allow
+  // for external users to override these as psuedo-supported APIs.
+  env.VM.checkRevision(templateSpec.compiler);
+
+  var invokePartialWrapper = function(partial, indent, name, context, hash, helpers, partials, data, depths) {
+    if (hash) {
+      context = Utils.extend({}, context, hash);
+    }
+
+    var result = env.VM.invokePartial.call(this, partial, name, context, helpers, partials, data, depths);
+
+    if (result == null && env.compile) {
+      var options = { helpers: helpers, partials: partials, data: data, depths: depths };
+      partials[name] = env.compile(partial, { data: data !== undefined, compat: templateSpec.compat }, env);
+      result = partials[name](context, options);
+    }
+    if (result != null) {
+      if (indent) {
+        var lines = result.split('\n');
+        for (var i = 0, l = lines.length; i < l; i++) {
+          if (!lines[i] && i + 1 === l) {
+            break;
+          }
+
+          lines[i] = indent + lines[i];
+        }
+        result = lines.join('\n');
+      }
+      return result;
+    } else {
+      throw new Exception("The partial " + name + " could not be compiled when running in runtime-only mode");
+    }
+  };
+
+  // Just add water
+  var container = {
+    lookup: function(depths, name) {
+      var len = depths.length;
+      for (var i = 0; i < len; i++) {
+        if (depths[i] && depths[i][name] != null) {
+          return depths[i][name];
+        }
+      }
+    },
+    lambda: function(current, context) {
+      return typeof current === 'function' ? current.call(context) : current;
+    },
+
+    escapeExpression: Utils.escapeExpression,
+    invokePartial: invokePartialWrapper,
+
+    fn: function(i) {
+      return templateSpec[i];
+    },
+
+    programs: [],
+    program: function(i, data, depths) {
+      var programWrapper = this.programs[i],
+          fn = this.fn(i);
+      if (data || depths) {
+        programWrapper = program(this, i, fn, data, depths);
+      } else if (!programWrapper) {
+        programWrapper = this.programs[i] = program(this, i, fn);
+      }
+      return programWrapper;
+    },
+
+    data: function(data, depth) {
+      while (data && depth--) {
+        data = data._parent;
+      }
+      return data;
+    },
+    merge: function(param, common) {
+      var ret = param || common;
+
+      if (param && common && (param !== common)) {
+        ret = Utils.extend({}, common, param);
+      }
+
+      return ret;
+    },
+
+    noop: env.VM.noop,
+    compilerInfo: templateSpec.compiler
+  };
+
+  var ret = function(context, options) {
+    options = options || {};
+    var data = options.data;
+
+    ret._setup(options);
+    if (!options.partial && templateSpec.useData) {
+      data = initData(context, data);
+    }
+    var depths;
+    if (templateSpec.useDepths) {
+      depths = options.depths ? [context].concat(options.depths) : [context];
+    }
+
+    return templateSpec.main.call(container, context, container.helpers, container.partials, data, depths);
+  };
+  ret.isTop = true;
+
+  ret._setup = function(options) {
+    if (!options.partial) {
+      container.helpers = container.merge(options.helpers, env.helpers);
+
+      if (templateSpec.usePartial) {
+        container.partials = container.merge(options.partials, env.partials);
+      }
+    } else {
+      container.helpers = options.helpers;
+      container.partials = options.partials;
+    }
+  };
+
+  ret._child = function(i, data, depths) {
+    if (templateSpec.useDepths && !depths) {
+      throw new Exception('must pass parent depths');
+    }
+
+    return program(container, i, templateSpec[i], data, depths);
+  };
+  return ret;
+}
+
+exports.template = template;function program(container, i, fn, data, depths) {
+  var prog = function(context, options) {
+    options = options || {};
+
+    return fn.call(container, context, container.helpers, container.partials, options.data || data, depths && [context].concat(depths));
+  };
+  prog.program = i;
+  prog.depth = depths ? depths.length : 0;
+  return prog;
+}
+
+exports.program = program;function invokePartial(partial, name, context, helpers, partials, data, depths) {
+  var options = { partial: true, helpers: helpers, partials: partials, data: data, depths: depths };
+
+  if(partial === undefined) {
+    throw new Exception("The partial " + name + " could not be found");
+  } else if(partial instanceof Function) {
+    return partial(context, options);
+  }
+}
+
+exports.invokePartial = invokePartial;function noop() { return ""; }
+
+exports.noop = noop;function initData(context, data) {
+  if (!data || !('root' in data)) {
+    data = data ? createFrame(data) : {};
+    data.root = context;
+  }
+  return data;
+}
+},{"./base":36,"./exception":45,"./utils":48}],47:[function(require,module,exports){
+"use strict";
+// Build out our basic SafeString type
+function SafeString(string) {
+  this.string = string;
+}
+
+SafeString.prototype.toString = function() {
+  return "" + this.string;
+};
+
+exports["default"] = SafeString;
+},{}],48:[function(require,module,exports){
+"use strict";
+/*jshint -W004 */
+var SafeString = require("./safe-string")["default"];
+
+var escape = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#x27;",
+  "`": "&#x60;"
+};
+
+var badChars = /[&<>"'`]/g;
+var possible = /[&<>"'`]/;
+
+function escapeChar(chr) {
+  return escape[chr];
+}
+
+function extend(obj /* , ...source */) {
+  for (var i = 1; i < arguments.length; i++) {
+    for (var key in arguments[i]) {
+      if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
+        obj[key] = arguments[i][key];
+      }
+    }
+  }
+
+  return obj;
+}
+
+exports.extend = extend;var toString = Object.prototype.toString;
+exports.toString = toString;
+// Sourced from lodash
+// https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
+var isFunction = function(value) {
+  return typeof value === 'function';
+};
+// fallback for older versions of Chrome and Safari
+/* istanbul ignore next */
+if (isFunction(/x/)) {
+  isFunction = function(value) {
+    return typeof value === 'function' && toString.call(value) === '[object Function]';
+  };
+}
+var isFunction;
+exports.isFunction = isFunction;
+/* istanbul ignore next */
+var isArray = Array.isArray || function(value) {
+  return (value && typeof value === 'object') ? toString.call(value) === '[object Array]' : false;
+};
+exports.isArray = isArray;
+
+function escapeExpression(string) {
+  // don't escape SafeStrings, since they're already safe
+  if (string instanceof SafeString) {
+    return string.toString();
+  } else if (string == null) {
+    return "";
+  } else if (!string) {
+    return string + '';
+  }
+
+  // Force a string conversion as this will be done by the append regardless and
+  // the regex test will do this transparently behind the scenes, causing issues if
+  // an object's to string has escaped characters in it.
+  string = "" + string;
+
+  if(!possible.test(string)) { return string; }
+  return string.replace(badChars, escapeChar);
+}
+
+exports.escapeExpression = escapeExpression;function isEmpty(value) {
+  if (!value && value !== 0) {
+    return true;
+  } else if (isArray(value) && value.length === 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
+  return (contextPath ? contextPath + '.' : '') + id;
+}
+
+exports.appendContextPath = appendContextPath;
+},{"./safe-string":47}],49:[function(require,module,exports){
+// USAGE:
+// var handlebars = require('handlebars');
+
+// var local = handlebars.create();
+
+var handlebars = require('../dist/cjs/handlebars')["default"];
+
+handlebars.Visitor = require('../dist/cjs/handlebars/compiler/visitor')["default"];
+
+var printer = require('../dist/cjs/handlebars/compiler/printer');
+handlebars.PrintVisitor = printer.PrintVisitor;
+handlebars.print = printer.print;
+
+module.exports = handlebars;
+
+// Publish a Node.js require() handler for .handlebars and .hbs files
+/* istanbul ignore else */
+if (typeof require !== 'undefined' && require.extensions) {
+  var extension = function(module, filename) {
+    var fs = require("fs");
+    var templateString = fs.readFileSync(filename, "utf8");
+    module.exports = handlebars.compile(templateString);
+  };
+  require.extensions[".handlebars"] = extension;
+  require.extensions[".hbs"] = extension;
+}
+
+},{"../dist/cjs/handlebars":34,"../dist/cjs/handlebars/compiler/printer":43,"../dist/cjs/handlebars/compiler/visitor":44,"fs":33}],50:[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -7072,7 +8922,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 var oldL = window.L,
     L = {};
 
-L.version = '0.7.3';
+L.version = '0.7.2';
 
 // define Leaflet for Node module pattern loaders, including Browserify
 if (typeof module === 'object' && typeof module.exports === 'object') {
@@ -16243,488 +18093,43 @@ L.Map.include({
 
 
 }(window, document));
-},{}],17:[function(require,module,exports){
-var L = require('leaflet');
-var Handlebars = require('handlebars');
-var _ = require('underscore');
-var Spinner = require('spinjs');
-
-var windowTemplate = require('livinglots.map.addlot.window'),
-    failureTemplate = require('livinglots.map.addlot.failure'),
-    successTemplate = require('livinglots.map.addlot.success'),
-    existsPopupTemplate = require('livinglots.map.addlot.exists');
-
-var parcelDefaultStyle = {
-    color: '#2593c6',
-    fillOpacity: 0,
-    weight: 2.5
-};
-
-var parcelSelectStyle = {
-    fillColor: '#EEC619',
-    fillOpacity: 0.5
-};
-
-var cancelButtonSelector = '.add-lot-mode-cancel',
-    submitButtonSelector = '.add-lot-mode-submit';
-
-L.Map.include({
-
-    selectedParcels: [],
-
-    parcelLayerOptions: {
-
-        onEachFeature: function (feature, layer) {
-            layer.on({
-                'click': function (event) {
-                    var map = this._map,
-                        layer = event.layer,
-                        feature = event.target.feature;
-                    if (_.findWhere(map.selectedParcels, { id: feature.id })) {
-                        map.selectedParcels = _.reject(map.selectedParcels, function (p) { return p.id === feature.id });
-                        layer.setStyle(parcelDefaultStyle);
-                    }
-                    else {
-                        $.get(Django.url('lots:create_by_parcels_check_parcel', { pk: feature.id }))
-                            .success(function(data) {
-                                if (data !== 'None') {
-                                    map.createLotExistsPopup(event.latlng, data);
-                                }
-                            });
-                        map.selectedParcels.push({
-                            id: feature.id,
-                            address: feature.properties.address
-                        });
-                        layer.setStyle(parcelSelectStyle);
-                    }
-                    map.updateLotAddWindow();
-                },
-
-                'mouseover': function (event) {
-                    var layer = event.layer,
-                        feature = event.target.feature;
-                    $('.map-add-lot-current-parcel').text(feature.properties.address);
-                }
-            });
-        },
-
-        style: function (feature) {
-            return parcelDefaultStyle;
-        },
-
-    },
-
-    addParcelsLayer: function () {
-        if (this.parcelsLayer) {
-            this.removeLayer(this.parcelsLayer);
-        }
-        var url = this.options.parcelsUrl;
-
-        var options = {
-            layerFactory: L.geoJson,
-            minZoom: 16,
-            serverZooms: [16],
-            unique: function (feature) {
-                return feature.id;
-            }
-        };
-
-        var layerOptions = L.extend({}, this.parcelLayerOptions);
-        this.parcelsLayer = new L.TileLayer.Vector(url, options,
-                                                   layerOptions);
-        this.addLayer(this.parcelsLayer);
-    },
-
-    enterLotAddMode: function () {
-        var map = this;
-        this.addParcelsLayer();
-        this.updateLotAddWindow();
-        this.fire('entermode', { name: 'addlot' });
-        this.lotAddZoomHandler();
-
-        this.on('zoomend', this.lotAddZoomHandler);
-
-        $(this.options.addLotParent).addClass('on');
-
-        this.on('entermode', function (data) {
-            if (data.name !== 'addlot') {
-                map.exitLotAddMode();
-            }
-        });
-
-        $('body').on('click', cancelButtonSelector, function (e) {
-            map.selectedParcels = [];
-            map.exitLotAddMode();
-            e.stopPropagation();
-            return false;
-        });
-
-        $('body').on('click', submitButtonSelector, function (e) {
-            var parcelPks = _.pluck(map.selectedParcels, 'id');
-            if (parcelPks.length > 0 && confirm('Create one lot with all of the parcels selected?')) {
-                var spinner = new Spinner()
-                    .spin($('.map-add-lot-mode-container')[0]);
-                $(cancelButtonSelector).addClass('disabled');
-                $(submitButtonSelector).addClass('disabled');
-
-                args = {
-                    csrfmiddlewaretoken: Django.csrf_token(),
-                    pks: parcelPks.join(',')
-                };
-                $.post(Django.url('lots:create_by_parcels'), args)
-                    .always(function () {
-                        spinner.stop();
-                    })
-                    .done(function (data) {
-                        map.updateLotAddWindowSuccess(data);
-                    })
-                    .fail(function() {
-                        map.updateLotAddWindowFailure();
-                    });
-            }
-            e.stopPropagation();
-            return false;
-        });
-    },
-
-    lotAddZoomHandler: function () {
-        if (this.getZoom() < 16) {
-            $('.map-add-lot-zoom-message').show();
-        }
-        else {
-            $('.map-add-lot-zoom-message').hide();
-        }
-    },
-
-    createLotExistsPopup: function (latlng, pk) {
-        var url = Django.url('lots:lot_detail', { pk: pk }),
-            content = existsPopupTemplate({ lotUrl: url });
-        this.openPopup(content, latlng, { offset: [0, 0] });
-    },
-
-    replaceLotAddWindowContent: function (content) {
-        $('.map-add-lot-mode-container').remove();
-        $(this.options.addLotParent).append(content);
-        this.fire('lotaddwindowchange');
-    },
-
-    updateLotAddWindow: function () {
-        this.replaceLotAddWindowContent(windowTemplate({
-            parcels: this.selectedParcels
-        }));
-    },
-
-    updateLotAddWindowSuccess: function (pk) {
-        var map = this;
-        this.replaceLotAddWindowContent(successTemplate({
-            pk: pk
-        }));
-
-        $('.add-lot-mode-view')
-            .attr('href', Django.url('lots:lot_detail', { pk: pk }));
-        $('.add-lot-mode-edit')
-            .attr('href', Django.url('admin:lots_lot_change', pk));
-        $(cancelButtonSelector).click(function () {
-            map.exitLotAddMode();
-        });
-    },
-
-    updateLotAddWindowFailure: function () {
-        var map = this;
-        this.replaceLotAddWindowContent(failureTemplate({}));
-
-        $(cancelButtonSelector).click(function () {
-            map.exitLotAddMode();
-        });
-    },
-
-    exitLotAddMode: function () {
-        $(this.options.addLotParent).removeClass('on');
-        this.fire('exitmode', { name: 'addlot' });
-        $('.map-add-lot-mode-container').hide();
-        this.off('zoomend', this.lotAddZoomHandler);
-        this.removeLayer(this.parcelsLayer);
-    }
-
-});
-
-},{"handlebars":2,"leaflet":16,"livinglots.map.addlot.exists":19,"livinglots.map.addlot.failure":20,"livinglots.map.addlot.success":21,"livinglots.map.addlot.window":22,"spinjs":26,"underscore":27}],18:[function(require,module,exports){
-var L = require('leaflet');
-var _ = require('underscore');
-var Spinner = require('spinjs');
-
-var windowTemplate = require('livinglots.map.mail.window'),
-    failureTemplate = require('livinglots.map.mail.failure'),
-    successTemplate = require('livinglots.map.mail.success');
-
-var cancelButtonSelector = '.mail-mode-cancel',
-    submitButtonSelector = '.mail-mode-submit',
-    formSelector = '.mail-mode-form';
-
-L.Map.include({
-    replaceMailWindowContent: function (content) {
-        $('.map-mail-mode-container').remove();
-        $(this.options.mailParent).append(content);
-        this.fire('mailwindowchange');
-    },
-
-    sendMail: function () {
-        var map = this,
-            params = {},
-            url = Django.url('lots:lot_email_organizers');
-
-        _.extend(params, this.currentFilters, {
-            bbox: this.getBounds().toBBoxString(),
-            subject: $(formSelector).find(':input[name=subject]').val(),
-            text: $(formSelector).find(':input[name=text]').val()
-        });
-
-        var spinner = new Spinner()
-            .spin($(this.options.mailParent)[0]);
-
-        $.getJSON(url + '?' + $.param(params))
-            .always(function () {
-                spinner.stop();
-            })
-            .done(function (data) {
-                map.replaceMailWindowContent(successTemplate(data));
-            })
-            .fail(function (data) {
-                map.replaceMailWindowContent(failureTemplate(data));
-            });
-    },
-
-    mailSubmitDisabled: function (subject, text, emailCount) {
-        return (subject === '' || text === '' || emailCount === 0);
-    },
-
-    updateMailWindow: function () {
-        var map = this,
-            params = {},
-            url = Django.url('lots:lot_count_organizers');
-
-        _.extend(params, this.currentFilters, {
-            bbox: this.getBounds().toBBoxString()
-        });
-
-        var subject = $(formSelector).find(':input[name=subject]').val(),
-            text = $(formSelector).find(':input[name=text]').val();
-        $.getJSON(url + '?' + $.param(params), function (data) {
-            _.extend(data, {
-                disabled: map.mailSubmitDisabled(subject, text, data.emails),
-                subject: subject,
-                text: text
-            });
-            map.replaceMailWindowContent(windowTemplate(data));
-
-            // Watch for changes on form to determine whether submit should be
-            // enabled
-            $(formSelector).find(':input').keyup(function () {
-                var subject = $(formSelector).find(':input[name=subject]').val(),
-                    text = $(formSelector).find(':input[name=text]').val(),
-                    emails = $(formSelector).find(':input[name=emails]').val(),
-                    disabled = map.mailSubmitDisabled(subject, text, emails);
-                $(submitButtonSelector).prop('disabled', disabled);
-            });
-        });
-    },
-
-    enterMailMode: function () {
-        $(this.options.mailParent).addClass('on');
-        this.updateMailWindow();
-        this.fire('entermode', { name: 'mail' });
-        var map = this;
-
-        // Update window on filters / map change
-        this.on({
-            'moveend': function () {
-                map.updateMailWindow();
-            },
-            'zoomend': function () {
-                map.updateMailWindow();
-            }
-        });
-
-        this.on('entermode', function (data) {
-            if (data.name !== 'mail') {
-                map.exitMailMode();
-            }
-        });
-
-        $('body').on('click', cancelButtonSelector, function (e) {
-            map.exitMailMode();
-            e.stopPropagation();
-            return false;
-        });
-
-        $('body').on('click', submitButtonSelector, function (e) {
-            // If already disabled, don't send mail
-            if ($(submitButtonSelector).is('.disabled')) {
-                return false;
-            }
-            $(submitButtonSelector).addClass('disabled');
-            map.sendMail();
-            e.stopPropagation();
-            return false;
-        });
-    },
-
-    exitMailMode: function () {
-        $(this.options.mailParent).removeClass('on');
-        $('.map-mail-mode-container').hide();
-        this.fire('exitmode', { name: 'mail' });
-    }
-});
-
-},{"leaflet":16,"livinglots.map.mail.failure":23,"livinglots.map.mail.success":24,"livinglots.map.mail.window":25,"spinjs":26,"underscore":27}],19:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<h3>\n    This parcel is already part of a lot. This will fail if you try to add it.\n</h3>\n<p>\n    <a href=\"";
-  if (helper = helpers.lotUrl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.lotUrl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" target=\"_blank\">View the existing lot's page</a>\n</p>\n";
-  return buffer;
-  });
-},{"handlebars/runtime":52}],20:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
-
-
-  return "<div class=\"map-add-lot-mode-container\">\n    <h1>Failure</h1>\n    <p>Something went wrong while trying to add your lot(s). Sorry about that.</p>\n    <p>The most likely reason that this happened is that the lot already exists.</p>\n    <p>Please try again and let us know if it continues to fail.</p>\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
-  });
-},{"handlebars/runtime":52}],21:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
-
-
-  return "<div class=\"map-add-lot-mode-container\">\n    <h1>Success</h1>\n    <p>Successfully added the lot(s).</p>\n    <p>You should edit the lot using the Edit button below to set its ownership and change its use, if necessary.</p>\n    <p>If the lot has something happening on it, click View, then the \"Is This An Active Project?\" button on the lot's page.</p>\n    <p>If the lot is vacant, it won't show up on the map without setting an owner.</p>\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-view btn btn-default\" target=\"_blank\">view</a>\n        <a href=\"#\" class=\"add-lot-mode-edit btn btn-default\" target=\"_blank\">edit</a>\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
-  });
-},{"handlebars/runtime":52}],22:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <div>\n            Adding a lot for these "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.parcels)),stack1 == null || stack1 === false ? stack1 : stack1.length)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " selected parcels:\n            <ul>\n                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.parcels), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            </ul>\n        </div>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                    <li>";
-  if (helper = helpers.address) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.address); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</li>\n                ";
-  return buffer;
-  }
-
-function program4(depth0,data) {
-  
-  
-  return "disabled";
-  }
-
-  buffer += "<div class=\"map-add-lot-mode-container\">\n    <h1>You are in add-a-lot mode</h1>\n    <div class=\"map-add-lot-zoom-message\">Zoom in to see parcel outlines</div>\n    <div>\n        Currently over:\n        <span class=\"map-add-lot-current-parcel\"></span>\n    </div>\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parcels), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">cancel</a>\n        <a href=\"#\" class=\"add-lot-mode-submit btn btn-default ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.parcels), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\">add lot</a>\n    </div>\n</div>\n";
-  return buffer;
-  });
-},{"handlebars/runtime":52}],23:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
-
-
-  return "<div class=\"map-mail-mode-container\">\n    <h1>Failure</h1>\n    <p>Something went wrong while trying to email organizers. Sorry about that.</p>\n    <p>Please try again and let us know if it continues to fail.</p>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
-  });
-},{"handlebars/runtime":52}],24:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<div class=\"map-mail-mode-container\">\n    <h1>Success</h1>\n    <p>Successfully sent your emails with subject \"";
-  if (helper = helpers.subject) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.subject); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" to ";
-  if (helper = helpers.organizers) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.organizers); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " organizers (";
-  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " unique addresses).</p>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
-  return buffer;
-  });
-},{"handlebars/runtime":52}],25:[function(require,module,exports){
-var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  
-  return "disabled";
-  }
-
-  buffer += "<div class=\"map-mail-mode-container\">\n    <h1>Email Organizers</h1>\n    <div class=\"map-mail-status\">\n        You are sending email to ";
-  if (helper = helpers.organizers) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.organizers); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " organizers (";
-  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " unique addresses).\n    </div>\n    <form class=\"mail-mode-form\">\n        <input type=\"hidden\" name=\"emails\" value=\"";
-  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" />\n        <input type=\"text\" class=\"form-control\" name=\"subject\" placeholder=\"subject\" value=\"";
-  if (helper = helpers.subject) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.subject); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" />\n        <textarea class=\"form-control\" name=\"text\" placeholder=\"text\">";
-  if (helper = helpers.text) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.text); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</textarea>\n    </form>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">cancel</a>\n        <button type=\"submit\" class=\"mail-mode-submit btn btn-default\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.disabled), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">send emails</button>\n    </div>\n</div>\n";
-  return buffer;
-  });
-},{"handlebars/runtime":52}],26:[function(require,module,exports){
-(function (global){
-;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
+},{}],51:[function(require,module,exports){
+module.exports=require(34)
+},{"./handlebars.runtime":52,"./handlebars/compiler/ast":54,"./handlebars/compiler/base":55,"./handlebars/compiler/compiler":56,"./handlebars/compiler/javascript-compiler":58}],52:[function(require,module,exports){
+module.exports=require(35)
+},{"./handlebars/base":53,"./handlebars/exception":62,"./handlebars/runtime":63,"./handlebars/safe-string":64,"./handlebars/utils":65}],53:[function(require,module,exports){
+module.exports=require(36)
+},{"./exception":62,"./utils":65}],54:[function(require,module,exports){
+module.exports=require(37)
+},{"../exception":62}],55:[function(require,module,exports){
+module.exports=require(38)
+},{"../utils":65,"./ast":54,"./helpers":57,"./parser":59}],56:[function(require,module,exports){
+module.exports=require(39)
+},{"../exception":62,"../utils":65}],57:[function(require,module,exports){
+module.exports=require(40)
+},{"../exception":62}],58:[function(require,module,exports){
+module.exports=require(41)
+},{"../base":53,"../exception":62}],59:[function(require,module,exports){
+module.exports=require(42)
+},{}],60:[function(require,module,exports){
+module.exports=require(43)
+},{"./visitor":61}],61:[function(require,module,exports){
+module.exports=require(44)
+},{}],62:[function(require,module,exports){
+module.exports=require(45)
+},{}],63:[function(require,module,exports){
+module.exports=require(46)
+},{"./base":53,"./exception":62,"./utils":65}],64:[function(require,module,exports){
+module.exports=require(47)
+},{}],65:[function(require,module,exports){
+module.exports=require(48)
+},{"./safe-string":64}],66:[function(require,module,exports){
+module.exports=require(49)
+},{"../dist/cjs/handlebars":51,"../dist/cjs/handlebars/compiler/printer":60,"../dist/cjs/handlebars/compiler/visitor":61,"fs":33}],67:[function(require,module,exports){
+module.exports=require(50)
+},{}],68:[function(require,module,exports){
 /**
- * Copyright (c) 2011-2013 Felix Gnass
+ * Copyright (c) 2011-2014 Felix Gnass
  * Licensed under the MIT license
  */
 (function(root, factory) {
@@ -16877,14 +18282,13 @@ function program1(depth0,data) {
     fps: 20,              // Frames per second when using setTimeout()
     zIndex: 2e9,          // Use a high z-index by default
     className: 'spinner', // CSS class to assign to the element
-    top: 'auto',          // center vertically
-    left: 'auto',         // center horizontally
-    position: 'relative'  // element position
+    top: '50%',           // center vertically
+    left: '50%',          // center horizontally
+    position: 'absolute'  // element position
   }
 
   /** The constructor */
   function Spinner(o) {
-    if (typeof this == 'undefined') return new Spinner(o)
     this.opts = merge(o || {}, Spinner.defaults, defaults)
   }
 
@@ -16905,17 +18309,14 @@ function program1(depth0,data) {
         , o = self.opts
         , el = self.el = css(createEl(0, {className: o.className}), {position: o.position, width: 0, zIndex: o.zIndex})
         , mid = o.radius+o.length+o.width
-        , ep // element position
-        , tp // target position
 
+      css(el, {
+        left: o.left,
+        top: o.top
+      })
+        
       if (target) {
         target.insertBefore(el, target.firstChild||null)
-        tp = pos(target)
-        ep = pos(el)
-        css(el, {
-          left: (o.left == 'auto' ? tp.x-ep.x + (target.offsetWidth >> 1) : parseInt(o.left, 10) + mid) + 'px',
-          top: (o.top == 'auto' ? tp.y-ep.y + (target.offsetHeight >> 1) : parseInt(o.top, 10) + mid)  + 'px'
-        })
       }
 
       el.setAttribute('role', 'progressbar')
@@ -17077,15 +18478,10 @@ function program1(depth0,data) {
 
 }));
 
-; browserify_shim__define__module__export__(typeof Spinner != "undefined" ? Spinner : window.Spinner);
-
-}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],27:[function(require,module,exports){
-//     Underscore.js 1.5.2
+},{}],69:[function(require,module,exports){
+//     Underscore.js 1.7.0
 //     http://underscorejs.org
-//     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Underscore may be freely distributed under the MIT license.
 
 (function() {
@@ -17098,9 +18494,6 @@ function program1(depth0,data) {
 
   // Save the previous value of the `_` variable.
   var previousUnderscore = root._;
-
-  // Establish the object that gets returned to break out of a loop iteration.
-  var breaker = {};
 
   // Save bytes in the minified (but not gzipped) version:
   var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
@@ -17116,15 +18509,6 @@ function program1(depth0,data) {
   // All **ECMAScript 5** native function implementations that we hope to use
   // are declared here.
   var
-    nativeForEach      = ArrayProto.forEach,
-    nativeMap          = ArrayProto.map,
-    nativeReduce       = ArrayProto.reduce,
-    nativeReduceRight  = ArrayProto.reduceRight,
-    nativeFilter       = ArrayProto.filter,
-    nativeEvery        = ArrayProto.every,
-    nativeSome         = ArrayProto.some,
-    nativeIndexOf      = ArrayProto.indexOf,
-    nativeLastIndexOf  = ArrayProto.lastIndexOf,
     nativeIsArray      = Array.isArray,
     nativeKeys         = Object.keys,
     nativeBind         = FuncProto.bind;
@@ -17138,8 +18522,7 @@ function program1(depth0,data) {
 
   // Export the Underscore object for **Node.js**, with
   // backwards-compatibility for the old `require()` API. If we're in
-  // the browser, add `_` as a global object via a string identifier,
-  // for Closure Compiler "advanced" mode.
+  // the browser, add `_` as a global object.
   if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       exports = module.exports = _;
@@ -17150,97 +18533,125 @@ function program1(depth0,data) {
   }
 
   // Current version.
-  _.VERSION = '1.5.2';
+  _.VERSION = '1.7.0';
+
+  // Internal function that returns an efficient (for current engines) version
+  // of the passed-in callback, to be repeatedly applied in other Underscore
+  // functions.
+  var createCallback = function(func, context, argCount) {
+    if (context === void 0) return func;
+    switch (argCount == null ? 3 : argCount) {
+      case 1: return function(value) {
+        return func.call(context, value);
+      };
+      case 2: return function(value, other) {
+        return func.call(context, value, other);
+      };
+      case 3: return function(value, index, collection) {
+        return func.call(context, value, index, collection);
+      };
+      case 4: return function(accumulator, value, index, collection) {
+        return func.call(context, accumulator, value, index, collection);
+      };
+    }
+    return function() {
+      return func.apply(context, arguments);
+    };
+  };
+
+  // A mostly-internal function to generate callbacks that can be applied
+  // to each element in a collection, returning the desired result — either
+  // identity, an arbitrary callback, a property matcher, or a property accessor.
+  _.iteratee = function(value, context, argCount) {
+    if (value == null) return _.identity;
+    if (_.isFunction(value)) return createCallback(value, context, argCount);
+    if (_.isObject(value)) return _.matches(value);
+    return _.property(value);
+  };
 
   // Collection Functions
   // --------------------
 
   // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles objects with the built-in `forEach`, arrays, and raw objects.
-  // Delegates to **ECMAScript 5**'s native `forEach` if available.
-  var each = _.each = _.forEach = function(obj, iterator, context) {
-    if (obj == null) return;
-    if (nativeForEach && obj.forEach === nativeForEach) {
-      obj.forEach(iterator, context);
-    } else if (obj.length === +obj.length) {
-      for (var i = 0, length = obj.length; i < length; i++) {
-        if (iterator.call(context, obj[i], i, obj) === breaker) return;
+  // Handles raw objects in addition to array-likes. Treats all
+  // sparse array-likes as if they were dense.
+  _.each = _.forEach = function(obj, iteratee, context) {
+    if (obj == null) return obj;
+    iteratee = createCallback(iteratee, context);
+    var i, length = obj.length;
+    if (length === +length) {
+      for (i = 0; i < length; i++) {
+        iteratee(obj[i], i, obj);
       }
     } else {
       var keys = _.keys(obj);
-      for (var i = 0, length = keys.length; i < length; i++) {
-        if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker) return;
+      for (i = 0, length = keys.length; i < length; i++) {
+        iteratee(obj[keys[i]], keys[i], obj);
       }
     }
+    return obj;
   };
 
-  // Return the results of applying the iterator to each element.
-  // Delegates to **ECMAScript 5**'s native `map` if available.
-  _.map = _.collect = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
-    if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
-    each(obj, function(value, index, list) {
-      results.push(iterator.call(context, value, index, list));
-    });
+  // Return the results of applying the iteratee to each element.
+  _.map = _.collect = function(obj, iteratee, context) {
+    if (obj == null) return [];
+    iteratee = _.iteratee(iteratee, context);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        results = Array(length),
+        currentKey;
+    for (var index = 0; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      results[index] = iteratee(obj[currentKey], currentKey, obj);
+    }
     return results;
   };
 
   var reduceError = 'Reduce of empty array with no initial value';
 
   // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
-  _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
+  // or `foldl`.
+  _.reduce = _.foldl = _.inject = function(obj, iteratee, memo, context) {
     if (obj == null) obj = [];
-    if (nativeReduce && obj.reduce === nativeReduce) {
-      if (context) iterator = _.bind(iterator, context);
-      return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
+    iteratee = createCallback(iteratee, context, 4);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        index = 0, currentKey;
+    if (arguments.length < 3) {
+      if (!length) throw new TypeError(reduceError);
+      memo = obj[keys ? keys[index++] : index++];
     }
-    each(obj, function(value, index, list) {
-      if (!initial) {
-        memo = value;
-        initial = true;
-      } else {
-        memo = iterator.call(context, memo, value, index, list);
-      }
-    });
-    if (!initial) throw new TypeError(reduceError);
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      memo = iteratee(memo, obj[currentKey], currentKey, obj);
+    }
     return memo;
   };
 
   // The right-associative version of reduce, also known as `foldr`.
-  // Delegates to **ECMAScript 5**'s native `reduceRight` if available.
-  _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
+  _.reduceRight = _.foldr = function(obj, iteratee, memo, context) {
     if (obj == null) obj = [];
-    if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
-      if (context) iterator = _.bind(iterator, context);
-      return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
+    iteratee = createCallback(iteratee, context, 4);
+    var keys = obj.length !== + obj.length && _.keys(obj),
+        index = (keys || obj).length,
+        currentKey;
+    if (arguments.length < 3) {
+      if (!index) throw new TypeError(reduceError);
+      memo = obj[keys ? keys[--index] : --index];
     }
-    var length = obj.length;
-    if (length !== +length) {
-      var keys = _.keys(obj);
-      length = keys.length;
+    while (index--) {
+      currentKey = keys ? keys[index] : index;
+      memo = iteratee(memo, obj[currentKey], currentKey, obj);
     }
-    each(obj, function(value, index, list) {
-      index = keys ? keys[--length] : --length;
-      if (!initial) {
-        memo = obj[index];
-        initial = true;
-      } else {
-        memo = iterator.call(context, memo, obj[index], index, list);
-      }
-    });
-    if (!initial) throw new TypeError(reduceError);
     return memo;
   };
 
   // Return the first value which passes a truth test. Aliased as `detect`.
-  _.find = _.detect = function(obj, iterator, context) {
+  _.find = _.detect = function(obj, predicate, context) {
     var result;
-    any(obj, function(value, index, list) {
-      if (iterator.call(context, value, index, list)) {
+    predicate = _.iteratee(predicate, context);
+    _.some(obj, function(value, index, list) {
+      if (predicate(value, index, list)) {
         result = value;
         return true;
       }
@@ -17249,61 +18660,58 @@ function program1(depth0,data) {
   };
 
   // Return all the elements that pass a truth test.
-  // Delegates to **ECMAScript 5**'s native `filter` if available.
   // Aliased as `select`.
-  _.filter = _.select = function(obj, iterator, context) {
+  _.filter = _.select = function(obj, predicate, context) {
     var results = [];
     if (obj == null) return results;
-    if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
-    each(obj, function(value, index, list) {
-      if (iterator.call(context, value, index, list)) results.push(value);
+    predicate = _.iteratee(predicate, context);
+    _.each(obj, function(value, index, list) {
+      if (predicate(value, index, list)) results.push(value);
     });
     return results;
   };
 
   // Return all the elements for which a truth test fails.
-  _.reject = function(obj, iterator, context) {
-    return _.filter(obj, function(value, index, list) {
-      return !iterator.call(context, value, index, list);
-    }, context);
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, _.negate(_.iteratee(predicate)), context);
   };
 
   // Determine whether all of the elements match a truth test.
-  // Delegates to **ECMAScript 5**'s native `every` if available.
   // Aliased as `all`.
-  _.every = _.all = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
-    var result = true;
-    if (obj == null) return result;
-    if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
-    each(obj, function(value, index, list) {
-      if (!(result = result && iterator.call(context, value, index, list))) return breaker;
-    });
-    return !!result;
+  _.every = _.all = function(obj, predicate, context) {
+    if (obj == null) return true;
+    predicate = _.iteratee(predicate, context);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        index, currentKey;
+    for (index = 0; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      if (!predicate(obj[currentKey], currentKey, obj)) return false;
+    }
+    return true;
   };
 
   // Determine if at least one element in the object matches a truth test.
-  // Delegates to **ECMAScript 5**'s native `some` if available.
   // Aliased as `any`.
-  var any = _.some = _.any = function(obj, iterator, context) {
-    iterator || (iterator = _.identity);
-    var result = false;
-    if (obj == null) return result;
-    if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
-    each(obj, function(value, index, list) {
-      if (result || (result = iterator.call(context, value, index, list))) return breaker;
-    });
-    return !!result;
+  _.some = _.any = function(obj, predicate, context) {
+    if (obj == null) return false;
+    predicate = _.iteratee(predicate, context);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        index, currentKey;
+    for (index = 0; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      if (predicate(obj[currentKey], currentKey, obj)) return true;
+    }
+    return false;
   };
 
   // Determine if the array or object contains a given value (using `===`).
   // Aliased as `include`.
   _.contains = _.include = function(obj, target) {
     if (obj == null) return false;
-    if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
-    return any(obj, function(value) {
-      return value === target;
-    });
+    if (obj.length !== +obj.length) obj = _.values(obj);
+    return _.indexOf(obj, target) >= 0;
   };
 
   // Invoke a method (with arguments) on every item in a collection.
@@ -17317,94 +18725,104 @@ function program1(depth0,data) {
 
   // Convenience version of a common use case of `map`: fetching a property.
   _.pluck = function(obj, key) {
-    return _.map(obj, function(value){ return value[key]; });
+    return _.map(obj, _.property(key));
   };
 
   // Convenience version of a common use case of `filter`: selecting only objects
   // containing specific `key:value` pairs.
-  _.where = function(obj, attrs, first) {
-    if (_.isEmpty(attrs)) return first ? void 0 : [];
-    return _[first ? 'find' : 'filter'](obj, function(value) {
-      for (var key in attrs) {
-        if (attrs[key] !== value[key]) return false;
-      }
-      return true;
-    });
+  _.where = function(obj, attrs) {
+    return _.filter(obj, _.matches(attrs));
   };
 
   // Convenience version of a common use case of `find`: getting the first object
   // containing specific `key:value` pairs.
   _.findWhere = function(obj, attrs) {
-    return _.where(obj, attrs, true);
+    return _.find(obj, _.matches(attrs));
   };
 
-  // Return the maximum element or (element-based computation).
-  // Can't optimize arrays of integers longer than 65,535 elements.
-  // See [WebKit Bug 80797](https://bugs.webkit.org/show_bug.cgi?id=80797)
-  _.max = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.max.apply(Math, obj);
+  // Return the maximum element (or element-based computation).
+  _.max = function(obj, iteratee, context) {
+    var result = -Infinity, lastComputed = -Infinity,
+        value, computed;
+    if (iteratee == null && obj != null) {
+      obj = obj.length === +obj.length ? obj : _.values(obj);
+      for (var i = 0, length = obj.length; i < length; i++) {
+        value = obj[i];
+        if (value > result) {
+          result = value;
+        }
+      }
+    } else {
+      iteratee = _.iteratee(iteratee, context);
+      _.each(obj, function(value, index, list) {
+        computed = iteratee(value, index, list);
+        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
+          result = value;
+          lastComputed = computed;
+        }
+      });
     }
-    if (!iterator && _.isEmpty(obj)) return -Infinity;
-    var result = {computed : -Infinity, value: -Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed > result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
+    return result;
   };
 
   // Return the minimum element (or element-based computation).
-  _.min = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.min.apply(Math, obj);
+  _.min = function(obj, iteratee, context) {
+    var result = Infinity, lastComputed = Infinity,
+        value, computed;
+    if (iteratee == null && obj != null) {
+      obj = obj.length === +obj.length ? obj : _.values(obj);
+      for (var i = 0, length = obj.length; i < length; i++) {
+        value = obj[i];
+        if (value < result) {
+          result = value;
+        }
+      }
+    } else {
+      iteratee = _.iteratee(iteratee, context);
+      _.each(obj, function(value, index, list) {
+        computed = iteratee(value, index, list);
+        if (computed < lastComputed || computed === Infinity && result === Infinity) {
+          result = value;
+          lastComputed = computed;
+        }
+      });
     }
-    if (!iterator && _.isEmpty(obj)) return Infinity;
-    var result = {computed : Infinity, value: Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed < result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
+    return result;
   };
 
-  // Shuffle an array, using the modern version of the 
+  // Shuffle a collection, using the modern version of the
   // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
   _.shuffle = function(obj) {
-    var rand;
-    var index = 0;
-    var shuffled = [];
-    each(obj, function(value) {
-      rand = _.random(index++);
-      shuffled[index - 1] = shuffled[rand];
-      shuffled[rand] = value;
-    });
+    var set = obj && obj.length === +obj.length ? obj : _.values(obj);
+    var length = set.length;
+    var shuffled = Array(length);
+    for (var index = 0, rand; index < length; index++) {
+      rand = _.random(0, index);
+      if (rand !== index) shuffled[index] = shuffled[rand];
+      shuffled[rand] = set[index];
+    }
     return shuffled;
   };
 
-  // Sample **n** random values from an array.
-  // If **n** is not specified, returns a single random element from the array.
+  // Sample **n** random values from a collection.
+  // If **n** is not specified, returns a single random element.
   // The internal `guard` argument allows it to work with `map`.
   _.sample = function(obj, n, guard) {
-    if (arguments.length < 2 || guard) {
+    if (n == null || guard) {
+      if (obj.length !== +obj.length) obj = _.values(obj);
       return obj[_.random(obj.length - 1)];
     }
     return _.shuffle(obj).slice(0, Math.max(0, n));
   };
 
-  // An internal function to generate lookup iterators.
-  var lookupIterator = function(value) {
-    return _.isFunction(value) ? value : function(obj){ return obj[value]; };
-  };
-
-  // Sort the object's values by a criterion produced by an iterator.
-  _.sortBy = function(obj, value, context) {
-    var iterator = lookupIterator(value);
+  // Sort the object's values by a criterion produced by an iteratee.
+  _.sortBy = function(obj, iteratee, context) {
+    iteratee = _.iteratee(iteratee, context);
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
         value: value,
         index: index,
-        criteria: iterator.call(context, value, index, list)
+        criteria: iteratee(value, index, list)
       };
     }).sort(function(left, right) {
       var a = left.criteria;
@@ -17419,12 +18837,12 @@ function program1(depth0,data) {
 
   // An internal function used for aggregate "group by" operations.
   var group = function(behavior) {
-    return function(obj, value, context) {
+    return function(obj, iteratee, context) {
       var result = {};
-      var iterator = value == null ? _.identity : lookupIterator(value);
-      each(obj, function(value, index) {
-        var key = iterator.call(context, value, index, obj);
-        behavior(result, key, value);
+      iteratee = _.iteratee(iteratee, context);
+      _.each(obj, function(value, index) {
+        var key = iteratee(value, index, obj);
+        behavior(result, value, key);
       });
       return result;
     };
@@ -17432,32 +18850,32 @@ function program1(depth0,data) {
 
   // Groups the object's values by a criterion. Pass either a string attribute
   // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, key, value) {
-    (_.has(result, key) ? result[key] : (result[key] = [])).push(value);
+  _.groupBy = group(function(result, value, key) {
+    if (_.has(result, key)) result[key].push(value); else result[key] = [value];
   });
 
   // Indexes the object's values by a criterion, similar to `groupBy`, but for
   // when you know that your index values will be unique.
-  _.indexBy = group(function(result, key, value) {
+  _.indexBy = group(function(result, value, key) {
     result[key] = value;
   });
 
   // Counts instances of an object that group by a certain criterion. Pass
   // either a string attribute to count by, or a function that returns the
   // criterion.
-  _.countBy = group(function(result, key) {
-    _.has(result, key) ? result[key]++ : result[key] = 1;
+  _.countBy = group(function(result, value, key) {
+    if (_.has(result, key)) result[key]++; else result[key] = 1;
   });
 
   // Use a comparator function to figure out the smallest index at which
   // an object should be inserted so as to maintain order. Uses binary search.
-  _.sortedIndex = function(array, obj, iterator, context) {
-    iterator = iterator == null ? _.identity : lookupIterator(iterator);
-    var value = iterator.call(context, obj);
+  _.sortedIndex = function(array, obj, iteratee, context) {
+    iteratee = _.iteratee(iteratee, context, 1);
+    var value = iteratee(obj);
     var low = 0, high = array.length;
     while (low < high) {
-      var mid = (low + high) >>> 1;
-      iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
+      var mid = low + high >>> 1;
+      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;
     }
     return low;
   };
@@ -17473,7 +18891,18 @@ function program1(depth0,data) {
   // Return the number of elements in an object.
   _.size = function(obj) {
     if (obj == null) return 0;
-    return (obj.length === +obj.length) ? obj.length : _.keys(obj).length;
+    return obj.length === +obj.length ? obj.length : _.keys(obj).length;
+  };
+
+  // Split a collection into two arrays: one whose elements all satisfy the given
+  // predicate, and one whose elements all do not satisfy the predicate.
+  _.partition = function(obj, predicate, context) {
+    predicate = _.iteratee(predicate, context);
+    var pass = [], fail = [];
+    _.each(obj, function(value, key, obj) {
+      (predicate(value, key, obj) ? pass : fail).push(value);
+    });
+    return [pass, fail];
   };
 
   // Array Functions
@@ -17484,7 +18913,9 @@ function program1(depth0,data) {
   // allows it to work with `_.map`.
   _.first = _.head = _.take = function(array, n, guard) {
     if (array == null) return void 0;
-    return (n == null) || guard ? array[0] : slice.call(array, 0, n);
+    if (n == null || guard) return array[0];
+    if (n < 0) return [];
+    return slice.call(array, 0, n);
   };
 
   // Returns everything but the last entry of the array. Especially useful on
@@ -17492,18 +18923,15 @@ function program1(depth0,data) {
   // the array, excluding the last N. The **guard** check allows it to work with
   // `_.map`.
   _.initial = function(array, n, guard) {
-    return slice.call(array, 0, array.length - ((n == null) || guard ? 1 : n));
+    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
   };
 
   // Get the last element of an array. Passing **n** will return the last N
   // values in the array. The **guard** check allows it to work with `_.map`.
   _.last = function(array, n, guard) {
     if (array == null) return void 0;
-    if ((n == null) || guard) {
-      return array[array.length - 1];
-    } else {
-      return slice.call(array, Math.max(array.length - n, 0));
-    }
+    if (n == null || guard) return array[array.length - 1];
+    return slice.call(array, Math.max(array.length - n, 0));
   };
 
   // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
@@ -17511,7 +18939,7 @@ function program1(depth0,data) {
   // the rest N values in the array. The **guard**
   // check allows it to work with `_.map`.
   _.rest = _.tail = _.drop = function(array, n, guard) {
-    return slice.call(array, (n == null) || guard ? 1 : n);
+    return slice.call(array, n == null || guard ? 1 : n);
   };
 
   // Trim out all falsy values from an array.
@@ -17520,23 +18948,26 @@ function program1(depth0,data) {
   };
 
   // Internal implementation of a recursive `flatten` function.
-  var flatten = function(input, shallow, output) {
+  var flatten = function(input, shallow, strict, output) {
     if (shallow && _.every(input, _.isArray)) {
       return concat.apply(output, input);
     }
-    each(input, function(value) {
-      if (_.isArray(value) || _.isArguments(value)) {
-        shallow ? push.apply(output, value) : flatten(value, shallow, output);
+    for (var i = 0, length = input.length; i < length; i++) {
+      var value = input[i];
+      if (!_.isArray(value) && !_.isArguments(value)) {
+        if (!strict) output.push(value);
+      } else if (shallow) {
+        push.apply(output, value);
       } else {
-        output.push(value);
+        flatten(value, shallow, strict, output);
       }
-    });
+    }
     return output;
   };
 
   // Flatten out an array, either recursively (by default), or just one level.
   _.flatten = function(array, shallow) {
-    return flatten(array, shallow, []);
+    return flatten(array, shallow, false, []);
   };
 
   // Return a version of the array that does not contain the specified value(s).
@@ -17547,55 +18978,74 @@ function program1(depth0,data) {
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
   // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted, iterator, context) {
-    if (_.isFunction(isSorted)) {
-      context = iterator;
-      iterator = isSorted;
+  _.uniq = _.unique = function(array, isSorted, iteratee, context) {
+    if (array == null) return [];
+    if (!_.isBoolean(isSorted)) {
+      context = iteratee;
+      iteratee = isSorted;
       isSorted = false;
     }
-    var initial = iterator ? _.map(array, iterator, context) : array;
-    var results = [];
+    if (iteratee != null) iteratee = _.iteratee(iteratee, context);
+    var result = [];
     var seen = [];
-    each(initial, function(value, index) {
-      if (isSorted ? (!index || seen[seen.length - 1] !== value) : !_.contains(seen, value)) {
-        seen.push(value);
-        results.push(array[index]);
+    for (var i = 0, length = array.length; i < length; i++) {
+      var value = array[i];
+      if (isSorted) {
+        if (!i || seen !== value) result.push(value);
+        seen = value;
+      } else if (iteratee) {
+        var computed = iteratee(value, i, array);
+        if (_.indexOf(seen, computed) < 0) {
+          seen.push(computed);
+          result.push(value);
+        }
+      } else if (_.indexOf(result, value) < 0) {
+        result.push(value);
       }
-    });
-    return results;
+    }
+    return result;
   };
 
   // Produce an array that contains the union: each distinct element from all of
   // the passed-in arrays.
   _.union = function() {
-    return _.uniq(_.flatten(arguments, true));
+    return _.uniq(flatten(arguments, true, true, []));
   };
 
   // Produce an array that contains every item shared between all the
   // passed-in arrays.
   _.intersection = function(array) {
-    var rest = slice.call(arguments, 1);
-    return _.filter(_.uniq(array), function(item) {
-      return _.every(rest, function(other) {
-        return _.indexOf(other, item) >= 0;
-      });
-    });
+    if (array == null) return [];
+    var result = [];
+    var argsLength = arguments.length;
+    for (var i = 0, length = array.length; i < length; i++) {
+      var item = array[i];
+      if (_.contains(result, item)) continue;
+      for (var j = 1; j < argsLength; j++) {
+        if (!_.contains(arguments[j], item)) break;
+      }
+      if (j === argsLength) result.push(item);
+    }
+    return result;
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
-    var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
-    return _.filter(array, function(value){ return !_.contains(rest, value); });
+    var rest = flatten(slice.call(arguments, 1), true, true, []);
+    return _.filter(array, function(value){
+      return !_.contains(rest, value);
+    });
   };
 
   // Zip together multiple lists into a single array -- elements that share
   // an index go together.
-  _.zip = function() {
-    var length = _.max(_.pluck(arguments, "length").concat(0));
-    var results = new Array(length);
+  _.zip = function(array) {
+    if (array == null) return [];
+    var length = _.max(arguments, 'length').length;
+    var results = Array(length);
     for (var i = 0; i < length; i++) {
-      results[i] = _.pluck(arguments, '' + i);
+      results[i] = _.pluck(arguments, i);
     }
     return results;
   };
@@ -17616,10 +19066,8 @@ function program1(depth0,data) {
     return result;
   };
 
-  // If the browser doesn't supply us with indexOf (I'm looking at you, **MSIE**),
-  // we need this function. Return the position of the first occurrence of an
-  // item in an array, or -1 if the item is not included in the array.
-  // Delegates to **ECMAScript 5**'s native `indexOf` if available.
+  // Return the position of the first occurrence of an item in an array,
+  // or -1 if the item is not included in the array.
   // If the array is large and already in sort order, pass `true`
   // for **isSorted** to use binary search.
   _.indexOf = function(array, item, isSorted) {
@@ -17627,26 +19075,23 @@ function program1(depth0,data) {
     var i = 0, length = array.length;
     if (isSorted) {
       if (typeof isSorted == 'number') {
-        i = (isSorted < 0 ? Math.max(0, length + isSorted) : isSorted);
+        i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted;
       } else {
         i = _.sortedIndex(array, item);
         return array[i] === item ? i : -1;
       }
     }
-    if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
     for (; i < length; i++) if (array[i] === item) return i;
     return -1;
   };
 
-  // Delegates to **ECMAScript 5**'s native `lastIndexOf` if available.
   _.lastIndexOf = function(array, item, from) {
     if (array == null) return -1;
-    var hasIndex = from != null;
-    if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
-      return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item);
+    var idx = array.length;
+    if (typeof from == 'number') {
+      idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1);
     }
-    var i = (hasIndex ? from : array.length);
-    while (i--) if (array[i] === item) return i;
+    while (--idx >= 0) if (array[idx] === item) return idx;
     return -1;
   };
 
@@ -17658,15 +19103,13 @@ function program1(depth0,data) {
       stop = start || 0;
       start = 0;
     }
-    step = arguments[2] || 1;
+    step = step || 1;
 
     var length = Math.max(Math.ceil((stop - start) / step), 0);
-    var idx = 0;
-    var range = new Array(length);
+    var range = Array(length);
 
-    while(idx < length) {
-      range[idx++] = start;
-      start += step;
+    for (var idx = 0; idx < length; idx++, start += step) {
+      range[idx] = start;
     }
 
     return range;
@@ -17676,7 +19119,7 @@ function program1(depth0,data) {
   // ------------------
 
   // Reusable constructor function for prototype setting.
-  var ctor = function(){};
+  var Ctor = function(){};
 
   // Create a function bound to a given object (assigning `this`, and arguments,
   // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
@@ -17684,52 +19127,68 @@ function program1(depth0,data) {
   _.bind = function(func, context) {
     var args, bound;
     if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    if (!_.isFunction(func)) throw new TypeError;
+    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
     args = slice.call(arguments, 2);
-    return bound = function() {
+    bound = function() {
       if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      ctor.prototype = func.prototype;
-      var self = new ctor;
-      ctor.prototype = null;
+      Ctor.prototype = func.prototype;
+      var self = new Ctor;
+      Ctor.prototype = null;
       var result = func.apply(self, args.concat(slice.call(arguments)));
-      if (Object(result) === result) return result;
+      if (_.isObject(result)) return result;
       return self;
     };
+    return bound;
   };
 
   // Partially apply a function by creating a version that has had some of its
-  // arguments pre-filled, without changing its dynamic `this` context.
+  // arguments pre-filled, without changing its dynamic `this` context. _ acts
+  // as a placeholder, allowing any combination of arguments to be pre-filled.
   _.partial = function(func) {
-    var args = slice.call(arguments, 1);
+    var boundArgs = slice.call(arguments, 1);
     return function() {
-      return func.apply(this, args.concat(slice.call(arguments)));
+      var position = 0;
+      var args = boundArgs.slice();
+      for (var i = 0, length = args.length; i < length; i++) {
+        if (args[i] === _) args[i] = arguments[position++];
+      }
+      while (position < arguments.length) args.push(arguments[position++]);
+      return func.apply(this, args);
     };
   };
 
-  // Bind all of an object's methods to that object. Useful for ensuring that
-  // all callbacks defined on an object belong to it.
+  // Bind a number of an object's methods to that object. Remaining arguments
+  // are the method names to be bound. Useful for ensuring that all callbacks
+  // defined on an object belong to it.
   _.bindAll = function(obj) {
-    var funcs = slice.call(arguments, 1);
-    if (funcs.length === 0) throw new Error("bindAll must be passed function names");
-    each(funcs, function(f) { obj[f] = _.bind(obj[f], obj); });
+    var i, length = arguments.length, key;
+    if (length <= 1) throw new Error('bindAll must be passed function names');
+    for (i = 1; i < length; i++) {
+      key = arguments[i];
+      obj[key] = _.bind(obj[key], obj);
+    }
     return obj;
   };
 
   // Memoize an expensive function by storing its results.
   _.memoize = function(func, hasher) {
-    var memo = {};
-    hasher || (hasher = _.identity);
-    return function() {
-      var key = hasher.apply(this, arguments);
-      return _.has(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
+    var memoize = function(key) {
+      var cache = memoize.cache;
+      var address = hasher ? hasher.apply(this, arguments) : key;
+      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
+      return cache[address];
     };
+    memoize.cache = {};
+    return memoize;
   };
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
   _.delay = function(func, wait) {
     var args = slice.call(arguments, 2);
-    return setTimeout(function(){ return func.apply(null, args); }, wait);
+    return setTimeout(function(){
+      return func.apply(null, args);
+    }, wait);
   };
 
   // Defers a function, scheduling it to run after the current call stack has
@@ -17747,23 +19206,25 @@ function program1(depth0,data) {
     var context, args, result;
     var timeout = null;
     var previous = 0;
-    options || (options = {});
+    if (!options) options = {};
     var later = function() {
-      previous = options.leading === false ? 0 : new Date;
+      previous = options.leading === false ? 0 : _.now();
       timeout = null;
       result = func.apply(context, args);
+      if (!timeout) context = args = null;
     };
     return function() {
-      var now = new Date;
+      var now = _.now();
       if (!previous && options.leading === false) previous = now;
       var remaining = wait - (now - previous);
       context = this;
       args = arguments;
-      if (remaining <= 0) {
+      if (remaining <= 0 || remaining > wait) {
         clearTimeout(timeout);
         timeout = null;
         previous = now;
         result = func.apply(context, args);
+        if (!timeout) context = args = null;
       } else if (!timeout && options.trailing !== false) {
         timeout = setTimeout(later, remaining);
       }
@@ -17777,38 +19238,33 @@ function program1(depth0,data) {
   // leading edge, instead of the trailing.
   _.debounce = function(func, wait, immediate) {
     var timeout, args, context, timestamp, result;
+
+    var later = function() {
+      var last = _.now() - timestamp;
+
+      if (last < wait && last > 0) {
+        timeout = setTimeout(later, wait - last);
+      } else {
+        timeout = null;
+        if (!immediate) {
+          result = func.apply(context, args);
+          if (!timeout) context = args = null;
+        }
+      }
+    };
+
     return function() {
       context = this;
       args = arguments;
-      timestamp = new Date();
-      var later = function() {
-        var last = (new Date()) - timestamp;
-        if (last < wait) {
-          timeout = setTimeout(later, wait - last);
-        } else {
-          timeout = null;
-          if (!immediate) result = func.apply(context, args);
-        }
-      };
+      timestamp = _.now();
       var callNow = immediate && !timeout;
-      if (!timeout) {
-        timeout = setTimeout(later, wait);
+      if (!timeout) timeout = setTimeout(later, wait);
+      if (callNow) {
+        result = func.apply(context, args);
+        context = args = null;
       }
-      if (callNow) result = func.apply(context, args);
-      return result;
-    };
-  };
 
-  // Returns a function that will be executed at most one time, no matter how
-  // often you call it. Useful for lazy initialization.
-  _.once = function(func) {
-    var ran = false, memo;
-    return function() {
-      if (ran) return memo;
-      ran = true;
-      memo = func.apply(this, arguments);
-      func = null;
-      return memo;
+      return result;
     };
   };
 
@@ -17816,23 +19272,26 @@ function program1(depth0,data) {
   // allowing you to adjust arguments, run code before and after, and
   // conditionally execute the original function.
   _.wrap = function(func, wrapper) {
+    return _.partial(wrapper, func);
+  };
+
+  // Returns a negated version of the passed-in predicate.
+  _.negate = function(predicate) {
     return function() {
-      var args = [func];
-      push.apply(args, arguments);
-      return wrapper.apply(this, args);
+      return !predicate.apply(this, arguments);
     };
   };
 
   // Returns a function that is the composition of a list of functions, each
   // consuming the return value of the function that follows.
   _.compose = function() {
-    var funcs = arguments;
+    var args = arguments;
+    var start = args.length - 1;
     return function() {
-      var args = arguments;
-      for (var i = funcs.length - 1; i >= 0; i--) {
-        args = [funcs[i].apply(this, args)];
-      }
-      return args[0];
+      var i = start;
+      var result = args[start].apply(this, arguments);
+      while (i--) result = args[i].call(this, result);
+      return result;
     };
   };
 
@@ -17845,13 +19304,31 @@ function program1(depth0,data) {
     };
   };
 
+  // Returns a function that will only be executed before being called N times.
+  _.before = function(times, func) {
+    var memo;
+    return function() {
+      if (--times > 0) {
+        memo = func.apply(this, arguments);
+      } else {
+        func = null;
+      }
+      return memo;
+    };
+  };
+
+  // Returns a function that will be executed at most one time, no matter how
+  // often you call it. Useful for lazy initialization.
+  _.once = _.partial(_.before, 2);
+
   // Object Functions
   // ----------------
 
   // Retrieve the names of an object's properties.
   // Delegates to **ECMAScript 5**'s native `Object.keys`
-  _.keys = nativeKeys || function(obj) {
-    if (obj !== Object(obj)) throw new TypeError('Invalid object');
+  _.keys = function(obj) {
+    if (!_.isObject(obj)) return [];
+    if (nativeKeys) return nativeKeys(obj);
     var keys = [];
     for (var key in obj) if (_.has(obj, key)) keys.push(key);
     return keys;
@@ -17861,7 +19338,7 @@ function program1(depth0,data) {
   _.values = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;
-    var values = new Array(length);
+    var values = Array(length);
     for (var i = 0; i < length; i++) {
       values[i] = obj[keys[i]];
     }
@@ -17872,7 +19349,7 @@ function program1(depth0,data) {
   _.pairs = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;
-    var pairs = new Array(length);
+    var pairs = Array(length);
     for (var i = 0; i < length; i++) {
       pairs[i] = [keys[i], obj[keys[i]]];
     }
@@ -17901,45 +19378,62 @@ function program1(depth0,data) {
 
   // Extend a given object with all the properties in passed-in object(s).
   _.extend = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          obj[prop] = source[prop];
+    if (!_.isObject(obj)) return obj;
+    var source, prop;
+    for (var i = 1, length = arguments.length; i < length; i++) {
+      source = arguments[i];
+      for (prop in source) {
+        if (hasOwnProperty.call(source, prop)) {
+            obj[prop] = source[prop];
         }
       }
-    });
+    }
     return obj;
   };
 
   // Return a copy of the object only containing the whitelisted properties.
-  _.pick = function(obj) {
-    var copy = {};
-    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-    each(keys, function(key) {
-      if (key in obj) copy[key] = obj[key];
-    });
-    return copy;
+  _.pick = function(obj, iteratee, context) {
+    var result = {}, key;
+    if (obj == null) return result;
+    if (_.isFunction(iteratee)) {
+      iteratee = createCallback(iteratee, context);
+      for (key in obj) {
+        var value = obj[key];
+        if (iteratee(value, key, obj)) result[key] = value;
+      }
+    } else {
+      var keys = concat.apply([], slice.call(arguments, 1));
+      obj = new Object(obj);
+      for (var i = 0, length = keys.length; i < length; i++) {
+        key = keys[i];
+        if (key in obj) result[key] = obj[key];
+      }
+    }
+    return result;
   };
 
    // Return a copy of the object without the blacklisted properties.
-  _.omit = function(obj) {
-    var copy = {};
-    var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-    for (var key in obj) {
-      if (!_.contains(keys, key)) copy[key] = obj[key];
+  _.omit = function(obj, iteratee, context) {
+    if (_.isFunction(iteratee)) {
+      iteratee = _.negate(iteratee);
+    } else {
+      var keys = _.map(concat.apply([], slice.call(arguments, 1)), String);
+      iteratee = function(value, key) {
+        return !_.contains(keys, key);
+      };
     }
-    return copy;
+    return _.pick(obj, iteratee, context);
   };
 
   // Fill in a given object with default properties.
   _.defaults = function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          if (obj[prop] === void 0) obj[prop] = source[prop];
-        }
+    if (!_.isObject(obj)) return obj;
+    for (var i = 1, length = arguments.length; i < length; i++) {
+      var source = arguments[i];
+      for (var prop in source) {
+        if (obj[prop] === void 0) obj[prop] = source[prop];
       }
-    });
+    }
     return obj;
   };
 
@@ -17961,7 +19455,7 @@ function program1(depth0,data) {
   var eq = function(a, b, aStack, bStack) {
     // Identical objects are equal. `0 === -0`, but they aren't identical.
     // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
-    if (a === b) return a !== 0 || 1 / a == 1 / b;
+    if (a === b) return a !== 0 || 1 / a === 1 / b;
     // A strict comparison is necessary because `null == undefined`.
     if (a == null || b == null) return a === b;
     // Unwrap any wrapped objects.
@@ -17969,29 +19463,27 @@ function program1(depth0,data) {
     if (b instanceof _) b = b._wrapped;
     // Compare `[[Class]]` names.
     var className = toString.call(a);
-    if (className != toString.call(b)) return false;
+    if (className !== toString.call(b)) return false;
     switch (className) {
-      // Strings, numbers, dates, and booleans are compared by value.
+      // Strings, numbers, regular expressions, dates, and booleans are compared by value.
+      case '[object RegExp]':
+      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
       case '[object String]':
         // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
         // equivalent to `new String("5")`.
-        return a == String(b);
+        return '' + a === '' + b;
       case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
-        // other numeric values.
-        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
+        // `NaN`s are equivalent, but non-reflexive.
+        // Object(NaN) is equivalent to NaN
+        if (+a !== +a) return +b !== +b;
+        // An `egal` comparison is performed for other numeric values.
+        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
       case '[object Date]':
       case '[object Boolean]':
         // Coerce dates and booleans to numeric primitive values. Dates are compared by their
         // millisecond representations. Note that invalid dates with millisecond representations
         // of `NaN` are not equivalent.
-        return +a == +b;
-      // RegExps are compared by their source patterns and flags.
-      case '[object RegExp]':
-        return a.source == b.source &&
-               a.global == b.global &&
-               a.multiline == b.multiline &&
-               a.ignoreCase == b.ignoreCase;
+        return +a === +b;
     }
     if (typeof a != 'object' || typeof b != 'object') return false;
     // Assume equality for cyclic structures. The algorithm for detecting cyclic
@@ -18000,24 +19492,29 @@ function program1(depth0,data) {
     while (length--) {
       // Linear search. Performance is inversely proportional to the number of
       // unique nested structures.
-      if (aStack[length] == a) return bStack[length] == b;
+      if (aStack[length] === a) return bStack[length] === b;
     }
     // Objects with different constructors are not equivalent, but `Object`s
     // from different frames are.
     var aCtor = a.constructor, bCtor = b.constructor;
-    if (aCtor !== bCtor && !(_.isFunction(aCtor) && (aCtor instanceof aCtor) &&
-                             _.isFunction(bCtor) && (bCtor instanceof bCtor))) {
+    if (
+      aCtor !== bCtor &&
+      // Handle Object.create(x) cases
+      'constructor' in a && 'constructor' in b &&
+      !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
+        _.isFunction(bCtor) && bCtor instanceof bCtor)
+    ) {
       return false;
     }
     // Add the first object to the stack of traversed objects.
     aStack.push(a);
     bStack.push(b);
-    var size = 0, result = true;
+    var size, result;
     // Recursively compare objects and arrays.
-    if (className == '[object Array]') {
+    if (className === '[object Array]') {
       // Compare array lengths to determine if a deep comparison is necessary.
       size = a.length;
-      result = size == b.length;
+      result = size === b.length;
       if (result) {
         // Deep compare the contents, ignoring non-numeric properties.
         while (size--) {
@@ -18026,20 +19523,16 @@ function program1(depth0,data) {
       }
     } else {
       // Deep compare objects.
-      for (var key in a) {
-        if (_.has(a, key)) {
-          // Count the expected number of properties.
-          size++;
-          // Deep compare each member.
+      var keys = _.keys(a), key;
+      size = keys.length;
+      // Ensure that both objects contain the same number of properties before comparing deep equality.
+      result = _.keys(b).length === size;
+      if (result) {
+        while (size--) {
+          // Deep compare each member
+          key = keys[size];
           if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
         }
-      }
-      // Ensure that both objects contain the same number of properties.
-      if (result) {
-        for (key in b) {
-          if (_.has(b, key) && !(size--)) break;
-        }
-        result = !size;
       }
     }
     // Remove the first object from the stack of traversed objects.
@@ -18057,7 +19550,7 @@ function program1(depth0,data) {
   // An "empty" object has no enumerable own-properties.
   _.isEmpty = function(obj) {
     if (obj == null) return true;
-    if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
+    if (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) return obj.length === 0;
     for (var key in obj) if (_.has(obj, key)) return false;
     return true;
   };
@@ -18070,18 +19563,19 @@ function program1(depth0,data) {
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
   _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) == '[object Array]';
+    return toString.call(obj) === '[object Array]';
   };
 
   // Is a given variable an object?
   _.isObject = function(obj) {
-    return obj === Object(obj);
+    var type = typeof obj;
+    return type === 'function' || type === 'object' && !!obj;
   };
 
   // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
-  each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
+  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
     _['is' + name] = function(obj) {
-      return toString.call(obj) == '[object ' + name + ']';
+      return toString.call(obj) === '[object ' + name + ']';
     };
   });
 
@@ -18089,14 +19583,14 @@ function program1(depth0,data) {
   // there isn't any inspectable "Arguments" type.
   if (!_.isArguments(arguments)) {
     _.isArguments = function(obj) {
-      return !!(obj && _.has(obj, 'callee'));
+      return _.has(obj, 'callee');
     };
   }
 
-  // Optimize `isFunction` if appropriate.
-  if (typeof (/./) !== 'function') {
+  // Optimize `isFunction` if appropriate. Work around an IE 11 bug.
+  if (typeof /./ !== 'function') {
     _.isFunction = function(obj) {
-      return typeof obj === 'function';
+      return typeof obj == 'function' || false;
     };
   }
 
@@ -18107,12 +19601,12 @@ function program1(depth0,data) {
 
   // Is the given value `NaN`? (NaN is the only number which does not equal itself).
   _.isNaN = function(obj) {
-    return _.isNumber(obj) && obj != +obj;
+    return _.isNumber(obj) && obj !== +obj;
   };
 
   // Is a given value a boolean?
   _.isBoolean = function(obj) {
-    return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
+    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
   };
 
   // Is a given value equal to null?
@@ -18128,7 +19622,7 @@ function program1(depth0,data) {
   // Shortcut function for checking if an object has a given property directly
   // on itself (in other words, not on a prototype).
   _.has = function(obj, key) {
-    return hasOwnProperty.call(obj, key);
+    return obj != null && hasOwnProperty.call(obj, key);
   };
 
   // Utility Functions
@@ -18141,15 +19635,44 @@ function program1(depth0,data) {
     return this;
   };
 
-  // Keep the identity function around for default iterators.
+  // Keep the identity function around for default iteratees.
   _.identity = function(value) {
     return value;
   };
 
+  _.constant = function(value) {
+    return function() {
+      return value;
+    };
+  };
+
+  _.noop = function(){};
+
+  _.property = function(key) {
+    return function(obj) {
+      return obj[key];
+    };
+  };
+
+  // Returns a predicate for checking whether an object has a given set of `key:value` pairs.
+  _.matches = function(attrs) {
+    var pairs = _.pairs(attrs), length = pairs.length;
+    return function(obj) {
+      if (obj == null) return !length;
+      obj = new Object(obj);
+      for (var i = 0; i < length; i++) {
+        var pair = pairs[i], key = pair[0];
+        if (pair[1] !== obj[key] || !(key in obj)) return false;
+      }
+      return true;
+    };
+  };
+
   // Run a function **n** times.
-  _.times = function(n, iterator, context) {
+  _.times = function(n, iteratee, context) {
     var accum = Array(Math.max(0, n));
-    for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
+    iteratee = createCallback(iteratee, context, 1);
+    for (var i = 0; i < n; i++) accum[i] = iteratee(i);
     return accum;
   };
 
@@ -18162,52 +19685,45 @@ function program1(depth0,data) {
     return min + Math.floor(Math.random() * (max - min + 1));
   };
 
-  // List of HTML entities for escaping.
-  var entityMap = {
-    escape: {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#x27;'
-    }
+  // A (possibly faster) way to get the current timestamp as an integer.
+  _.now = Date.now || function() {
+    return new Date().getTime();
   };
-  entityMap.unescape = _.invert(entityMap.escape);
 
-  // Regexes containing the keys and values listed immediately above.
-  var entityRegexes = {
-    escape:   new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g'),
-    unescape: new RegExp('(' + _.keys(entityMap.unescape).join('|') + ')', 'g')
+   // List of HTML entities for escaping.
+  var escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '`': '&#x60;'
   };
+  var unescapeMap = _.invert(escapeMap);
 
   // Functions for escaping and unescaping strings to/from HTML interpolation.
-  _.each(['escape', 'unescape'], function(method) {
-    _[method] = function(string) {
-      if (string == null) return '';
-      return ('' + string).replace(entityRegexes[method], function(match) {
-        return entityMap[method][match];
-      });
+  var createEscaper = function(map) {
+    var escaper = function(match) {
+      return map[match];
     };
-  });
+    // Regexes for identifying a key that needs to be escaped
+    var source = '(?:' + _.keys(map).join('|') + ')';
+    var testRegexp = RegExp(source);
+    var replaceRegexp = RegExp(source, 'g');
+    return function(string) {
+      string = string == null ? '' : '' + string;
+      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
+    };
+  };
+  _.escape = createEscaper(escapeMap);
+  _.unescape = createEscaper(unescapeMap);
 
   // If the value of the named `property` is a function then invoke it with the
   // `object` as context; otherwise, return it.
   _.result = function(object, property) {
     if (object == null) return void 0;
     var value = object[property];
-    return _.isFunction(value) ? value.call(object) : value;
-  };
-
-  // Add your own custom functions to the Underscore object.
-  _.mixin = function(obj) {
-    each(_.functions(obj), function(name) {
-      var func = _[name] = obj[name];
-      _.prototype[name] = function() {
-        var args = [this._wrapped];
-        push.apply(args, arguments);
-        return result.call(this, func.apply(_, args));
-      };
-    });
+    return _.isFunction(value) ? object[property]() : value;
   };
 
   // Generate a unique integer id (unique within the entire client session).
@@ -18238,22 +19754,26 @@ function program1(depth0,data) {
     '\\':     '\\',
     '\r':     'r',
     '\n':     'n',
-    '\t':     't',
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
 
-  var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+  var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
+
+  var escapeChar = function(match) {
+    return '\\' + escapes[match];
+  };
 
   // JavaScript micro-templating, similar to John Resig's implementation.
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
-  _.template = function(text, data, settings) {
-    var render;
+  // NB: `oldSettings` only exists for backwards compatibility.
+  _.template = function(text, settings, oldSettings) {
+    if (!settings && oldSettings) settings = oldSettings;
     settings = _.defaults({}, settings, _.templateSettings);
 
     // Combine delimiters into one regular expression via alternation.
-    var matcher = new RegExp([
+    var matcher = RegExp([
       (settings.escape || noMatch).source,
       (settings.interpolate || noMatch).source,
       (settings.evaluate || noMatch).source
@@ -18263,19 +19783,18 @@ function program1(depth0,data) {
     var index = 0;
     var source = "__p+='";
     text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-      source += text.slice(index, offset)
-        .replace(escaper, function(match) { return '\\' + escapes[match]; });
+      source += text.slice(index, offset).replace(escaper, escapeChar);
+      index = offset + match.length;
 
       if (escape) {
         source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-      }
-      if (interpolate) {
+      } else if (interpolate) {
         source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-      }
-      if (evaluate) {
+      } else if (evaluate) {
         source += "';\n" + evaluate + "\n__p+='";
       }
-      index = offset + match.length;
+
+      // Adobe VMs need the match returned to produce the correct offest.
       return match;
     });
     source += "';\n";
@@ -18285,29 +19804,31 @@ function program1(depth0,data) {
 
     source = "var __t,__p='',__j=Array.prototype.join," +
       "print=function(){__p+=__j.call(arguments,'');};\n" +
-      source + "return __p;\n";
+      source + 'return __p;\n';
 
     try {
-      render = new Function(settings.variable || 'obj', '_', source);
+      var render = new Function(settings.variable || 'obj', '_', source);
     } catch (e) {
       e.source = source;
       throw e;
     }
 
-    if (data) return render(data, _);
     var template = function(data) {
       return render.call(this, data, _);
     };
 
-    // Provide the compiled function source as a convenience for precompilation.
-    template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
+    // Provide the compiled source as a convenience for precompilation.
+    var argument = settings.variable || 'obj';
+    template.source = 'function(' + argument + '){\n' + source + '}';
 
     return template;
   };
 
-  // Add a "chain" function, which will delegate to the wrapper.
+  // Add a "chain" function. Start chaining a wrapped Underscore object.
   _.chain = function(obj) {
-    return _(obj).chain();
+    var instance = _(obj);
+    instance._chain = true;
+    return instance;
   };
 
   // OOP
@@ -18321,1963 +19842,473 @@ function program1(depth0,data) {
     return this._chain ? _(obj).chain() : obj;
   };
 
+  // Add your own custom functions to the Underscore object.
+  _.mixin = function(obj) {
+    _.each(_.functions(obj), function(name) {
+      var func = _[name] = obj[name];
+      _.prototype[name] = function() {
+        var args = [this._wrapped];
+        push.apply(args, arguments);
+        return result.call(this, func.apply(_, args));
+      };
+    });
+  };
+
   // Add all of the Underscore functions to the wrapper object.
   _.mixin(_);
 
   // Add all mutator Array functions to the wrapper.
-  each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = ArrayProto[name];
     _.prototype[name] = function() {
       var obj = this._wrapped;
       method.apply(obj, arguments);
-      if ((name == 'shift' || name == 'splice') && obj.length === 0) delete obj[0];
+      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
       return result.call(this, obj);
     };
   });
 
   // Add all accessor Array functions to the wrapper.
-  each(['concat', 'join', 'slice'], function(name) {
+  _.each(['concat', 'join', 'slice'], function(name) {
     var method = ArrayProto[name];
     _.prototype[name] = function() {
       return result.call(this, method.apply(this._wrapped, arguments));
     };
   });
 
-  _.extend(_.prototype, {
+  // Extracts the result from a wrapped and chained object.
+  _.prototype.value = function() {
+    return this._wrapped;
+  };
 
-    // Start chaining a wrapped Underscore object.
-    chain: function() {
-      this._chain = true;
-      return this;
-    },
-
-    // Extracts the result from a wrapped and chained object.
-    value: function() {
-      return this._wrapped;
-    }
-
-  });
-
-}).call(this);
-
-},{}],28:[function(require,module,exports){
-var _ = require('underscore');
-
-
-module.exports = {
-    lotShouldAppear: function (lot, filters) {
-        // Layers
-        var lotLayers = lot.feature.properties.layers.split(',');
-        if (_.isEmpty(_.intersection(lotLayers, filters.layers))) {
-            return false;
-        }
-
-        // Projects
-        if (filters.projects === 'exclude' && _.contains(lotLayers, 'in_use')) {
-            return false;
-        }
-        else if (filters.projects === 'only' && !_.contains(lotLayers, 'in_use')) {
-            return false;
-        }
-        else if (filters.projects === 'started_here') {
-            if (_.contains(lotLayers, 'in_use') && !_.contains(lotLayers, 'in_use_started_here')) {
-                return false;
-            }
-        }
-        else if (filters.projects === 'started_here_only' &&
-                 !_.contains(lotLayers, 'in_use_started_here')) {
-            return false;
-        }
-
-        // Owners
-        if (filters.public_owners &&
-            !_.contains(filters.public_owners, lot.feature.properties.owner)) {
-            return false;
-        }
-
-        return true;
-    },
-
-    paramsToFilters: function (params) {
-        var filters = _.extend({}, params);
-        filters.layers = filters.layers.split(',');
-        if (filters.public_owners) {
-            filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
-                return parseInt(ownerPk);
-            });
-        }
-        return filters;
-    }
-};
-
-},{"underscore":27}],29:[function(require,module,exports){
-var geocoder = new google.maps.Geocoder();
-
-function geocode(address, bounds, state, f) {
-    geocoder.geocode({
-        'address': address,
-        'bounds': to_google_bounds(bounds),
-    }, function (results, status) {
-        for (var i = 0; i < results.length; i++) {
-            var result_state = get_component(results[i], 'administrative_area_level_1');
-            if (result_state === state) {
-                return f(results[i], status);
-            }
-        }
-        return f(null, status);
+  // AMD registration happens at the end for compatibility with AMD loaders
+  // that may not enforce next-turn semantics on modules. Even though general
+  // practice for AMD registration is to be anonymous, underscore registers
+  // as a named module because, like jQuery, it is a base library that is
+  // popular enough to be bundled in a third party lib, but not be part of
+  // an AMD load request. Those cases could generate an error when an
+  // anonymous define() is called outside of a loader request.
+  if (typeof define === 'function' && define.amd) {
+    define('underscore', [], function() {
+      return _;
     });
-}
+  }
+}.call(this));
 
-function get_component(result, desired_type) {
-    var matches = $.grep(result.address_components, function (component, i) {
-        return ($.inArray(desired_type, component.types) >= 0);
-    });
-    if (matches.length >= 0 && matches[0] !== null) {
-        return matches[0].short_name;
-    }
-    return null;
-}
-
-function get_street(result) {
-    var street_number = get_component(result, 'street_number');
-    var route = get_component(result, 'route');
-    if (street_number === null || route === null) {
-        return null;
-    }
-    return street_number + ' ' + route;
-}
-
-function get_city(result) {
-    var city = get_component(result, 'sublocality');
-    if (city === null) {
-        city = get_component(result, 'locality');
-    }
-    return city;
-}
-
-function get_state(result) {
-    return get_component(result, 'administrative_area_level_1');
-}
-
-function get_zip(result) {
-    return get_component(result, 'postal_code');
-}
-
-function get_longitude(result) {
-    return result.geometry.location.lng();
-}
-
-function get_latitude(result) {
-    return result.geometry.location.lat();
-}
-
-function to_google_bounds(bounds) {
-    // bounds: left, bottom, right, top
-    return new google.maps.LatLngBounds(
-        new google.maps.LatLng(bounds[1], bounds[0]),
-        new google.maps.LatLng(bounds[3], bounds[2])
-    );
-}
-
-module.exports = {
-    geocode: geocode
-};
-
-},{}],30:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 var L = require('leaflet');
-
-require('TileLayer.GeoJSON');
-
-L.TileLayer.Vector.include({
-
-    getTileUrl: function (coords) {
-        var x = coords.x,
-            y = coords.y,
-            z = this._getZoomForUrl();
-        return this._url + z + '/' + x + '/' + y + '.geojson';
-    }
-
-});
-
-},{"TileLayer.GeoJSON":10,"leaflet":16}],31:[function(require,module,exports){
-var L = require('leaflet');
-
-require('TileLayer.GeoJSON');
-
-require('./leaflet.geojson.tile');
-require('./leaflet.lotmultipolygon');
-require('./leaflet.lotpolygon');
-
-
-L.LotGeoJson = L.GeoJSON.extend({
-
-    initialize: function (geojson, options) {
-        L.GeoJSON.prototype.initialize.call(this, geojson, options);
-    },
-
-    addData: function (geojson) {
-        var features = L.Util.isArray(geojson) ? geojson : geojson.features,
-            i, len, feature;
-
-        if (features) {
-            for (i = 0, len = features.length; i < len; i++) {
-                // Only add this if geometry or geometries are set and not null
-                feature = features[i];
-                if (feature.geometries || feature.geometry || feature.features || feature.coordinates) {
-                    this.addData(features[i]);
-                }
-            }
-            return this;
-        }
-
-        var options = this.options;
-
-        if (options.filter && !options.filter(geojson)) { return; }
-
-        var layer = this.geometryToLotLayer(geojson, options.pointToLayer, options.coordsToLatLng, options);
-        layer.feature = L.GeoJSON.asFeature(geojson);
-
-        layer.defaultOptions = layer.options;
-        this.resetStyle(layer);
-
-        if (options.onEachFeature) {
-            options.onEachFeature(geojson, layer);
-        }
-
-        return this.addLayer(layer);
-    },
-
-    geometryToLotLayer: function (geojson, pointToLayer, coordsToLatLng, vectorOptions) {
-        var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
-            coords = geometry.coordinates,
-            layers = [],
-            latlng, latlngs, i, len;
-
-        var options = L.extend({}, vectorOptions);
-        if (geojson.properties.has_organizers) {
-            options.hasOrganizers = true;
-        }
-
-        coordsToLatLng = coordsToLatLng || L.GeoJSON.coordsToLatLng;
-
-        switch (geometry.type) {
-        case 'Point':
-            latlng = coordsToLatLng(coords);
-            return pointToLayer ? pointToLayer(geojson, latlng) : new L.Marker(latlng);
-
-        case 'MultiPoint':
-            for (i = 0, len = coords.length; i < len; i++) {
-                latlng = coordsToLatLng(coords[i]);
-                layers.push(pointToLayer ? pointToLayer(geojson, latlng) : new L.Marker(latlng));
-            }
-            return new L.FeatureGroup(layers);
-
-        case 'LineString':
-            latlngs = L.GeoJSON.coordsToLatLngs(coords, 0, coordsToLatLng);
-            return new L.Polyline(latlngs, options);
-
-        case 'Polygon':
-            if (coords.length === 2 && !coords[1].length) {
-                throw new Error('Invalid GeoJSON object.');
-            }
-            latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
-            return L.lotPolygon(latlngs, options);
-
-        case 'MultiLineString':
-            latlngs = L.GeoJSON.coordsToLatLngs(coords, 1, coordsToLatLng);
-            return new L.MultiPolyline(latlngs, options);
-
-        case 'MultiPolygon':
-            latlngs = L.GeoJSON.coordsToLatLngs(coords, 2, coordsToLatLng);
-            return new L.LotMultiPolygon(latlngs, options);
-
-        case 'GeometryCollection':
-            for (i = 0, len = geometry.geometries.length; i < len; i++) {
-
-                layers.push(L.GeoJSON.geometryToLayer({
-                    geometry: geometry.geometries[i],
-                    type: 'Feature',
-                    properties: geojson.properties
-                }, pointToLayer, coordsToLatLng, options));
-            }
-            return new L.FeatureGroup(layers);
-
-        default:
-            throw new Error('Invalid GeoJSON object.');
-        }
-    }
-
-});
-
-L.lotGeoJson = function (geojson, options) {
-    return new L.LotGeoJson(geojson, options);
-};
-
-L.LotLayer = L.TileLayer.Vector.extend({
-
-    initialize: function (url, options, geojsonOptions) {
-        options.tileCacheFactory = L.tileCache;
-        options.layerFactory = L.lotGeoJson;
-        L.TileLayer.Vector.prototype.initialize.call(this, url, options,
-                                                      geojsonOptions);
-    },
-
-});
-
-L.lotLayer = function (url, options, geojsonOptions) {
-    return new L.LotLayer(url, options, geojsonOptions);
-};
-
-},{"./leaflet.geojson.tile":30,"./leaflet.lotmultipolygon":34,"./leaflet.lotpolygon":36,"TileLayer.GeoJSON":10,"leaflet":16}],32:[function(require,module,exports){
-var _ = require('underscore');
-var filters = require('./filters');
 var Handlebars = require('handlebars');
-var L = require('leaflet');
-var mapstyles = require('./map.styles');
-var Spinner = require('spinjs');
+var _ = require('underscore');
+var Spinner = require('spin.js');
 
-require('leaflet.bing');
-require('leaflet.dataoptions');
-require('leaflet.hash');
-require('leaflet.usermarker');
+var templates = require('./templates')(Handlebars);
 
-require('./leaflet.lotlayer');
-require('./leaflet.lotmarker');
+var parcelDefaultStyle = {
+    color: '#2593c6',
+    fillOpacity: 0,
+    weight: 2.5
+};
 
+var parcelSelectStyle = {
+    fillColor: '#EEC619',
+    fillOpacity: 0.5
+};
 
-L.LotMap = L.Map.extend({
+var cancelButtonSelector = '.add-lot-mode-cancel',
+    submitButtonSelector = '.add-lot-mode-submit';
 
-    boundariesLayer: null,
-    centroidsLayer: null,
-    currentFilters: {},
-    polygonsLayer: null,
-    lotLayerTransitionPoint: 15,
-    previousZoom: null,
-    userLayer: null,
-    userLocationZoom: 16,
+L.Map.include({
 
-    filters: null,
+    selectedParcels: [],
 
-    compiledPopupTemplate: null,
+    parcelLayerOptions: {
 
-    getPopupTemplate: function () {
-        if (this.compiledPopupTemplate) {
-            return this.compiledPopupTemplate;
-        }
-        var source = $("#popup-template").html();
-        this.compiledPopupTemplate = Handlebars.compile(source);
-        return this.compiledPopupTemplate;
-    },
-
-    lotLayerOptions: {
         onEachFeature: function (feature, layer) {
             layer.on({
                 'click': function (event) {
-                    var latlng = event.latlng,
-                        x = this._map.latLngToContainerPoint(latlng).x,
-                        y = this._map.latLngToContainerPoint(latlng).y - 100,
-                        point = this._map.containerPointToLatLng([x, y]),
-                        template = this._map.getPopupTemplate();
-                    this.bindPopup('<div id="popup"></div>').openPopup();
-                    var spinner = new Spinner().spin($('#popup')[0]);
-                    $.getJSON(Django.url('lots:lot_detail_json', { pk: this.feature.properties.id }), function (data) {
-                        spinner.stop();
-                        $('#popup').append(template(data));
-                    });
-                    return this._map.setView(point, this._map._zoom);
-                },
-                'mouseover': function (event) {
-                    this._map.options.onMouseOverFeature(event.target.feature);
-                },
-                'mouseout': function (event) {
-                    this._map.options.onMouseOutFeature(event.target.feature);
-                }
-            });
-        },
-        pointToLayer: function (feature, latlng) {
-            var options = {};
-            var layers = feature.properties.layers.split(',');
-            if (_.contains(layers, 'organizing')) {
-                options.hasOrganizers = true;
-            }
-            return L.lotMarker(latlng, options);
-        },
-        style: function (feature) {
-            var style = {
-                fillColor: '#000000',
-                fillOpacity: 1,
-                stroke: 0
-            };
-            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
-            return style;
-        },
-        popupOptions: {
-            autoPan: false,
-            maxWidth: 250,
-            minWidth: 250,
-            offset: [0, 0]
-        }
-    },
-
-    initialize: function (id, options) {
-        L.Map.prototype.initialize.call(this, id, options);
-        this.addBaseLayer();
-        var hash = new L.Hash(this);
-
-        if (options.filterParams) {
-            this.currentFilters = filters.paramsToFilters(options.filterParams);
-        }
-
-        this.boundariesLayer = L.geoJson(null, {
-            color: '#58595b',
-            fill: false
-        }).addTo(this);
-
-        // When new lots are added ensure they should be displayed
-        var map = this;
-        this.on('layeradd', function (event) {
-            // Dig through the layers of layers
-            event.layer.on('layeradd', function (event) {
-                event.layer.eachLayer(function (lot) {
-                    if (!lot.feature || !lot.feature.properties.layers) return;
-                    if (filters.lotShouldAppear(lot, map.currentFilters)) {
-                        lot.show();
+                    var map = this._map,
+                        layer = event.layer,
+                        feature = event.target.feature;
+                    if (_.findWhere(map.selectedParcels, { id: feature.id })) {
+                        map.selectedParcels = _.reject(map.selectedParcels, function (p) {
+                            return p.id === feature.id;
+                        });
+                        layer.setStyle(parcelDefaultStyle);
                     }
                     else {
-                        lot.hide();
+                        $.get(Django.url('lots:create_by_parcels_check_parcel', { pk: feature.id }))
+                            .success(function(data) {
+                                if (data !== 'None') {
+                                    map.createLotExistsPopup(event.latlng, data);
+                                }
+                            });
+                        map.selectedParcels.push({
+                            id: feature.id,
+                            address: feature.properties.address
+                        });
+                        layer.setStyle(parcelSelectStyle);
                     }
-                });
+                    map.updateLotAddWindow();
+                },
+
+                'mouseover': function (event) {
+                    var layer = event.layer,
+                        feature = event.target.feature;
+                    $('.map-add-lot-current-parcel').text(feature.properties.address);
+                }
             });
-        });
+        },
 
-        this.on('zoomend', function () {
-            var currentZoom = this.getZoom();
-            if (this.previousZoom) {
-                // Switch to centroids
-                if (currentZoom <= this.lotLayerTransitionPoint && 
-                    this.previousZoom > this.lotLayerTransitionPoint) {
-                    this.fire('lotlayertransition', { details: false });
-                }
-                // Switch to polygons
-                else if (currentZoom > this.lotLayerTransitionPoint &&
-                         this.previousZoom <= this.lotLayerTransitionPoint) {
-                    this.fire('lotlayertransition', { details: true });
-                }
-            }
-            else {
-                // Start with centroids
-                if (currentZoom <= this.lotLayerTransitionPoint) {
-                    this.fire('lotlayertransition', { details: false });
-                }
-                // Start with polygons
-                else if (currentZoom > this.lotLayerTransitionPoint) {
-                    this.fire('lotlayertransition', { details: true });
-                }
-            }
-            this.previousZoom = currentZoom;
-        });
+        style: function (feature) {
+            return parcelDefaultStyle;
+        },
+
     },
 
-    addBaseLayer: function () {
-        var streets = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(this);
-        var bing = new L.BingLayer('Ajio1n0EgmAAvT3zLndCpHrYR_LHJDgfDU6B0tV_1RClr7OFLzy4RnkLXlSdkJ_x');
-
-        L.control.layers({
-            streets: streets,
-            satellite: bing
-        }).addTo(this);
-    },
-
-    addLotsLayer: function () {
-        this.addCentroidsLayer();
-        this.addPolygonsLayer();
-        if (this.getZoom() <= this.lotLayerTransitionPoint) {
-            this.addLayer(this.centroidsLayer);
-            this.removeLayer(this.polygonsLayer);
+    addParcelsLayer: function () {
+        if (this.parcelsLayer) {
+            this.removeLayer(this.parcelsLayer);
         }
-        else {
-            this.removeLayer(this.centroidsLayer);
-            this.addLayer(this.polygonsLayer);
-        }
-    },
-
-    addCentroidsLayer: function () {
-        if (this.centroidsLayer) {
-            this.removeLayer(this.centroidsLayer);
-        }
-        var url = this.options.lotCentroidsUrl;
+        var url = this.options.parcelsUrl;
 
         var options = {
-            serverZooms: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            unique: function (feature) {
-                return feature.id;
-            }
-        };
-
-        this.centroidsLayer = L.lotLayer(url, options, this.lotLayerOptions);
-    },
-
-    addPolygonsLayer: function () {
-        if (this.polygonsLayer) {
-            this.removeLayer(this.polygonsLayer);
-        }
-        var url = this.options.lotPolygonsUrl;
-
-        var options = {
-            maxZoom: 19,
+            layerFactory: L.geoJson,
+            minZoom: 16,
             serverZooms: [16],
             unique: function (feature) {
                 return feature.id;
             }
         };
 
-        var layerOptions = L.extend({}, this.lotLayerOptions);
-        this.polygonsLayer = L.lotLayer(url, options, layerOptions);
+        var layerOptions = L.extend({}, this.parcelLayerOptions);
+        this.parcelsLayer = new L.TileLayer.Vector(url, options,
+                                                   layerOptions);
+        this.addLayer(this.parcelsLayer);
     },
 
-    updateFilters: function (params) {
-        this.currentFilters = filters.paramsToFilters(params);
-        this.updateDisplayedLots();
-        this.fire('filterschanged', this.currentFilters);
-    },
+    enterLotAddMode: function () {
+        var map = this;
+        this.addParcelsLayer();
+        this.updateLotAddWindow();
+        this.fire('entermode', { name: 'addlot' });
+        this.lotAddZoomHandler();
 
-    updateDisplayedLots: function () {
-        function updateDisplayedLotsForLayer(layer) {
-            if (layer.vectorLayer) {
-                // Lots are nested in tiles so we need to do two layers of 
-                // eachLayer to get to them all
-                var map = this;
-                layer.vectorLayer.eachLayer(function (tileLayer) {
-                    tileLayer.eachLayer(function (lot) {
-                        if (filters.lotShouldAppear(lot, map.currentFilters)) {
-                            lot.show();
-                        }
-                        else {
-                            lot.hide();
-                        }
-                    });
-                });
+        this.on('zoomend', this.lotAddZoomHandler);
+
+        $(this.options.addLotParent).addClass('on');
+
+        this.on('entermode', function (data) {
+            if (data.name !== 'addlot') {
+                map.exitLotAddMode();
             }
-        }
-
-        updateDisplayedLotsForLayer(this.centroidsLayer);
-        updateDisplayedLotsForLayer(this.polygonsLayer);
-    },
-
-    addUserLayer: function (latlng) {
-        this.userLayer = L.userMarker(latlng, {
-            smallIcon: true,
-        }).addTo(this);
-        this.setView(latlng, this.userLocationZoom);
-    },
-
-    removeUserLayer: function () {
-        if (this.userLayer) {
-            this.removeLayer(this.userLayer);
-        }
-    },
-
-    removeBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-    },
-
-    updateBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-        this.boundariesLayer.addData(data);
-        if (options.zoomToBounds) {
-            this.fitBounds(this.boundariesLayer.getBounds());
-        }
-    }
-
-});
-
-L.lotMap = function (id, options) {
-    return new L.LotMap(id, options);
-};
-
-},{"./filters":28,"./leaflet.lotlayer":31,"./leaflet.lotmarker":33,"./map.styles":40,"handlebars":2,"leaflet":16,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.hash":4,"leaflet.usermarker":15,"spinjs":26,"underscore":27}],33:[function(require,module,exports){
-var L = require('leaflet');
-
-require('./leaflet.lotpath');
-
-
-L.LotMarker = L.CircleMarker.extend({
-
-    onZoomEnd: function () {
-        if (this._map && this.feature.properties.has_organizers) {
-            this.bringToFront();
-        }
-    },
-
-    _pickRadius: function (zoom) {
-        var radius = 4;   
-        if (zoom >= 13) {
-            radius = 6;
-        }
-        if (zoom >= 14) {
-            radius = 9;
-        }
-        if (zoom >= 15) {
-            radius = 12;
-        }
-        if (zoom >= 16) {
-            radius = 15;
-        }
-        return radius;
-    },
-
-    _updatePath: function () {
-        var zoom = this._map.getZoom();
-
-        // Update the circle's radius according to the map's zoom level
-        this.options.radius = this._radius = this._pickRadius(zoom);
-
-        this.updateActionPathScale();
-        L.CircleMarker.prototype._updatePath.call(this);
-    }
-
-});
-
-L.LotMarker.include(L.LotPathMixin);
-
-L.LotMarker.addInitHook(function () {
-    this.on({
-        'add': function () {
-            this.initActionPath();
-
-            if (this.feature && this.feature.properties.has_organizers) {
-                var layer = this;
-                this._map.on('zoomend', this.onZoomEnd, layer);
-            }
-        },
-        'remove': function () {
-            if (this.feature && this.feature.properties.has_organizers) {
-                var layer = this;
-                this._map.off('zoomend', this.onZoomEnd, layer);
-            }
-        }
-    });
-});
-
-L.lotMarker = function (latlng, options) {
-    return new L.LotMarker(latlng, options);
-};
-
-},{"./leaflet.lotpath":35,"leaflet":16}],34:[function(require,module,exports){
-var L = require('leaflet');
-
-require('./leaflet.lotpolygon');
-
-
-L.LotMultiPolygon = L.FeatureGroup.extend({
-
-    initialize: function (latlngs, options) {
-        this._layers = {};
-        this._options = options;
-        this.setLatLngs(latlngs);
-    },
-
-    setLatLngs: function (latlngs) {
-        var i = 0,
-            len = latlngs.length;
-
-        this.eachLayer(function (layer) {
-            if (i < len) {
-                layer.setLatLngs(latlngs[i++]);
-            } else {
-                this.removeLayer(layer);
-            }
-        }, this);
-
-        while (i < len) {
-            this.addLayer(new L.LotPolygon(latlngs[i++], this._options));
-        }
-
-        return this;
-    },
-
-    getLatLngs: function () {
-        var latlngs = [];
-
-        this.eachLayer(function (layer) {
-            latlngs.push(layer.getLatLngs());
         });
 
-        return latlngs;
-    },
-
-    show: function () {
-        this.eachLayer(function (layer) {
-            layer.show();
-        });
-    },
-
-    hide: function () {
-        this.eachLayer(function (layer) {
-            layer.hide();
-        });
-    }
-});
-
-},{"./leaflet.lotpolygon":36,"leaflet":16}],35:[function(require,module,exports){
-var L = require('leaflet');
-
-
-L.LotPathMixin = {
-
-    hide: function () {
-        if (!this._path) return;
-        this._path.style.display = 'none';
-        if (this._actionPath) {
-            this._actionPath.style.display = 'none';
-        }
-    },
-
-    show: function () {
-        if (!this._path) return;
-        this._path.style.display = 'block';
-        if (this._actionPath) {
-            this._actionPath.style.display = 'block';
-        }
-    },
-
-    initActionPath: function() {
-        if (this.options.hasOrganizers) {
-            this._actionPath = this._createElement('path');
-            this._actionPath.setAttribute('style', 'fill:#eec619; fill-opacity:1;');
-            this._actionPath.setAttribute('d', this.getActionPathSvgStr());
-            this._container.insertBefore(this._actionPath, this._path);
-
-            this.updateActionPathScale();
-        }
-    },
-
-    getActionPathSvgStr: function () {
-        return 'M 0,-39 c -0.6 0 -2.2 3.4 -3.5 7.6 -1.3 4.2 -3 7.8 -3.7 8.1 -0.7 0.3 -4.2 -1.6 -7.7 -4.1 -5.8 -4.1 -8.6 -5.5 -8.6 -4.2 0 0.2 1.1 4.1 2.6 8.6 1.4 4.5 2.4 8.3 2.1 8.6 -0.2 0.2 -4.3 0.7 -9.1 1.1 -4.7 0.3 -8.6 1 -8.6 1.5 0 0.5 2.9 3 6.5 5.5 3.6 2.6 6.5 5.2 6.5 5.8 0 0.6 -2.9 3.2 -6.5 5.8 -3.6 2.6 -6.5 5.1 -6.5 5.5 0 0.5 3.9 1.1 8.6 1.5 4.7 0.3 8.8 0.8 9.1 1.1 0.2 0.2 -0.7 4.1 -2.1 8.6 -1.4 4.5 -2.6 8.3 -2.6 8.6 0 1.3 2.8 -0 8.6 -4.2 3.5 -2.5 7 -4.4 7.7 -4.1 0.7 0.3 2.3 3.9 3.7 8.1 1.3 4.2 2.9 7.6 3.5 7.6 0.6 0 2.2 -3.4 3.5 -7.6 1.3 -4.2 3 -7.8 3.7 -8.1 0.7 -0.3 4.2 1.6 7.7 4.1 5.8 4.1 8.6 5.5 8.6 4.2 0 -0.2 -1.1 -4.1 -2.6 -8.6 -1.4 -4.5 -2.4 -8.3 -2.1 -8.6 0.2 -0.2 4.3 -0.7 9.1 -1.1 4.7 -0.3 8.6 -1 8.6 -1.5 0 -0.5 -2.9 -3 -6.5 -5.5 -3.6 -2.6 -6.5 -5.2 -6.5 -5.8 0 -0.6 2.9 -3.2 6.5 -5.8 3.6 -2.6 6.5 -5.1 6.5 -5.5 0 -0.5 -3.9 -1.1 -8.6 -1.5 -4.7 -0.3 -8.8 -0.8 -9.1 -1.1 -0.2 -0.2 0.7 -4.1 2.1 -8.6 1.4 -4.5 2.6 -8.3 2.6 -8.6 0 -1.3 -2.8 0 -8.6 4.2 -3.5 2.5 -7 4.4 -7.7 4.1 -0.7 -0.3 -2.3 -3.9 -3.7 -8.1 -1.3 -4.2 -2.9 -7.6 -3.5 -7.6 z';
-    },
-
-    updateActionPathScale: function () {
-        if (this._actionPath) {
-            var point = this._map.latLngToLayerPoint(this.getBounds().getCenter()),
-                zoom = this._map.getZoom(),
-                scale = 0.5;
-
-            // Translate and scale around the layer's point
-            if (zoom >= 18) {
-                scale = 1.5;
-            }
-            else if (zoom >= 15) {
-                scale = 0.75;
-            }
-            this._actionPath.setAttribute('transform', 'translate(' + point.x + ',' + point.y + ') scale(' + scale + ')');
-        }
-    }
-
-};
-
-},{"leaflet":16}],36:[function(require,module,exports){
-var L = require('leaflet');
-
-require('./leaflet.lotpath');
-
-
-L.LotPolygon = L.Polygon.extend({
-
-    _pickOpacity: function (zoom) {
-        if (zoom >= 18) {
-            return 0.65;
-        }
-        if (zoom >= 17) {
-            return 0.85;
-        }
-        return 1;
-    },
-
-    _updatePath: function () {
-        // Update opacity
-        this.options.fillOpacity = this._pickOpacity(this._map.getZoom());
-        this._updateStyle();
-
-        this.updateActionPathScale();
-        L.Polygon.prototype._updatePath.call(this);
-    }
-
-});
-
-L.LotPolygon.include(L.LotPathMixin);
-
-L.LotPolygon.addInitHook(function () {
-    this.on({
-        'add': function () {
-            this.initActionPath();
-        }
-    });
-});
-
-L.lotPolygon = function (latlngs, options) {
-    return new L.LotPolygon(latlngs, options);
-};
-
-},{"./leaflet.lotpath":35,"leaflet":16}],37:[function(require,module,exports){
-//
-// lotdetailpage.js
-//
-// Scripts that only run on the lot detail page.
-//
-
-var Handlebars = require('handlebars');
-var L = require('leaflet');
-
-require('leaflet.dataoptions');
-
-require('./leaflet.lotlayer');
-require('./leaflet.lotmarker');
-var mapstyles = require('./map.styles');
-var StreetView = require('./streetview');
-require('./overlaymenu');
-
-
-var vectorLayerOptions = {
-    serverZooms: [16],
-    unique: function (feature) {
-        return feature.id;
-    }
-};
-
-function getLotLayerOptions(lotPk) {
-    return {
-        pointToLayer: function (feature, latlng) {
-            var options = {};
-            if (feature.properties.has_organizers) {
-                options.hasOrganizers = true;
-            }
-            return L.lotMarker(latlng, options);
-        },
-        style: function (feature) {
-            var style = {
-                fillOpacity: 0.2,
-                stroke: false
-            };
-            style.fillColor = mapstyles.getLayerColor(feature.properties.layers.split(','));
-
-            // Style this lot distinctly
-            if (feature.properties.id === lotPk) {
-                style.fillOpacity = 1;
-            }
-            return style;
-        }
-    };
-}
-
-function addBaseLayer(map) {
-    var streets = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
-}
-
-function addLotsLayer(map) {
-    var url = map.options.lotsurl,
-        lotLayerOptions = getLotLayerOptions(map.options.lotPk);
-    var lotsLayer = L.lotLayer(url, vectorLayerOptions, lotLayerOptions).addTo(map);
-}
-
-$(document).ready(function () {
-    if ($('.lot-detail-page').length > 0) {
-        var map = L.map('lot-detail-map', {
-            doubleClickZoom: false,
-            dragging: false,
-            scrollWheelZoom: false,
-            touchZoom: false
-        });
-
-        var bbox = map.options.bbox;
-        if (bbox) {
-            map.fitBounds([
-                [bbox[1], bbox[0]],   
-                [bbox[3], bbox[2]]   
-            ], { padding: [20, 20] });
-        }
-
-        addBaseLayer(map);
-        addLotsLayer(map);
-        StreetView.load_streetview(
-            $('.lot-detail-header-image').data('lon'),
-            $('.lot-detail-header-image').data('lat'),
-            $('.lot-detail-header-image'),
-            $('.lot-detail-header-streetview-error')
-        );
-    }
-
-    $('.overlay-nearby-button').overlaymenu({
-        menu: '.overlaymenu-nearby'
-    });
-});
-
-},{"./leaflet.lotlayer":31,"./leaflet.lotmarker":33,"./map.styles":40,"./overlaymenu":42,"./streetview":44,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],38:[function(require,module,exports){
-//
-// main.js
-//
-// Scripts that should run on every page.
-//
-
-require('fancybox');
-
-
-/*
- * Global form-related scripts
- */
-$(document).ready(function () {
-    /*
-     * Disable submit buttons on forms once they have been submitted once.
-     */
-    $('form').submit(function () {
-        $(this).find('input[type="submit"]').attr('disabled', 'disabled');
-    });
-
-    /*
-     * Collapse the collapsible sections
-     */
-    // Slide up those sections not initially expanded
-    $('.collapsible-section:not(.is-expanded) .collapsible-section-text').slideUp();
-
-    // Prepare headers for clicking
-    $('.collapsible-section-header').click(function () {
-        var $section = $(this).parent(),
-            $sectionText = $section.find('.collapsible-section-text');
-        $section.toggleClass('is-expanded');
-        $sectionText.slideToggle();
-    });
-
-    /*
-     * Fancy the fancyboxes
-     */
-    $('.fancybox').fancybox({
-        beforeShow: function () {
-            var $link = this.element,
-                $img = $link.find('img'),
-                alt = $img.attr('alt'),
-                addedBy = $link.data('added-by'),
-                description = $link.data('description');
-
-            this.inner.find('img').attr('alt', alt);
-            this.title = alt + ' by ' + addedBy + '<p>' + description + '</p>';
-        }
-    });
-
-});
-
-
-/*
- * Page-specific modules
- */
-require('./mappage.js');
-require('./lotdetailpage.js');
-
-},{"./lotdetailpage.js":37,"./mappage.js":41,"fancybox":1}],39:[function(require,module,exports){
-var L = require('leaflet');
-
-var geocode = require('./geocode').geocode;
-
-
-function addCityAndState(query, city, state) {
-    if (query.toLowerCase().indexOf(city) <= 0) {
-        query += ', ' + city;
-    }
-    if (query.toLowerCase().indexOf(state) <= 0) {
-        query += ', ' + state;
-    }
-    return query;
-}
-
-function searchByAddress(form) {
-    form = $(form);
-    form.trigger('searchstart');
-    var warningSelector = form.data('warningSelector'),
-        bounds = form.data('bounds'),
-        city = form.data('city'),
-        state = form.data('state'),
-        query = form.find('input[type="text"]').val();
-
-    form.find(warningSelector).hide();
-    form.find(':input[type=submit]')
-        .attr('disabled', 'disabled');
-
-    query = addCityAndState(query, city, state);
-
-    geocode(query, bounds, state, function (result, status) {
-        // Done searching
-        form.find(':input[type=submit]')
-            .removeAttr('disabled');
-
-        // Is result valid?
-        if (result === null) {
-            form.find(warningSelector)
-                .text(form.data('errorMessage'))
-                .show();
-            return;
-        }
-
-        // Let the world know!
-        var found_location = result.geometry.location;
-        form.trigger('searchresultfound', [{
-            longitude: found_location.lng(),
-            latitude: found_location.lat(),
-            query_address: query,
-            found_address: result.formatted_address,
-        }]);
-    });
-}
-
-$.fn.mapsearch = function (options) {
-
-    this.keypress(function (e) {
-        if (e.keyCode === '13') {
-            e.preventDefault();
-            searchByAddress(this);
+        $('body').on('click', cancelButtonSelector, function (e) {
+            map.selectedParcels = [];
+            map.exitLotAddMode();
+            e.stopPropagation();
             return false;
-        }
-    });
-    this.submit(function (e) {
-        e.preventDefault();
-        searchByAddress(this);
-        return false;
-    });
-
-    return this;
-};
-
-},{"./geocode":29,"leaflet":16}],40:[function(require,module,exports){
-//
-// Lot map styles by layer for maps
-//
-var _ = require('underscore');
-
-var fillColors = {
-    default: '#000000',
-    in_use: '#97b03d',
-    private: '#ea292e',
-    public: '#812683',
-    gutterspace: '#0000FF'
-};
-
-module.exports = {
-    fillColors: fillColors,
-
-    getLayerColor: function (layers) {
-        if (_.contains(layers, 'in_use')) {
-            return fillColors.in_use;
-        }
-        if (_.contains(layers, 'public')) {
-            return fillColors.public;
-        }
-        if (_.contains(layers, 'private')) {
-            return fillColors.private;
-        }
-        if (_.contains(layers, 'gutterspace')) {
-            return fillColors.gutterspace;
-        }
-        return fillColors.default;
-    }
-};
-
-},{"underscore":27}],41:[function(require,module,exports){
-//
-// mappage.js
-//
-// Scripts that only run on the map page.
-//
-
-var _ = require('underscore');
-var Handlebars = require('handlebars');
-var L = require('leaflet');
-var Spinner = require('spinjs');
-var singleminded = require('./singleminded');
-var initWelcome = require('./welcome').init;
-
-require('jquery.infinitescroll');
-require('leaflet.loading');
-require('livinglots.map.addlot');
-// TODO install as NPM module instead to avoid weird browserify fun
-require('livinglots.map.mail');
-require('./leaflet.lotmap');
-require('./map.search.js');
-require('./overlaymenu');
-
-
-function buildLotFilterParams(map, options) {
-    var layers = _.map($('.filter-layer:checked'), function (layer) {
-        return $(layer).attr('name'); 
-    });
-    var publicOwnerPks = [$('.filter-owner-public').val()];
-    var params = {
-        layers: layers.join(','),
-        parents_only: true,
-        projects: $('.filter-projects').val(),
-        public_owners: publicOwnerPks.join(',')
-    };
-
-    if (options && options.bbox) {
-        params.bbox = map.getBounds().toBBoxString();
-    }
-
-    return params;
-}
-
-function updateLotCount(map) {
-    var url = Django.url('lots:lot_count') + '?' +
-        $.param(buildLotFilterParams(map, { bbox: true }));
-    singleminded.remember({
-        name: 'updateLotCount',
-        jqxhr: $.getJSON(url, function (data) {
-            _.each(data, function (value, key) {
-                $('#' + key).text(value);
-            });
-        })
-    });
-}
-
-function updateOwnershipOverview(map) {
-    var url = Django.url('lots:lot_ownership_overview'),
-        params = buildLotFilterParams(map, { bbox: true });
-    $.getJSON(url + '?' + $.param(params), function (data) {
-        var template = Handlebars.compile($('#details-template').html());
-        var content = template({
-            lottypes: data.owners
-        });
-        $('.details-overview').html(content);
-    });
-}
-
-function updateDetailsLink(map) {
-    var params = buildLotFilterParams(map);
-    delete params.parents_only;
-
-    var l = window.location,
-        query = '?' + $.param(params),
-        url = l.protocol + '//' + l.host + l.pathname + query + l.hash;
-    $('a.details-link').attr('href', url);
-}
-
-function deparam() {
-    var vars = {},
-        param,
-        params = window.location.search.slice(1).split('&');
-    for(var i = 0; i < params.length; i++) {
-        param = params[i].split('=');
-        vars[param[0]] = decodeURIComponent(param[1]);
-    }
-    return vars;
-}
-
-function setFilters(params) {
-    // Clear checkbox filters
-    $('.filter[type=checkbox]').prop('checked', false);
-
-    // Set layers filters
-    var layers = params.layers.split(',');
-    _.each(layers, function (layer) {
-        $('.filter-layer[name=' + layer +']').prop('checked', true);
-    });
-
-    // Set owners filters
-    var publicOwners = params.public_owners.split(',');
-    _.each(publicOwners, function (pk) {
-        $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
-    });
-
-    // Set boundaries filters
-
-    var projects = params.projects;
-    if (projects !== '') {
-        $('.filter-projects').val(projects);
-    }
-}
-
-function prepareOverlayMenus(map) {
-    $('.overlay-download-button').overlaymenu({
-        menu: '.overlaymenu-download'
-    });
-
-    $('.overlay-admin-button').overlaymenu({
-        menu: '.overlaymenu-admin'
-    });
-
-    $('.overlay-details-button')
-        .overlaymenu({
-            menu: '.overlaymenu-details'
-        })
-        .on('overlaymenuopen', function () {
-            var spinner = new Spinner({
-                left: '50%',
-                top: '50%'
-            }).spin($('.details-overview')[0]);
-            updateDetailsLink(map);
-            updateOwnershipOverview(map);
         });
 
-    $('.overlay-news-button')
-        .overlaymenu({
-            menu: '.overlaymenu-news'
-        })
-        .on('overlaymenuopen', function () {
-            var spinner = new Spinner({
-                left: '0px',
-                top: '0px'
-            }).spin($('.activity-stream')[0]);
+        $('body').on('click', submitButtonSelector, function (e) {
+            var parcelPks = _.pluck(map.selectedParcels, 'id');
+            if (parcelPks.length > 0 && confirm('Create one lot with all of the parcels selected?')) {
+                var spinner = new Spinner()
+                    .spin($('.map-add-lot-mode-container')[0]);
+                $(cancelButtonSelector).addClass('disabled');
+                $(submitButtonSelector).addClass('disabled');
 
-            var url = Django.url('activity_list');
-            $('.activity-stream').load(url, function () {
-                $('.action-list').infinitescroll({
-                    loading: {
-                        finishedMsg: 'No more activities to load.'
-                    },
-                    behavior: 'local',
-                    binder: $('.overlaymenu-news .overlaymenu-menu-content'),
-                    itemSelector: 'li.action',
-                    navSelector: '.activity-stream-nav',
-                    nextSelector: '.activity-stream-nav a:first'
-                });
-            });
-        });
-
-    $('.overlay-filter-button').overlaymenu({
-        menu: '.overlaymenu-filter'
-    });
-
-
-}
-
-$(document).ready(function () {
-    if ($('.map-page').length > 0) {
-        var params;
-        if (window.location.search.length) {
-            params = deparam();
-            setFilters(params);
-        }
-
-        var map = L.lotMap('map', {
-            filterParams: buildLotFilterParams(null),
-
-            onMouseOverFeature: function (feature) {
-            },
-
-            onMouseOutFeature: function (feature) {
+                args = {
+                    csrfmiddlewaretoken: Django.csrf_token(),
+                    pks: parcelPks.join(',')
+                };
+                $.post(Django.url('lots:create_by_parcels'), args)
+                    .always(function () {
+                        spinner.stop();
+                    })
+                    .done(function (data) {
+                        map.updateLotAddWindowSuccess(data);
+                    })
+                    .fail(function() {
+                        map.updateLotAddWindowFailure();
+                    });
             }
-
+            e.stopPropagation();
+            return false;
         });
+    },
 
-        map.addLotsLayer();
-
-        prepareOverlayMenus(map);
-
-        $('.details-print').click(function () {
-            // TODO This is not a good solution since the map size changes
-            // on print. Look into taking screenshots like:
-            //   https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
-            //   http://html2canvas.hertzen.com
-            window.print();
-        });
-
-        $('form.map-search-form').mapsearch()
-            .on('searchstart', function (e) {
-                map.removeUserLayer();
-            })
-            .on('searchresultfound', function (e, result) {
-                map.addUserLayer([result.latitude, result.longitude]);
-            });
-
-        $('.filter').change(function () {
-            var params = buildLotFilterParams(map);
-            map.updateFilters(params);
-            updateLotCount(map);
-        });
-
-        updateLotCount(map);
-        map.on({
-            'moveend': function () {
-                updateLotCount(map);
-            },
-            'zoomend': function () {
-                updateLotCount(map);
-            },
-            'lotlayertransition': function (e) {
-                map.addLotsLayer(buildLotFilterParams(map));
-            }
-        });
-
-        $('.export').click(function (e) {
-            var url = $(this).data('baseurl') + 
-                $.param(buildLotFilterParams(map, { bbox: true }));
-            window.location.href = url;
-            e.preventDefault();
-        });
-
-        initWelcome();
-
-        $('.admin-button-add-lot').click(function () {
-            map.enterLotAddMode();
-        });
-
-        $('.admin-button-email').click(function () {
-            map.enterMailMode();
-        });
-    }
-});
-
-},{"./leaflet.lotmap":32,"./map.search.js":39,"./overlaymenu":42,"./singleminded":43,"./welcome":45,"handlebars":2,"jquery.infinitescroll":3,"leaflet":16,"leaflet.loading":14,"livinglots.map.addlot":17,"livinglots.map.mail":18,"spinjs":26,"underscore":27}],42:[function(require,module,exports){
-//
-// overlaymenu.js
-//
-// Overlay / dropdown menus, like modals but less intrusive
-//
-
-var _ = require('underscore');
-
-
-function show(button, menu) {
-    var offset = button.offset(),
-        outerWidth = button.outerWidth(),
-        outerHeight = button.outerHeight(),
-        menuWidth = menu.outerWidth();
-
-    button.trigger('overlaymenuopen');
-
-    menu
-        .show()
-        .offset({
-            left: offset.left + outerWidth - menuWidth,
-            top: offset.top + outerHeight + 13
-        });
-}
-
-function hide(button, menu) {
-    button.trigger('overlaymenuclose');
-    menu.hide();
-}
-
-function isVisible(menu) {
-    return menu.is(':visible');
-}
-
-function isInMenu(target, menu) {
-    return (target[0] === menu[0] ||
-            _.find(target.parents(), function (ele) { return ele === menu[0]; }));
-}
-
-$.fn.overlaymenu = function (options) {
-    var button = this,
-        menu = $(options.menu);
-
-    $('html').click(function (e) {
-        var target = $(e.target);
-
-        // If user not clicking in menu, consider hiding or showing it
-        if (!isInMenu(target, menu)) {
-            if (target[0] === button[0]) {
-                // If button clicked, show or hide the menu appropriately
-                if (isVisible(menu)) {
-                    hide(button, menu);
-                }
-                else {
-                    show(button, menu);
-                }
-                return false;
-            }
-            else {
-                // Something else was clicked--hide the menu
-                hide(button, menu);
-            }
-        }
-    });
-    return this;
-};
-
-},{"underscore":27}],43:[function(require,module,exports){
-var thoughts = {};
-
-function forget(name) {
-    var request = thoughts[name];
-
-    // If request exists and does not have a DONE state, abort it
-    if (request && request.readyState != 4) {
-        request.abort();
-    }
-
-    thoughts[name] = null;
-}
-
-function remember(params) {
-    var name = params.name,
-        jqxhr = params.jqxhr;
-
-    forget(name);
-
-    jqxhr.done(function() {
-        // Don't bother remembering requests we've finished
-        forget(name);
-    });
-    thoughts[name] = jqxhr;
-}
-
-module.exports = {
-    forget: forget,
-    remember: remember
-};
-
-},{}],44:[function(require,module,exports){
-
-
-function get_heading(lon0, lat0, lon1, lat1) {
-    // Don't bother with great-circle calculations--should be close!
-    var r = Math.atan2(-(lon1 - lon0), (lat1 - lat0));
-    if (r < 0) {
-        r += 2 * Math.PI;
-    }
-    var d = r * (180 / Math.PI);
-
-    // Convert to google's heading: "True north is 0°, east is 90°,
-    // south is 180°, west is 270°."
-    if (d >= 45 && d < 135) { d += 180; }
-    else if (d >= 225 && d < 315) { d -= 180; }
-    return d;
-}
-
-function load_streetview(lon, lat, $elem, $errorBox) {
-    var service = new google.maps.StreetViewService();
-
-    if (!(lon && lat)) {
-        return;
-    }
-    var latLng = new google.maps.LatLng(lat, lon);
-
-    service.getPanoramaByLocation(latLng, 50, function (result, status) {
-        // TODO result.imageDate could be useful
-
-        if (status === google.maps.StreetViewStatus.OK) {
-            var lon0 = result.location.latLng.lng(),
-                lat0 = result.location.latLng.lat();
-
-            var pano = new google.maps.StreetViewPanorama($elem[0], {
-                pano: result.location.pano,
-                pov: {
-                    heading: get_heading(lon0, lat0, lon, lat),
-                    pitch: 0,
-                },
-            });
+    lotAddZoomHandler: function () {
+        if (this.getZoom() < 16) {
+            $('.map-add-lot-zoom-message').show();
         }
         else {
-            $errorBox.show();
+            $('.map-add-lot-zoom-message').hide();
         }
-    });
-}
+    },
 
-module.exports = {
-    load_streetview: load_streetview
-};
+    createLotExistsPopup: function (latlng, pk) {
+        var url = Django.url('lots:lot_detail', { pk: pk }),
+            content = existsPopupTemplate({ lotUrl: url });
+        this.openPopup(content, latlng, { offset: [0, 0] });
+    },
 
-},{}],45:[function(require,module,exports){
-//
-// Welcome header
-//
+    replaceLotAddWindowContent: function (content) {
+        $('.map-add-lot-mode-container').remove();
+        $(this.options.addLotParent).append(content);
+        this.fire('lotaddwindowchange');
+    },
 
-function initClose() {
-    $('.map-welcome-close-button').click(function (e) {
-        $('.map-welcome').addClass('closed');
-        $('.map-welcome h1').animate({ 'font-size': '28px' });
-        $('.map-welcome-body').slideUp();
-        e.preventDefault();
-        return false;
-    });
-}
+    updateLotAddWindow: function () {
+        this.replaceLotAddWindowContent(templates['addlot.window.hbs']({
+            parcels: this.selectedParcels
+        }));
+    },
 
-function initOpen() {
-    $('.map-welcome-open-button').click(function (e) {
-        $('.map-welcome').removeClass('closed');
-        $('.map-welcome h1').animate({ 'font-size': '56px' });
-        $('.map-welcome-body').slideDown();
-        e.preventDefault();
-        return false;
-    });
-}
+    updateLotAddWindowSuccess: function (pk) {
+        var map = this;
+        this.replaceLotAddWindowContent(templates['addlot.success.hbs']({
+            pk: pk
+        }));
 
-module.exports = {
-    init: function () {
-        initClose();
-        initOpen();
-    }
-};
+        $('.add-lot-mode-view')
+            .attr('href', Django.url('lots:lot_detail', { pk: pk }));
+        $('.add-lot-mode-edit')
+            .attr('href', Django.url('admin:lots_lot_change', pk));
+        $(cancelButtonSelector).click(function () {
+            map.exitLotAddMode();
+        });
+    },
 
-},{}],46:[function(require,module,exports){
-"use strict";
-/*globals Handlebars: true */
-var base = require("./handlebars/base");
+    updateLotAddWindowFailure: function () {
+        var map = this;
+        this.replaceLotAddWindowContent(templates['addlot.failure.hbs']({}));
 
-// Each of these augment the Handlebars object. No need to setup here.
-// (This is done to easily share code between commonjs and browse envs)
-var SafeString = require("./handlebars/safe-string")["default"];
-var Exception = require("./handlebars/exception")["default"];
-var Utils = require("./handlebars/utils");
-var runtime = require("./handlebars/runtime");
+        $(cancelButtonSelector).click(function () {
+            map.exitLotAddMode();
+        });
+    },
 
-// For compatibility and usage outside of module systems, make the Handlebars object a namespace
-var create = function() {
-  var hb = new base.HandlebarsEnvironment();
-
-  Utils.extend(hb, base);
-  hb.SafeString = SafeString;
-  hb.Exception = Exception;
-  hb.Utils = Utils;
-
-  hb.VM = runtime;
-  hb.template = function(spec) {
-    return runtime.template(spec, hb);
-  };
-
-  return hb;
-};
-
-var Handlebars = create();
-Handlebars.create = create;
-
-exports["default"] = Handlebars;
-},{"./handlebars/base":47,"./handlebars/exception":48,"./handlebars/runtime":49,"./handlebars/safe-string":50,"./handlebars/utils":51}],47:[function(require,module,exports){
-"use strict";
-var Utils = require("./utils");
-var Exception = require("./exception")["default"];
-
-var VERSION = "1.3.0";
-exports.VERSION = VERSION;var COMPILER_REVISION = 4;
-exports.COMPILER_REVISION = COMPILER_REVISION;
-var REVISION_CHANGES = {
-  1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
-  2: '== 1.0.0-rc.3',
-  3: '== 1.0.0-rc.4',
-  4: '>= 1.0.0'
-};
-exports.REVISION_CHANGES = REVISION_CHANGES;
-var isArray = Utils.isArray,
-    isFunction = Utils.isFunction,
-    toString = Utils.toString,
-    objectType = '[object Object]';
-
-function HandlebarsEnvironment(helpers, partials) {
-  this.helpers = helpers || {};
-  this.partials = partials || {};
-
-  registerDefaultHelpers(this);
-}
-
-exports.HandlebarsEnvironment = HandlebarsEnvironment;HandlebarsEnvironment.prototype = {
-  constructor: HandlebarsEnvironment,
-
-  logger: logger,
-  log: log,
-
-  registerHelper: function(name, fn, inverse) {
-    if (toString.call(name) === objectType) {
-      if (inverse || fn) { throw new Exception('Arg not supported with multiple helpers'); }
-      Utils.extend(this.helpers, name);
-    } else {
-      if (inverse) { fn.not = inverse; }
-      this.helpers[name] = fn;
-    }
-  },
-
-  registerPartial: function(name, str) {
-    if (toString.call(name) === objectType) {
-      Utils.extend(this.partials,  name);
-    } else {
-      this.partials[name] = str;
-    }
-  }
-};
-
-function registerDefaultHelpers(instance) {
-  instance.registerHelper('helperMissing', function(arg) {
-    if(arguments.length === 2) {
-      return undefined;
-    } else {
-      throw new Exception("Missing helper: '" + arg + "'");
-    }
-  });
-
-  instance.registerHelper('blockHelperMissing', function(context, options) {
-    var inverse = options.inverse || function() {}, fn = options.fn;
-
-    if (isFunction(context)) { context = context.call(this); }
-
-    if(context === true) {
-      return fn(this);
-    } else if(context === false || context == null) {
-      return inverse(this);
-    } else if (isArray(context)) {
-      if(context.length > 0) {
-        return instance.helpers.each(context, options);
-      } else {
-        return inverse(this);
-      }
-    } else {
-      return fn(context);
-    }
-  });
-
-  instance.registerHelper('each', function(context, options) {
-    var fn = options.fn, inverse = options.inverse;
-    var i = 0, ret = "", data;
-
-    if (isFunction(context)) { context = context.call(this); }
-
-    if (options.data) {
-      data = createFrame(options.data);
+    exitLotAddMode: function () {
+        $(this.options.addLotParent).removeClass('on');
+        this.fire('exitmode', { name: 'addlot' });
+        $('.map-add-lot-mode-container').hide();
+        this.off('zoomend', this.lotAddZoomHandler);
+        this.removeLayer(this.parcelsLayer);
     }
 
-    if(context && typeof context === 'object') {
-      if (isArray(context)) {
-        for(var j = context.length; i<j; i++) {
-          if (data) {
-            data.index = i;
-            data.first = (i === 0);
-            data.last  = (i === (context.length-1));
-          }
-          ret = ret + fn(context[i], { data: data });
-        }
-      } else {
-        for(var key in context) {
-          if(context.hasOwnProperty(key)) {
-            if(data) { 
-              data.key = key; 
-              data.index = i;
-              data.first = (i === 0);
+});
+
+},{"./templates":72,"handlebars":66,"leaflet":67,"spin.js":68,"underscore":69}],71:[function(require,module,exports){
+var L = require('leaflet');
+var Handlebars = require('handlebars');
+var _ = require('underscore');
+var Spinner = require('spin.js');
+
+var templates = require('./templates')(Handlebars);
+
+var cancelButtonSelector = '.mail-mode-cancel',
+    submitButtonSelector = '.mail-mode-submit',
+    formSelector = '.mail-mode-form';
+
+L.Map.include({
+    replaceMailWindowContent: function (content) {
+        $('.map-mail-mode-container').remove();
+        $(this.options.mailParent).append(content);
+        this.fire('mailwindowchange');
+    },
+
+    sendMail: function () {
+        var map = this,
+            params = {},
+            url = Django.url('lots:lot_email_organizers');
+
+        _.extend(params, this.currentFilters, {
+            bbox: this.getBounds().toBBoxString(),
+            subject: $(formSelector).find(':input[name=subject]').val(),
+            text: $(formSelector).find(':input[name=text]').val()
+        });
+
+        var spinner = new Spinner()
+            .spin($(this.options.mailParent)[0]);
+
+        $.getJSON(url + '?' + $.param(params))
+            .always(function () {
+                spinner.stop();
+            })
+            .done(function (data) {
+                map.replaceMailWindowContent(templates['mail.success.hbs'](data));
+            })
+            .fail(function (data) {
+                map.replaceMailWindowContent(templates['mail.failure.hbs'](data));
+            });
+    },
+
+    mailSubmitDisabled: function (subject, text, emailCount) {
+        return (subject === '' || text === '' || emailCount === 0);
+    },
+
+    updateMailWindow: function () {
+        var map = this,
+            params = {},
+            url = Django.url('lots:lot_count_organizers');
+
+        _.extend(params, this.currentFilters, {
+            bbox: this.getBounds().toBBoxString()
+        });
+
+        var subject = $(formSelector).find(':input[name=subject]').val(),
+            text = $(formSelector).find(':input[name=text]').val();
+        $.getJSON(url + '?' + $.param(params), function (data) {
+            _.extend(data, {
+                disabled: map.mailSubmitDisabled(subject, text, data.emails),
+                subject: subject,
+                text: text
+            });
+            map.replaceMailWindowContent(templates['mail.window.hbs'](data));
+
+            // Watch for changes on form to determine whether submit should be
+            // enabled
+            $(formSelector).find(':input').keyup(function () {
+                var subject = $(formSelector).find(':input[name=subject]').val(),
+                    text = $(formSelector).find(':input[name=text]').val(),
+                    emails = $(formSelector).find(':input[name=emails]').val(),
+                    disabled = map.mailSubmitDisabled(subject, text, emails);
+                $(submitButtonSelector).prop('disabled', disabled);
+            });
+        });
+    },
+
+    enterMailMode: function () {
+        $(this.options.mailParent).addClass('on');
+        this.updateMailWindow();
+        this.fire('entermode', { name: 'mail' });
+        var map = this;
+
+        // Update window on filters / map change
+        this.on({
+            'moveend': function () {
+                map.updateMailWindow();
+            },
+            'zoomend': function () {
+                map.updateMailWindow();
             }
-            ret = ret + fn(context[key], {data: data});
-            i++;
-          }
-        }
-      }
-    }
+        });
 
-    if(i === 0){
-      ret = inverse(this);
-    }
+        this.on('entermode', function (data) {
+            if (data.name !== 'mail') {
+                map.exitMailMode();
+            }
+        });
 
-    return ret;
-  });
+        $('body').on('click', cancelButtonSelector, function (e) {
+            map.exitMailMode();
+            e.stopPropagation();
+            return false;
+        });
 
-  instance.registerHelper('if', function(conditional, options) {
-    if (isFunction(conditional)) { conditional = conditional.call(this); }
-
-    // Default behavior is to render the positive path if the value is truthy and not empty.
-    // The `includeZero` option may be set to treat the condtional as purely not empty based on the
-    // behavior of isEmpty. Effectively this determines if 0 is handled by the positive path or negative.
-    if ((!options.hash.includeZero && !conditional) || Utils.isEmpty(conditional)) {
-      return options.inverse(this);
-    } else {
-      return options.fn(this);
-    }
-  });
-
-  instance.registerHelper('unless', function(conditional, options) {
-    return instance.helpers['if'].call(this, conditional, {fn: options.inverse, inverse: options.fn, hash: options.hash});
-  });
-
-  instance.registerHelper('with', function(context, options) {
-    if (isFunction(context)) { context = context.call(this); }
-
-    if (!Utils.isEmpty(context)) return options.fn(context);
-  });
-
-  instance.registerHelper('log', function(context, options) {
-    var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
-    instance.log(level, context);
-  });
-}
-
-var logger = {
-  methodMap: { 0: 'debug', 1: 'info', 2: 'warn', 3: 'error' },
-
-  // State enum
-  DEBUG: 0,
-  INFO: 1,
-  WARN: 2,
-  ERROR: 3,
-  level: 3,
-
-  // can be overridden in the host environment
-  log: function(level, obj) {
-    if (logger.level <= level) {
-      var method = logger.methodMap[level];
-      if (typeof console !== 'undefined' && console[method]) {
-        console[method].call(console, obj);
-      }
-    }
-  }
-};
-exports.logger = logger;
-function log(level, obj) { logger.log(level, obj); }
-
-exports.log = log;var createFrame = function(object) {
-  var obj = {};
-  Utils.extend(obj, object);
-  return obj;
-};
-exports.createFrame = createFrame;
-},{"./exception":48,"./utils":51}],48:[function(require,module,exports){
-"use strict";
-
-var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
-
-function Exception(message, node) {
-  var line;
-  if (node && node.firstLine) {
-    line = node.firstLine;
-
-    message += ' - ' + line + ':' + node.firstColumn;
-  }
-
-  var tmp = Error.prototype.constructor.call(this, message);
-
-  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
-  for (var idx = 0; idx < errorProps.length; idx++) {
-    this[errorProps[idx]] = tmp[errorProps[idx]];
-  }
-
-  if (line) {
-    this.lineNumber = line;
-    this.column = node.firstColumn;
-  }
-}
-
-Exception.prototype = new Error();
-
-exports["default"] = Exception;
-},{}],49:[function(require,module,exports){
-"use strict";
-var Utils = require("./utils");
-var Exception = require("./exception")["default"];
-var COMPILER_REVISION = require("./base").COMPILER_REVISION;
-var REVISION_CHANGES = require("./base").REVISION_CHANGES;
-
-function checkRevision(compilerInfo) {
-  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
-      currentRevision = COMPILER_REVISION;
-
-  if (compilerRevision !== currentRevision) {
-    if (compilerRevision < currentRevision) {
-      var runtimeVersions = REVISION_CHANGES[currentRevision],
-          compilerVersions = REVISION_CHANGES[compilerRevision];
-      throw new Exception("Template was precompiled with an older version of Handlebars than the current runtime. "+
-            "Please update your precompiler to a newer version ("+runtimeVersions+") or downgrade your runtime to an older version ("+compilerVersions+").");
-    } else {
-      // Use the embedded version info since the runtime doesn't know about this revision yet
-      throw new Exception("Template was precompiled with a newer version of Handlebars than the current runtime. "+
-            "Please update your runtime to a newer version ("+compilerInfo[1]+").");
-    }
-  }
-}
-
-exports.checkRevision = checkRevision;// TODO: Remove this line and break up compilePartial
-
-function template(templateSpec, env) {
-  if (!env) {
-    throw new Exception("No environment passed to template");
-  }
-
-  // Note: Using env.VM references rather than local var references throughout this section to allow
-  // for external users to override these as psuedo-supported APIs.
-  var invokePartialWrapper = function(partial, name, context, helpers, partials, data) {
-    var result = env.VM.invokePartial.apply(this, arguments);
-    if (result != null) { return result; }
-
-    if (env.compile) {
-      var options = { helpers: helpers, partials: partials, data: data };
-      partials[name] = env.compile(partial, { data: data !== undefined }, env);
-      return partials[name](context, options);
-    } else {
-      throw new Exception("The partial " + name + " could not be compiled when running in runtime-only mode");
-    }
-  };
-
-  // Just add water
-  var container = {
-    escapeExpression: Utils.escapeExpression,
-    invokePartial: invokePartialWrapper,
-    programs: [],
-    program: function(i, fn, data) {
-      var programWrapper = this.programs[i];
-      if(data) {
-        programWrapper = program(i, fn, data);
-      } else if (!programWrapper) {
-        programWrapper = this.programs[i] = program(i, fn);
-      }
-      return programWrapper;
+        $('body').on('click', submitButtonSelector, function (e) {
+            // If already disabled, don't send mail
+            if ($(submitButtonSelector).is('.disabled')) {
+                return false;
+            }
+            $(submitButtonSelector).addClass('disabled');
+            map.sendMail();
+            e.stopPropagation();
+            return false;
+        });
     },
-    merge: function(param, common) {
-      var ret = param || common;
 
-      if (param && common && (param !== common)) {
-        ret = {};
-        Utils.extend(ret, common);
-        Utils.extend(ret, param);
-      }
-      return ret;
-    },
-    programWithDepth: env.VM.programWithDepth,
-    noop: env.VM.noop,
-    compilerInfo: null
-  };
-
-  return function(context, options) {
-    options = options || {};
-    var namespace = options.partial ? options : env,
-        helpers,
-        partials;
-
-    if (!options.partial) {
-      helpers = options.helpers;
-      partials = options.partials;
+    exitMailMode: function () {
+        $(this.options.mailParent).removeClass('on');
+        $('.map-mail-mode-container').hide();
+        this.fire('exitmode', { name: 'mail' });
     }
-    var result = templateSpec.call(
-          container,
-          namespace, context,
-          helpers,
-          partials,
-          options.data);
+});
 
-    if (!options.partial) {
-      env.VM.checkRevision(container.compilerInfo);
-    }
+},{"./templates":72,"handlebars":66,"leaflet":67,"spin.js":68,"underscore":69}],72:[function(require,module,exports){
+module.exports = function(Handlebars) {
 
-    return result;
-  };
-}
+var templates = {};
 
-exports.template = template;function programWithDepth(i, fn, data /*, $depth */) {
-  var args = Array.prototype.slice.call(arguments, 3);
+templates["addlot.existspopup.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<h3>\n    This parcel is already part of a lot. This will fail if you try to add it.\n</h3>\n<p>\n    <a href=\""
+    + escapeExpression(((helper = (helper = helpers.lotUrl || (depth0 != null ? depth0.lotUrl : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"lotUrl","hash":{},"data":data}) : helper)))
+    + "\" target=\"_blank\">View the existing lot's page</a>\n</p>\n";
+},"useData":true});
 
-  var prog = function(context, options) {
-    options = options || {};
+templates["addlot.failure.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"map-add-lot-mode-container\">\n    <h1>Failure</h1>\n    <p>Something went wrong while trying to add your lot(s). Sorry about that.</p>\n    <p>The most likely reason that this happened is that the lot already exists.</p>\n    <p>Please try again and let us know if it continues to fail.</p>\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
+  },"useData":true});
 
-    return fn.apply(this, [context, options.data || data].concat(args));
-  };
-  prog.program = i;
-  prog.depth = args.length;
-  return prog;
-}
+templates["addlot.success.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"map-add-lot-mode-container\">\n    <h1>Success</h1>\n    <p>Successfully added the lot(s).</p>\n    <p>You should edit the lot using the Edit button below to set its ownership and change its use, if necessary.</p>\n    <p>If the lot has something happening on it, click View, then the \"Is This An Active Project?\" button on the lot's page.</p>\n    <p>If the lot is vacant, it won't show up on the map without setting an owner.</p>\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-view btn btn-default\" target=\"_blank\">view</a>\n        <a href=\"#\" class=\"add-lot-mode-edit btn btn-default\" target=\"_blank\">edit</a>\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
+  },"useData":true});
 
-exports.programWithDepth = programWithDepth;function program(i, fn, data) {
-  var prog = function(context, options) {
-    options = options || {};
+templates["addlot.window.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "        <div>\n            Adding a lot for these "
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.parcels : depth0)) != null ? stack1.length : stack1), depth0))
+    + " selected parcels:\n            <ul>\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.parcels : depth0), {"name":"each","hash":{},"fn":this.program(2, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "            </ul>\n        </div>\n";
+},"2":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "                    <li>"
+    + escapeExpression(((helper = (helper = helpers.address || (depth0 != null ? depth0.address : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"address","hash":{},"data":data}) : helper)))
+    + "</li>\n";
+},"4":function(depth0,helpers,partials,data) {
+  return "disabled";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class=\"map-add-lot-mode-container\">\n    <h1>You are in add-a-lot mode</h1>\n    <div class=\"map-add-lot-zoom-message\">Zoom in to see parcel outlines</div>\n    <div>\n        Currently over:\n        <span class=\"map-add-lot-current-parcel\"></span>\n    </div>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.parcels : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">cancel</a>\n        <a href=\"#\" class=\"add-lot-mode-submit btn btn-default ";
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.parcels : depth0), {"name":"unless","hash":{},"fn":this.program(4, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\">add lot</a>\n    </div>\n</div>\n";
+},"useData":true});
 
-    return fn(context, options.data || data);
-  };
-  prog.program = i;
-  prog.depth = 0;
-  return prog;
-}
+templates["mail.failure.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"map-mail-mode-container\">\n    <h1>Failure</h1>\n    <p>Something went wrong while trying to email organizers. Sorry about that.</p>\n    <p>Please try again and let us know if it continues to fail.</p>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
+  },"useData":true});
 
-exports.program = program;function invokePartial(partial, name, context, helpers, partials, data) {
-  var options = { partial: true, helpers: helpers, partials: partials, data: data };
+templates["mail.success.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<div class=\"map-mail-mode-container\">\n    <h1>Success</h1>\n    <p>Successfully sent your emails with subject \""
+    + escapeExpression(((helper = (helper = helpers.subject || (depth0 != null ? depth0.subject : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"subject","hash":{},"data":data}) : helper)))
+    + "\" to "
+    + escapeExpression(((helper = (helper = helpers.organizers || (depth0 != null ? depth0.organizers : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"organizers","hash":{},"data":data}) : helper)))
+    + " organizers ("
+    + escapeExpression(((helper = (helper = helpers.emails || (depth0 != null ? depth0.emails : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"emails","hash":{},"data":data}) : helper)))
+    + " unique addresses).</p>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
+},"useData":true});
 
-  if(partial === undefined) {
-    throw new Exception("The partial " + name + " could not be found");
-  } else if(partial instanceof Function) {
-    return partial(context, options);
-  }
-}
+templates["mail.window.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  return "disabled";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class=\"map-mail-mode-container\">\n    <h1>Email Organizers</h1>\n    <div class=\"map-mail-status\">\n        You are sending email to "
+    + escapeExpression(((helper = (helper = helpers.organizers || (depth0 != null ? depth0.organizers : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"organizers","hash":{},"data":data}) : helper)))
+    + " organizers ("
+    + escapeExpression(((helper = (helper = helpers.emails || (depth0 != null ? depth0.emails : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"emails","hash":{},"data":data}) : helper)))
+    + " unique addresses).\n    </div>\n    <form class=\"mail-mode-form\">\n        <input type=\"hidden\" name=\"emails\" value=\""
+    + escapeExpression(((helper = (helper = helpers.emails || (depth0 != null ? depth0.emails : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"emails","hash":{},"data":data}) : helper)))
+    + "\" />\n        <input type=\"text\" class=\"form-control\" name=\"subject\" placeholder=\"subject\" value=\""
+    + escapeExpression(((helper = (helper = helpers.subject || (depth0 != null ? depth0.subject : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"subject","hash":{},"data":data}) : helper)))
+    + "\" />\n        <textarea class=\"form-control\" name=\"text\" placeholder=\"text\">"
+    + escapeExpression(((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"text","hash":{},"data":data}) : helper)))
+    + "</textarea>\n    </form>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">cancel</a>\n        <button type=\"submit\" class=\"mail-mode-submit btn btn-default\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.disabled : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + ">send emails</button>\n    </div>\n</div>\n";
+},"useData":true});
 
-exports.invokePartial = invokePartial;function noop() { return ""; }
+return templates;
 
-exports.noop = noop;
-},{"./base":47,"./exception":48,"./utils":51}],50:[function(require,module,exports){
-"use strict";
-// Build out our basic SafeString type
-function SafeString(string) {
-  this.string = string;
-}
-
-SafeString.prototype.toString = function() {
-  return "" + this.string;
 };
-
-exports["default"] = SafeString;
-},{}],51:[function(require,module,exports){
-"use strict";
-/*jshint -W004 */
-var SafeString = require("./safe-string")["default"];
-
-var escape = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#x27;",
-  "`": "&#x60;"
-};
-
-var badChars = /[&<>"'`]/g;
-var possible = /[&<>"'`]/;
-
-function escapeChar(chr) {
-  return escape[chr] || "&amp;";
-}
-
-function extend(obj, value) {
-  for(var key in value) {
-    if(Object.prototype.hasOwnProperty.call(value, key)) {
-      obj[key] = value[key];
-    }
-  }
-}
-
-exports.extend = extend;var toString = Object.prototype.toString;
-exports.toString = toString;
-// Sourced from lodash
-// https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
-var isFunction = function(value) {
-  return typeof value === 'function';
-};
-// fallback for older versions of Chrome and Safari
-if (isFunction(/x/)) {
-  isFunction = function(value) {
-    return typeof value === 'function' && toString.call(value) === '[object Function]';
-  };
-}
-var isFunction;
-exports.isFunction = isFunction;
-var isArray = Array.isArray || function(value) {
-  return (value && typeof value === 'object') ? toString.call(value) === '[object Array]' : false;
-};
-exports.isArray = isArray;
-
-function escapeExpression(string) {
-  // don't escape SafeStrings, since they're already safe
-  if (string instanceof SafeString) {
-    return string.toString();
-  } else if (!string && string !== 0) {
-    return "";
-  }
-
-  // Force a string conversion as this will be done by the append regardless and
-  // the regex test will do this transparently behind the scenes, causing issues if
-  // an object's to string has escaped characters in it.
-  string = "" + string;
-
-  if(!possible.test(string)) { return string; }
-  return string.replace(badChars, escapeChar);
-}
-
-exports.escapeExpression = escapeExpression;function isEmpty(value) {
-  if (!value && value !== 0) {
-    return true;
-  } else if (isArray(value) && value.length === 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-exports.isEmpty = isEmpty;
-},{"./safe-string":50}],52:[function(require,module,exports){
-// Create a simple path alias to allow browserify to resolve
-// the runtime on a supported path.
-module.exports = require('./dist/cjs/handlebars.runtime');
-
-},{"./dist/cjs/handlebars.runtime":46}]},{},[38]);
+},{}],73:[function(require,module,exports){
+module.exports=require(68)
+},{}],74:[function(require,module,exports){
+module.exports=require(69)
+},{}]},{},[25]);

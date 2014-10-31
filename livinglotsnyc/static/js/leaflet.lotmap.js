@@ -3,7 +3,7 @@ var filters = require('./filters');
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
-var Spinner = require('spinjs');
+var Spinner = require('spin.js');
 
 require('leaflet.bing');
 require('leaflet.dataoptions');
@@ -211,11 +211,11 @@ L.LotMap = L.Map.extend({
     },
 
     updateDisplayedLots: function () {
+        var map = this;
         function updateDisplayedLotsForLayer(layer) {
             if (layer.vectorLayer) {
                 // Lots are nested in tiles so we need to do two layers of 
                 // eachLayer to get to them all
-                var map = this;
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
                         if (filters.lotShouldAppear(lot, map.currentFilters)) {
