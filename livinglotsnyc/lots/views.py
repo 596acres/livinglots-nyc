@@ -6,8 +6,12 @@ from pint import UnitRegistry
 from random import shuffle
 
 from django.db.models import Count, Sum
+from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponseBadRequest
+from django.views.generic import View
 
-from braces.views import JSONResponseMixin
+from braces.views import (JSONResponseMixin, LoginRequiredMixin,
+                          PermissionRequiredMixin)
 from caching.base import cached
 
 from inplace.views import GeoJSONListView
@@ -18,7 +22,11 @@ from livinglots_lots.views import LotDetailView as BaseLotDetailView
 from livinglots_lots.views import LotsCSV as BaseLotsCSV
 from livinglots_lots.views import LotsKML as BaseLotsKML
 from livinglots_lots.views import LotsGeoJSON as BaseLotsGeoJSON
+from livinglots_organize.mail import mass_mail_organizers
+
+from organize.models import Organizer
 from nycdata.parcels.models import Parcel
+from .models import Lot
 
 
 ureg = UnitRegistry()
@@ -232,6 +240,53 @@ class LotsCountViewWithAcres(LotsCountView):
             'in-use-acres': self.get_area_in_acres(in_use),
         }
         return context
+
+
+class LotOrganizersMixin(object):
+
+    def get_organizers(self):
+        lots = self.get_lots().qs.values_list('pk', flat=True)
+        return Organizer.objects.filter(
+            content_type_id=ContentType.objects.get_for_model(Lot).pk,
+            object_id__in=lots,
+        )
+
+
+class CountOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
+                          JSONResponseMixin, FilteredLotsMixin,
+                          LotOrganizersMixin, View):
+    permission_required = 'lots.add_lot'
+
+    def get(self, request, *args, **kwargs):
+        organizers = self.get_organizers()
+        context = {
+            'emails': len(set(organizers.values_list('email', flat=True))),
+            'organizers': organizers.count(),
+        }
+        return self.render_json_response(context)
+
+
+class EmailOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
+                          JSONResponseMixin, FilteredLotsMixin,
+                          LotOrganizersMixin, View):
+    permission_required = 'organize.email_organizer'
+
+    def get(self, request, *args, **kwargs):
+        organizers = self.get_organizers()
+        subject = request.GET.get('subject')
+        text = request.GET.get('text')
+        emails = set(organizers.values_list('email', flat=True))
+        if not (subject and text and emails):
+            raise HttpResponseBadRequest
+        context = {
+            'emails': len(emails),
+            'organizers': len(organizers),
+            'subject': subject,
+            'text': text,
+        }
+
+        mass_mail_organizers(subject, text, organizers)
+        return self.render_json_response(context)
 
 
 class LotsCSV(BaseLotsCSV):

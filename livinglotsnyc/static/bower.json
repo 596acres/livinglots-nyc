@@ -29,7 +29,7 @@
     "leaflet-tilelayer-vector": "https://github.com/ebrelsford/leaflet-tilelayer-vector.git#master",
     "select2": "~3.4.5",
     "leaflet.loading": "~0.1.4",
-    "livinglots-map": "https://github.com/596acres/livinglots-map.git#0.2.0"
+    "livinglots-map": "https://github.com/596acres/livinglots-map.git#0.3.0"
   },
   "resolutions": {
     "leaflet": "e-tag:08329f89f"

@@ -14,6 +14,8 @@ var initWelcome = require('./welcome').init;
 require('jquery.infinitescroll');
 require('leaflet.loading');
 require('livinglots.map.addlot');
+// TODO install as NPM module instead to avoid weird browserify fun
+require('livinglots.map.mail');
 require('./leaflet.lotmap');
 require('./map.search.js');
 require('./overlaymenu');
@@ -231,6 +233,10 @@ $(document).ready(function () {
 
         $('.admin-button-add-lot').click(function () {
             map.enterLotAddMode();
+        });
+
+        $('.admin-button-email').click(function () {
+            map.enterMailMode();
         });
     }
 });

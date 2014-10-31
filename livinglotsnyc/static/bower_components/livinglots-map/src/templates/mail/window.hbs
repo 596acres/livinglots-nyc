@@ -1,0 +1,15 @@
+<div class="map-mail-mode-container">
+    <h1>Email Organizers</h1>
+    <div class="map-mail-status">
+        You are sending email to {{organizers}} organizers ({{emails}} unique addresses).
+    </div>
+    <form class="mail-mode-form">
+        <input type="hidden" name="emails" value="{{emails}}" />
+        <input type="text" class="form-control" name="subject" placeholder="subject" value="{{subject}}" />
+        <textarea class="form-control" name="text" placeholder="text">{{text}}</textarea>
+    </form>
+    <div class="map-mail-actions">
+        <a href="#" class="mail-mode-cancel btn btn-default">cancel</a>
+        <button type="submit" class="mail-mode-submit btn btn-default" {{#if disabled}}disabled{{/if}}>send emails</button>
+    </div>
+</div>

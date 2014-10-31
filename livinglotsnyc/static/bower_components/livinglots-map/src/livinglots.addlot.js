@@ -93,9 +93,18 @@ L.Map.include({
         var map = this;
         this.addParcelsLayer();
         this.updateLotAddWindow();
+        this.fire('entermode', { name: 'addlot' });
         this.lotAddZoomHandler();
 
         this.on('zoomend', this.lotAddZoomHandler);
+
+        $(this.options.addLotParent).addClass('on');
+
+        this.on('entermode', function (data) {
+            if (data.name !== 'addlot') {
+                map.exitLotAddMode();
+            }
+        });
 
         $('body').on('click', cancelButtonSelector, function (e) {
             map.selectedParcels = [];
@@ -184,6 +193,8 @@ L.Map.include({
     },
 
     exitLotAddMode: function () {
+        $(this.options.addLotParent).removeClass('on');
+        this.fire('exitmode', { name: 'addlot' });
         $('.map-add-lot-mode-container').hide();
         this.off('zoomend', this.lotAddZoomHandler);
         this.removeLayer(this.parcelsLayer);

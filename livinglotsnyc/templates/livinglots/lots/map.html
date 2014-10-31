@@ -114,9 +114,11 @@
     data-l-parcels-url="{% inplace_setting PARCELS_URL %}"
 
     data-l-add-lot-parent=".map-add-lot-parent"
+    data-l-mail-parent=".map-mail-parent"
 >
 
-    <div class="map-add-lot-parent" style="z-index: 5000; background: white;"></div>
+    <div class="map-add-lot-parent"></div>
+    <div class="map-mail-parent"></div>
 
     <div class="legend hidden-print">
         <div>
@@ -184,6 +186,9 @@
 
     <div class="overlaymenu-menu-content">
         <section>
+            <a class="admin-button-email btn btn-default btn-block">
+                {% trans "email organizers" %}
+            </a>
             <a class="admin-button-add-lot btn btn-default btn-block">
                 {% trans "add lot" %}
             </a>

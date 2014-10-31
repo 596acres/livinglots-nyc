@@ -16339,9 +16339,18 @@ L.Map.include({
         var map = this;
         this.addParcelsLayer();
         this.updateLotAddWindow();
+        this.fire('entermode', { name: 'addlot' });
         this.lotAddZoomHandler();
 
         this.on('zoomend', this.lotAddZoomHandler);
+
+        $(this.options.addLotParent).addClass('on');
+
+        this.on('entermode', function (data) {
+            if (data.name !== 'addlot') {
+                map.exitLotAddMode();
+            }
+        });
 
         $('body').on('click', cancelButtonSelector, function (e) {
             map.selectedParcels = [];
@@ -16430,6 +16439,8 @@ L.Map.include({
     },
 
     exitLotAddMode: function () {
+        $(this.options.addLotParent).removeClass('on');
+        this.fire('exitmode', { name: 'addlot' });
         $('.map-add-lot-mode-container').hide();
         this.off('zoomend', this.lotAddZoomHandler);
         this.removeLayer(this.parcelsLayer);
@@ -16437,7 +16448,135 @@ L.Map.include({
 
 });
 
-},{"handlebars":2,"leaflet":16,"livinglots.map.addlot.exists":18,"livinglots.map.addlot.failure":19,"livinglots.map.addlot.success":20,"livinglots.map.addlot.window":21,"spinjs":22,"underscore":23}],18:[function(require,module,exports){
+},{"handlebars":2,"leaflet":16,"livinglots.map.addlot.exists":19,"livinglots.map.addlot.failure":20,"livinglots.map.addlot.success":21,"livinglots.map.addlot.window":22,"spinjs":26,"underscore":27}],18:[function(require,module,exports){
+var L = require('leaflet');
+var _ = require('underscore');
+var Spinner = require('spinjs');
+
+var windowTemplate = require('livinglots.map.mail.window'),
+    failureTemplate = require('livinglots.map.mail.failure'),
+    successTemplate = require('livinglots.map.mail.success');
+
+var cancelButtonSelector = '.mail-mode-cancel',
+    submitButtonSelector = '.mail-mode-submit',
+    formSelector = '.mail-mode-form';
+
+L.Map.include({
+    replaceMailWindowContent: function (content) {
+        $('.map-mail-mode-container').remove();
+        $(this.options.mailParent).append(content);
+        this.fire('mailwindowchange');
+    },
+
+    sendMail: function () {
+        var map = this,
+            params = {},
+            url = Django.url('lots:lot_email_organizers');
+
+        _.extend(params, this.currentFilters, {
+            bbox: this.getBounds().toBBoxString(),
+            subject: $(formSelector).find(':input[name=subject]').val(),
+            text: $(formSelector).find(':input[name=text]').val()
+        });
+
+        var spinner = new Spinner()
+            .spin($(this.options.mailParent)[0]);
+
+        $.getJSON(url + '?' + $.param(params))
+            .always(function () {
+                spinner.stop();
+            })
+            .done(function (data) {
+                map.replaceMailWindowContent(successTemplate(data));
+            })
+            .fail(function (data) {
+                map.replaceMailWindowContent(failureTemplate(data));
+            });
+    },
+
+    mailSubmitDisabled: function (subject, text, emailCount) {
+        return (subject === '' || text === '' || emailCount === 0);
+    },
+
+    updateMailWindow: function () {
+        var map = this,
+            params = {},
+            url = Django.url('lots:lot_count_organizers');
+
+        _.extend(params, this.currentFilters, {
+            bbox: this.getBounds().toBBoxString()
+        });
+
+        var subject = $(formSelector).find(':input[name=subject]').val(),
+            text = $(formSelector).find(':input[name=text]').val();
+        $.getJSON(url + '?' + $.param(params), function (data) {
+            _.extend(data, {
+                disabled: map.mailSubmitDisabled(subject, text, data.emails),
+                subject: subject,
+                text: text
+            });
+            map.replaceMailWindowContent(windowTemplate(data));
+
+            // Watch for changes on form to determine whether submit should be
+            // enabled
+            $(formSelector).find(':input').keyup(function () {
+                var subject = $(formSelector).find(':input[name=subject]').val(),
+                    text = $(formSelector).find(':input[name=text]').val(),
+                    emails = $(formSelector).find(':input[name=emails]').val(),
+                    disabled = map.mailSubmitDisabled(subject, text, emails);
+                $(submitButtonSelector).prop('disabled', disabled);
+            });
+        });
+    },
+
+    enterMailMode: function () {
+        $(this.options.mailParent).addClass('on');
+        this.updateMailWindow();
+        this.fire('entermode', { name: 'mail' });
+        var map = this;
+
+        // Update window on filters / map change
+        this.on({
+            'moveend': function () {
+                map.updateMailWindow();
+            },
+            'zoomend': function () {
+                map.updateMailWindow();
+            }
+        });
+
+        this.on('entermode', function (data) {
+            if (data.name !== 'mail') {
+                map.exitMailMode();
+            }
+        });
+
+        $('body').on('click', cancelButtonSelector, function (e) {
+            map.exitMailMode();
+            e.stopPropagation();
+            return false;
+        });
+
+        $('body').on('click', submitButtonSelector, function (e) {
+            // If already disabled, don't send mail
+            if ($(submitButtonSelector).is('.disabled')) {
+                return false;
+            }
+            $(submitButtonSelector).addClass('disabled');
+            map.sendMail();
+            e.stopPropagation();
+            return false;
+        });
+    },
+
+    exitMailMode: function () {
+        $(this.options.mailParent).removeClass('on');
+        $('.map-mail-mode-container').hide();
+        this.fire('exitmode', { name: 'mail' });
+    }
+});
+
+},{"leaflet":16,"livinglots.map.mail.failure":23,"livinglots.map.mail.success":24,"livinglots.map.mail.window":25,"spinjs":26,"underscore":27}],19:[function(require,module,exports){
 var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -16451,7 +16590,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     + "\" target=\"_blank\">View the existing lot's page</a>\n</p>\n";
   return buffer;
   });
-},{"handlebars/runtime":48}],19:[function(require,module,exports){
+},{"handlebars/runtime":52}],20:[function(require,module,exports){
 var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -16460,7 +16599,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
   return "<div class=\"map-add-lot-mode-container\">\n    <h1>Failure</h1>\n    <p>Something went wrong while trying to add your lot(s). Sorry about that.</p>\n    <p>The most likely reason that this happened is that the lot already exists.</p>\n    <p>Please try again and let us know if it continues to fail.</p>\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
   });
-},{"handlebars/runtime":48}],20:[function(require,module,exports){
+},{"handlebars/runtime":52}],21:[function(require,module,exports){
 var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -16469,7 +16608,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
   return "<div class=\"map-add-lot-mode-container\">\n    <h1>Success</h1>\n    <p>Successfully added the lot(s).</p>\n    <p>You should edit the lot using the Edit button below to set its ownership and change its use, if necessary.</p>\n    <p>If the lot has something happening on it, click View, then the \"Is This An Active Project?\" button on the lot's page.</p>\n    <p>If the lot is vacant, it won't show up on the map without setting an owner.</p>\n    <div class=\"map-add-lot-actions\">\n        <a href=\"#\" class=\"add-lot-mode-view btn btn-default\" target=\"_blank\">view</a>\n        <a href=\"#\" class=\"add-lot-mode-edit btn btn-default\" target=\"_blank\">edit</a>\n        <a href=\"#\" class=\"add-lot-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
   });
-},{"handlebars/runtime":48}],21:[function(require,module,exports){
+},{"handlebars/runtime":52}],22:[function(require,module,exports){
 var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -16512,7 +16651,76 @@ function program4(depth0,data) {
   buffer += "\">add lot</a>\n    </div>\n</div>\n";
   return buffer;
   });
-},{"handlebars/runtime":48}],22:[function(require,module,exports){
+},{"handlebars/runtime":52}],23:[function(require,module,exports){
+var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"map-mail-mode-container\">\n    <h1>Failure</h1>\n    <p>Something went wrong while trying to email organizers. Sorry about that.</p>\n    <p>Please try again and let us know if it continues to fail.</p>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
+  });
+},{"handlebars/runtime":52}],24:[function(require,module,exports){
+var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"map-mail-mode-container\">\n    <h1>Success</h1>\n    <p>Successfully sent your emails with subject \"";
+  if (helper = helpers.subject) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.subject); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" to ";
+  if (helper = helpers.organizers) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.organizers); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " organizers (";
+  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " unique addresses).</p>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">close</a>\n    </div>\n</div>\n";
+  return buffer;
+  });
+},{"handlebars/runtime":52}],25:[function(require,module,exports){
+var templater = require("handlebars/runtime").default.template;module.exports = templater(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  
+  return "disabled";
+  }
+
+  buffer += "<div class=\"map-mail-mode-container\">\n    <h1>Email Organizers</h1>\n    <div class=\"map-mail-status\">\n        You are sending email to ";
+  if (helper = helpers.organizers) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.organizers); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " organizers (";
+  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " unique addresses).\n    </div>\n    <form class=\"mail-mode-form\">\n        <input type=\"hidden\" name=\"emails\" value=\"";
+  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" />\n        <input type=\"text\" class=\"form-control\" name=\"subject\" placeholder=\"subject\" value=\"";
+  if (helper = helpers.subject) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.subject); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" />\n        <textarea class=\"form-control\" name=\"text\" placeholder=\"text\">";
+  if (helper = helpers.text) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.text); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</textarea>\n    </form>\n    <div class=\"map-mail-actions\">\n        <a href=\"#\" class=\"mail-mode-cancel btn btn-default\">cancel</a>\n        <button type=\"submit\" class=\"mail-mode-submit btn btn-default\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.disabled), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">send emails</button>\n    </div>\n</div>\n";
+  return buffer;
+  });
+},{"handlebars/runtime":52}],26:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /**
@@ -16874,7 +17082,7 @@ function program4(depth0,data) {
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],23:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -18152,7 +18360,7 @@ function program4(depth0,data) {
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var _ = require('underscore');
 
 
@@ -18202,7 +18410,7 @@ module.exports = {
     }
 };
 
-},{"underscore":23}],25:[function(require,module,exports){
+},{"underscore":27}],29:[function(require,module,exports){
 var geocoder = new google.maps.Geocoder();
 
 function geocode(address, bounds, state, f) {
@@ -18275,7 +18483,7 @@ module.exports = {
     geocode: geocode
 };
 
-},{}],26:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
@@ -18291,7 +18499,7 @@ L.TileLayer.Vector.include({
 
 });
 
-},{"TileLayer.GeoJSON":10,"leaflet":16}],27:[function(require,module,exports){
+},{"TileLayer.GeoJSON":10,"leaflet":16}],31:[function(require,module,exports){
 var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
@@ -18420,7 +18628,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":26,"./leaflet.lotmultipolygon":30,"./leaflet.lotpolygon":32,"TileLayer.GeoJSON":10,"leaflet":16}],28:[function(require,module,exports){
+},{"./leaflet.geojson.tile":30,"./leaflet.lotmultipolygon":34,"./leaflet.lotpolygon":36,"TileLayer.GeoJSON":10,"leaflet":16}],32:[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -18437,12 +18645,11 @@ require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 
 
-var currentFilters = {};
-
 L.LotMap = L.Map.extend({
 
     boundariesLayer: null,
     centroidsLayer: null,
+    currentFilters: {},
     polygonsLayer: null,
     lotLayerTransitionPoint: 15,
     previousZoom: null,
@@ -18518,7 +18725,7 @@ L.LotMap = L.Map.extend({
         var hash = new L.Hash(this);
 
         if (options.filterParams) {
-            currentFilters = filters.paramsToFilters(options.filterParams);
+            this.currentFilters = filters.paramsToFilters(options.filterParams);
         }
 
         this.boundariesLayer = L.geoJson(null, {
@@ -18527,12 +18734,13 @@ L.LotMap = L.Map.extend({
         }).addTo(this);
 
         // When new lots are added ensure they should be displayed
+        var map = this;
         this.on('layeradd', function (event) {
             // Dig through the layers of layers
             event.layer.on('layeradd', function (event) {
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) return;
-                    if (filters.lotShouldAppear(lot, currentFilters)) {
+                    if (filters.lotShouldAppear(lot, map.currentFilters)) {
                         lot.show();
                     }
                     else {
@@ -18628,8 +18836,9 @@ L.LotMap = L.Map.extend({
     },
 
     updateFilters: function (params) {
-        currentFilters = filters.paramsToFilters(params);
+        this.currentFilters = filters.paramsToFilters(params);
         this.updateDisplayedLots();
+        this.fire('filterschanged', this.currentFilters);
     },
 
     updateDisplayedLots: function () {
@@ -18637,9 +18846,10 @@ L.LotMap = L.Map.extend({
             if (layer.vectorLayer) {
                 // Lots are nested in tiles so we need to do two layers of 
                 // eachLayer to get to them all
+                var map = this;
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
-                        if (filters.lotShouldAppear(lot, currentFilters)) {
+                        if (filters.lotShouldAppear(lot, map.currentFilters)) {
                             lot.show();
                         }
                         else {
@@ -18685,7 +18895,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":24,"./leaflet.lotlayer":27,"./leaflet.lotmarker":29,"./map.styles":36,"handlebars":2,"leaflet":16,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.hash":4,"leaflet.usermarker":15,"spinjs":22,"underscore":23}],29:[function(require,module,exports){
+},{"./filters":28,"./leaflet.lotlayer":31,"./leaflet.lotmarker":33,"./map.styles":40,"handlebars":2,"leaflet":16,"leaflet.bing":5,"leaflet.dataoptions":13,"leaflet.hash":4,"leaflet.usermarker":15,"spinjs":26,"underscore":27}],33:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -18753,7 +18963,7 @@ L.lotMarker = function (latlng, options) {
     return new L.LotMarker(latlng, options);
 };
 
-},{"./leaflet.lotpath":31,"leaflet":16}],30:[function(require,module,exports){
+},{"./leaflet.lotpath":35,"leaflet":16}],34:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpolygon');
@@ -18809,7 +19019,7 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
     }
 });
 
-},{"./leaflet.lotpolygon":32,"leaflet":16}],31:[function(require,module,exports){
+},{"./leaflet.lotpolygon":36,"leaflet":16}],35:[function(require,module,exports){
 var L = require('leaflet');
 
 
@@ -18865,7 +19075,7 @@ L.LotPathMixin = {
 
 };
 
-},{"leaflet":16}],32:[function(require,module,exports){
+},{"leaflet":16}],36:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -18908,7 +19118,7 @@ L.lotPolygon = function (latlngs, options) {
     return new L.LotPolygon(latlngs, options);
 };
 
-},{"./leaflet.lotpath":31,"leaflet":16}],33:[function(require,module,exports){
+},{"./leaflet.lotpath":35,"leaflet":16}],37:[function(require,module,exports){
 //
 // lotdetailpage.js
 //
@@ -19001,7 +19211,7 @@ $(document).ready(function () {
     });
 });
 
-},{"./leaflet.lotlayer":27,"./leaflet.lotmarker":29,"./map.styles":36,"./overlaymenu":38,"./streetview":40,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],34:[function(require,module,exports){
+},{"./leaflet.lotlayer":31,"./leaflet.lotmarker":33,"./map.styles":40,"./overlaymenu":42,"./streetview":44,"handlebars":2,"leaflet":16,"leaflet.dataoptions":13}],38:[function(require,module,exports){
 //
 // main.js
 //
@@ -19061,7 +19271,7 @@ $(document).ready(function () {
 require('./mappage.js');
 require('./lotdetailpage.js');
 
-},{"./lotdetailpage.js":33,"./mappage.js":37,"fancybox":1}],35:[function(require,module,exports){
+},{"./lotdetailpage.js":37,"./mappage.js":41,"fancybox":1}],39:[function(require,module,exports){
 var L = require('leaflet');
 
 var geocode = require('./geocode').geocode;
@@ -19134,7 +19344,7 @@ $.fn.mapsearch = function (options) {
     return this;
 };
 
-},{"./geocode":25,"leaflet":16}],36:[function(require,module,exports){
+},{"./geocode":29,"leaflet":16}],40:[function(require,module,exports){
 //
 // Lot map styles by layer for maps
 //
@@ -19168,7 +19378,7 @@ module.exports = {
     }
 };
 
-},{"underscore":23}],37:[function(require,module,exports){
+},{"underscore":27}],41:[function(require,module,exports){
 //
 // mappage.js
 //
@@ -19185,6 +19395,8 @@ var initWelcome = require('./welcome').init;
 require('jquery.infinitescroll');
 require('leaflet.loading');
 require('livinglots.map.addlot');
+// TODO install as NPM module instead to avoid weird browserify fun
+require('livinglots.map.mail');
 require('./leaflet.lotmap');
 require('./map.search.js');
 require('./overlaymenu');
@@ -19403,10 +19615,14 @@ $(document).ready(function () {
         $('.admin-button-add-lot').click(function () {
             map.enterLotAddMode();
         });
+
+        $('.admin-button-email').click(function () {
+            map.enterMailMode();
+        });
     }
 });
 
-},{"./leaflet.lotmap":28,"./map.search.js":35,"./overlaymenu":38,"./singleminded":39,"./welcome":41,"handlebars":2,"jquery.infinitescroll":3,"leaflet":16,"leaflet.loading":14,"livinglots.map.addlot":17,"spinjs":22,"underscore":23}],38:[function(require,module,exports){
+},{"./leaflet.lotmap":32,"./map.search.js":39,"./overlaymenu":42,"./singleminded":43,"./welcome":45,"handlebars":2,"jquery.infinitescroll":3,"leaflet":16,"leaflet.loading":14,"livinglots.map.addlot":17,"livinglots.map.mail":18,"spinjs":26,"underscore":27}],42:[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -19474,7 +19690,7 @@ $.fn.overlaymenu = function (options) {
     return this;
 };
 
-},{"underscore":23}],39:[function(require,module,exports){
+},{"underscore":27}],43:[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -19506,7 +19722,7 @@ module.exports = {
     remember: remember
 };
 
-},{}],40:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 
 
 function get_heading(lon0, lat0, lon1, lat1) {
@@ -19557,7 +19773,7 @@ module.exports = {
     load_streetview: load_streetview
 };
 
-},{}],41:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 //
 // Welcome header
 //
@@ -19589,7 +19805,7 @@ module.exports = {
     }
 };
 
-},{}],42:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -19622,7 +19838,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":43,"./handlebars/exception":44,"./handlebars/runtime":45,"./handlebars/safe-string":46,"./handlebars/utils":47}],43:[function(require,module,exports){
+},{"./handlebars/base":47,"./handlebars/exception":48,"./handlebars/runtime":49,"./handlebars/safe-string":50,"./handlebars/utils":51}],47:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -19803,7 +20019,7 @@ exports.log = log;var createFrame = function(object) {
   return obj;
 };
 exports.createFrame = createFrame;
-},{"./exception":44,"./utils":47}],44:[function(require,module,exports){
+},{"./exception":48,"./utils":51}],48:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -19832,7 +20048,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],45:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -19970,7 +20186,7 @@ exports.program = program;function invokePartial(partial, name, context, helpers
 exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;
-},{"./base":43,"./exception":44,"./utils":47}],46:[function(require,module,exports){
+},{"./base":47,"./exception":48,"./utils":51}],50:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -19982,7 +20198,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],47:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -20059,9 +20275,9 @@ exports.escapeExpression = escapeExpression;function isEmpty(value) {
 }
 
 exports.isEmpty = isEmpty;
-},{"./safe-string":46}],48:[function(require,module,exports){
+},{"./safe-string":50}],52:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime');
 
-},{"./dist/cjs/handlebars.runtime":42}]},{},[34]);
+},{"./dist/cjs/handlebars.runtime":46}]},{},[38]);

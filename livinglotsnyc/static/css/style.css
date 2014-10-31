@@ -3208,8 +3208,21 @@ a.thumbnail.active {
 }
 .map-add-lot-parent {
   background-color: white;
+  display: none;
   position: absolute;
   z-index: 5000;
+}
+.map-add-lot-parent.on {
+  display: block;
+}
+.map-mail-parent {
+  background-color: white;
+  display: none;
+  position: absolute;
+  z-index: 5000;
+}
+.map-mail-parent.on {
+  display: block;
 }
 /*
  * Global properties
@@ -3839,6 +3852,14 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   padding: 15px;
 }
 .map-add-lot-parent h1 {
+  font-size: 16px;
+  margin: 0;
+}
+.map-mail-parent {
+  left: 50px;
+  padding: 15px;
+}
+.map-mail-parent h1 {
   font-size: 16px;
   margin: 0;
 }

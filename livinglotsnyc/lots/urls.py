@@ -2,8 +2,9 @@ from django.conf.urls import patterns, url
 
 import livinglots_lots.urls as llurls
 
-from .views import (CreateLotView, LotsCountViewWithAcres, LotDetailView,
-                    LotDetailViewJSON, LotsGeoJSONCentroid, LotsGeoJSONPolygon,
+from .views import (CountOrganizersView, CreateLotView, EmailOrganizersView,
+                    LotsCountViewWithAcres, LotDetailView, LotDetailViewJSON,
+                    LotsGeoJSONCentroid, LotsGeoJSONPolygon,
                     LotsOwnershipOverview, LotsCSV, LotsKML, LotsGeoJSON)
 
 
@@ -16,6 +17,8 @@ urlpatterns = patterns('',
         name='lot_geojson_centroid'),
     url(r'^geojson-polygon/', LotsGeoJSONPolygon.as_view(),
         name='lot_geojson_polygon'),
+    url(r'^count/organizers/', CountOrganizersView.as_view(),
+        name='lot_count_organizers'),
     url(r'^count/ownership/', LotsOwnershipOverview.as_view(),
         name='lot_ownership_overview'),
     url(r'^count/', LotsCountViewWithAcres.as_view(), name='lot_count'),
@@ -25,5 +28,8 @@ urlpatterns = patterns('',
 
     url(r'^create/by-parcels/$', CreateLotView.as_view(),
         name='create_by_parcels'),
+
+    url(r'^organizers/email/', EmailOrganizersView.as_view(),
+        name='lot_email_organizers'),
 
 ) + llurls.urlpatterns
