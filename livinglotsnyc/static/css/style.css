@@ -3462,7 +3462,6 @@ footer .footer-main:after {
   left: 25px;
   padding: 5px;
   position: absolute;
-  width: 25%;
   z-index: 5000;
 }
 .legend-marker {
