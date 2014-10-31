@@ -10,3 +10,8 @@ class Organizer(BaseOrganizer):
             'hash': self.email_hash,
             'pk': self.object_id,
         })
+
+    class Meta:
+        permissions = (
+            ('email_organizer', 'Can email organizers'),
+        )
