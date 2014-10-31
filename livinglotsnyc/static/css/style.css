@@ -3482,16 +3482,16 @@ footer .footer-main:after {
   width: 20px;
 }
 .legend-marker-public {
-  background: #812683;
+  background: #66A954;
 }
 .legend-marker-private {
-  background: #ea292e;
+  background: #4292F1;
 }
 .legend-marker-project {
-  background: #97b03d;
+  background: #FD39FE;
 }
 .legend-marker-gutterspace {
-  background: #0000FF;
+  background: #FE3627;
 }
 .legend-label {
   display: inline;
