@@ -66,7 +66,7 @@ L.LotMap = L.Map.extend({
         pointToLayer: function (feature, latlng) {
             var options = {};
             var layers = feature.properties.layers.split(',');
-            if (_.contains(layers, 'organizing')) {
+            if (_.contains(layers, 'organizing') || _.contains(layers, 'in_use_started_here')) {
                 options.hasOrganizers = true;
             }
             return L.lotMarker(latlng, options);
