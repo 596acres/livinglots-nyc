@@ -160,6 +160,9 @@ class LotMixin(models.Model):
             return [self,]
     lots = property(_get_lots)
 
+    def __unicode__(self):
+        return self.display_name
+
     class Meta:
         abstract = True
 
