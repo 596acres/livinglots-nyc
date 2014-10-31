@@ -6,8 +6,12 @@
   "license": "BSD-2-Clause",
   "main": "index.js",
   "dependencies": {
+    "handlebars": "^2.0.0",
+    "leaflet": "~0.7.3",
+    "livinglots-map": "git://github.com/596acres/livinglots-map",
+    "spin.js": "~2.0.1",
     "tinymce": "^4.0.28",
-    "browserify-handlebars": "~0.2.0"
+    "underscore": "~1.7.0"
   },
   "devDependencies": {
     "browserify": "^4.1.10",
@@ -17,11 +21,10 @@
     "grunt-cli": "^0.1.13",
     "grunt-contrib-copy": "^0.5.0",
     "grunt-contrib-cssmin": "^0.10.0",
-    "grunt-contrib-handlebars": "^0.8.0",
+    "grunt-contrib-handlebars": "^0.9.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-less": "^0.11.2",
     "grunt-contrib-watch": "^0.6.1",
-    "handlebars": "^1.3.0",
     "watchify": "^1.0.0"
   },
   "scripts": {
@@ -30,26 +33,13 @@
   "browser": {
     "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
     "fancybox": "./bower_components/fancybox/source/jquery.fancybox.js",
-    "handlebars": "./bower_components/handlebars/handlebars.js",
     "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
-    "leaflet": "./bower_components/leaflet/dist/leaflet-src.js",
     "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",
     "leaflet.bing": "./bower_components/leaflet-plugins/layer/tile/Bing.js",
     "leaflet.dataoptions": "./bower_components/leaflet.dataoptions/src/leaflet.dataoptions.js",
     "leaflet.hash": "./bower_components/leaflet-hash/leaflet-hash.js",
     "leaflet.loading": "./bower_components/leaflet.loading/src/Control.Loading.js",
     "leaflet.usermarker": "./bower_components/leaflet.usermarker/src/leaflet.usermarker.js",
-    "livinglots.map.addlot": "./bower_components/livinglots-map/src/livinglots.addlot.js",
-    "livinglots.map.addlot.exists": "./bower_components/livinglots-map/src/templates/addlot/existspopup.hbs",
-    "livinglots.map.addlot.failure": "./bower_components/livinglots-map/src/templates/addlot/failure.hbs",
-    "livinglots.map.addlot.success": "./bower_components/livinglots-map/src/templates/addlot/success.hbs",
-    "livinglots.map.addlot.window": "./bower_components/livinglots-map/src/templates/addlot/window.hbs",
-    "livinglots.map.mail": "./bower_components/livinglots-map/src/livinglots.mail.js",
-    "livinglots.map.mail.failure": "./bower_components/livinglots-map/src/templates/mail/failure.hbs",
-    "livinglots.map.mail.success": "./bower_components/livinglots-map/src/templates/mail/success.hbs",
-    "livinglots.map.mail.window": "./bower_components/livinglots-map/src/templates/mail/window.hbs",
-    "spinjs": "./bower_components/spin.js/spin.js",
-    "underscore": "./bower_components/underscore/underscore.js",
     "communist": "./bower_components/leaflet-tilelayer-vector/lib/communist.min.js",
     "AbstractWorker": "./bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js",
     "CommunistWorker": "./bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js",
@@ -60,7 +50,6 @@
   },
   "browserify": {
     "transform": [
-      "browserify-handlebars",
       "browserify-shim"
     ]
   },
@@ -73,7 +62,6 @@
         "AbstractWorker"
       ]
     },
-    "handlebars": "Handlebars",
     "spinjs": "Spinner",
     "TileLayer.GeoJSON": {
       "depends": [
