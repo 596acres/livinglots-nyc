@@ -15,7 +15,7 @@
             <select class="filter filter-owner-public form-control">
                 <option value="">all owners</option>
 
-                {% get_owners type "public" as owners %}
+                {% get_owners type "public" True as owners %}
                 {% for owner in owners %}
                     <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
                         {{ owner.name }}
