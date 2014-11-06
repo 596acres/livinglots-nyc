@@ -62,35 +62,12 @@ class OwnerFilter(django_filters.Filter):
         return qs.filter(owner_query | other_owners_query)
 
 
-class ProjectFilter(django_filters.Filter):
-
-    def filter(self, qs, value):
-        if not value or value == 'include':
-            return qs
-        has_project_filter = Q(known_use__visible=True)
-        if value == 'include':
-            return qs
-        elif value == 'exclude':
-            return qs.filter(~has_project_filter)
-        elif value == 'only':
-            return qs.filter(has_project_filter)
-        elif value == 'started_here':
-            return qs.filter(
-                ~Q(lotlayer__name='in_use') | 
-                Q(lotlayer__name='in_use_started_here')
-            )
-        elif value == 'started_here_only':
-            return qs.filter(lotlayer__name='in_use_started_here')
-        return qs
-
-
 class LotFilter(django_filters.FilterSet):
 
     bbox = BoundingBoxFilter()
     layers = LayerFilter()
     lot_center = LotCenterFilter()
     parents_only = LotGroupParentFilter()
-    projects = ProjectFilter()
     public_owners = OwnerFilter(owner_type='public')
 
     def __init__(self, *args, **kwargs):
@@ -111,6 +88,5 @@ class LotFilter(django_filters.FilterSet):
             'layers',
             'lot_center',
             'parents_only',
-            'projects',
             'public_owners',
         ]

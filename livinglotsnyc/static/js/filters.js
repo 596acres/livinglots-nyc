@@ -15,7 +15,7 @@ module.exports = {
         }
 
         // Ownership layers
-        if (_.isEmpty(_.intersection(lotLayersOwnership, filters.layers))) {
+        if (_.isEmpty(_.intersection(lotLayersOwnership, filters.owner_types))) {
             return false;
         }
 
@@ -43,6 +43,7 @@ module.exports = {
     paramsToFilters: function (params) {
         var filters = _.extend({}, params);
         filters.layers = filters.layers.split(',');
+        filters.owner_types = filters.owner_types.split(',');
         if (filters.public_owners) {
             filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
                 return parseInt(ownerPk);
