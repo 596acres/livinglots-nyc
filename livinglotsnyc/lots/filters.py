@@ -62,11 +62,19 @@ class OwnerFilter(django_filters.Filter):
         return qs.filter(owner_query | other_owners_query)
 
 
+class OwnerTypesFilter(django_filters.Filter):
+
+    def filter(self, qs, value):
+        # Lots should also be in these layers, use layers for convenience
+        return qs.filter(lotlayer__name__in=value.split(','))
+
+
 class LotFilter(django_filters.FilterSet):
 
     bbox = BoundingBoxFilter()
     layers = LayerFilter()
     lot_center = LotCenterFilter()
+    owner_types = OwnerTypesFilter()
     parents_only = LotGroupParentFilter()
     public_owners = OwnerFilter(owner_type='public')
 
@@ -87,6 +95,7 @@ class LotFilter(django_filters.FilterSet):
             'known_use',
             'layers',
             'lot_center',
+            'owner_types',
             'parents_only',
             'public_owners',
         ]
