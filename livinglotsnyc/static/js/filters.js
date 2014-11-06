@@ -3,32 +3,37 @@ var _ = require('underscore');
 
 module.exports = {
     lotShouldAppear: function (lot, filters) {
-        // Layers
-        var lotLayers = lot.feature.properties.layers.split(',');
-        if (_.isEmpty(_.intersection(lotLayers, filters.layers))) {
+        var ownershipLayers = ['public', 'private_opt_in'],
+            peopleInvolvedLayers = ['in_use', 'in_use_started_here', 'organizing'],
+            lotLayers = lot.feature.properties.layers.split(','),
+            lotLayersOwnership = _.intersection(lotLayers, ownershipLayers),
+            lotLayersNotOwnership = _.difference(lotLayers, ownershipLayers);
+
+        // Gutterspace, no matter owner
+        if (_.contains(_.intersection(lotLayersNotOwnership, filters.layers), 'gutterspace')) {
+            return true;
+        }
+
+        // Ownership layers
+        if (_.isEmpty(_.intersection(lotLayersOwnership, filters.layers))) {
             return false;
         }
 
-        // Projects
-        if (filters.projects === 'exclude' && _.contains(lotLayers, 'in_use')) {
-            return false;
-        }
-        else if (filters.projects === 'only' && !_.contains(lotLayers, 'in_use')) {
-            return false;
-        }
-        else if (filters.projects === 'started_here') {
-            if (_.contains(lotLayers, 'in_use') && !_.contains(lotLayers, 'in_use_started_here')) {
-                return false;
-            }
-        }
-        else if (filters.projects === 'started_here_only' &&
-                 !_.contains(lotLayers, 'in_use_started_here')) {
-            return false;
-        }
-
-        // Owners
+        // Individual owners
         if (filters.public_owners &&
             !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+            return false;
+        }
+
+        // No people involved (just vacant): no_people selected, lot has no
+        // people-involving layers associated with it
+        if (_.contains(filters.layers, 'no_people') &&
+            _.isEmpty(_.intersection(peopleInvolvedLayers, lotLayersNotOwnership))) {
+            return true;
+        }
+
+        // Other layers
+        if (_.isEmpty(_.intersection(lotLayersNotOwnership, filters.layers))) {
             return false;
         }
 

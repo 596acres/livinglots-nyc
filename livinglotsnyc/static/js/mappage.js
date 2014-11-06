@@ -36,7 +36,6 @@ function buildLotFilterParams(map, options) {
         params.bbox = map.getBounds().toBBoxString();
     }
 
-    console.log('params', params);
     return params;
 }
 
@@ -103,11 +102,6 @@ function setFilters(params) {
     });
 
     // Set boundaries filters
-
-    var projects = params.projects;
-    if (projects !== '') {
-        $('.filter-projects').val(projects);
-    }
 }
 
 function prepareOverlayMenus(map) {
