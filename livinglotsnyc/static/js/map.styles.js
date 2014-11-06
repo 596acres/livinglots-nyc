@@ -8,7 +8,7 @@ var fillColors = {
     in_use: '#FD39FE',
     private: '#4292F1',
     public: '#66A954',
-    gutterspace: '#FE3627'
+    gutterspace: '#66A954'
 };
 
 module.exports = {
