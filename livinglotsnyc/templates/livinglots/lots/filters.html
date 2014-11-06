@@ -4,58 +4,69 @@
     <div class="overlaymenu-tip"></div>
 </div>
 <div class="overlaymenu-menu-content">
-    <ul class="filter-owner-list">
-        <li class="filter-owner">
-            <input id="layer-public" type="checkbox" class="filter filter-layer" name="public" checked />
-            <label class="filter-owner-label" for="layer-public">
-                <span class="legend-marker legend-marker-public"></span>
-                <span class="filter-owner-label-text">{% trans "publicly owned land" %}</span>
-            </label>
-
-            <select class="filter filter-owner-public form-control">
-                <option value="">all owners</option>
-
-                {% get_owners type "public" True as owners %}
-                {% for owner in owners %}
-                    <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
-                        {{ owner.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </li>
-        <li class="filter-owner">
-            <input id="layer-private" type="checkbox" class="filter filter-layer" name="private_opt_in" checked />
-            <label class="filter-owner-label" for="layer-private">
-                <span class="legend-marker legend-marker-private"></span>
-                <span class="filter-owner-label-text">{% trans "private land belonging to an owner who wants to see it used" %}</span>
-            </label>
-        </li>
-    </ul>
-
-    <section class="filter-section filter-section-projects">
-        <div class="form-horizontal filter-projects-row">
-            <div class="control-label">
-                <label for="projects" class="">
-                    <span class="legend-marker legend-marker-project"></span>
-                    {% trans "projects" %}
+    <section class="filter-section filter-section-owners">
+        <ul class="filter-owner-list">
+            <li class="filter-owner">
+                <input id="layer-public" type="checkbox" class="filter filter-layer" name="public" checked />
+                <label class="filter-owner-label" for="layer-public">
+                    {% trans "public land" %}
                 </label>
-            </div>
-            <select class="filter filter-projects form-control" id="projects">
-                <option value="started_here">{% trans "include projects started with help from 596 Acres" %}</option>
-                <option value="started_here_only">{% trans "only projects started with help from 596 Acres" %}</option>
-                <option value="include">{% trans "include" %}</option>
-                <option value="exclude">{% trans "exclude" %}</option>
-                <option value="only">{% trans "show only projects" %}</option>
-            </select>
-        </div>
+
+                <select class="filter filter-owner-public form-control">
+                    <option value="">all owners</option>
+
+                    {% get_owners type "public" True as owners %}
+                    {% for owner in owners %}
+                        <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
+                            {{ owner.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </li>
+            <li class="filter-owner">
+                <input id="layer-private" type="checkbox" class="filter filter-layer" name="private_opt_in" checked />
+                <label class="filter-owner-label" for="layer-private">
+                    {% trans "private land" %}
+                </label>
+            </li>
+        </ul>
     </section>
 
-    <section class="filter-gutterspace">
-        <input id="layer-gutterspace" type="checkbox" class="filter filter-layer" name="gutterspace" />
-        <label class="filter-label" for="layer-gutterspace">
-            <span class="legend-marker legend-marker-gutterspace"></span>
-            <span class="filter-gutterspace-label-text">{% trans "gutterspace" %}</span>
-        </label>
+    <section class="filter-section filter-section-types">
+        <div>
+            <input id="layer-organizing" type="checkbox" class="filter filter-layer" name="organizing" checked />
+            <label class="filter-label" for="layer-organizing">
+                {% trans "land where people are organizing" %}
+            </label>
+        </div>
+
+        <div>
+            <input id="layer-access" type="checkbox" class="filter filter-layer" name="access" checked />
+            <label class="filter-label" for="layer-access">
+                {% trans "land where people have access" %}
+            </label>
+        </div>
+
+        <div>
+            <input id="layer-no-people" type="checkbox" class="filter filter-layer" name="no-people" checked />
+            <label class="filter-label" for="layer-no-people">
+                {% trans "vacant land with no people involved" %}
+            </label>
+        </div>
+
+        <div>
+            <input id="layer-596-facilitated" type="checkbox" class="filter filter-layer" name="596-facilitated" checked />
+            <label class="filter-label" for="layer-596-facilitated">
+                {% trans "596 Acres network" %}
+            </label>
+        </div>
+
+        <div>
+            <input id="layer-gutterspace" type="checkbox" class="filter filter-layer" name="gutterspace" />
+            <label class="filter-label" for="layer-gutterspace">
+                {% trans "gutterspaces" %}
+            </label>
+        </div>
     </section>
 
     <section class="filter-section filter-section-boundaries">

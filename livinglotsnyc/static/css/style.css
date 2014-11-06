@@ -3349,88 +3349,25 @@ a.thumbnail.active {
 .file-added {
   font-size: 12px;
 }
-.filter-projects-row {
-  margin-left: 0;
-  margin-right: 0;
+.filter-section {
+  border-bottom: 1px solid black;
+  padding-bottom: 10px;
+  padding-top: 10px;
 }
-.filter-projects-row:before,
-.filter-projects-row:after {
-  content: " ";
-  display: table;
-}
-.filter-projects-row:after {
-  clear: both;
-}
-.filter-projects-row:before,
-.filter-projects-row:after {
-  content: " ";
-  display: table;
-}
-.filter-projects-row:after {
-  clear: both;
-}
-.filter-projects-row .control-label {
-  position: relative;
-  float: left;
-  width: 41.66666667%;
-  min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px;
-  text-align: left;
-}
-.filter-projects-row .form-control {
-  position: relative;
-  float: left;
-  width: 58.33333333%;
-  min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px;
-}
-.filter-layer-checkbox {
-  vertical-align: middle;
-}
-.filter-owner {
-  margin-bottom: 5px;
-  margin-top: 5px;
+.filter-section:last-child {
+  border-bottom: none;
 }
 .filter-owner-list {
   list-style: none;
+  margin: 0;
   padding-left: 0;
-}
-.filter-owner input[type=checkbox] {
-  vertical-align: middle;
-}
-.filter-owner .legend-marker {
-  vertical-align: middle;
 }
 .filter-owner-label {
   width: 90%;
 }
-.filter-owner-label-text {
-  display: inline-block;
-  vertical-align: middle;
-  width: 80%;
-}
 .filter-owner-public {
   margin-left: 10%;
   width: 80%;
-}
-.filter-gutterspace {
-  margin-bottom: 5px;
-  margin-top: 5px;
-}
-.filter-gutterspace input[type=checkbox] {
-  vertical-align: middle;
-}
-.filter-gutterspace .legend-marker {
-  vertical-align: middle;
-}
-.filter-gutterspace-label {
-  width: 90%;
-}
-.filter-gutterspace-label-text {
-  display: inline-block;
-  vertical-align: middle;
 }
 footer .footer-main {
   margin-left: 0;

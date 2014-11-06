@@ -1,71 +1,26 @@
-.filter-projects-row {
-    .make-row(0);
+.filter-section {
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    padding-top: 10px;
 
-    .control-label {
-        .make-xs-column(5);
-        text-align: left;
+    &:last-child {
+        border-bottom: none;
     }
-
-    .form-control {
-        .make-xs-column(7);
-    }
-}
-
-.filter-layer-checkbox {
-    vertical-align: middle;
 }
 
 .filter-owner {
-    margin-bottom: 5px;
-    margin-top: 5px;
-
     &-list {
         list-style: none;
+        margin: 0;
         padding-left: 0;
-    }
-
-    input[type=checkbox] {
-        .filter-layer-checkbox();
-    }
-
-    .legend-marker {
-        vertical-align: middle;
     }
 
     &-label {
         width: 90%;
-    }
-
-    &-label-text {
-        display: inline-block;
-        vertical-align: middle;
-        width: 80%;
     }
 
     &-public {
         margin-left: 10%;
         width: 80%;
-    }
-}
-
-.filter-gutterspace {
-    margin-bottom: 5px;
-    margin-top: 5px;
-
-    input[type=checkbox] {
-        .filter-layer-checkbox();
-    }
-
-    .legend-marker {
-        vertical-align: middle;
-    }
-
-    &-label {
-        width: 90%;
-    }
-
-    &-label-text {
-        display: inline-block;
-        vertical-align: middle;
     }
 }

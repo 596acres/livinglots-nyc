@@ -36,6 +36,7 @@ function buildLotFilterParams(map, options) {
         params.bbox = map.getBounds().toBBoxString();
     }
 
+    console.log('params', params);
     return params;
 }
 
