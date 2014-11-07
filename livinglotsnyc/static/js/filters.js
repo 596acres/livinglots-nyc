@@ -28,7 +28,8 @@ module.exports = {
         // No people involved (just vacant): no_people selected, lot has no
         // people-involving layers associated with it
         if (_.contains(filters.layers, 'no_people') &&
-            _.isEmpty(_.intersection(peopleInvolvedLayers, lotLayersNotOwnership))) {
+            _.isEmpty(_.intersection(peopleInvolvedLayers, lotLayersNotOwnership)) &&
+            !_.contains(lotLayers, 'gutterspace')) {
             return true;
         }
 
