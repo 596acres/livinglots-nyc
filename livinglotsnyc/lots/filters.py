@@ -20,7 +20,19 @@ class BoundingBoxFilter(django_filters.Filter):
 class LayerFilter(django_filters.Filter):
 
     def filter(self, qs, value):
-        return qs.filter(lotlayer__name__in=value.split(','))
+        people_layers = ('in_use', 'in_use_started_here', 'organizing',)
+        layers = value.split(',')
+        condition = Q(lotlayer__name__in=layers)
+
+        # Handle no_people: either no layer in people layers or layer is in
+        # a selected people layer
+        if 'no_people' in layers:
+            condition = (
+                ~Q(lotlayer__name__in=people_layers) | 
+                Q(lotlayer__name__in=[l for l in layers if l in people_layers])
+            )
+
+        return qs.filter(condition)
 
 
 class LotGroupParentFilter(django_filters.Filter):
