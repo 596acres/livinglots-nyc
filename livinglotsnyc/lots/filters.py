@@ -27,9 +27,9 @@ class LayerFilter(django_filters.Filter):
         # Handle no_people: either no layer in people layers or layer is in
         # a selected people layer
         if 'no_people' in layers:
-            condition = (
-                ~Q(lotlayer__name__in=people_layers) | 
-                Q(lotlayer__name__in=[l for l in layers if l in people_layers])
+            condition = Q(
+                ~Q(lotlayer__name__in=people_layers + ('gutterspace',)) | 
+                condition
             )
 
         return qs.filter(condition)
