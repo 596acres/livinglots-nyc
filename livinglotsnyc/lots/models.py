@@ -71,6 +71,7 @@ class LotMixin(models.Model):
     bbl = models.CharField(max_length=10, unique=True, blank=True, null=True)
     block = models.IntegerField(blank=True, null=True)
     borough = models.CharField(max_length=25, choices=BOROUGH_CHOICES)
+    gutterspace = models.BooleanField(default=False)
     lot_number = models.IntegerField(blank=True, null=True)
     organizers = generic.GenericRelation(Organizer)
     parcel = models.ForeignKey('parcels.Parcel',
