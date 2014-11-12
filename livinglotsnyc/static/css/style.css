@@ -3452,8 +3452,21 @@ footer .footer-main:after {
     width: 50%;
   }
 }
-.header-home-link img {
-  max-width: 300px;
+.page-header {
+  margin-top: 25px;
+}
+.page-header-home-link img {
+  margin-left: 35px;
+  max-width: 500px;
+}
+.page-header .navbar-nav {
+  font-size: 24px;
+  margin-left: 20px;
+}
+.page-header .navbar-nav > li > a {
+  line-height: 75px;
+  padding-bottom: 0;
+  padding-top: 0;
 }
 .legend {
   background: rgba(255, 255, 255, 0.85);
