@@ -3310,8 +3310,8 @@ body {
   clear: both;
 }
 .overlaymenu {
-  background: rgba(255, 255, 255, 0.95);
-  border: 3px solid #2593c6;
+  background: #f6f8f7;
+  border: 3px solid #160805;
   display: none;
   padding: 15px;
   position: absolute;
@@ -3337,8 +3337,8 @@ body {
   left: 97px;
 }
 .overlaymenu-tip {
-  background: rgba(255, 255, 255, 0.95);
-  border: 3px solid #2593c6;
+  background: #f6f8f7;
+  border: 3px solid #160805;
   border-bottom: 0;
   border-right: 0;
   display: block;

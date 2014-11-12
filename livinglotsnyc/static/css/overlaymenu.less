@@ -1,6 +1,9 @@
+@overlaymenu-bg-color: @fill-color;
+@overlaymenu-border-color: @foreground-color;
+
 .overlaymenu {
-    background: rgba(256, 256, 256, 0.95);
-    border: 3px solid #2593c6;
+    background: @fill-color;
+    border: 3px solid @overlaymenu-border-color;
     display: none;
     padding: 15px;
     position: absolute;
@@ -28,8 +31,8 @@
 }
 
 .overlaymenu-tip {
-    background: rgba(256, 256, 256, 0.95);
-    border: 3px solid #2593c6;
+    background: @overlaymenu-bg-color;
+    border: 3px solid @overlaymenu-border-color;
     border-bottom: 0;
     border-right: 0;
     display: block;
