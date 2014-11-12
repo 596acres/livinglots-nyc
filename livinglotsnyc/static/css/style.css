@@ -3783,6 +3783,10 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   height: 150px;
   width: 225px;
 }
+.map-welcome {
+  background: black;
+  color: #ffffff;
+}
 .map-welcome h1 {
   font-family: 'Oswald', sans-serif;
   font-size: 56px;
@@ -3797,7 +3801,7 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
 .map-welcome-open-button,
 .map-welcome-open-button:active,
 .map-welcome-open-button:hover {
-  color: black;
+  color: #ffffff;
   float: right;
   font-size: 16px;
   margin-right: 50px;
