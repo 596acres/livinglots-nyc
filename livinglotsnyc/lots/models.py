@@ -101,10 +101,12 @@ class LotMixin(models.Model):
                     blocks = list(set([l.block for l in self.lots]))
                     block_strs = []
                     for block in blocks:
+                        block_lots = [l for l in self.lots if l.block == block]
                         block_strs.append('block %d, %s' % (
                             block,
-                            'lots %s' % (
-                                ', '.join([str(l.lot_number) for l in self.lots if l.block == block])
+                            '%s %s' % (
+                                'lot' if len(block_lots) == 1 else 'lots',
+                                ', '.join([str(l.lot_number) for l in block_lots]),
                             )
                         ))
                     return '%s %s' % (self.borough, '; '.join(block_strs))
