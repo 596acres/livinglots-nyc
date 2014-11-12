@@ -31,27 +31,23 @@
     <div>
         {% for field in form.visible_fields %}
             <div class="form-group {% if field.errors %}has-error{% endif %} {% if field.field.required %}required{% endif %}">
-                <div class="col-lg-3 control-label">
+                <div class="control-label">
                     {{ field.label_tag }}
                 </div>
-                <div class="col-lg-6">
+                <div class="controls">
+                    {% render_field field class+="form-control" %}
 
-                    <div class="controls">
-                        {% render_field field class+="form-control" %}
-
-                        {% if field.errors %}
-                        <div class="help-block">
-                            {% for error in field.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        {% if field.help_text %}
-                        <div class="help-text">{{ field.help_text|safe }}</div>
-                        {% endif %}
-
+                    {% if field.errors %}
+                    <div class="help-block">
+                        {% for error in field.errors %}
+                            {{ error }}
+                        {% endfor %}
                     </div>
+                    {% endif %}
+
+                    {% if field.help_text %}
+                    <div class="help-text">{{ field.help_text|safe }}</div>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

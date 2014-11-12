@@ -3389,6 +3389,42 @@ footer .footer-main:after {
 footer .footer-main:after {
   clear: both;
 }
+.form-group .control-label {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .form-group .control-label {
+    float: left;
+    width: 25%;
+  }
+}
+@media (min-width: 992px) {
+  .form-group .control-label {
+    float: left;
+    width: 25%;
+  }
+}
+.form-group .controls {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .form-group .controls {
+    float: left;
+    width: 75%;
+  }
+}
+@media (min-width: 992px) {
+  .form-group .controls {
+    float: left;
+    width: 50%;
+  }
+}
 .header-home-link img {
   max-width: 300px;
 }
