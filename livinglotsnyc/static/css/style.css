@@ -3592,6 +3592,52 @@ footer .footer-main:after {
   width: 100%;
   height: 500px;
 }
+.map-page .map-header {
+  display: block !important;
+  margin-top: 15px;
+}
+table.map-page .map-header {
+  display: table;
+}
+tr.map-page .map-header {
+  display: table-row !important;
+}
+th.map-page .map-header,
+td.map-page .map-header {
+  display: table-cell !important;
+}
+@media (max-width: 767px) {
+  .map-page .map-header,
+  tr.map-page .map-header,
+  th.map-page .map-header,
+  td.map-page .map-header {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .map-page .map-header.hidden-sm,
+  tr.map-page .map-header.hidden-sm,
+  th.map-page .map-header.hidden-sm,
+  td.map-page .map-header.hidden-sm {
+    display: none !important;
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .map-page .map-header.hidden-md,
+  tr.map-page .map-header.hidden-md,
+  th.map-page .map-header.hidden-md,
+  td.map-page .map-header.hidden-md {
+    display: none !important;
+  }
+}
+@media (min-width: 1200px) {
+  .map-page .map-header.hidden-lg,
+  tr.map-page .map-header.hidden-lg,
+  th.map-page .map-header.hidden-lg,
+  td.map-page .map-header.hidden-lg {
+    display: none !important;
+  }
+}
 .map-page .map-header-content {
   margin-left: 0;
   margin-right: 0;
