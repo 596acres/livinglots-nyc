@@ -994,8 +994,8 @@ fieldset[disabled] .btn-primary.active {
 }
 .btn-warning {
   color: #ffffff;
-  background-color: #f0ad4e;
-  border-color: #eea236;
+  background-color: #cfb933;
+  border-color: #bca82c;
 }
 .btn-warning:hover,
 .btn-warning:focus,
@@ -1003,8 +1003,8 @@ fieldset[disabled] .btn-primary.active {
 .btn-warning.active,
 .open .dropdown-toggle.btn-warning {
   color: #ffffff;
-  background-color: #ed9c28;
-  border-color: #d58512;
+  background-color: #b09d29;
+  border-color: #8b7c21;
 }
 .btn-warning:active,
 .btn-warning.active,
@@ -1026,17 +1026,17 @@ fieldset[disabled] .btn-warning:active,
 .btn-warning.disabled.active,
 .btn-warning[disabled].active,
 fieldset[disabled] .btn-warning.active {
-  background-color: #f0ad4e;
-  border-color: #eea236;
+  background-color: #cfb933;
+  border-color: #bca82c;
 }
 .btn-warning .badge {
-  color: #f0ad4e;
+  color: #cfb933;
   background-color: #fff;
 }
 .btn-danger {
   color: #ffffff;
-  background-color: #d9534f;
-  border-color: #d43f3a;
+  background-color: #e64c9b;
+  border-color: #e3368e;
 }
 .btn-danger:hover,
 .btn-danger:focus,
@@ -1044,8 +1044,8 @@ fieldset[disabled] .btn-warning.active {
 .btn-danger.active,
 .open .dropdown-toggle.btn-danger {
   color: #ffffff;
-  background-color: #d2322d;
-  border-color: #ac2925;
+  background-color: #e12887;
+  border-color: #c01b70;
 }
 .btn-danger:active,
 .btn-danger.active,
@@ -1067,17 +1067,17 @@ fieldset[disabled] .btn-danger:active,
 .btn-danger.disabled.active,
 .btn-danger[disabled].active,
 fieldset[disabled] .btn-danger.active {
-  background-color: #d9534f;
-  border-color: #d43f3a;
+  background-color: #e64c9b;
+  border-color: #e3368e;
 }
 .btn-danger .badge {
-  color: #d9534f;
+  color: #e64c9b;
   background-color: #fff;
 }
 .btn-success {
   color: #ffffff;
-  background-color: #5cb85c;
-  border-color: #4cae4c;
+  background-color: #1f9e48;
+  border-color: #1b893e;
 }
 .btn-success:hover,
 .btn-success:focus,
@@ -1085,8 +1085,8 @@ fieldset[disabled] .btn-danger.active {
 .btn-success.active,
 .open .dropdown-toggle.btn-success {
   color: #ffffff;
-  background-color: #47a447;
-  border-color: #398439;
+  background-color: #187c38;
+  border-color: #115627;
 }
 .btn-success:active,
 .btn-success.active,
@@ -1108,17 +1108,17 @@ fieldset[disabled] .btn-success:active,
 .btn-success.disabled.active,
 .btn-success[disabled].active,
 fieldset[disabled] .btn-success.active {
-  background-color: #5cb85c;
-  border-color: #4cae4c;
+  background-color: #1f9e48;
+  border-color: #1b893e;
 }
 .btn-success .badge {
-  color: #5cb85c;
+  color: #1f9e48;
   background-color: #fff;
 }
 .btn-info {
   color: #ffffff;
-  background-color: #5bc0de;
-  border-color: #46b8da;
+  background-color: #b4d0d1;
+  border-color: #a4c6c7;
 }
 .btn-info:hover,
 .btn-info:focus,
@@ -1126,8 +1126,8 @@ fieldset[disabled] .btn-success.active {
 .btn-info.active,
 .open .dropdown-toggle.btn-info {
   color: #ffffff;
-  background-color: #39b3d7;
-  border-color: #269abc;
+  background-color: #9bc0c1;
+  border-color: #7eaeb0;
 }
 .btn-info:active,
 .btn-info.active,
@@ -1149,11 +1149,11 @@ fieldset[disabled] .btn-info:active,
 .btn-info.disabled.active,
 .btn-info[disabled].active,
 fieldset[disabled] .btn-info.active {
-  background-color: #5bc0de;
-  border-color: #46b8da;
+  background-color: #b4d0d1;
+  border-color: #a4c6c7;
 }
 .btn-info .badge {
-  color: #5bc0de;
+  color: #b4d0d1;
   background-color: #fff;
 }
 .btn-link {
@@ -3825,8 +3825,8 @@ a.photo-list-item.active {
   line-height: 1.5;
   border-radius: 3px;
   color: #ffffff;
-  background-color: #f0ad4e;
-  border-color: #eea236;
+  background-color: #cfb933;
+  border-color: #bca82c;
   margin-bottom: 5px;
 }
 .photo-list-admin-actions .btn:hover,
@@ -3835,8 +3835,8 @@ a.photo-list-item.active {
 .photo-list-admin-actions .btn.active,
 .open .dropdown-toggle.photo-list-admin-actions .btn {
   color: #ffffff;
-  background-color: #ed9c28;
-  border-color: #d58512;
+  background-color: #b09d29;
+  border-color: #8b7c21;
 }
 .photo-list-admin-actions .btn:active,
 .photo-list-admin-actions .btn.active,
@@ -3858,11 +3858,11 @@ fieldset[disabled] .photo-list-admin-actions .btn:active,
 .photo-list-admin-actions .btn.disabled.active,
 .photo-list-admin-actions .btn[disabled].active,
 fieldset[disabled] .photo-list-admin-actions .btn.active {
-  background-color: #f0ad4e;
-  border-color: #eea236;
+  background-color: #cfb933;
+  border-color: #bca82c;
 }
 .photo-list-admin-actions .btn .badge {
-  color: #f0ad4e;
+  color: #cfb933;
   background-color: #fff;
 }
 #popup {
