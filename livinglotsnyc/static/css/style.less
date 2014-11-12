@@ -5,7 +5,11 @@
 @import "../bower_components/select2/select2.css";
 
 
+// Import our variables, bootstrap's, then override their variables
+@import "variables.less";
 @import "../bower_components/bootstrap/less/variables.less";
+@import "overrides/bootstrap-variables.less";
+
 @import "../bower_components/bootstrap/less/utilities.less";
 @import "../bower_components/bootstrap/less/mixins.less";
 @import "../bower_components/bootstrap/less/responsive-utilities.less";
@@ -31,7 +35,6 @@
  */
 
 @import "fonts.less";
-@import "variables.less";
 @import "mixins.less";
 @import "base.less";
 @import "overlaymenu.less";
