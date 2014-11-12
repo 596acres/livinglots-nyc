@@ -88,4 +88,15 @@ $(document).ready(function () {
     $('.overlay-nearby-button').overlaymenu({
         menu: '.overlaymenu-nearby'
     });
+
+    $('.btn-add-to-group').click(function () {
+        if (!confirm("Group these two lots? This can't be undone.")) {
+            return false;
+        }
+        var url = Django.url('lots:add_to_group', { pk: $(this).data('lot') });
+        $.post(url, { lot_to_add: $(this).data('lot-to-add') }, function (data) {
+            window.location = Django.url('lots:lot_detail', { pk: data.group });
+        });
+        return false;
+    });
 });

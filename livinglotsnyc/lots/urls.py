@@ -2,9 +2,9 @@ from django.conf.urls import patterns, url
 
 import livinglots_lots.urls as llurls
 
-from .views import (CountOrganizersView, CreateLotView, EmailOrganizersView,
-                    LotsCountViewWithAcres, LotDetailView, LotDetailViewJSON,
-                    LotsGeoJSONCentroid, LotsGeoJSONPolygon,
+from .views import (AddToGroupView, CountOrganizersView, CreateLotView,
+                    EmailOrganizersView, LotsCountViewWithAcres, LotDetailView,
+                    LotDetailViewJSON, LotsGeoJSONCentroid, LotsGeoJSONPolygon,
                     LotsOwnershipOverview, LotsCSV, LotsKML, LotsGeoJSON)
 
 
@@ -28,6 +28,9 @@ urlpatterns = patterns('',
 
     url(r'^create/by-parcels/$', CreateLotView.as_view(),
         name='create_by_parcels'),
+
+    url(r'^(?P<pk>\d+)/group/add/$', AddToGroupView.as_view(),
+        name='add_to_group'),
 
     url(r'^organizers/email/', EmailOrganizersView.as_view(),
         name='lot_email_organizers'),

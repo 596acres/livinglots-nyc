@@ -7,10 +7,12 @@ from random import shuffle
 
 from django.db.models import Count, Sum
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.http import HttpResponseBadRequest
 from django.views.generic import View
+from django.views.generic.detail import SingleObjectMixin
 
-from braces.views import (JSONResponseMixin, LoginRequiredMixin,
+from braces.views import (CsrfExemptMixin, JSONResponseMixin, LoginRequiredMixin,
                           PermissionRequiredMixin)
 from caching.base import cached
 
@@ -313,3 +315,21 @@ class CreateLotView(BaseCreateLotView):
 
     def get_parcels(self, pks):
         return Parcel.objects.filter(pk__in=pks)
+
+
+class AddToGroupView(CsrfExemptMixin, LoginRequiredMixin, 
+                     PermissionRequiredMixin, JSONResponseMixin,
+                     SingleObjectMixin, View):
+    model = Lot
+    permission_required = 'lots.add_lot'
+
+    def post(self, request, *args, **kwargs):
+        lot = self.get_object()
+        to_add = Lot.objects.get(pk=request.POST.get('lot_to_add'))
+        context = {
+            'lot': lot.pk,
+            'lot_to_add': to_add.pk,
+            'group': lot.group_with(to_add).pk,
+        }
+        messages.success(request, 'Successfully added %s to this group' % str(to_add))
+        return self.render_json_response(context)

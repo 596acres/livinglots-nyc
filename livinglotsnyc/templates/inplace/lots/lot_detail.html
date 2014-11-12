@@ -190,6 +190,11 @@
                             <a href="{{ nearby.get_absolute_url }}">
                                 {{ nearby.display_name }}
                             </a>
+                            {% if "lots.change_lot" in perms %}
+                            <a class="btn btn-sm btn-warning btn-add-to-group" data-lot="{{ lot.pk }}" data-lot-to-add="{{ nearby.pk }}" href="#">
+                                    {% trans "Group with this lot" %}
+                                </a>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>

@@ -4338,7 +4338,8 @@ module.exports = {
         // No people involved (just vacant): no_people selected, lot has no
         // people-involving layers associated with it
         if (_.contains(filters.layers, 'no_people') &&
-            _.isEmpty(_.intersection(peopleInvolvedLayers, lotLayersNotOwnership))) {
+            _.isEmpty(_.intersection(peopleInvolvedLayers, lotLayersNotOwnership)) &&
+            !_.contains(lotLayers, 'gutterspace')) {
             return true;
         }
 
@@ -5163,6 +5164,17 @@ $(document).ready(function () {
 
     $('.overlay-nearby-button').overlaymenu({
         menu: '.overlaymenu-nearby'
+    });
+
+    $('.btn-add-to-group').click(function () {
+        if (!confirm("Group these two lots? This can't be undone.")) {
+            return false;
+        }
+        var url = Django.url('lots:add_to_group', { pk: $(this).data('lot') });
+        $.post(url, { lot_to_add: $(this).data('lot-to-add') }, function (data) {
+            window.location = Django.url('lots:lot_detail', { pk: data.group });
+        });
+        return false;
     });
 });
 

@@ -1,6 +1,7 @@
 from pint import UnitRegistry
 
 from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
@@ -78,6 +79,13 @@ class LotMixin(models.Model):
         blank=True,
         null=True,
     )
+
+    files = generic.GenericRelation('files.File')
+    groundtruth_records = generic.GenericRelation('groundtruth.GroundtruthRecord')
+    notes = generic.GenericRelation('notes.Note')
+    photos = generic.GenericRelation('photos.Photo')
+    steward_notifications = generic.GenericRelation('steward.StewardNotification')
+    steward_projects = generic.GenericRelation('steward.StewardProject')
 
     owner_opt_in = models.BooleanField(default=False)
 
@@ -161,6 +169,31 @@ class LotMixin(models.Model):
             return [self,]
     lots = property(_get_lots)
 
+    def get_new_lotgroup_kwargs(self):
+        kwargs = super(LotMixin, self).get_new_lotgroup_kwargs()
+        kwargs.update({
+            'borough': self.borough,
+        })
+        return kwargs
+
+    def reassign_objects(self, new_lot, **kwargs):
+        """Reassign related objects (eg, notes or organizers) to the new lot"""
+        self.files.update(**kwargs)
+
+        self.notes.update(**kwargs)
+        self.organizers.update(**kwargs)
+        self.photos.update(**kwargs)
+        self.steward_projects.update(**kwargs)
+
+        # Handle things with MonitorEntrys (moderated)
+        monitor_objs = (
+            list(self.groundtruth_records.all()) +
+            list(self.steward_notifications.all())
+        )
+        for obj in monitor_objs:
+            obj.content_object = new_lot
+            obj.save()
+
     def __unicode__(self):
         return self.display_name
 
@@ -229,9 +262,6 @@ class LotLayer(BaseLotLayer):
                 Q(owner__owner_type='private'),
                 Q(owner_opt_in=True)
             ),
-            'hidden': Q(
-                ~Q(known_use__name='gutterspace'),
-                known_use__visible=False,
-            ),
-            'gutterspace': Q(known_use__name='gutterspace'),
+            'hidden': Q(known_use__visible=False),
+            'gutterspace': Q(gutterspace=True),
         }
