@@ -1,6 +1,6 @@
 .legend {
-    background: rgba(256, 256, 256, 0.85);
-    border: 3px solid #2593c6;
+    background: fadeout(@fill-color, 10%);
+    border: 3px solid @foreground-color;
     bottom: 10px;
     left: 25px;
     padding: 5px;
@@ -25,19 +25,15 @@
         }
 
         &-public {
-            background: #66A954;
+            background: @lot-public-color;
         }
 
         &-private {
-            background: #4292F1;
+            background: @lot-private-color;
         }
 
         &-project {
-            background: #FD39FE;
-        }
-
-        &-gutterspace {
-            background: #FE3627;
+            background: @lot-access-color;
         }
     }
 

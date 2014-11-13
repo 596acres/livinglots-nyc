@@ -3469,8 +3469,8 @@ footer .footer-main:after {
   padding-top: 0;
 }
 .legend {
-  background: rgba(255, 255, 255, 0.85);
-  border: 3px solid #2593c6;
+  background: rgba(246, 248, 247, 0.9);
+  border: 3px solid #160805;
   bottom: 10px;
   left: 25px;
   padding: 5px;
@@ -3494,16 +3494,13 @@ footer .footer-main:after {
   width: 20px;
 }
 .legend-marker-public {
-  background: #66A954;
+  background: #1f9e48;
 }
 .legend-marker-private {
-  background: #4292F1;
+  background: #b4d0d1;
 }
 .legend-marker-project {
-  background: #FD39FE;
-}
-.legend-marker-gutterspace {
-  background: #FE3627;
+  background: #e64c9b;
 }
 .legend-label {
   display: inline;
