@@ -1,4 +1,5 @@
 .*.sw*
 *.pyc
+.project
 TODO
 tilestache
