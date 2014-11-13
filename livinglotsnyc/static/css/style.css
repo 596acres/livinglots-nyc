@@ -3543,8 +3543,8 @@ footer .footer-main:after {
   margin-top: 10px;
 }
 .lot-detail-organizers h2 {
-  background: #58595b;
-  color: white;
+  background: #f6f8f7;
+  color: #160805;
   padding-left: 5px;
   padding-bottom: 10px;
   padding-top: 10px;
@@ -3561,8 +3561,7 @@ footer .footer-main:after {
   display: none;
 }
 .lot-detail-info-box {
-  background-color: rgba(151, 176, 61, 0.1);
-  /* #97b03d in RGB */
+  background-color: #f6f8f7;
   margin-top: 15px;
   padding: 10px;
 }
@@ -3576,7 +3575,7 @@ footer .footer-main:after {
 .lot-detail-organizer-intro h3 {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
-  color: #2593c6;
+  color: #1f9e48;
   margin: 0;
   text-transform: uppercase;
 }
