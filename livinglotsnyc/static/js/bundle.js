@@ -5319,10 +5319,10 @@ var _ = require('underscore');
 
 var fillColors = {
     default: '#000000',
-    in_use: '#FD39FE',
-    private: '#4292F1',
-    public: '#66A954',
-    gutterspace: '#66A954'
+    in_use: '#e64c9b',
+    private: '#b4d0d1',
+    public: '#1f9e48',
+    gutterspace: '#1f9e48'
 };
 
 module.exports = {
