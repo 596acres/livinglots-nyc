@@ -8,3 +8,5 @@ class OrganizeAppConfig(AppConfig):
 
     def ready(self):
         registry.register(self.get_model('Organizer'))
+
+        from .signals import *

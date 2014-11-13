@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     'inplace.boundaries',
     'inplace_activity_stream',
     'jsonfield',
+    'mailchimp',
     'mptt',
     'reversion',
     'reversion_compare',
@@ -299,3 +300,10 @@ CONTACT_FORM_REASONS = OrderedDict([
 ])
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+MAILCHIMP_API_KEY = get_env_variable('MAILCHIMP_API_KEY')
+MAILCHIMP_LIST_ID = get_env_variable('MAILCHIMP_LIST_ID')
+MAILCHIMP_PARTCICIPATION_GROUP = {
+    'name':'Participation',
+    'groups':'Watchers and Organizers'
+}
