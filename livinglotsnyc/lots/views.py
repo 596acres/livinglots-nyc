@@ -203,8 +203,8 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         for layer, qs in layers.items():
             count = {
                 'label': self.layer_labels[layer],
-                'total': qs.count(),
-                'sites': qs.filter().count(),
+                'total': qs.distinct().count(),
+                'sites': qs.filter().distinct().count(),
                 'type': layer,
             }
             owners = self.get_owners(qs)
