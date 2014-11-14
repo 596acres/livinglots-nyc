@@ -215,8 +215,11 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         ))
 
     def get_sqft(self, qs):
-        sqft = qs.aggregate(area=Sum('polygon_area'))['area']
-        return int(round(sqft))
+        try:
+            sqft = qs.aggregate(area=Sum('polygon_area'))['area']
+            return int(round(sqft))
+        except TypeError:
+            return 0
 
     def get_acres(self, sqft):
         try:
