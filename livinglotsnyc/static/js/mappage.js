@@ -11,6 +11,7 @@ var Spinner = require('spin.js');
 var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 
+require('bootstrap_tooltip');
 require('jquery.infinitescroll');
 require('leaflet.loading');
 require('livinglots-map/src/livinglots.addlot');
@@ -67,6 +68,7 @@ function updateOwnershipOverview(map) {
             lottypes: data.owners
         });
         $('.details-overview').html(content);
+        $('.details-area-compare-tooltip').tooltip();
     });
 }
 

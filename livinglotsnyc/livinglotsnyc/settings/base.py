@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     # first-party, project-generic
     #
     'pagepermissions',
+    'sizecompare',
 
     #
     # Living Lots

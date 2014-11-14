@@ -25,6 +25,7 @@ from livinglots_lots.views import LotsCSV as BaseLotsCSV
 from livinglots_lots.views import LotsKML as BaseLotsKML
 from livinglots_lots.views import LotsGeoJSON as BaseLotsGeoJSON
 from livinglots_organize.mail import mass_mail_organizers
+from sizecompare.compare import find_comparable
 
 from organize.models import Organizer
 from nycdata.parcels.models import Parcel
@@ -210,11 +211,13 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
     def get_layer_counts(self, layers):
         counts = []
         for layer, qs in layers.items():
+            sqft = self.get_sqft(qs.distinct())
             count = {
                 'acres': self.get_acres(qs.distinct()),
+                'comparable': find_comparable(sqft),
                 'label': self.layer_labels[layer],
                 'total': qs.distinct().count(),
-                'sqft': self.get_sqft(qs.distinct()),
+                'sqft': sqft,
                 'type': layer,
             }
             owners = self.get_owners(qs)

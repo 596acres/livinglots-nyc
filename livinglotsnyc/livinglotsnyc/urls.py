@@ -32,6 +32,9 @@ urlpatterns += patterns('',
     # Activity stream
     url('^activity/', include('activities.urls')),
 
+    # Size Compare
+    url('^compare/', include('sizecompare.urls')),
+
     # Django.js
     url(r'^djangojs/', include('djangojs.urls')),
 

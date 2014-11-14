@@ -32,6 +32,7 @@
   },
   "browser": {
     "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
+    "bootstrap_tooltip": "./bower_components/bootstrap/js/tooltip.js",
     "fancybox": "./bower_components/fancybox/source/jquery.fancybox.js",
     "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
     "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",

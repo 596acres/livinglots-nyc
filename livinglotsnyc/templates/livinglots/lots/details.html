@@ -16,7 +16,9 @@
                     </ul>
                     <span class="details-total">
                         {{total}} sites,
-                        {{pick-area acres sqft}}
+                        <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
+                            {{pick-area acres sqft}}
+                        </a>
                     </span>
                 </li>
             {{/each}}

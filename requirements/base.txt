@@ -40,6 +40,7 @@ git+git://github.com/ebrelsford/Django-monitor/@master
 django-mptt==0.6.1
 django-reversion==1.8.4
 git+git://github.com/ebrelsford/django-reversion-compare/@master
+git+git://github.com/596acres/django-sizecompare/@master
 django.js==0.8.1
 feincms-cleanse==2
 feincms-elephantblog==1.0.0
