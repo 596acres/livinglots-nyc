@@ -180,12 +180,8 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
     def get_owners(self, lots_qs):
         owners = []
         for row in lots_qs.values('owner__name').annotate(count=Count('pk')):
-            label = 'owned by %s' % row['owner__name']
-            if row['owner__name'] == 'private owner':
-                label = ''
             owners.append({
                 'name': row['owner__name'],
-                'label': label,
                 'count': row['count'],
             })
         return sorted(owners, key=itemgetter('name'))
