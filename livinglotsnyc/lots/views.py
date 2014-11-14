@@ -5,7 +5,7 @@ from operator import itemgetter
 from pint import UnitRegistry
 from random import shuffle
 
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.http import HttpResponseBadRequest
@@ -178,7 +178,10 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
     }
 
     def get_organizing(self, qs):
-        qs = qs.filter(lotlayer__name='organizing').distinct()
+        qs = qs.filter(Q(
+            Q(lotlayer__name='organizing') |
+            Q(lotlayer__name='in_use_started_here')
+        )).distinct()
         sqft = qs.aggregate(area=Sum('polygon_area'))['area']
         if not sqft:
             sqft = 0
