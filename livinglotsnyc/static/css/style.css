@@ -3854,10 +3854,8 @@ fieldset[disabled] .btn-show-details.active {
 .overlaymenu-details .details-actions {
   margin-left: 0;
   margin-right: 0;
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
   display: block;
+  margin-left: 8%;
 }
 .overlaymenu-details .details-actions:before,
 .overlaymenu-details .details-actions:after {
@@ -3874,25 +3872,6 @@ fieldset[disabled] .btn-show-details.active {
 }
 .overlaymenu-details .details-actions:after {
   clear: both;
-}
-.overlaymenu-details .details-actions > .btn {
-  position: relative;
-  float: left;
-}
-.overlaymenu-details .details-actions > .btn:hover,
-.overlaymenu-details .details-actions > .btn:focus,
-.overlaymenu-details .details-actions > .btn:active,
-.overlaymenu-details .details-actions > .btn.active {
-  z-index: 2;
-}
-.overlaymenu-details .details-actions > .btn:focus {
-  outline: none;
-}
-.overlaymenu-details .details-actions .btn + .btn,
-.overlaymenu-details .details-actions .btn + .btn-group,
-.overlaymenu-details .details-actions .btn-group + .btn,
-.overlaymenu-details .details-actions .btn-group + .btn-group {
-  margin-left: -1px;
 }
 .overlaymenu-details .details-show-owners {
   position: relative;
@@ -3902,11 +3881,6 @@ fieldset[disabled] .btn-show-details.active {
   color: #160805;
   background-color: #ffffff;
   border-color: #160805;
-}
-@media (min-width: 992px) {
-  .overlaymenu-details .details-show-owners {
-    margin-left: 16.66666667%;
-  }
 }
 @media (min-width: 992px) {
   .overlaymenu-details .details-show-owners {
