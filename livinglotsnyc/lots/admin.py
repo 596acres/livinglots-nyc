@@ -13,7 +13,7 @@ class LotAdmin(BaseLotAdmin):
             }),
         ) + BaseLotAdmin.fieldsets + (
             ('Ownership', {
-                'fields': (('owner', 'owner_contact',),),
+                'fields': (('owner', 'owner_contact',), 'owner_opt_in',),
             }),
         )
     list_display = ('bbl', 'address_line1', 'borough', 'known_use')
