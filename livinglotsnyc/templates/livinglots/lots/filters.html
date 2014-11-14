@@ -28,6 +28,19 @@
                 <label class="filter-owner-label" for="owner-type-private">
                     {% trans "private land" %}
                 </label>
+
+                {% get_owners type "private" True as owners %}
+                {% if owners %}
+                    <select class="filter filter-owner-private form-control">
+                        <option value="">all owners</option>
+
+                        {% for owner in owners %}
+                            <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
+                                {{ owner.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
             </li>
         </ul>
     </section>

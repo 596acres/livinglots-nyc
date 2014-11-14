@@ -3392,7 +3392,7 @@ body {
 .filter-owner-label {
   width: 90%;
 }
-.filter-owner-public {
+.filter-owner select {
   margin-left: 10%;
   width: 80%;
 }
