@@ -21,7 +21,10 @@
                     <ul class="details-owner-list details-owner-list-{{type}}">
                         {{#each owners}}
                             <li>
-                                {{name}}: {{count}} lots
+                                {{name}}: {{count}} sites,
+                                <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
+                                    {{pick-area acres sqft}}
+                                </a>
                             </li>
                         {{/each}}
                     </ul>

@@ -179,10 +179,15 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
 
     def get_owners(self, lots_qs):
         owners = []
-        for row in lots_qs.values('owner__name').annotate(count=Count('pk')):
+        for row in lots_qs.values('owner__name').annotate(count=Count('pk'),
+                                                          area=Sum('polygon_area')):
+            sqft = row['area']
             owners.append({
-                'name': row['owner__name'],
+                'acres': self.get_acres(sqft),
+                'sqft': int(round(sqft)),
+                'comparable': find_comparable(sqft),
                 'count': row['count'],
+                'name': row['owner__name'],
             })
         return sorted(owners, key=itemgetter('name'))
 
@@ -199,8 +204,8 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         sqft = qs.aggregate(area=Sum('polygon_area'))['area']
         return int(round(sqft))
 
-    def get_acres(self, qs):
-        sqft = self.get_sqft(qs) * (ureg.feet ** 2)
+    def get_acres(self, sqft):
+        sqft = sqft * (ureg.feet ** 2)
         acres = sqft.to(ureg.acre).magnitude
         return int(round(acres))
 
@@ -209,7 +214,7 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         for layer, qs in layers.items():
             sqft = self.get_sqft(qs.distinct())
             count = {
-                'acres': self.get_acres(qs.distinct()),
+                'acres': self.get_acres(sqft),
                 'comparable': find_comparable(sqft),
                 'label': self.layer_labels[layer],
                 'total': qs.distinct().count(),
