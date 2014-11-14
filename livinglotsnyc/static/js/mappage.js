@@ -15,6 +15,7 @@ require('jquery.infinitescroll');
 require('leaflet.loading');
 require('livinglots-map/src/livinglots.addlot');
 require('livinglots-map/src/livinglots.mail');
+require('./handlebars.helpers');
 require('./leaflet.lotmap');
 require('./map.search.js');
 require('./overlaymenu');

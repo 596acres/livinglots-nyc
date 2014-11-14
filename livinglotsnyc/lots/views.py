@@ -198,13 +198,23 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
             ('project', lots.filter(lotlayer__name='in_use')),
         ))
 
+    def get_sqft(self, qs):
+        sqft = qs.aggregate(area=Sum('polygon_area'))['area']
+        return int(round(sqft))
+
+    def get_acres(self, qs):
+        sqft = self.get_sqft(qs) * (ureg.feet ** 2)
+        acres = sqft.to(ureg.acre).magnitude
+        return int(round(acres))
+
     def get_layer_counts(self, layers):
         counts = []
         for layer, qs in layers.items():
             count = {
+                'acres': self.get_acres(qs.distinct()),
                 'label': self.layer_labels[layer],
                 'total': qs.distinct().count(),
-                'sites': qs.filter().distinct().count(),
+                'sqft': self.get_sqft(qs.distinct()),
                 'type': layer,
             }
             owners = self.get_owners(qs)

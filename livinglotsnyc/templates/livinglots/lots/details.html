@@ -6,7 +6,7 @@
             {{#each lottypes}}
                 <li>
                     <span class="legend-marker legend-marker-{{type}}"></span>
-                    {{label}}
+                    {{label}}:
                     <ul class="details-owner-list details-owner-list-{{type}}">
                         {{#each owners}}
                             <li>
@@ -14,7 +14,10 @@
                             </li>
                         {{/each}}
                     </ul>
-                    <span class="details-total">({{total}} lots)</span>
+                    <span class="details-total">
+                        {{total}} sites,
+                        {{pick-area acres sqft}}
+                    </span>
                 </li>
             {{/each}}
         </ul>
