@@ -4,7 +4,7 @@
     {% verbatim %}
         <ul class="details-layer-list">
             {{#each lottypes}}
-                <li>
+                <li class="details-layer-list-item">
                     <span class="legend-marker legend-marker-{{type}}"></span>
                     {{label}}:
                     <span class="details-total">
@@ -14,8 +14,11 @@
                         </a>
                     </span>
                     <div class="details-actions">
-                        <button type="button" class="details-show-owners btn btn-primary btn-xs" data-toggle="button" aria-pressed="false" data-type="{{type}}">
+                        <button type="button" class="details-show-owners btn btn-xs" data-toggle="button" aria-pressed="false" data-type="{{type}}">
                             owners
+                        </button>
+                        <button type="button" class="details-show-organizing btn btn-xs" data-toggle="button" aria-pressed="false" data-type="{{type}}">
+                            organizers
                         </button>
                     </div>
                     <ul class="details-owner-list details-owner-list-{{type}}">
@@ -28,6 +31,15 @@
                             </li>
                         {{/each}}
                     </ul>
+                    <div class="details-organizing details-organizing-{{type}}">
+                        <div class="details-organizing-text">
+                            <img src="/static/img/action_star_small.png" />
+                            organizing: {{organizing.count}} sites,
+                            <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
+                                {{pick-area organizing.acres organizing.sqft}}
+                            </a>
+                        </div>
+                    </div>
                 </li>
             {{/each}}
         </ul>

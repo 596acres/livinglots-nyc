@@ -177,6 +177,17 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         'project': 'people have access',
     }
 
+    def get_organizing(self, qs):
+        qs = qs.filter(lotlayer__name='organizing').distinct()
+        sqft = qs.aggregate(area=Sum('polygon_area'))['area']
+        if not sqft:
+            sqft = 0
+        return {
+            'acres': self.get_acres(sqft),
+            'count': qs.count(),
+            'sqft': int(round(sqft)),
+        }
+
     def get_owners(self, lots_qs):
         owners = []
         for row in lots_qs.values('owner__name').annotate(count=Count('pk'),
@@ -205,26 +216,27 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         return int(round(sqft))
 
     def get_acres(self, sqft):
-        sqft = sqft * (ureg.feet ** 2)
-        acres = sqft.to(ureg.acre).magnitude
-        return int(round(acres))
+        try:
+            sqft = sqft * (ureg.feet ** 2)
+            acres = sqft.to(ureg.acre).magnitude
+            return int(round(acres))
+        except ValueError:
+            return 0
 
     def get_layer_counts(self, layers):
         counts = []
         for layer, qs in layers.items():
             sqft = self.get_sqft(qs.distinct())
-            count = {
+            counts.append({
                 'acres': self.get_acres(sqft),
                 'comparable': find_comparable(sqft),
                 'label': self.layer_labels[layer],
-                'total': qs.distinct().count(),
+                'organizing': self.get_organizing(qs),
+                'owners': self.get_owners(qs),
                 'sqft': sqft,
+                'total': qs.distinct().count(),
                 'type': layer,
-            }
-            owners = self.get_owners(qs)
-            if owners:
-                count['owners'] = owners
-            counts.append(count)
+            })
         return counts
 
     def get_context_data(self, **kwargs):

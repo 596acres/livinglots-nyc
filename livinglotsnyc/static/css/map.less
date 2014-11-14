@@ -22,6 +22,16 @@
     margin-top: 5px;
 }
 
+.btn-show-details {
+    .make-md-column(4);
+    .button-variant(@foreground-color; white; @foreground-color);
+}
+
+.details-container {
+    display: none;
+    margin-top: 15px;
+}
+
 .overlaymenu {
     &-admin .overlaymenu-menu-content {
         min-height: 10px;
@@ -46,12 +56,17 @@
     &-details {
         .details-actions {
             .make-row(0);
+            .btn-group();
+            display: block;
         }
 
         .details-show-owners {
-            .button-variant(@foreground-color; white; @foreground-color);
-            .make-md-column(4);
             .make-md-column-offset(2);
+            .btn-show-details();
+        }
+
+        .details-show-organizing {
+            .btn-show-details();
         }
 
         .details-overview {
@@ -61,10 +76,24 @@
             .details-layer-list {
                 list-style: none;
                 padding-left: 0;
+
+                &-item {
+                    margin-bottom: 15px;
+                }
             }
 
             .details-owner-list {
-                display: none;
+                .details-container();
+            }
+
+            .details-organizing {
+                .make-row(0);
+                .details-container();
+
+                &-text {
+                    .make-md-column(10);
+                    .make-md-column-offset(1);
+                }
             }
         }
     }

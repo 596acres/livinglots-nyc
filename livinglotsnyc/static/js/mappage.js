@@ -73,6 +73,9 @@ function updateOwnershipOverview(map) {
         $('.details-show-owners').click(function () {
             $('.details-owner-list-' + $(this).data('type')).slideToggle();
         });
+        $('.details-show-organizing').click(function () {
+            $('.details-organizing-' + $(this).data('type')).slideToggle();
+        });
     });
 }
 

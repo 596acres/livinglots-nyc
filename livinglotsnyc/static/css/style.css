@@ -3780,6 +3780,61 @@ td.map-page .map-header {
 .overlay-admin-button {
   margin-top: 5px;
 }
+.btn-show-details {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  color: #160805;
+  background-color: #ffffff;
+  border-color: #160805;
+}
+@media (min-width: 992px) {
+  .btn-show-details {
+    float: left;
+    width: 33.33333333%;
+  }
+}
+.btn-show-details:hover,
+.btn-show-details:focus,
+.btn-show-details:active,
+.btn-show-details.active,
+.open .dropdown-toggle.btn-show-details {
+  color: #160805;
+  background-color: #ebebeb;
+  border-color: #000000;
+}
+.btn-show-details:active,
+.btn-show-details.active,
+.open .dropdown-toggle.btn-show-details {
+  background-image: none;
+}
+.btn-show-details.disabled,
+.btn-show-details[disabled],
+fieldset[disabled] .btn-show-details,
+.btn-show-details.disabled:hover,
+.btn-show-details[disabled]:hover,
+fieldset[disabled] .btn-show-details:hover,
+.btn-show-details.disabled:focus,
+.btn-show-details[disabled]:focus,
+fieldset[disabled] .btn-show-details:focus,
+.btn-show-details.disabled:active,
+.btn-show-details[disabled]:active,
+fieldset[disabled] .btn-show-details:active,
+.btn-show-details.disabled.active,
+.btn-show-details[disabled].active,
+fieldset[disabled] .btn-show-details.active {
+  background-color: #ffffff;
+  border-color: #160805;
+}
+.btn-show-details .badge {
+  color: #ffffff;
+  background-color: #fff;
+}
+.details-container {
+  display: none;
+  margin-top: 15px;
+}
 .overlaymenu-admin .overlaymenu-menu-content {
   min-height: 10px;
 }
@@ -3799,6 +3854,10 @@ td.map-page .map-header {
 .overlaymenu-details .details-actions {
   margin-left: 0;
   margin-right: 0;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  display: block;
 }
 .overlaymenu-details .details-actions:before,
 .overlaymenu-details .details-actions:after {
@@ -3815,15 +3874,45 @@ td.map-page .map-header {
 }
 .overlaymenu-details .details-actions:after {
   clear: both;
+}
+.overlaymenu-details .details-actions > .btn {
+  position: relative;
+  float: left;
+}
+.overlaymenu-details .details-actions > .btn:hover,
+.overlaymenu-details .details-actions > .btn:focus,
+.overlaymenu-details .details-actions > .btn:active,
+.overlaymenu-details .details-actions > .btn.active {
+  z-index: 2;
+}
+.overlaymenu-details .details-actions > .btn:focus {
+  outline: none;
+}
+.overlaymenu-details .details-actions .btn + .btn,
+.overlaymenu-details .details-actions .btn + .btn-group,
+.overlaymenu-details .details-actions .btn-group + .btn,
+.overlaymenu-details .details-actions .btn-group + .btn-group {
+  margin-left: -1px;
 }
 .overlaymenu-details .details-show-owners {
-  color: #160805;
-  background-color: #ffffff;
-  border-color: #160805;
   position: relative;
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px;
+  color: #160805;
+  background-color: #ffffff;
+  border-color: #160805;
+}
+@media (min-width: 992px) {
+  .overlaymenu-details .details-show-owners {
+    margin-left: 16.66666667%;
+  }
+}
+@media (min-width: 992px) {
+  .overlaymenu-details .details-show-owners {
+    float: left;
+    width: 33.33333333%;
+  }
 }
 .overlaymenu-details .details-show-owners:hover,
 .overlaymenu-details .details-show-owners:focus,
@@ -3861,16 +3950,56 @@ fieldset[disabled] .overlaymenu-details .details-show-owners.active {
   color: #ffffff;
   background-color: #fff;
 }
+.overlaymenu-details .details-show-organizing {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  color: #160805;
+  background-color: #ffffff;
+  border-color: #160805;
+}
 @media (min-width: 992px) {
-  .overlaymenu-details .details-show-owners {
+  .overlaymenu-details .details-show-organizing {
     float: left;
     width: 33.33333333%;
   }
 }
-@media (min-width: 992px) {
-  .overlaymenu-details .details-show-owners {
-    margin-left: 16.66666667%;
-  }
+.overlaymenu-details .details-show-organizing:hover,
+.overlaymenu-details .details-show-organizing:focus,
+.overlaymenu-details .details-show-organizing:active,
+.overlaymenu-details .details-show-organizing.active,
+.open .dropdown-toggle.overlaymenu-details .details-show-organizing {
+  color: #160805;
+  background-color: #ebebeb;
+  border-color: #000000;
+}
+.overlaymenu-details .details-show-organizing:active,
+.overlaymenu-details .details-show-organizing.active,
+.open .dropdown-toggle.overlaymenu-details .details-show-organizing {
+  background-image: none;
+}
+.overlaymenu-details .details-show-organizing.disabled,
+.overlaymenu-details .details-show-organizing[disabled],
+fieldset[disabled] .overlaymenu-details .details-show-organizing,
+.overlaymenu-details .details-show-organizing.disabled:hover,
+.overlaymenu-details .details-show-organizing[disabled]:hover,
+fieldset[disabled] .overlaymenu-details .details-show-organizing:hover,
+.overlaymenu-details .details-show-organizing.disabled:focus,
+.overlaymenu-details .details-show-organizing[disabled]:focus,
+fieldset[disabled] .overlaymenu-details .details-show-organizing:focus,
+.overlaymenu-details .details-show-organizing.disabled:active,
+.overlaymenu-details .details-show-organizing[disabled]:active,
+fieldset[disabled] .overlaymenu-details .details-show-organizing:active,
+.overlaymenu-details .details-show-organizing.disabled.active,
+.overlaymenu-details .details-show-organizing[disabled].active,
+fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
+  background-color: #ffffff;
+  border-color: #160805;
+}
+.overlaymenu-details .details-show-organizing .badge {
+  color: #ffffff;
+  background-color: #fff;
 }
 .overlaymenu-details .details-overview {
   min-height: 100px;
@@ -3880,8 +4009,51 @@ fieldset[disabled] .overlaymenu-details .details-show-owners.active {
   list-style: none;
   padding-left: 0;
 }
+.overlaymenu-details .details-overview .details-layer-list-item {
+  margin-bottom: 15px;
+}
 .overlaymenu-details .details-overview .details-owner-list {
   display: none;
+  margin-top: 15px;
+}
+.overlaymenu-details .details-overview .details-organizing {
+  margin-left: 0;
+  margin-right: 0;
+  display: none;
+  margin-top: 15px;
+}
+.overlaymenu-details .details-overview .details-organizing:before,
+.overlaymenu-details .details-overview .details-organizing:after {
+  content: " ";
+  display: table;
+}
+.overlaymenu-details .details-overview .details-organizing:after {
+  clear: both;
+}
+.overlaymenu-details .details-overview .details-organizing:before,
+.overlaymenu-details .details-overview .details-organizing:after {
+  content: " ";
+  display: table;
+}
+.overlaymenu-details .details-overview .details-organizing:after {
+  clear: both;
+}
+.overlaymenu-details .details-overview .details-organizing-text {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 992px) {
+  .overlaymenu-details .details-overview .details-organizing-text {
+    float: left;
+    width: 83.33333333%;
+  }
+}
+@media (min-width: 992px) {
+  .overlaymenu-details .details-overview .details-organizing-text {
+    margin-left: 8.33333333%;
+  }
 }
 .note-list {
   list-style: none;
