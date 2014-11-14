@@ -1,4 +1,5 @@
 var L = require('leaflet');
+var _ = require('underscore');
 
 require('TileLayer.GeoJSON');
 
@@ -49,10 +50,11 @@ L.LotGeoJson = L.GeoJSON.extend({
         var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
             coords = geometry.coordinates,
             layers = [],
-            latlng, latlngs, i, len;
+            latlng, latlngs, i, len,
+            options = L.extend({}, vectorOptions),
+            lotLayers = geojson.properties.layers.split(',');
 
-        var options = L.extend({}, vectorOptions);
-        if (geojson.properties.has_organizers) {
+        if (_.contains(lotLayers, 'organizing') || _.contains(lotLayers, 'in_use_started_here')) {
             options.hasOrganizers = true;
         }
 

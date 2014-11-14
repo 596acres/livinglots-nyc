@@ -4455,6 +4455,7 @@ L.TileLayer.Vector.include({
 
 },{"TileLayer.GeoJSON":9,"leaflet":50}],18:[function(require,module,exports){
 var L = require('leaflet');
+var _ = require('underscore');
 
 require('TileLayer.GeoJSON');
 
@@ -4505,10 +4506,11 @@ L.LotGeoJson = L.GeoJSON.extend({
         var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
             coords = geometry.coordinates,
             layers = [],
-            latlng, latlngs, i, len;
+            latlng, latlngs, i, len,
+            options = L.extend({}, vectorOptions),
+            lotLayers = geojson.properties.layers.split(',');
 
-        var options = L.extend({}, vectorOptions);
-        if (geojson.properties.has_organizers) {
+        if (_.contains(lotLayers, 'organizing') || _.contains(lotLayers, 'in_use_started_here')) {
             options.hasOrganizers = true;
         }
 
@@ -4582,7 +4584,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":17,"./leaflet.lotmultipolygon":21,"./leaflet.lotpolygon":23,"TileLayer.GeoJSON":9,"leaflet":50}],19:[function(require,module,exports){
+},{"./leaflet.geojson.tile":17,"./leaflet.lotmultipolygon":21,"./leaflet.lotpolygon":23,"TileLayer.GeoJSON":9,"leaflet":50,"underscore":74}],19:[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
