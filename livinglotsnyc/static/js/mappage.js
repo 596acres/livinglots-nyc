@@ -70,11 +70,35 @@ function updateOwnershipOverview(map) {
         });
         $('.details-overview').html(content);
         $('.details-area-compare-tooltip').tooltip();
-        $('.details-show-owners').click(function () {
-            $('.details-owner-list-' + $(this).data('type')).slideToggle();
+        $('.details-show-owners :input').change(function () {
+            var $list = $('.details-owner-list-' + $(this).data('type')),
+                $otherButton = $('.details-show-organizing-' + $(this).data('type'));
+            if ($(this).is(':checked')) {
+                $list.slideDown();
+
+                // Slide up other one
+                if ($otherButton.is('.active')) {
+                    $('.details-show-organizing-' + $(this).data('type')).button('toggle');
+                }
+            }
+            else {
+                $list.slideUp();
+            }
         });
-        $('.details-show-organizing').click(function () {
-            $('.details-organizing-' + $(this).data('type')).slideToggle();
+        $('.details-show-organizing :input').change(function () {
+            var $list = $('.details-organizing-' + $(this).data('type')),
+                $otherButton = $('.details-show-owners-' + $(this).data('type'));
+            if ($(this).is(':checked')) {
+                $list.slideDown();
+
+                // Slide up other one
+                if ($otherButton.is('.active')) {
+                    $('.details-show-owners-' + $(this).data('type')).button('toggle');
+                }
+            }
+            else {
+                $list.slideUp();
+            }
         });
     });
 }

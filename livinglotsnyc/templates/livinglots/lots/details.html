@@ -13,13 +13,15 @@
                             {{pick-area acres sqft}}
                         </a>
                     </span>
-                    <div class="details-actions">
-                        <button type="button" class="details-show-owners btn btn-xs" data-toggle="button" aria-pressed="false" data-type="{{type}}">
+                    <div class="details-actions" data-toggle="buttons">
+                        <label class="details-show-owners details-show-owners-{{type}} btn btn-xs">
+                            <input type="checkbox" autocomplete="off" data-type="{{type}}">
                             owners
-                        </button>
-                        <button type="button" class="details-show-organizing btn btn-xs" data-toggle="button" aria-pressed="false" data-type="{{type}}">
+                        </label>
+                        <label class="details-show-organizing details-show-organizing-{{type}} btn btn-xs">
+                            <input type="checkbox" autocomplete="off" data-type="{{type}}">
                             organizers
-                        </button>
+                        </label>
                     </div>
                     <ul class="details-owner-list details-owner-list-{{type}}">
                         {{#each owners}}
