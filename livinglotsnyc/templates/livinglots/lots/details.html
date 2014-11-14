@@ -7,19 +7,24 @@
                 <li>
                     <span class="legend-marker legend-marker-{{type}}"></span>
                     {{label}}:
-                    <ul class="details-owner-list details-owner-list-{{type}}">
-                        {{#each owners}}
-                            <li>
-                                {{count}} lots {{label}}
-                            </li>
-                        {{/each}}
-                    </ul>
                     <span class="details-total">
                         {{total}} sites,
                         <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
                             {{pick-area acres sqft}}
                         </a>
                     </span>
+                    <div class="details-actions">
+                        <button type="button" class="details-show-owners btn btn-primary btn-xs" data-toggle="button" aria-pressed="false" data-type="{{type}}">
+                            owners
+                        </button>
+                    </div>
+                    <ul class="details-owner-list details-owner-list-{{type}}">
+                        {{#each owners}}
+                            <li>
+                                {{name}}: {{count}} lots
+                            </li>
+                        {{/each}}
+                    </ul>
                 </li>
             {{/each}}
         </ul>

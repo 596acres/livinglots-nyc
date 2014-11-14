@@ -11,6 +11,7 @@ var Spinner = require('spin.js');
 var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 
+require('bootstrap_button');
 require('bootstrap_tooltip');
 require('jquery.infinitescroll');
 require('leaflet.loading');
@@ -69,6 +70,9 @@ function updateOwnershipOverview(map) {
         });
         $('.details-overview').html(content);
         $('.details-area-compare-tooltip').tooltip();
+        $('.details-show-owners').click(function () {
+            $('.details-owner-list-' + $(this).data('type')).slideToggle();
+        });
     });
 }
 

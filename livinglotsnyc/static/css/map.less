@@ -44,6 +44,16 @@
     }
 
     &-details {
+        .details-actions {
+            .make-row(0);
+        }
+
+        .details-show-owners {
+            .button-variant(@foreground-color; white; @foreground-color);
+            .make-md-column(4);
+            .make-md-column-offset(2);
+        }
+
         .details-overview {
             min-height: 100px;
             width: 100%;

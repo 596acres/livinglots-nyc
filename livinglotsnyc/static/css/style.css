@@ -3796,6 +3796,82 @@ td.map-page .map-header {
 .overlaymenu-news .activity-stream-container {
   min-height: 200px;
 }
+.overlaymenu-details .details-actions {
+  margin-left: 0;
+  margin-right: 0;
+}
+.overlaymenu-details .details-actions:before,
+.overlaymenu-details .details-actions:after {
+  content: " ";
+  display: table;
+}
+.overlaymenu-details .details-actions:after {
+  clear: both;
+}
+.overlaymenu-details .details-actions:before,
+.overlaymenu-details .details-actions:after {
+  content: " ";
+  display: table;
+}
+.overlaymenu-details .details-actions:after {
+  clear: both;
+}
+.overlaymenu-details .details-show-owners {
+  color: #160805;
+  background-color: #ffffff;
+  border-color: #160805;
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.overlaymenu-details .details-show-owners:hover,
+.overlaymenu-details .details-show-owners:focus,
+.overlaymenu-details .details-show-owners:active,
+.overlaymenu-details .details-show-owners.active,
+.open .dropdown-toggle.overlaymenu-details .details-show-owners {
+  color: #160805;
+  background-color: #ebebeb;
+  border-color: #000000;
+}
+.overlaymenu-details .details-show-owners:active,
+.overlaymenu-details .details-show-owners.active,
+.open .dropdown-toggle.overlaymenu-details .details-show-owners {
+  background-image: none;
+}
+.overlaymenu-details .details-show-owners.disabled,
+.overlaymenu-details .details-show-owners[disabled],
+fieldset[disabled] .overlaymenu-details .details-show-owners,
+.overlaymenu-details .details-show-owners.disabled:hover,
+.overlaymenu-details .details-show-owners[disabled]:hover,
+fieldset[disabled] .overlaymenu-details .details-show-owners:hover,
+.overlaymenu-details .details-show-owners.disabled:focus,
+.overlaymenu-details .details-show-owners[disabled]:focus,
+fieldset[disabled] .overlaymenu-details .details-show-owners:focus,
+.overlaymenu-details .details-show-owners.disabled:active,
+.overlaymenu-details .details-show-owners[disabled]:active,
+fieldset[disabled] .overlaymenu-details .details-show-owners:active,
+.overlaymenu-details .details-show-owners.disabled.active,
+.overlaymenu-details .details-show-owners[disabled].active,
+fieldset[disabled] .overlaymenu-details .details-show-owners.active {
+  background-color: #ffffff;
+  border-color: #160805;
+}
+.overlaymenu-details .details-show-owners .badge {
+  color: #ffffff;
+  background-color: #fff;
+}
+@media (min-width: 992px) {
+  .overlaymenu-details .details-show-owners {
+    float: left;
+    width: 33.33333333%;
+  }
+}
+@media (min-width: 992px) {
+  .overlaymenu-details .details-show-owners {
+    margin-left: 16.66666667%;
+  }
+}
 .overlaymenu-details .details-overview {
   min-height: 100px;
   width: 100%;
