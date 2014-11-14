@@ -8,13 +8,14 @@
                     <span class="legend-marker legend-marker-{{type}}"></span>
                     {{label}}:
                     <span class="details-total">
-                        {{total}} sites,
+                        {{total}} sites{{#if sqft}},
                         <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
                             {{pick-area acres sqft}}
                         </a>
+                        {{/if}}
                     </span>
                     <div class="details-actions btn-group btn-group-xs" data-toggle="buttons">
-                        <label class="details-show-owners details-show-owners-{{type}} btn">
+                        <label class="details-show-owners details-show-owners-{{type}} btn {{#unless owners}}disabled{{/unless}}">
                             <input type="checkbox" autocomplete="off" data-type="{{type}}">
                             owners
                         </label>
@@ -26,20 +27,22 @@
                     <ul class="details-owner-list details-owner-list-{{type}}">
                         {{#each owners}}
                             <li>
-                                {{name}}: {{count}} sites,
+                                {{name}}: {{count}} sites{{#if sqft}},
                                 <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
                                     {{pick-area acres sqft}}
                                 </a>
+                                {{/if}}
                             </li>
                         {{/each}}
                     </ul>
                     <div class="details-organizing details-organizing-{{type}}">
                         <div class="details-organizing-text">
                             <img src="/static/img/action_star_small.png" />
-                            organizing: {{organizing.count}} sites,
+                            organizing: {{organizing.count}} sites{{#if organizing.sqft}},
                             <a href="#" class="details-area-compare-tooltip" data-placement="bottom" data-toggle="tooltip" title="{{compare comparable}}">
                                 {{pick-area organizing.acres organizing.sqft}}
                             </a>
+                            {{/if}}
                         </div>
                     </div>
                 </li>
