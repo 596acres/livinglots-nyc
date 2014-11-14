@@ -20,8 +20,13 @@ module.exports = {
         }
 
         // Individual owners
-        if (filters.public_owners &&
-            !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+        if (filters.public_owners && _.contains(lotLayersOwnership, 'public') &&
+                !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+            return false;
+        }
+        if (filters.private_owners && 
+                _.contains(lotLayersOwnership, 'private_opt_in') &&
+                !_.contains(filters.private_owners, lot.feature.properties.owner)) {
             return false;
         }
 
@@ -47,6 +52,11 @@ module.exports = {
         filters.owner_types = filters.owner_types.split(',');
         if (filters.public_owners) {
             filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
+                return parseInt(ownerPk);
+            });
+        }
+        if (filters.private_owners) {
+            filters.private_owners = _.map(filters.private_owners.split(','), function (ownerPk) {
                 return parseInt(ownerPk);
             });
         }

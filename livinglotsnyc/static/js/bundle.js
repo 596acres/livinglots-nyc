@@ -4330,8 +4330,13 @@ module.exports = {
         }
 
         // Individual owners
-        if (filters.public_owners &&
-            !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+        if (filters.public_owners && _.contains(lotLayersOwnership, 'public') &&
+                !_.contains(filters.public_owners, lot.feature.properties.owner)) {
+            return false;
+        }
+        if (filters.private_owners && 
+                _.contains(lotLayersOwnership, 'private_opt_in') &&
+                !_.contains(filters.private_owners, lot.feature.properties.owner)) {
             return false;
         }
 
@@ -4357,6 +4362,11 @@ module.exports = {
         filters.owner_types = filters.owner_types.split(',');
         if (filters.public_owners) {
             filters.public_owners = _.map(filters.public_owners.split(','), function (ownerPk) {
+                return parseInt(ownerPk);
+            });
+        }
+        if (filters.private_owners) {
+            filters.private_owners = _.map(filters.private_owners.split(','), function (ownerPk) {
                 return parseInt(ownerPk);
             });
         }
@@ -5378,10 +5388,12 @@ function buildLotFilterParams(map, options) {
         return $(ownerType).attr('name'); 
     });
     var publicOwnerPks = [$('.filter-owner-public').val()];
+    var privateOwnerPks = [$('.filter-owner-private').val()];
     var params = {
         layers: layers.join(','),
         owner_types: ownerTypes.join(','),
         parents_only: true,
+        private_owners: privateOwnerPks.join(','),
         public_owners: publicOwnerPks.join(',')
     };
 
@@ -5452,6 +5464,10 @@ function setFilters(params) {
     var publicOwners = params.public_owners.split(',');
     _.each(publicOwners, function (pk) {
         $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
+    });
+    var privateOwners = params.private_owners.split(',');
+    _.each(privateOwners, function (pk) {
+        $('.filter-owner-private[data-owner-pk=' + pk +']').prop('checked', true);
     });
 
     // Set boundaries filters
