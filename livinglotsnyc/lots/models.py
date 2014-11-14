@@ -203,9 +203,36 @@ class LotMixin(models.Model):
         abstract = True
 
 
-class Lot(LotMixin, LotGroupLotMixin, BaseLot):
+class VisibleLotManager(BaseLotManager):
+    """A manager that only retrieves lots that are publicly viewable."""
 
+    def get_visible(self):
+        """
+        Should be publicly viewable if:
+            * There is no known use or its type is visible
+            * The known_use_certainty is over 3
+            * If any steward_projects exist, they opted in to being included
+        """
+        return super(VisibleLotManager, self).get_queryset().filter(
+            Q(
+                Q(known_use__isnull=True) |
+                Q(known_use__visible=True, steward_inclusion_opt_in=True)
+            ),
+            Q(
+                ~Q(owner__owner_type='private') |
+                Q(owner_opt_in=True)
+            ),
+            known_use_certainty__gt=3,
+            group__isnull=True,
+        )
+
+    def get_queryset(self):
+        return self.get_visible()
+
+
+class Lot(LotMixin, LotGroupLotMixin, BaseLot):
     objects = LotManager()
+    visible = VisibleLotManager()
 
     @models.permalink
     def get_absolute_url(self):
