@@ -168,11 +168,12 @@ class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
         return self.render_json_response(context)
 
 
-class LotsOwnershipOverview(FilteredLotsMixin, JSONResponseView):
+class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
 
     layer_labels = {
         'public': 'vacant public land',
         'private': 'private land opportunities',
+        'project': 'people have access',
     }
 
     def get_owners(self, lots_qs):
@@ -191,10 +192,11 @@ class LotsOwnershipOverview(FilteredLotsMixin, JSONResponseView):
     def get_layers(self, lots):
         lots_vacant = lots.exclude(lotlayer__name__in=('in_use',
                                                        'in_use_started_here',))
-        return OrderedDict({
-            'public': lots_vacant.filter(lotlayer__name='public'),
-            'private': lots_vacant.filter(lotlayer__name='private_opt_in'),
-        })
+        return OrderedDict((
+            ('public', lots_vacant.filter(lotlayer__name='public')),
+            ('private', lots_vacant.filter(lotlayer__name='private_opt_in')),
+            ('project', lots.filter(lotlayer__name='in_use')),
+        ))
 
     def get_layer_counts(self, layers):
         counts = []

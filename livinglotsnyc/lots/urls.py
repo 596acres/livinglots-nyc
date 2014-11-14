@@ -5,7 +5,7 @@ import livinglots_lots.urls as llurls
 from .views import (AddToGroupView, CountOrganizersView, CreateLotView,
                     EmailOrganizersView, LotsCountViewWithAcres, LotDetailView,
                     LotDetailViewJSON, LotsGeoJSONCentroid, LotsGeoJSONPolygon,
-                    LotsOwnershipOverview, LotsCSV, LotsKML, LotsGeoJSON)
+                    LotsTypesOverview, LotsCSV, LotsKML, LotsGeoJSON)
 
 
 urlpatterns = patterns('',
@@ -19,7 +19,7 @@ urlpatterns = patterns('',
         name='lot_geojson_polygon'),
     url(r'^count/organizers/', CountOrganizersView.as_view(),
         name='lot_count_organizers'),
-    url(r'^count/ownership/', LotsOwnershipOverview.as_view(),
+    url(r'^count/ownership/', LotsTypesOverview.as_view(),
         name='lot_ownership_overview'),
     url(r'^count/', LotsCountViewWithAcres.as_view(), name='lot_count'),
     url(r'^csv/', LotsCSV.as_view(), name='csv'),
