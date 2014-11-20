@@ -6,8 +6,22 @@ from django.contrib.gis.geos import Polygon
 from django.contrib.gis.measure import D
 
 import django_filters
+from inplace.boundaries.models import Boundary
 
 from .models import Lot
+
+
+class BoundaryFilter(django_filters.Filter):
+
+    def filter(self, qs, value):
+        name, pk = value.split('::')
+        try:
+            return qs.filter(
+                centroid__within=Boundary.objects.get(layer__name=name, pk=pk).geometry
+            )
+        except Boundary.DoesNotExist:
+            print 'Could not find Boundary %s %s' % (name, pk)
+        return qs
 
 
 class BoundingBoxFilter(django_filters.Filter):
@@ -84,6 +98,7 @@ class OwnerTypesFilter(django_filters.Filter):
 class LotFilter(django_filters.FilterSet):
 
     bbox = BoundingBoxFilter()
+    boundary = BoundaryFilter()
     layers = LayerFilter()
     lot_center = LotCenterFilter()
     owner_types = OwnerTypesFilter()
@@ -104,6 +119,7 @@ class LotFilter(django_filters.FilterSet):
         fields = [
             'address_line1',
             'bbox',
+            'boundary',
             'known_use',
             'layers',
             'lot_center',

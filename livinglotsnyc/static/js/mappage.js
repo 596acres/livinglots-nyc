@@ -32,6 +32,7 @@ function buildLotFilterParams(map, options) {
     });
     var publicOwnerPks = [$('.filter-owner-public').val()];
     var privateOwnerPks = [$('.filter-owner-private').val()];
+
     var params = {
         layers: layers.join(','),
         owner_types: ownerTypes.join(','),
@@ -40,6 +41,14 @@ function buildLotFilterParams(map, options) {
         public_owners: publicOwnerPks.join(',')
     };
 
+    // Add boundary, if any
+    $.each($('.filter-boundaries'), function () {
+        if ($(this).val() !== '') {
+            params.boundary = $(this).data('layer') + '::' + $(this).val(); 
+        }
+    });
+
+    // Add BBOX if requested
     if (options && options.bbox) {
         params.bbox = map.getBounds().toBBoxString();
     }
@@ -128,7 +137,6 @@ function initializeBoundaries(map) {
         // Clear other boundary filters
         $('.filter-boundaries').not('#' + $(this).attr('id')).val('');
 
-        // TODO actually filter on the boundary
         addBoundary(map, $(this).data('layer'), $(this).val());
     });
 }
