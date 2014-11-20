@@ -5227,8 +5227,9 @@ L.LotMap = L.Map.extend({
         }
 
         this.boundariesLayer = L.geoJson(null, {
-            color: '#58595b',
-            fill: false
+            color: '#FFA813',
+            fill: false,
+            opacity: 1
         }).addTo(this);
 
         // When new lots are added ensure they should be displayed
@@ -6005,6 +6006,36 @@ function updateDetailsLink(map) {
     $('a.details-link').attr('href', url);
 }
 
+function initializeBoundaries(map) {
+    // Check for city council / community board layers, console a warning
+    var url = window.location.protocol + '//' + window.location.host +
+        Django.url('inplace:layer_upload');
+    if ($('.filter-city-council-districts').length === 0) {
+        console.warn('No city council districts! Add some here: ' + url);
+    }
+    if ($('.filter-community-districts').length === 0) {
+        console.warn('No community districts! Add some here: ' + url);
+    }
+
+    $('.filter-boundaries').change(function () {
+        // Clear other boundary filters
+        $('.filter-boundaries').not('#' + $(this).attr('id')).val('');
+
+        // TODO actually filter on the boundary
+        addBoundary(map, $(this).data('layer'), $(this).val());
+    });
+}
+
+function addBoundary(map, layer, pk) {
+    if (!pk || pk === '') {
+        map.removeBoundaries();
+    }
+    var url = Django.url('inplace:boundary_detail', { pk: pk });
+    $.getJSON(url, function (data) {
+        map.updateBoundaries(data, { zoomToBounds: true });
+    });
+}
+
 function deparam() {
     var vars = {},
         param,
@@ -6167,6 +6198,8 @@ $(document).ready(function () {
         $('.admin-button-email').click(function () {
             map.enterMailMode();
         });
+
+        initializeBoundaries(map);
     }
 });
 
