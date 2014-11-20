@@ -98,8 +98,9 @@ L.LotMap = L.Map.extend({
         }
 
         this.boundariesLayer = L.geoJson(null, {
-            color: '#58595b',
-            fill: false
+            color: '#FFA813',
+            fill: false,
+            opacity: 1
         }).addTo(this);
 
         // When new lots are added ensure they should be displayed
