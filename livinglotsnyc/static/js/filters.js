@@ -1,13 +1,22 @@
 var _ = require('underscore');
+var leafletPip = require('leaflet-pip');
 
 
 module.exports = {
-    lotShouldAppear: function (lot, filters) {
+    lotShouldAppear: function (lot, filters, boundariesLayer) {
         var ownershipLayers = ['public', 'private_opt_in'],
             peopleInvolvedLayers = ['in_use', 'in_use_started_here', 'organizing'],
             lotLayers = lot.feature.properties.layers.split(','),
             lotLayersOwnership = _.intersection(lotLayers, ownershipLayers),
             lotLayersNotOwnership = _.difference(lotLayers, ownershipLayers);
+
+        // Look at current boundary, hide anything not in it
+        if (boundariesLayer.getLayers().length > 0) {
+            var inLayers = leafletPip.pointInLayer(lot.getLatLng(), boundariesLayer, true);
+            if (inLayers.length === 0) {
+                return false;
+            }
+        }
 
         // Gutterspace, no matter owner
         if (_.contains(_.intersection(lotLayersNotOwnership, filters.layers), 'gutterspace')) {

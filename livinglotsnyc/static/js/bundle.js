@@ -3781,7 +3781,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":7,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":8,"leaflet":53}],10:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":7,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":8,"leaflet":55}],10:[function(require,module,exports){
 /**
  * Simple tile cache to keep tiles while zooming with overzoom
  */
@@ -4814,15 +4814,24 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 },{}],17:[function(require,module,exports){
 var _ = require('underscore');
+var leafletPip = require('leaflet-pip');
 
 
 module.exports = {
-    lotShouldAppear: function (lot, filters) {
+    lotShouldAppear: function (lot, filters, boundariesLayer) {
         var ownershipLayers = ['public', 'private_opt_in'],
             peopleInvolvedLayers = ['in_use', 'in_use_started_here', 'organizing'],
             lotLayers = lot.feature.properties.layers.split(','),
             lotLayersOwnership = _.intersection(lotLayers, ownershipLayers),
             lotLayersNotOwnership = _.difference(lotLayers, ownershipLayers);
+
+        // Look at current boundary, hide anything not in it
+        if (boundariesLayer.getLayers().length > 0) {
+            var inLayers = leafletPip.pointInLayer(lot.getLatLng(), boundariesLayer, true);
+            if (inLayers.length === 0) {
+                return false;
+            }
+        }
 
         // Gutterspace, no matter owner
         if (_.contains(_.intersection(lotLayersNotOwnership, filters.layers), 'gutterspace')) {
@@ -4879,7 +4888,7 @@ module.exports = {
     }
 };
 
-},{"underscore":77}],18:[function(require,module,exports){
+},{"leaflet-pip":53,"underscore":79}],18:[function(require,module,exports){
 var geocoder = new google.maps.Geocoder();
 
 function geocode(address, bounds, state, f) {
@@ -4995,7 +5004,7 @@ L.TileLayer.Vector.include({
 
 });
 
-},{"TileLayer.GeoJSON":11,"leaflet":53}],21:[function(require,module,exports){
+},{"TileLayer.GeoJSON":11,"leaflet":55}],21:[function(require,module,exports){
 var L = require('leaflet');
 var _ = require('underscore');
 
@@ -5126,7 +5135,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":11,"leaflet":53,"underscore":77}],22:[function(require,module,exports){
+},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":11,"leaflet":55,"underscore":79}],22:[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -5239,7 +5248,7 @@ L.LotMap = L.Map.extend({
             event.layer.on('layeradd', function (event) {
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) return;
-                    if (filters.lotShouldAppear(lot, map.currentFilters)) {
+                    if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
                         lot.show();
                     }
                     else {
@@ -5350,7 +5359,7 @@ L.LotMap = L.Map.extend({
                 // eachLayer to get to them all
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
-                        if (filters.lotShouldAppear(lot, map.currentFilters)) {
+                        if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
                             lot.show();
                         }
                         else {
@@ -5380,11 +5389,19 @@ L.LotMap = L.Map.extend({
 
     removeBoundaries: function (data, options) {
         this.boundariesLayer.clearLayers();
+
+        // There is a chance the lots were updated before we got here, so do it
+        // again just in case
+        this.updateDisplayedLots();
     },
 
     updateBoundaries: function (data, options) {
         this.boundariesLayer.clearLayers();
         this.boundariesLayer.addData(data);
+
+        // There is a chance the lots were updated before we got here, so do it
+        // again just in case
+        this.updateDisplayedLots();
         if (options.zoomToBounds) {
             this.fitBounds(this.boundariesLayer.getBounds());
         }
@@ -5396,7 +5413,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":17,"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"handlebars":52,"leaflet":53,"leaflet.bing":6,"leaflet.dataoptions":14,"leaflet.hash":5,"leaflet.usermarker":16,"spin.js":76,"underscore":77}],23:[function(require,module,exports){
+},{"./filters":17,"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"handlebars":52,"leaflet":55,"leaflet.bing":6,"leaflet.dataoptions":14,"leaflet.hash":5,"leaflet.usermarker":16,"spin.js":78,"underscore":79}],23:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -5464,7 +5481,7 @@ L.lotMarker = function (latlng, options) {
     return new L.LotMarker(latlng, options);
 };
 
-},{"./leaflet.lotpath":25,"leaflet":53}],24:[function(require,module,exports){
+},{"./leaflet.lotpath":25,"leaflet":55}],24:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpolygon');
@@ -5520,7 +5537,7 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
     }
 });
 
-},{"./leaflet.lotpolygon":26,"leaflet":53}],25:[function(require,module,exports){
+},{"./leaflet.lotpolygon":26,"leaflet":55}],25:[function(require,module,exports){
 var L = require('leaflet');
 
 
@@ -5576,7 +5593,7 @@ L.LotPathMixin = {
 
 };
 
-},{"leaflet":53}],26:[function(require,module,exports){
+},{"leaflet":55}],26:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -5619,7 +5636,7 @@ L.lotPolygon = function (latlngs, options) {
     return new L.LotPolygon(latlngs, options);
 };
 
-},{"./leaflet.lotpath":25,"leaflet":53}],27:[function(require,module,exports){
+},{"./leaflet.lotpath":25,"leaflet":55}],27:[function(require,module,exports){
 //
 // lotdetailpage.js
 //
@@ -5723,7 +5740,7 @@ $(document).ready(function () {
     });
 });
 
-},{"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"./overlaymenu":32,"./streetview":34,"handlebars":52,"leaflet":53,"leaflet.dataoptions":14}],28:[function(require,module,exports){
+},{"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"./overlaymenu":32,"./streetview":34,"handlebars":52,"leaflet":55,"leaflet.dataoptions":14}],28:[function(require,module,exports){
 //
 // main.js
 //
@@ -5856,7 +5873,7 @@ $.fn.mapsearch = function (options) {
     return this;
 };
 
-},{"./geocode":18,"leaflet":53}],30:[function(require,module,exports){
+},{"./geocode":18,"leaflet":55}],30:[function(require,module,exports){
 //
 // Lot map styles by layer for maps
 //
@@ -5890,7 +5907,7 @@ module.exports = {
     }
 };
 
-},{"underscore":77}],31:[function(require,module,exports){
+},{"underscore":79}],31:[function(require,module,exports){
 //
 // mappage.js
 //
@@ -6211,7 +6228,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./handlebars.helpers":19,"./leaflet.lotmap":22,"./map.search.js":29,"./overlaymenu":32,"./singleminded":33,"./welcome":35,"bootstrap_button":1,"bootstrap_tooltip":2,"handlebars":52,"jquery.infinitescroll":4,"leaflet":53,"leaflet.loading":15,"livinglots-map/src/livinglots.addlot":73,"livinglots-map/src/livinglots.mail":74,"spin.js":76,"underscore":77}],32:[function(require,module,exports){
+},{"./handlebars.helpers":19,"./leaflet.lotmap":22,"./map.search.js":29,"./overlaymenu":32,"./singleminded":33,"./welcome":35,"bootstrap_button":1,"bootstrap_tooltip":2,"handlebars":52,"jquery.infinitescroll":4,"leaflet":55,"leaflet.loading":15,"livinglots-map/src/livinglots.addlot":75,"livinglots-map/src/livinglots.mail":76,"spin.js":78,"underscore":79}],32:[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -6279,7 +6296,7 @@ $.fn.overlaymenu = function (options) {
     return this;
 };
 
-},{"underscore":77}],33:[function(require,module,exports){
+},{"underscore":79}],33:[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -9554,6 +9571,445 @@ if (typeof require !== 'undefined' && require.extensions) {
 }
 
 },{"../dist/cjs/handlebars":37,"../dist/cjs/handlebars/compiler/printer":46,"../dist/cjs/handlebars/compiler/visitor":47,"fs":36}],53:[function(require,module,exports){
+var gju = require('geojson-utils');
+
+var leafletPip = {
+    bassackwards: false,
+    pointInLayer: function(p, layer, first) {
+        'use strict';
+        if (p instanceof L.LatLng) p = [p.lng, p.lat];
+        else if (leafletPip.bassackwards) p.reverse();
+
+        var results = [];
+
+        layer.eachLayer(function(l) {
+            if (first && results.length) return;
+            if ((l instanceof L.MultiPolygon ||
+                 l instanceof L.Polygon) &&
+                gju.pointInPolygon({
+                    type: 'Point',
+                    coordinates: p
+                }, l.toGeoJSON().geometry)) {
+                results.push(l);
+            }
+        });
+        return results;
+    }
+};
+
+module.exports = leafletPip;
+
+},{"geojson-utils":54}],54:[function(require,module,exports){
+(function () {
+  var gju = this.gju = {};
+
+  // Export the geojson object for **CommonJS**
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = gju;
+  }
+
+  // adapted from http://www.kevlindev.com/gui/math/intersection/Intersection.js
+  gju.lineStringsIntersect = function (l1, l2) {
+    var intersects = [];
+    for (var i = 0; i <= l1.coordinates.length - 2; ++i) {
+      for (var j = 0; j <= l2.coordinates.length - 2; ++j) {
+        var a1 = {
+          x: l1.coordinates[i][1],
+          y: l1.coordinates[i][0]
+        },
+          a2 = {
+            x: l1.coordinates[i + 1][1],
+            y: l1.coordinates[i + 1][0]
+          },
+          b1 = {
+            x: l2.coordinates[j][1],
+            y: l2.coordinates[j][0]
+          },
+          b2 = {
+            x: l2.coordinates[j + 1][1],
+            y: l2.coordinates[j + 1][0]
+          },
+          ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x),
+          ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x),
+          u_b = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+        if (u_b != 0) {
+          var ua = ua_t / u_b,
+            ub = ub_t / u_b;
+          if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
+            intersects.push({
+              'type': 'Point',
+              'coordinates': [a1.x + ua * (a2.x - a1.x), a1.y + ua * (a2.y - a1.y)]
+            });
+          }
+        }
+      }
+    }
+    if (intersects.length == 0) intersects = false;
+    return intersects;
+  }
+
+  // Bounding Box
+
+  function boundingBoxAroundPolyCoords (coords) {
+    var xAll = [], yAll = []
+
+    for (var i = 0; i < coords[0].length; i++) {
+      xAll.push(coords[0][i][1])
+      yAll.push(coords[0][i][0])
+    }
+
+    xAll = xAll.sort(function (a,b) { return a - b })
+    yAll = yAll.sort(function (a,b) { return a - b })
+
+    return [ [xAll[0], yAll[0]], [xAll[xAll.length - 1], yAll[yAll.length - 1]] ]
+  }
+
+  gju.pointInBoundingBox = function (point, bounds) {
+    return !(point.coordinates[1] < bounds[0][0] || point.coordinates[1] > bounds[1][0] || point.coordinates[0] < bounds[0][1] || point.coordinates[0] > bounds[1][1]) 
+  }
+
+  // Point in Polygon
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html#Listing the Vertices
+
+  function pnpoly (x,y,coords) {
+    var vert = [ [0,0] ]
+
+    for (var i = 0; i < coords.length; i++) {
+      for (var j = 0; j < coords[i].length; j++) {
+        vert.push(coords[i][j])
+      }
+	  vert.push(coords[i][0])
+      vert.push([0,0])
+    }
+
+    var inside = false
+    for (var i = 0, j = vert.length - 1; i < vert.length; j = i++) {
+      if (((vert[i][0] > y) != (vert[j][0] > y)) && (x < (vert[j][1] - vert[i][1]) * (y - vert[i][0]) / (vert[j][0] - vert[i][0]) + vert[i][1])) inside = !inside
+    }
+
+    return inside
+  }
+
+  gju.pointInPolygon = function (p, poly) {
+    var coords = (poly.type == "Polygon") ? [ poly.coordinates ] : poly.coordinates
+
+    var insideBox = false
+    for (var i = 0; i < coords.length; i++) {
+      if (gju.pointInBoundingBox(p, boundingBoxAroundPolyCoords(coords[i]))) insideBox = true
+    }
+    if (!insideBox) return false
+
+    var insidePoly = false
+    for (var i = 0; i < coords.length; i++) {
+      if (pnpoly(p.coordinates[1], p.coordinates[0], coords[i])) insidePoly = true
+    }
+
+    return insidePoly
+  }
+
+  // support multi (but not donut) polygons
+  gju.pointInMultiPolygon = function (p, poly) {
+    var coords_array = (poly.type == "MultiPolygon") ? [ poly.coordinates ] : poly.coordinates
+
+    var insideBox = false
+    var insidePoly = false
+    for (var i = 0; i < coords_array.length; i++){
+      var coords = coords_array[i];
+      for (var j = 0; j < coords.length; j++) {
+        if (!insideBox){
+          if (gju.pointInBoundingBox(p, boundingBoxAroundPolyCoords(coords[j]))) {
+            insideBox = true
+          }
+        }
+      }
+      if (!insideBox) return false
+      for (var j = 0; j < coords.length; j++) {
+        if (!insidePoly){
+          if (pnpoly(p.coordinates[1], p.coordinates[0], coords[j])) {
+            insidePoly = true
+          }
+        }
+      }
+    }
+
+    return insidePoly
+  }
+
+  gju.numberToRadius = function (number) {
+    return number * Math.PI / 180;
+  }
+
+  gju.numberToDegree = function (number) {
+    return number * 180 / Math.PI;
+  }
+
+  // written with help from @tautologe
+  gju.drawCircle = function (radiusInMeters, centerPoint, steps) {
+    var center = [centerPoint.coordinates[1], centerPoint.coordinates[0]],
+      dist = (radiusInMeters / 1000) / 6371,
+      // convert meters to radiant
+      radCenter = [gju.numberToRadius(center[0]), gju.numberToRadius(center[1])],
+      steps = steps || 15,
+      // 15 sided circle
+      poly = [[center[0], center[1]]];
+    for (var i = 0; i < steps; i++) {
+      var brng = 2 * Math.PI * i / steps;
+      var lat = Math.asin(Math.sin(radCenter[0]) * Math.cos(dist)
+              + Math.cos(radCenter[0]) * Math.sin(dist) * Math.cos(brng));
+      var lng = radCenter[1] + Math.atan2(Math.sin(brng) * Math.sin(dist) * Math.cos(radCenter[0]),
+                                          Math.cos(dist) - Math.sin(radCenter[0]) * Math.sin(lat));
+      poly[i] = [];
+      poly[i][1] = gju.numberToDegree(lat);
+      poly[i][0] = gju.numberToDegree(lng);
+    }
+    return {
+      "type": "Polygon",
+      "coordinates": [poly]
+    };
+  }
+
+  // assumes rectangle starts at lower left point
+  gju.rectangleCentroid = function (rectangle) {
+    var bbox = rectangle.coordinates[0];
+    var xmin = bbox[0][0],
+      ymin = bbox[0][1],
+      xmax = bbox[2][0],
+      ymax = bbox[2][1];
+    var xwidth = xmax - xmin;
+    var ywidth = ymax - ymin;
+    return {
+      'type': 'Point',
+      'coordinates': [xmin + xwidth / 2, ymin + ywidth / 2]
+    };
+  }
+
+  // from http://www.movable-type.co.uk/scripts/latlong.html
+  gju.pointDistance = function (pt1, pt2) {
+    var lon1 = pt1.coordinates[0],
+      lat1 = pt1.coordinates[1],
+      lon2 = pt2.coordinates[0],
+      lat2 = pt2.coordinates[1],
+      dLat = gju.numberToRadius(lat2 - lat1),
+      dLon = gju.numberToRadius(lon2 - lon1),
+      a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(gju.numberToRadius(lat1))
+        * Math.cos(gju.numberToRadius(lat2)) * Math.pow(Math.sin(dLon / 2), 2),
+      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (6371 * c) * 1000; // returns meters
+  },
+
+  // checks if geometry lies entirely within a circle
+  // works with Point, LineString, Polygon
+  gju.geometryWithinRadius = function (geometry, center, radius) {
+    if (geometry.type == 'Point') {
+      return gju.pointDistance(geometry, center) <= radius;
+    } else if (geometry.type == 'LineString' || geometry.type == 'Polygon') {
+      var point = {};
+      var coordinates;
+      if (geometry.type == 'Polygon') {
+        // it's enough to check the exterior ring of the Polygon
+        coordinates = geometry.coordinates[0];
+      } else {
+        coordinates = geometry.coordinates;
+      }
+      for (var i in coordinates) {
+        point.coordinates = coordinates[i];
+        if (gju.pointDistance(point, center) > radius) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  // adapted from http://paulbourke.net/geometry/polyarea/javascript.txt
+  gju.area = function (polygon) {
+    var area = 0;
+    // TODO: polygon holes at coordinates[1]
+    var points = polygon.coordinates[0];
+    var j = points.length - 1;
+    var p1, p2;
+
+    for (var i = 0; i < points.length; j = i++) {
+      var p1 = {
+        x: points[i][1],
+        y: points[i][0]
+      };
+      var p2 = {
+        x: points[j][1],
+        y: points[j][0]
+      };
+      area += p1.x * p2.y;
+      area -= p1.y * p2.x;
+    }
+
+    area /= 2;
+    return area;
+  },
+
+  // adapted from http://paulbourke.net/geometry/polyarea/javascript.txt
+  gju.centroid = function (polygon) {
+    var f, x = 0,
+      y = 0;
+    // TODO: polygon holes at coordinates[1]
+    var points = polygon.coordinates[0];
+    var j = points.length - 1;
+    var p1, p2;
+
+    for (var i = 0; i < points.length; j = i++) {
+      var p1 = {
+        x: points[i][1],
+        y: points[i][0]
+      };
+      var p2 = {
+        x: points[j][1],
+        y: points[j][0]
+      };
+      f = p1.x * p2.y - p2.x * p1.y;
+      x += (p1.x + p2.x) * f;
+      y += (p1.y + p2.y) * f;
+    }
+
+    f = gju.area(polygon) * 6;
+    return {
+      'type': 'Point',
+      'coordinates': [y / f, x / f]
+    };
+  },
+
+  gju.simplify = function (source, kink) { /* source[] array of geojson points */
+    /* kink	in metres, kinks above this depth kept  */
+    /* kink depth is the height of the triangle abc where a-b and b-c are two consecutive line segments */
+    kink = kink || 20;
+    source = source.map(function (o) {
+      return {
+        lng: o.coordinates[0],
+        lat: o.coordinates[1]
+      }
+    });
+
+    var n_source, n_stack, n_dest, start, end, i, sig;
+    var dev_sqr, max_dev_sqr, band_sqr;
+    var x12, y12, d12, x13, y13, d13, x23, y23, d23;
+    var F = (Math.PI / 180.0) * 0.5;
+    var index = new Array(); /* aray of indexes of source points to include in the reduced line */
+    var sig_start = new Array(); /* indices of start & end of working section */
+    var sig_end = new Array();
+
+    /* check for simple cases */
+
+    if (source.length < 3) return (source); /* one or two points */
+
+    /* more complex case. initialize stack */
+
+    n_source = source.length;
+    band_sqr = kink * 360.0 / (2.0 * Math.PI * 6378137.0); /* Now in degrees */
+    band_sqr *= band_sqr;
+    n_dest = 0;
+    sig_start[0] = 0;
+    sig_end[0] = n_source - 1;
+    n_stack = 1;
+
+    /* while the stack is not empty  ... */
+    while (n_stack > 0) {
+
+      /* ... pop the top-most entries off the stacks */
+
+      start = sig_start[n_stack - 1];
+      end = sig_end[n_stack - 1];
+      n_stack--;
+
+      if ((end - start) > 1) { /* any intermediate points ? */
+
+        /* ... yes, so find most deviant intermediate point to
+        either side of line joining start & end points */
+
+        x12 = (source[end].lng() - source[start].lng());
+        y12 = (source[end].lat() - source[start].lat());
+        if (Math.abs(x12) > 180.0) x12 = 360.0 - Math.abs(x12);
+        x12 *= Math.cos(F * (source[end].lat() + source[start].lat())); /* use avg lat to reduce lng */
+        d12 = (x12 * x12) + (y12 * y12);
+
+        for (i = start + 1, sig = start, max_dev_sqr = -1.0; i < end; i++) {
+
+          x13 = source[i].lng() - source[start].lng();
+          y13 = source[i].lat() - source[start].lat();
+          if (Math.abs(x13) > 180.0) x13 = 360.0 - Math.abs(x13);
+          x13 *= Math.cos(F * (source[i].lat() + source[start].lat()));
+          d13 = (x13 * x13) + (y13 * y13);
+
+          x23 = source[i].lng() - source[end].lng();
+          y23 = source[i].lat() - source[end].lat();
+          if (Math.abs(x23) > 180.0) x23 = 360.0 - Math.abs(x23);
+          x23 *= Math.cos(F * (source[i].lat() + source[end].lat()));
+          d23 = (x23 * x23) + (y23 * y23);
+
+          if (d13 >= (d12 + d23)) dev_sqr = d23;
+          else if (d23 >= (d12 + d13)) dev_sqr = d13;
+          else dev_sqr = (x13 * y12 - y13 * x12) * (x13 * y12 - y13 * x12) / d12; // solve triangle
+          if (dev_sqr > max_dev_sqr) {
+            sig = i;
+            max_dev_sqr = dev_sqr;
+          }
+        }
+
+        if (max_dev_sqr < band_sqr) { /* is there a sig. intermediate point ? */
+          /* ... no, so transfer current start point */
+          index[n_dest] = start;
+          n_dest++;
+        } else { /* ... yes, so push two sub-sections on stack for further processing */
+          n_stack++;
+          sig_start[n_stack - 1] = sig;
+          sig_end[n_stack - 1] = end;
+          n_stack++;
+          sig_start[n_stack - 1] = start;
+          sig_end[n_stack - 1] = sig;
+        }
+      } else { /* ... no intermediate points, so transfer current start point */
+        index[n_dest] = start;
+        n_dest++;
+      }
+    }
+
+    /* transfer last point */
+    index[n_dest] = n_source - 1;
+    n_dest++;
+
+    /* make return array */
+    var r = new Array();
+    for (var i = 0; i < n_dest; i++)
+      r.push(source[index[i]]);
+
+    return r.map(function (o) {
+      return {
+        type: "Point",
+        coordinates: [o.lng, o.lat]
+      }
+    });
+  }
+
+  // http://www.movable-type.co.uk/scripts/latlong.html#destPoint
+  gju.destinationPoint = function (pt, brng, dist) {
+    dist = dist/6371;  // convert dist to angular distance in radians
+    brng = gju.numberToRadius(brng);
+
+    var lon1 = gju.numberToRadius(pt.coordinates[0]);
+    var lat1 = gju.numberToRadius(pt.coordinates[1]);
+
+    var lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) +
+                          Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
+    var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1),
+                                 Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
+    lon2 = (lon2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+
+    return {
+      'type': 'Point',
+      'coordinates': [gju.numberToDegree(lon2), gju.numberToDegree(lat2)]
+    };
+  };
+
+})();
+
+},{}],55:[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -18734,41 +19190,41 @@ L.Map.include({
 
 
 }(window, document));
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports=require(37)
-},{"./handlebars.runtime":55,"./handlebars/compiler/ast":57,"./handlebars/compiler/base":58,"./handlebars/compiler/compiler":59,"./handlebars/compiler/javascript-compiler":61}],55:[function(require,module,exports){
+},{"./handlebars.runtime":57,"./handlebars/compiler/ast":59,"./handlebars/compiler/base":60,"./handlebars/compiler/compiler":61,"./handlebars/compiler/javascript-compiler":63}],57:[function(require,module,exports){
 module.exports=require(38)
-},{"./handlebars/base":56,"./handlebars/exception":65,"./handlebars/runtime":66,"./handlebars/safe-string":67,"./handlebars/utils":68}],56:[function(require,module,exports){
+},{"./handlebars/base":58,"./handlebars/exception":67,"./handlebars/runtime":68,"./handlebars/safe-string":69,"./handlebars/utils":70}],58:[function(require,module,exports){
 module.exports=require(39)
-},{"./exception":65,"./utils":68}],57:[function(require,module,exports){
+},{"./exception":67,"./utils":70}],59:[function(require,module,exports){
 module.exports=require(40)
-},{"../exception":65}],58:[function(require,module,exports){
+},{"../exception":67}],60:[function(require,module,exports){
 module.exports=require(41)
-},{"../utils":68,"./ast":57,"./helpers":60,"./parser":62}],59:[function(require,module,exports){
+},{"../utils":70,"./ast":59,"./helpers":62,"./parser":64}],61:[function(require,module,exports){
 module.exports=require(42)
-},{"../exception":65,"../utils":68}],60:[function(require,module,exports){
+},{"../exception":67,"../utils":70}],62:[function(require,module,exports){
 module.exports=require(43)
-},{"../exception":65}],61:[function(require,module,exports){
+},{"../exception":67}],63:[function(require,module,exports){
 module.exports=require(44)
-},{"../base":56,"../exception":65}],62:[function(require,module,exports){
+},{"../base":58,"../exception":67}],64:[function(require,module,exports){
 module.exports=require(45)
-},{}],63:[function(require,module,exports){
-module.exports=require(46)
-},{"./visitor":64}],64:[function(require,module,exports){
-module.exports=require(47)
 },{}],65:[function(require,module,exports){
+module.exports=require(46)
+},{"./visitor":66}],66:[function(require,module,exports){
+module.exports=require(47)
+},{}],67:[function(require,module,exports){
 module.exports=require(48)
-},{}],66:[function(require,module,exports){
-module.exports=require(49)
-},{"./base":56,"./exception":65,"./utils":68}],67:[function(require,module,exports){
-module.exports=require(50)
 },{}],68:[function(require,module,exports){
+module.exports=require(49)
+},{"./base":58,"./exception":67,"./utils":70}],69:[function(require,module,exports){
+module.exports=require(50)
+},{}],70:[function(require,module,exports){
 module.exports=require(51)
-},{"./safe-string":67}],69:[function(require,module,exports){
+},{"./safe-string":69}],71:[function(require,module,exports){
 module.exports=require(52)
-},{"../dist/cjs/handlebars":54,"../dist/cjs/handlebars/compiler/printer":63,"../dist/cjs/handlebars/compiler/visitor":64,"fs":36}],70:[function(require,module,exports){
-module.exports=require(53)
-},{}],71:[function(require,module,exports){
+},{"../dist/cjs/handlebars":56,"../dist/cjs/handlebars/compiler/printer":65,"../dist/cjs/handlebars/compiler/visitor":66,"fs":36}],72:[function(require,module,exports){
+module.exports=require(55)
+},{}],73:[function(require,module,exports){
 /**
  * Copyright (c) 2011-2014 Felix Gnass
  * Licensed under the MIT license
@@ -19119,7 +19575,7 @@ module.exports=require(53)
 
 }));
 
-},{}],72:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -20536,7 +20992,7 @@ module.exports=require(53)
   }
 }.call(this));
 
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -20740,7 +21196,7 @@ L.Map.include({
 
 });
 
-},{"./templates":75,"handlebars":69,"leaflet":70,"spin.js":71,"underscore":72}],74:[function(require,module,exports){
+},{"./templates":77,"handlebars":71,"leaflet":72,"spin.js":73,"underscore":74}],76:[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -20867,7 +21323,7 @@ L.Map.include({
     }
 });
 
-},{"./templates":75,"handlebars":69,"leaflet":70,"spin.js":71,"underscore":72}],75:[function(require,module,exports){
+},{"./templates":77,"handlebars":71,"leaflet":72,"spin.js":73,"underscore":74}],77:[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -20948,8 +21404,8 @@ templates["mail.window.hbs"] = Handlebars.template({"1":function(depth0,helpers,
 return templates;
 
 };
-},{}],76:[function(require,module,exports){
-module.exports=require(71)
-},{}],77:[function(require,module,exports){
-module.exports=require(72)
+},{}],78:[function(require,module,exports){
+module.exports=require(73)
+},{}],79:[function(require,module,exports){
+module.exports=require(74)
 },{}]},{},[28]);

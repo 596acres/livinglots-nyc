@@ -8,6 +8,7 @@
   "dependencies": {
     "handlebars": "^2.0.0",
     "leaflet": "~0.7.3",
+    "leaflet-pip": "^0.1.1",
     "livinglots-map": "git://github.com/596acres/livinglots-map",
     "spin.js": "~2.0.1",
     "tinymce": "^4.0.28",

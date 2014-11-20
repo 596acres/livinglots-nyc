@@ -110,7 +110,7 @@ L.LotMap = L.Map.extend({
             event.layer.on('layeradd', function (event) {
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) return;
-                    if (filters.lotShouldAppear(lot, map.currentFilters)) {
+                    if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
                         lot.show();
                     }
                     else {
@@ -221,7 +221,7 @@ L.LotMap = L.Map.extend({
                 // eachLayer to get to them all
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
-                        if (filters.lotShouldAppear(lot, map.currentFilters)) {
+                        if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
                             lot.show();
                         }
                         else {
@@ -251,11 +251,19 @@ L.LotMap = L.Map.extend({
 
     removeBoundaries: function (data, options) {
         this.boundariesLayer.clearLayers();
+
+        // There is a chance the lots were updated before we got here, so do it
+        // again just in case
+        this.updateDisplayedLots();
     },
 
     updateBoundaries: function (data, options) {
         this.boundariesLayer.clearLayers();
         this.boundariesLayer.addData(data);
+
+        // There is a chance the lots were updated before we got here, so do it
+        // again just in case
+        this.updateDisplayedLots();
         if (options.zoomToBounds) {
             this.fitBounds(this.boundariesLayer.getBounds());
         }
