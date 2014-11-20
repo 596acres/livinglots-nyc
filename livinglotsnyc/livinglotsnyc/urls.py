@@ -32,6 +32,9 @@ urlpatterns += patterns('',
     # Activity stream
     url('^activity/', include('activities.urls')),
 
+    # Inplace
+    url(r'^inplace/', include('inplace.urls', 'inplace')),
+
     # Size Compare
     url('^compare/', include('sizecompare.urls')),
 
