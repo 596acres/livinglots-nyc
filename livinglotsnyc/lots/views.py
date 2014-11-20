@@ -196,9 +196,13 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         for row in lots_qs.values('owner__name').annotate(count=Count('pk'),
                                                           area=Sum('polygon_area')):
             sqft = row['area']
+            try:
+                sqft_display = int(round(float(sqft)))
+            except TypeError:
+                sqft_display = 0
             owners.append({
                 'acres': self.get_acres(sqft),
-                'sqft': int(round(float(sqft))),
+                'sqft': sqft_display,
                 'comparable': find_comparable(sqft),
                 'count': row['count'],
                 'name': row['owner__name'],
