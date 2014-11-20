@@ -198,7 +198,7 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
             sqft = row['area']
             owners.append({
                 'acres': self.get_acres(sqft),
-                'sqft': int(round(sqft)),
+                'sqft': int(round(float(sqft))),
                 'comparable': find_comparable(sqft),
                 'count': row['count'],
                 'name': row['owner__name'],
