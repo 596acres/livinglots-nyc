@@ -2,7 +2,9 @@
     margin-top: 25px;
 
     &-home-link img {
-        margin-left: 35px;
+        // Account for whitespace in logo
+        margin-left: @header-left-padding - 5;
+
         max-width: 500px;
     }
 

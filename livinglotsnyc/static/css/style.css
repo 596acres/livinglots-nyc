@@ -3554,7 +3554,7 @@ footer .footer-main:after {
   margin-top: 25px;
 }
 .page-header-home-link img {
-  margin-left: 35px;
+  margin-left: 25px;
   max-width: 500px;
 }
 .page-header .navbar-nav {
@@ -3771,12 +3771,21 @@ td.map-page .map-header {
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px;
+  padding-left: 30px;
 }
 @media (min-width: 992px) {
   .map-page .map-header-currently-viewing {
     float: left;
     width: 33.33333333%;
   }
+}
+.map-page .map-header-currently-viewing h2 {
+  margin: 0;
+}
+.map-page .map-header-currently-viewing ul {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 20px;
 }
 .overlay-admin-button {
   margin-top: 5px;
@@ -4195,7 +4204,7 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   font-weight: bold;
   font-size: 28px;
   margin: 0;
-  padding-left: 35px;
+  padding-left: 30px;
   text-transform: uppercase;
 }
 .map-welcome-close-button,
