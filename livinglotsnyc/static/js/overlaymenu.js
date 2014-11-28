@@ -21,11 +21,22 @@ function show(button, menu) {
             left: offset.left + outerWidth - menuWidth,
             top: offset.top + outerHeight + 13
         });
+
+    // If user hits <Esc>, hide menu
+    $('body')
+        .on('keyup.overlaymenu', function (event) {
+            if (event.which === 27) {
+                hide(button, menu);
+            }
+        });
 }
 
 function hide(button, menu) {
     button.trigger('overlaymenuclose');
     menu.hide();
+
+    // Remove event handler that will hide menus
+    $('body').off('keyup.overlaymenu');
 }
 
 function isVisible(menu) {
@@ -58,7 +69,9 @@ $.fn.overlaymenu = function (options) {
             }
             else {
                 // Something else was clicked--hide the menu
-                hide(button, menu);
+                if (isVisible(menu)) {
+                    hide(button, menu);
+                }
             }
         }
     });
