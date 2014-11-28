@@ -3416,6 +3416,9 @@ body {
   width: 250px;
   z-index: 5005;
 }
+.overlaymenu-filter {
+  padding-right: 0;
+}
 .overlaymenu h2 {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
