@@ -3898,7 +3898,6 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 ; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js");
 require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js");
-require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js");
 require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js");
 ;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
 // Load data tiles using the JQuery ajax function
@@ -4160,7 +4159,11 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":9,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":10,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js":12,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":13}],12:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":9,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":10,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":13}],12:[function(require,module,exports){
+(function (global){
+
+; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js");
+;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
 (function () {
 
     function defineOverzoom(L) {
@@ -4278,7 +4281,10 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],13:[function(require,module,exports){
+}).call(global, module, undefined, undefined);
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js":11}],13:[function(require,module,exports){
 (function () {
 
     function defineTileQueue(L) {
@@ -5009,6 +5015,7 @@ var L = require('leaflet');
 var _ = require('underscore');
 
 require('TileLayer.GeoJSON');
+require('TileLayer.Overzoom');
 
 require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');
@@ -5135,7 +5142,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":11,"leaflet":55,"underscore":79}],22:[function(require,module,exports){
+},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":11,"TileLayer.Overzoom":12,"leaflet":55,"underscore":79}],22:[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');

@@ -2,6 +2,7 @@ var L = require('leaflet');
 var _ = require('underscore');
 
 require('TileLayer.GeoJSON');
+require('TileLayer.Overzoom');
 
 require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');

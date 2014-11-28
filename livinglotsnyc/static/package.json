@@ -66,11 +66,13 @@
       ]
     },
     "spinjs": "Spinner",
+    "TileLayer.Overzoom": {
+      "depends": ["TileLayer.GeoJSON"]
+    },
     "TileLayer.GeoJSON": {
       "depends": [
         "CommunistWorker",
         "TileCache",
-        "TileLayer.Overzoom",
         "TileQueue"
       ]
     }
