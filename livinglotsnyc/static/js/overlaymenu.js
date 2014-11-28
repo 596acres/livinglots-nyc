@@ -52,7 +52,7 @@ $.fn.overlaymenu = function (options) {
     var button = this,
         menu = $(options.menu);
 
-    $('html').click(function (e) {
+    $('*').click(function (e) {
         var target = $(e.target);
 
         // If user not clicking in menu, consider hiding or showing it
