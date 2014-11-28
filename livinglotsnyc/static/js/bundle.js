@@ -5180,6 +5180,9 @@ L.LotMap = L.Map.extend({
         onEachFeature: function (feature, layer) {
             layer.on({
                 'click': function (event) {
+                    // Trigger a click on the body to close all overlaymenus
+                    $('body').trigger('click');
+
                     var latlng = event.latlng,
                         x = this._map.latLngToContainerPoint(latlng).x,
                         y = this._map.latLngToContainerPoint(latlng).y - 100,
