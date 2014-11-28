@@ -4195,6 +4195,10 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   height: 150px;
   width: 225px;
 }
+#popup header {
+  font-size: 16px;
+  font-weight: bold;
+}
 .map-welcome {
   background: black;
   color: #ffffff;
