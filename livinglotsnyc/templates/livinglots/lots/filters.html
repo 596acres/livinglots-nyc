@@ -85,25 +85,29 @@
     <section class="filter-section filter-section-boundaries">
         {% all_boundaries "city council districts" as ccs %}
         {% if ccs %}
-            <label for="city-council-districts">city council districts</label>
-            <select id="city-council-districts" name="city-council-districts" class="form-control filter-boundaries filter-city-council-districts" data-layer="city council districts">
-                <option value="">all</option>
-                {% sort_city_council_districts ccs as sorted_ccs %}
-                {% for cc in sorted_ccs %}
-                    <option value="{{ cc.pk }}">{{ cc.label }}</option>
-                {% endfor %}
-            </select>
+            <div class="filter-section-boundaries-item">
+                <label for="city-council-districts">city council districts</label>
+                <select id="city-council-districts" name="city-council-districts" class="form-control filter-boundaries filter-city-council-districts" data-layer="city council districts">
+                    <option value="">all</option>
+                    {% sort_city_council_districts ccs as sorted_ccs %}
+                    {% for cc in sorted_ccs %}
+                        <option value="{{ cc.pk }}">{{ cc.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         {% endif %}
 
         {% all_boundaries "community districts" as cds %}
         {% if cds %}
-            <label for="community-districts">community districts</label>
-            <select id="community-districts" name="community-districts" class="form-control filter-boundaries filter-community-districts" data-layer="community districts">
-                <option value="">all</option>
-                {% for cd in cds %}
-                    <option value="{{ cd.pk }}">{{ cd.label|community_district_label }}</option>
-                {% endfor %}
-            </select>
+            <div class="filter-section-boundaries-item">
+                <label for="community-districts">community districts</label>
+                <select id="community-districts" name="community-districts" class="form-control filter-boundaries filter-community-districts" data-layer="community districts">
+                    <option value="">all</option>
+                    {% for cd in cds %}
+                        <option value="{{ cd.pk }}">{{ cd.label|community_district_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         {% endif %}
     </section>
 </div>

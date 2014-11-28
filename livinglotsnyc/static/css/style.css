@@ -3485,6 +3485,12 @@ body {
 .filter-section:last-child {
   border-bottom: none;
 }
+.filter-owner {
+  margin-top: 10px;
+}
+.filter-owner:first-child {
+  margin-top: 0;
+}
 .filter-owner-list {
   list-style: none;
   margin: 0;
@@ -3496,6 +3502,12 @@ body {
 .filter-owner select {
   margin-left: 10%;
   width: 80%;
+}
+.filter-section-boundaries-item {
+  margin-top: 10px;
+}
+.filter-section-boundaries-item:first-child {
+  margin-top: 0;
 }
 footer .footer-main {
   margin-left: 0;
