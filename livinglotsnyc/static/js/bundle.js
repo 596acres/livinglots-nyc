@@ -6058,7 +6058,7 @@ function deparam() {
     return vars;
 }
 
-function setFilters(params) {
+function setFiltersUIFromQueryParams(params) {
     // Clear checkbox filters
     $('.filter[type=checkbox]').prop('checked', false);
 
@@ -6140,8 +6140,7 @@ $(document).ready(function () {
     if ($('.map-page').length > 0) {
         var params;
         if (window.location.search.length) {
-            params = deparam();
-            setFilters(params);
+            setFiltersUIFromQueryParams(deparam());
         }
 
         var map = L.lotMap('map', {
