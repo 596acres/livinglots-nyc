@@ -10,7 +10,7 @@
     </ul>
     <div class="activity-stream-nav" style="display: none;">
         {% if page_obj.has_next %}
-            <a href="/activity-stream/?page={{ page_obj.next_page_number }}">next page</a>
+            <a href="{% url "activity_list" %}?page={{ page_obj.next_page_number }}">next page</a>
         {% endif %}
     </div>
 </div>
