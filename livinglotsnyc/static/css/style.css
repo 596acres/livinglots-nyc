@@ -4272,9 +4272,9 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   font-size: 28px;
+  font-style: italic;
   margin: 0;
   padding-left: 30px;
-  text-transform: uppercase;
 }
 .map-welcome-close-button,
 .map-welcome-close-button:active,
@@ -4285,6 +4285,7 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   color: #ffffff;
   float: right;
   font-size: 16px;
+  font-style: normal;
   margin-right: 50px;
   margin-top: 10px;
   text-decoration: none;
