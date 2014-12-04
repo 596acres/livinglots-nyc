@@ -4894,7 +4894,7 @@ module.exports = {
     }
 };
 
-},{"leaflet-pip":53,"underscore":79}],18:[function(require,module,exports){
+},{"leaflet-pip":53,"underscore":80}],18:[function(require,module,exports){
 var geocoder = new google.maps.Geocoder();
 
 function geocode(address, bounds, state, f) {
@@ -5142,7 +5142,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":11,"TileLayer.Overzoom":12,"leaflet":55,"underscore":79}],22:[function(require,module,exports){
+},{"./leaflet.geojson.tile":20,"./leaflet.lotmultipolygon":24,"./leaflet.lotpolygon":26,"TileLayer.GeoJSON":11,"TileLayer.Overzoom":12,"leaflet":55,"underscore":80}],22:[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -5154,14 +5154,13 @@ require('leaflet.bing');
 require('leaflet.dataoptions');
 require('leaflet.hash');
 require('leaflet.usermarker');
+require('livinglots-map/src/livinglots.boundaries');
 
 require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 
 
 L.LotMap = L.Map.extend({
-
-    boundariesLayer: null,
     centroidsLayer: null,
     currentFilters: {},
     polygonsLayer: null,
@@ -5245,12 +5244,6 @@ L.LotMap = L.Map.extend({
             this.currentFilters = filters.paramsToFilters(options.filterParams);
         }
 
-        this.boundariesLayer = L.geoJson(null, {
-            color: '#FFA813',
-            fill: false,
-            opacity: 1
-        }).addTo(this);
-
         // When new lots are added ensure they should be displayed
         var map = this;
         this.on('layeradd', function (event) {
@@ -5293,6 +5286,10 @@ L.LotMap = L.Map.extend({
                 }
             }
             this.previousZoom = currentZoom;
+        });
+
+        this.on('boundarieschange', function () {
+            this.updateDisplayedLots();
         });
     },
 
@@ -5395,35 +5392,14 @@ L.LotMap = L.Map.extend({
         if (this.userLayer) {
             this.removeLayer(this.userLayer);
         }
-    },
-
-    removeBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-
-        // There is a chance the lots were updated before we got here, so do it
-        // again just in case
-        this.updateDisplayedLots();
-    },
-
-    updateBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-        this.boundariesLayer.addData(data);
-
-        // There is a chance the lots were updated before we got here, so do it
-        // again just in case
-        this.updateDisplayedLots();
-        if (options.zoomToBounds) {
-            this.fitBounds(this.boundariesLayer.getBounds());
-        }
     }
-
 });
 
 L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":17,"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"handlebars":52,"leaflet":55,"leaflet.bing":6,"leaflet.dataoptions":14,"leaflet.hash":5,"leaflet.usermarker":16,"spin.js":78,"underscore":79}],23:[function(require,module,exports){
+},{"./filters":17,"./leaflet.lotlayer":21,"./leaflet.lotmarker":23,"./map.styles":30,"handlebars":52,"leaflet":55,"leaflet.bing":6,"leaflet.dataoptions":14,"leaflet.hash":5,"leaflet.usermarker":16,"livinglots-map/src/livinglots.boundaries":76,"spin.js":79,"underscore":80}],23:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -5917,7 +5893,7 @@ module.exports = {
     }
 };
 
-},{"underscore":79}],31:[function(require,module,exports){
+},{"underscore":80}],31:[function(require,module,exports){
 //
 // mappage.js
 //
@@ -6238,7 +6214,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./handlebars.helpers":19,"./leaflet.lotmap":22,"./map.search.js":29,"./overlaymenu":32,"./singleminded":33,"./welcome":35,"bootstrap_button":1,"bootstrap_tooltip":2,"handlebars":52,"jquery.infinitescroll":4,"leaflet":55,"leaflet.loading":15,"livinglots-map/src/livinglots.addlot":75,"livinglots-map/src/livinglots.mail":76,"spin.js":78,"underscore":79}],32:[function(require,module,exports){
+},{"./handlebars.helpers":19,"./leaflet.lotmap":22,"./map.search.js":29,"./overlaymenu":32,"./singleminded":33,"./welcome":35,"bootstrap_button":1,"bootstrap_tooltip":2,"handlebars":52,"jquery.infinitescroll":4,"leaflet":55,"leaflet.loading":15,"livinglots-map/src/livinglots.addlot":75,"livinglots-map/src/livinglots.mail":77,"spin.js":79,"underscore":80}],32:[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -6319,7 +6295,7 @@ $.fn.overlaymenu = function (options) {
     return this;
 };
 
-},{"underscore":79}],33:[function(require,module,exports){
+},{"underscore":80}],33:[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -21219,7 +21195,43 @@ L.Map.include({
 
 });
 
-},{"./templates":77,"handlebars":71,"leaflet":72,"spin.js":73,"underscore":74}],76:[function(require,module,exports){
+},{"./templates":78,"handlebars":71,"leaflet":72,"spin.js":73,"underscore":74}],76:[function(require,module,exports){
+//
+// livinglots.boundaries.js
+//
+// Add boundary-handling to a Leaflet map
+//
+
+L.Map.include({
+    boundariesLayer: null,
+
+    _initBoundaries: function () {
+        this.boundariesLayer = L.geoJson(null, {
+            color: '#FFA813',
+            fill: false,
+            opacity: 1
+        }).addTo(this);
+    },
+
+    removeBoundaries: function (data, options) {
+        this.boundariesLayer.clearLayers();
+        this.fire('boundarieschange');
+    },
+
+    updateBoundaries: function (data, options) {
+        this.boundariesLayer.clearLayers();
+        this.boundariesLayer.addData(data);
+        this.fire('boundarieschange');
+        if (options.zoomToBounds) {
+            this.fitBounds(this.boundariesLayer.getBounds());
+        }
+    }
+
+});
+
+L.Map.addInitHook('_initBoundaries');
+
+},{}],77:[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -21346,7 +21358,7 @@ L.Map.include({
     }
 });
 
-},{"./templates":77,"handlebars":71,"leaflet":72,"spin.js":73,"underscore":74}],77:[function(require,module,exports){
+},{"./templates":78,"handlebars":71,"leaflet":72,"spin.js":73,"underscore":74}],78:[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -21427,8 +21439,8 @@ templates["mail.window.hbs"] = Handlebars.template({"1":function(depth0,helpers,
 return templates;
 
 };
-},{}],78:[function(require,module,exports){
-module.exports=require(73)
 },{}],79:[function(require,module,exports){
+module.exports=require(73)
+},{}],80:[function(require,module,exports){
 module.exports=require(74)
 },{}]},{},[28]);

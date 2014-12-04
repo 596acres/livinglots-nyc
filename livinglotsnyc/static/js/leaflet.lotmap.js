@@ -9,14 +9,13 @@ require('leaflet.bing');
 require('leaflet.dataoptions');
 require('leaflet.hash');
 require('leaflet.usermarker');
+require('livinglots-map/src/livinglots.boundaries');
 
 require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
 
 
 L.LotMap = L.Map.extend({
-
-    boundariesLayer: null,
     centroidsLayer: null,
     currentFilters: {},
     polygonsLayer: null,
@@ -100,12 +99,6 @@ L.LotMap = L.Map.extend({
             this.currentFilters = filters.paramsToFilters(options.filterParams);
         }
 
-        this.boundariesLayer = L.geoJson(null, {
-            color: '#FFA813',
-            fill: false,
-            opacity: 1
-        }).addTo(this);
-
         // When new lots are added ensure they should be displayed
         var map = this;
         this.on('layeradd', function (event) {
@@ -148,6 +141,10 @@ L.LotMap = L.Map.extend({
                 }
             }
             this.previousZoom = currentZoom;
+        });
+
+        this.on('boundarieschange', function () {
+            this.updateDisplayedLots();
         });
     },
 
@@ -250,28 +247,7 @@ L.LotMap = L.Map.extend({
         if (this.userLayer) {
             this.removeLayer(this.userLayer);
         }
-    },
-
-    removeBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-
-        // There is a chance the lots were updated before we got here, so do it
-        // again just in case
-        this.updateDisplayedLots();
-    },
-
-    updateBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-        this.boundariesLayer.addData(data);
-
-        // There is a chance the lots were updated before we got here, so do it
-        // again just in case
-        this.updateDisplayedLots();
-        if (options.zoomToBounds) {
-            this.fitBounds(this.boundariesLayer.getBounds());
-        }
     }
-
 });
 
 L.lotMap = function (id, options) {
