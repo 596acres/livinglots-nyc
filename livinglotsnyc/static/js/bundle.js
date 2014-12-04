@@ -6354,8 +6354,6 @@ function load_streetview(lon, lat, $elem, $errorBox) {
     var latLng = new google.maps.LatLng(lat, lon);
 
     service.getPanoramaByLocation(latLng, 50, function (result, status) {
-        // TODO result.imageDate could be useful
-
         if (status === google.maps.StreetViewStatus.OK) {
             var lon0 = result.location.latLng.lng(),
                 lat0 = result.location.latLng.lat();
