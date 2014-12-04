@@ -6069,14 +6069,18 @@ function setFilters(params) {
     });
 
     // Set owners filters
-    var publicOwners = params.public_owners.split(',');
-    _.each(publicOwners, function (pk) {
-        $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
-    });
-    var privateOwners = params.private_owners.split(',');
-    _.each(privateOwners, function (pk) {
-        $('.filter-owner-private[data-owner-pk=' + pk +']').prop('checked', true);
-    });
+    if (params.public_owners) {
+        var publicOwners = params.public_owners.split(',');
+        _.each(publicOwners, function (pk) {
+            $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
+        });
+    }
+    if (params.privateOwners) {
+        var privateOwners = params.private_owners.split(',');
+        _.each(privateOwners, function (pk) {
+            $('.filter-owner-private[data-owner-pk=' + pk +']').prop('checked', true);
+        });
+    }
 
     // Set boundaries filters
 }
