@@ -37,6 +37,7 @@ function load_streetview(lon, lat, $elem, $errorBox) {
             });
         }
         else {
+            $elem.addClass('no-streetview');
             $errorBox.show();
         }
     });

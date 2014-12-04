@@ -50,10 +50,17 @@
         width: 100%;
         height: 300px;
         margin-top: 15px;
+        transition: height 0.5s ease;
+
+        &.no-streetview {
+            height: 100px;
+        }
     }
 
     &-header-streetview-error {
         display: none;
+        float: left;
+        margin-left: 25%;
     }
 
     &-info-box {

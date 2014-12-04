@@ -3699,9 +3699,15 @@ footer .footer-main-wrapper:after {
   width: 100%;
   height: 300px;
   margin-top: 15px;
+  transition: height 0.5s ease;
+}
+.lot-detail-header-image.no-streetview {
+  height: 100px;
 }
 .lot-detail-header-streetview-error {
   display: none;
+  float: left;
+  margin-left: 25%;
 }
 .lot-detail-info-box {
   background-color: #f6f8f7;
