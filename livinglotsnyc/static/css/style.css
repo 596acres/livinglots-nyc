@@ -4125,6 +4125,13 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
 .overlaymenu-news .action-list .action:last-of-type {
   border-bottom: none;
 }
+.overlaymenu-news .action-list .action .actor {
+  font-weight: bold;
+}
+.overlaymenu-news .action-list .action-timestamp {
+  font-size: 12px;
+  margin-top: 5px;
+}
 .note-list {
   list-style: none;
   padding: 0;
