@@ -148,11 +148,17 @@ class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
     slug_field = 'bbl'
     slug_url_kwarg = 'bbl'
 
+    def round_acres(self, lot):
+        try:
+            return round(lot.area_acres, 3)
+        except TypeError:
+            return None
+
     def get(self, request, *args, **kwargs):
         lot = self.object = self.get_object()
 
         context = {
-            'area_acres': round(lot.area_acres, 3),
+            'area_acres': self.round_acres(lot),
             'bbl': lot.bbl,
             'centroid': {
                 'x': lot.centroid.x,
