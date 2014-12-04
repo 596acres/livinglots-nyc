@@ -4110,6 +4110,20 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
     margin-left: 8.33333333%;
   }
 }
+.overlaymenu-news {
+  padding-right: 0;
+}
+.overlaymenu-news .action-list {
+  list-style: none;
+  padding-left: 0;
+}
+.overlaymenu-news .action-list .action {
+  border-bottom: 1px solid #160805;
+  padding: 10px;
+}
+.overlaymenu-news .action-list .action:last-of-type {
+  border-bottom: none;
+}
 .note-list {
   list-style: none;
   padding: 0;
