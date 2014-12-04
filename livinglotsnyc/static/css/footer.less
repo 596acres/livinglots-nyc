@@ -1,5 +1,15 @@
 footer {
+    background: @black;
+    color: white;
+    padding: 50px;
+
     .footer-main {
-        .make-row(0);
+        .make-md-column(8);
+        .make-md-column-offset(2);
+        text-align: center;
+
+        &-wrapper {
+            .make-row(0);
+        }
     }
 }
