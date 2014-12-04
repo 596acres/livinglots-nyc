@@ -212,10 +212,7 @@ function prepareOverlayMenus(map) {
             menu: '.overlaymenu-news'
         })
         .on('overlaymenuopen', function () {
-            var spinner = new Spinner({
-                left: '0px',
-                top: '0px'
-            }).spin($('.activity-stream')[0]);
+            var spinner = new Spinner().spin($('.activity-stream')[0]);
 
             var url = Django.url('activity_list');
             $('.activity-stream').load(url, function () {
