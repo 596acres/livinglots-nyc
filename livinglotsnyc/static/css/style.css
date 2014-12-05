@@ -3749,7 +3749,7 @@ footer .footer-main-wrapper:after {
 }
 .map-page #map {
   width: 100%;
-  height: 500px;
+  height: 75vh;
 }
 .map-page .map-header {
   display: block !important;
