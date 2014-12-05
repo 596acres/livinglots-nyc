@@ -1,3 +1,6 @@
+from django.db import models
+from django.db.models import Q
+
 from caching.base import CachingQuerySet, CachingMixin
 from feincms.models import Base
 
@@ -10,6 +13,24 @@ class PathwayManager(BasePathwayManager):
     def get_queryset(self):
         return CachingQuerySet(self.model, self._db)
 
+    def get_for_lot(self, lot):
+        pathways = super(PathwayManager, self).get_for_lot(lot)
+        pathways = pathways.filter(Q(
+            Q(borough=None) |
+            Q(borough=lot.borough)
+        ))
+        return pathways
+
 
 class Pathway(CachingMixin, PathwayFeinCMSMixin, BasePathway, Base):
     objects = PathwayManager()
+
+    BOROUGH_CHOICES = (
+        ('Bronx', 'Bronx'),
+        ('Brooklyn', 'Brooklyn'),
+        ('Manhattan', 'Manhattan'),
+        ('Queens', 'Queens'),
+        ('Staten Island', 'Staten Island'),
+    )
+    borough = models.CharField(max_length=25, choices=BOROUGH_CHOICES,
+                               blank=True, null=True)

@@ -19,6 +19,7 @@ class PathwayAdmin(BasePathwayAdmin):
             'fields': [
                 ('public_owners', 'specific_public_owners'),
                 ('private_owners', 'specific_private_owners'),
+                ('borough',),
             ],
         }],
         item_editor.FEINCMS_CONTENT_FIELDSET,
