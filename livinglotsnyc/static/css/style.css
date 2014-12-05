@@ -4337,10 +4337,9 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
 .map-welcome-open-button:active,
 .map-welcome-open-button:hover {
   color: #ffffff;
-  float: right;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
-  margin-right: 50px;
+  margin-left: 50px;
   margin-top: 10px;
   text-decoration: none;
 }
