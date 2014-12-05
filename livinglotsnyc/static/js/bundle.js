@@ -6068,6 +6068,13 @@ function setFiltersUIFromQueryParams(params) {
         $('.filter-layer[name=' + layer +']').prop('checked', true);
     });
 
+    // Set owner types
+    if (params.owner_types) {
+        _.each(params.owner_types.split(','), function (owner_type) {
+            $('.filter-owner-type[name=' + owner_type +']').prop('checked', true);
+        });
+    }
+
     // Set owners filters
     if (params.public_owners) {
         var publicOwners = params.public_owners.split(',');
