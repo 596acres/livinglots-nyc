@@ -3391,6 +3391,8 @@ body {
 .page-wrapper-row {
   margin-left: 0;
   margin-right: 0;
+  min-height: 80vh;
+  padding-bottom: 50px;
 }
 .page-wrapper-row:before,
 .page-wrapper-row:after {
