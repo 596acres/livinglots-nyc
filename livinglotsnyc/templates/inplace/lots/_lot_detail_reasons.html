@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n lots_tags %}
 
 <section>
     <h2>{% trans "Why is this lot here?" %}</h2>
@@ -10,9 +10,15 @@
             {% endblocktrans %}
         </p>
     {% elif not lot.known_use %}
-        <p>{% trans "We think this lot is vacant because:" %}</p>
-        <ul class="lot-detail-reasons">
-        </ul>
+        {% get_vacant_reasons for lot as reasons %}
+        {% if reasons %}
+            <p>{% trans "We think this lot is vacant because:" %}</p>
+            <ul class="lot-detail-reasons">
+                {% for reason in reasons %}
+                    <li>{{ reason|safe }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% else %}
         {% blocktrans with use=lot.known_use %}
             The lot is being used as a {{ use }}.
