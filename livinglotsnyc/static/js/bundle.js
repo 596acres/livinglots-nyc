@@ -5361,7 +5361,7 @@ L.LotMap = L.Map.extend({
     updateDisplayedLots: function () {
         var map = this;
         function updateDisplayedLotsForLayer(layer) {
-            if (layer.vectorLayer) {
+            if (layer && layer.vectorLayer) {
                 // Lots are nested in tiles so we need to do two layers of 
                 // eachLayer to get to them all
                 layer.vectorLayer.eachLayer(function (tileLayer) {
@@ -6090,6 +6090,12 @@ function setFiltersUIFromQueryParams(params) {
     }
 
     // Set boundaries filters
+    if (params.boundary) {
+        var split = params.boundary.split('::'),
+            layer = split[0].replace(/\+/g, ' '),
+            id = split[1];
+        $('.filter-boundaries[data-layer="' + layer + '"]').val(id);
+    }
 }
 
 function prepareOverlayMenus(map) {
@@ -6161,6 +6167,13 @@ $(document).ready(function () {
 
         });
 
+        initializeBoundaries(map);
+
+        // Just in case boundaries were set via query string, trigger change 
+        // here. Can't do until the map exists, but we actually do want to set
+        // most the other filters before the map exists.
+        $('.filter-boundaries').trigger('change');
+
         map.addLotsLayer();
 
         prepareOverlayMenus(map);
@@ -6216,8 +6229,6 @@ $(document).ready(function () {
         $('.admin-button-email').click(function () {
             map.enterMailMode();
         });
-
-        initializeBoundaries(map);
     }
 });
 

@@ -216,7 +216,7 @@ L.LotMap = L.Map.extend({
     updateDisplayedLots: function () {
         var map = this;
         function updateDisplayedLotsForLayer(layer) {
-            if (layer.vectorLayer) {
+            if (layer && layer.vectorLayer) {
                 // Lots are nested in tiles so we need to do two layers of 
                 // eachLayer to get to them all
                 layer.vectorLayer.eachLayer(function (tileLayer) {
