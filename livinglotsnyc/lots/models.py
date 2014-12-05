@@ -160,7 +160,7 @@ class LotMixin(models.Model):
         try:
             return list(self.polygon.extent)
         except Exception:
-            return None
+            return list(self.centroid.buffer(.0005).extent)
 
     bbox = property(_bbox)
 
