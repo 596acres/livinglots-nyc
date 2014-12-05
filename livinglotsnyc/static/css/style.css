@@ -4354,10 +4354,10 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   display: inline-block;
 }
 .map-welcome-body {
-  padding-left: 35px;
+  font-size: 16px;
+  padding-bottom: 10px;
+  padding-left: 30px;
   padding-right: 35px;
-  padding-bottom: 20px;
-  padding-top: 10px;
 }
 .map-add-lot-parent {
   left: 50px;
