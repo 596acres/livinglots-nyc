@@ -150,7 +150,13 @@ class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
 
     def round_acres(self, lot):
         try:
-            return round(lot.area_acres, 3)
+            # Attempt to round to smallest number of digits we can
+            decimal_places = 1
+            rounded = 0
+            while not rounded:
+                rounded = round(lot.area_acres, decimal_places)
+                decimal_places += 1
+            return rounded
         except TypeError:
             return None
 
