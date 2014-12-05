@@ -143,6 +143,26 @@ class LotDetailView(BaseLotDetailView):
     slug_field = 'bbl'
     slug_url_kwarg = 'bbl'
 
+    def check_lot_sanity(self, request, lot):
+        """
+        Sanity check the lot. In particular, check for missing things every lot
+        should have. Warn superusers if there is something amiss.
+        """
+        if not lot.centroid:
+            messages.warning(request, ("This lot doesn't have a center point "
+                                       "(centroid). You should edit the lot "
+                                       "and add one."))
+        if not lot.polygon:
+            messages.warning(request, ("This lot doesn't have a shape "
+                                       "(polygon). You should edit the lot "
+                                       "and add one."))
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            lot = self.get_object()
+            self.check_lot_sanity(request, lot)
+        return super(LotDetailView, self).get(request, *args, **kwargs)
+
 
 class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
     slug_field = 'bbl'
