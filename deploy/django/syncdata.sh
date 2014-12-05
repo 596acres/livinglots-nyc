@@ -2,4 +2,4 @@
 
 source $HOME/.bashrc
 source $HOME/.virtualenvs/$LIVING_LOTS_VIRTUAL_ENV/bin/activate
-django-admin.py syncdata
+django-admin syncdata
