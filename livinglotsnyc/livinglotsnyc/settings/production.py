@@ -2,20 +2,17 @@ import os
 
 from .base import *
 
-# TODO Fill with appropriate admins
 ADMINS = (
-    ('', 'admin@example.com'),
+    ('', 'admin@livinglotsnyc.org'),
 )
 
-# TODO Fill with appropriate managers
 MANAGERS = (
-    ('', 'manager@example.com'),
+    ('', 'admin@livinglotsnyc.org'),
 )
 
-# TODO Fill with appropriate facilitators
 FACILITATORS = {
     'global': [
-        'facilitators@example.com',
+        'facilitators@livinglotsnyc.org',
     ],
 }
 
