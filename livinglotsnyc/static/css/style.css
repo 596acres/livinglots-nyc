@@ -4167,6 +4167,10 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   font-size: 26px;
   line-height: 26px;
 }
+.add-organizer-page input[name=post_publicly] {
+  box-shadow: none;
+  width: 10%;
+}
 .photos-actions {
   margin-bottom: 25px;
 }
