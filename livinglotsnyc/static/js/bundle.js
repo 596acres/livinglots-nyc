@@ -6158,13 +6158,8 @@ $(document).ready(function () {
 
         var map = L.lotMap('map', {
             filterParams: buildLotFilterParams(null),
-
-            onMouseOverFeature: function (feature) {
-            },
-
-            onMouseOutFeature: function (feature) {
-            }
-
+            onMouseOverFeature: function (feature) {},
+            onMouseOutFeature: function (feature) {}
         });
 
         initializeBoundaries(map);
