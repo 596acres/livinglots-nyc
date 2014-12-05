@@ -4285,12 +4285,38 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   background-color: #fff;
 }
 #popup {
-  height: 150px;
+  height: 175px;
   width: 225px;
 }
 #popup header {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
+  margin-bottom: 10px;
+}
+#popup .popup-streetview {
+  position: relative;
+  float: left;
+  width: 50%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#popup .popup-lot-details {
+  position: relative;
+  float: left;
+  width: 50%;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#popup .popup-lot-details .owner {
+  margin-bottom: 3px;
+}
+#popup .popup-lot-details .owner-value {
+  font-weight: bold;
+}
+#popup .popup-lot-details .size {
+  margin-bottom: 3px;
 }
 .map-welcome {
   background: #1f9e48;

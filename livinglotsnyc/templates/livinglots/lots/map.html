@@ -7,19 +7,19 @@
                 <a target="_blank" href="{{url}}">{{name}}</a>
             </header>
             <div class="row">
-                <div class="popup-streetview col-xs-6">
+                <div class="popup-streetview">
                     <div>
                         <img src="http://maps.googleapis.com/maps/api/streetview?location={{centroid.y}},{{centroid.x}}&size=105x110&sensor=false&fov=45" />
                     </div>
                 </div>
-                <div class="popup-lot-details col-xs-6">
+                <div class="popup-lot-details">
                     {{#if part_of_group}}
                         <div class="lot-count">
                             {{number_of_lots}} lots
                         </div>
                     {{/if}}
-                    <div class="size">Size: {{area_acres}} acres</div>
-                    <div class="owner">Owner: {{owner}}</div>
+                    <div class="size">{{area_acres}} acres</div>
+                    <div class="owner">Owned by <span class="owner-value">{{owner}}</span></div>
                     <a target="_blank" href="{{url}}" class="btn btn-default">learn more</a>
                 </div>
             </div>
