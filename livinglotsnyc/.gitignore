@@ -1,2 +1,3 @@
 *.pyc
 .*.sw[po]
+collected_static
