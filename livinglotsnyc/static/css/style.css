@@ -4506,7 +4506,8 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
   margin-bottom: 3px;
 }
 .map-welcome {
-  background: #1f9e48;
+  background-image: url("../img/welcome_texture.png");
+  background-size: cover;
   color: #ffffff;
 }
 .map-welcome h1 {
