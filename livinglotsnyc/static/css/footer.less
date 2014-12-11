@@ -3,13 +3,40 @@ footer {
     color: white;
     padding: 50px;
 
-    .footer-main {
+    a {
+        &:link, &:visited, &:hover, &:active {
+            color: white;
+            text-decoration: underline;
+        }
+    }
+
+    .footer-main,
+    .footer-bottom {
         .make-md-column(8);
         .make-md-column-offset(2);
         text-align: center;
 
         &-wrapper {
             .make-row(0);
+        }
+    }
+
+    .footer-middle {
+        .make-row();
+        margin-bottom: 25px;
+        margin-top: 25px;
+
+        &-left,
+        &-right {
+            .make-md-column(3);
+        }
+
+        &-left {
+            .make-md-column-offset(2);
+        }
+
+        &-right {
+            .make-md-column-offset(1);
         }
     }
 }
