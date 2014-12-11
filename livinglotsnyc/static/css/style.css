@@ -4574,6 +4574,11 @@ fieldset[disabled] .photo-list-admin-actions .btn.active {
 .leaflet-container .btn {
   color: #ffffff;
 }
+.leaflet-container .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 12px;
+  padding: 4px;
+}
 .leaflet-control-zoom a {
   color: #160805;
 }
