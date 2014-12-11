@@ -41,6 +41,13 @@
 @news-button-z-index: 6000;
 
 .overlay-news-button {
+    .button-variant(black, transparent, transparent);
+
+    &:active,
+    &.active {
+        .box-shadow(none);
+    }
+
     height: @news-button-height;
     position: absolute;
     width: @news-button-width;
