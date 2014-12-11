@@ -3744,7 +3744,23 @@ footer .footer-middle:after {
 footer .footer-middle:after {
   clear: both;
 }
-footer .footer-middle-left,
+footer .footer-middle-left {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 992px) {
+  footer .footer-middle-left {
+    float: left;
+    width: 8.33333333%;
+  }
+}
+@media (min-width: 992px) {
+  footer .footer-middle-left {
+    margin-left: 25%;
+  }
+}
 footer .footer-middle-right {
   position: relative;
   min-height: 1px;
@@ -3752,20 +3768,9 @@ footer .footer-middle-right {
   padding-right: 15px;
 }
 @media (min-width: 992px) {
-  footer .footer-middle-left,
   footer .footer-middle-right {
     float: left;
-    width: 25%;
-  }
-}
-@media (min-width: 992px) {
-  footer .footer-middle-left {
-    margin-left: 16.66666667%;
-  }
-}
-@media (min-width: 992px) {
-  footer .footer-middle-right {
-    margin-left: 8.33333333%;
+    width: 33.33333333%;
   }
 }
 .form-group .control-label {
