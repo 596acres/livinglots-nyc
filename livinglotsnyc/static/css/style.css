@@ -3751,6 +3751,28 @@ footer .footer-main-wrapper:after {
   padding-bottom: 0;
   padding-top: 0;
 }
+.page-header .mainmenu-item:hover .submenu {
+  display: block;
+}
+.page-header .submenu {
+  background-color: white;
+  display: none;
+  font-size: 18px;
+  list-style: none;
+  margin-top: -15px;
+  padding: 10px;
+  position: absolute;
+}
+.page-header .submenu li {
+  padding: 3px;
+}
+.page-header .submenu a {
+  color: black;
+  white-space: nowrap;
+}
+.page-header .submenu a:hover {
+  text-decoration: none;
+}
 .legend {
   background: rgba(246, 248, 247, 0.9);
   border: 3px solid #160805;

@@ -18,4 +18,33 @@
             padding-top: 0;
         }
     }
+
+    .mainmenu-item {
+        &:hover .submenu {
+            display: block;
+        }
+    }
+
+    .submenu {
+        background-color: white;
+        display: none;
+        font-size: 18px;
+        list-style: none;
+        margin-top: -15px;
+        padding: 10px;
+        position: absolute;
+
+        li {
+            padding: 3px;
+        }
+
+        a {
+            color: black;
+            white-space: nowrap;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
 }

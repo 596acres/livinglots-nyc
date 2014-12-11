@@ -27,8 +27,19 @@
             <ul class="nav navbar-nav">
                 {% feincms_nav feincms_page level=2 depth=1 as mainmenu %}
                 {% for page in mainmenu %}
-                    <li {% ifequal page feincms_page %}class="active"{% endifequal %}>
+                    <li class="mainmenu-item">
                         <a href="{{ page.get_absolute_url }}">{{ page.title }}</a>
+
+                        {% feincms_nav page level=3 depth=1 as submenu %}
+                        {% if submenu %}
+                            <ul class="submenu">
+                                {% for submenupage in submenu %}
+                                    <li>
+                                        <a href="{{ submenupage.get_absolute_url }}">{{ submenupage.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </li>
                 {% endfor %}
                 {% if user.is_superuser %}
