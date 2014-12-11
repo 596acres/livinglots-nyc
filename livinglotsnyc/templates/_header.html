@@ -27,7 +27,7 @@
             <ul class="nav navbar-nav">
                 {% feincms_nav feincms_page level=2 depth=1 as mainmenu %}
                 {% for page in mainmenu %}
-                <li {% ifequal page feincms_page %}class="active"{% endifequal %}>
+                    <li {% ifequal page feincms_page %}class="active"{% endifequal %}>
                         <a href="{{ page.get_absolute_url }}">{{ page.title }}</a>
                     </li>
                 {% endfor %}
