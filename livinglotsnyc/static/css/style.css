@@ -3640,23 +3640,79 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 }
-.file-list {
+.usercontent-list {
   list-style: none;
   padding: 0;
 }
-.file-list .file-added-by-name {
+.usercontent-list-admin-actions .btn {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  color: #ffffff;
+  background-color: #cfb933;
+  border-color: #bca82c;
+  margin-bottom: 5px;
+}
+.usercontent-list-admin-actions .btn:hover,
+.usercontent-list-admin-actions .btn:focus,
+.usercontent-list-admin-actions .btn:active,
+.usercontent-list-admin-actions .btn.active,
+.open .dropdown-toggle.usercontent-list-admin-actions .btn {
+  color: #ffffff;
+  background-color: #b09d29;
+  border-color: #8b7c21;
+}
+.usercontent-list-admin-actions .btn:active,
+.usercontent-list-admin-actions .btn.active,
+.open .dropdown-toggle.usercontent-list-admin-actions .btn {
+  background-image: none;
+}
+.usercontent-list-admin-actions .btn.disabled,
+.usercontent-list-admin-actions .btn[disabled],
+fieldset[disabled] .usercontent-list-admin-actions .btn,
+.usercontent-list-admin-actions .btn.disabled:hover,
+.usercontent-list-admin-actions .btn[disabled]:hover,
+fieldset[disabled] .usercontent-list-admin-actions .btn:hover,
+.usercontent-list-admin-actions .btn.disabled:focus,
+.usercontent-list-admin-actions .btn[disabled]:focus,
+fieldset[disabled] .usercontent-list-admin-actions .btn:focus,
+.usercontent-list-admin-actions .btn.disabled:active,
+.usercontent-list-admin-actions .btn[disabled]:active,
+fieldset[disabled] .usercontent-list-admin-actions .btn:active,
+.usercontent-list-admin-actions .btn.disabled.active,
+.usercontent-list-admin-actions .btn[disabled].active,
+fieldset[disabled] .usercontent-list-admin-actions .btn.active {
+  background-color: #cfb933;
+  border-color: #bca82c;
+}
+.usercontent-list-admin-actions .btn .badge {
+  color: #cfb933;
+  background-color: #fff;
+}
+.usercontent-list .file {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.usercontent-list .file-added {
+  font-size: 12px;
+}
+.usercontent-list .file-added-by-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
   font-size: 26px;
   line-height: 26px;
 }
-.file-list-item {
-  margin-top: 25px;
-  margin-bottom: 25px;
+.usercontent-list .file-details {
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
-.file-added {
-  font-size: 12px;
+.usercontent-list .file-details .file-title {
+  font-size: 18px;
+}
+.usercontent-list .file-details .file-description {
+  display: block;
 }
 .filter-section {
   border-bottom: 1px solid black;
@@ -4511,23 +4567,19 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   font-size: 12px;
   margin-top: 5px;
 }
-.note-list {
-  list-style: none;
-  padding: 0;
-}
-.note-list-item {
+.usercontent-list .note {
   margin-top: 25px;
   margin-bottom: 25px;
 }
-.note-list .note-added-by-name {
+.usercontent-list .note-added {
+  font-size: 12px;
+}
+.usercontent-list .note-added-by-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
   font-size: 26px;
   line-height: 26px;
-}
-.note-added {
-  font-size: 12px;
 }
 .organizer-list {
   list-style: none;
@@ -4548,124 +4600,35 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   box-shadow: none;
   width: 10%;
 }
-.photos-actions {
+.usercontent-list .photo {
+  margin-top: 25px;
   margin-bottom: 25px;
 }
-.photo-list {
-  margin-left: 0;
-  margin-right: 0;
-}
-.photo-list:before,
-.photo-list:after {
-  content: " ";
-  display: table;
-}
-.photo-list:after {
-  clear: both;
-}
-.photo-list:before,
-.photo-list:after {
-  content: " ";
-  display: table;
-}
-.photo-list:after {
-  clear: both;
-}
-.photo-list-item {
-  position: relative;
-  min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px;
-  display: block;
-  padding: 4px;
-  margin-bottom: 20px;
-  line-height: 1.42857143;
-  background-color: #ffffff;
-  border: 1px solid #dddddd;
-  border-radius: 10px;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-}
-@media (min-width: 768px) {
-  .photo-list-item {
-    float: left;
-    width: 50%;
-  }
-}
-.photo-list-item > img,
-.photo-list-item a > img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-}
-a.photo-list-item:hover,
-a.photo-list-item:focus,
-a.photo-list-item.active {
-  border-color: #1f9e48;
-}
-.photo-list-item .caption {
-  padding: 9px;
-  color: #333333;
-}
-.photo-list-admin-actions {
-  position: relative;
-  min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px;
-}
-@media (min-width: 768px) {
-  .photo-list-admin-actions {
-    float: left;
-    width: 50%;
-  }
-}
-.photo-list-admin-actions .btn {
-  padding: 1px 5px;
+.usercontent-list .photo-added {
   font-size: 12px;
-  line-height: 1.5;
-  border-radius: 3px;
-  color: #ffffff;
-  background-color: #cfb933;
-  border-color: #bca82c;
-  margin-bottom: 5px;
 }
-.photo-list-admin-actions .btn:hover,
-.photo-list-admin-actions .btn:focus,
-.photo-list-admin-actions .btn:active,
-.photo-list-admin-actions .btn.active,
-.open .dropdown-toggle.photo-list-admin-actions .btn {
-  color: #ffffff;
-  background-color: #b09d29;
-  border-color: #8b7c21;
+.usercontent-list .photo-added-by-name {
+  font-family: "Cooper Hewitt", sans-serif;
+  font-weight: bold;
+  color: #58595b;
+  font-size: 26px;
+  line-height: 26px;
 }
-.photo-list-admin-actions .btn:active,
-.photo-list-admin-actions .btn.active,
-.open .dropdown-toggle.photo-list-admin-actions .btn {
-  background-image: none;
+.usercontent-list .photo-image {
+  display: block;
 }
-.photo-list-admin-actions .btn.disabled,
-.photo-list-admin-actions .btn[disabled],
-fieldset[disabled] .photo-list-admin-actions .btn,
-.photo-list-admin-actions .btn.disabled:hover,
-.photo-list-admin-actions .btn[disabled]:hover,
-fieldset[disabled] .photo-list-admin-actions .btn:hover,
-.photo-list-admin-actions .btn.disabled:focus,
-.photo-list-admin-actions .btn[disabled]:focus,
-fieldset[disabled] .photo-list-admin-actions .btn:focus,
-.photo-list-admin-actions .btn.disabled:active,
-.photo-list-admin-actions .btn[disabled]:active,
-fieldset[disabled] .photo-list-admin-actions .btn:active,
-.photo-list-admin-actions .btn.disabled.active,
-.photo-list-admin-actions .btn[disabled].active,
-fieldset[disabled] .photo-list-admin-actions .btn.active {
-  background-color: #cfb933;
-  border-color: #bca82c;
+.usercontent-list .photo-image img {
+  max-width: 100%;
 }
-.photo-list-admin-actions .btn .badge {
-  color: #cfb933;
-  background-color: #fff;
+.usercontent-list .photo-details {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+.usercontent-list .photo-details .photo-name {
+  font-size: 18px;
+}
+.usercontent-list .photo-details .photo-description {
+  display: block;
 }
 #popup {
   height: 200px;

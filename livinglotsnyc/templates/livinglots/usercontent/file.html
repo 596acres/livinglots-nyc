@@ -1,0 +1,40 @@
+{% load i18n %}
+
+<div class="file">
+    <span class="file-added-by-name">
+        {{ file.added_by_name }}
+    </span>
+    {% trans "uploaded" %}
+    <div class="file-details">
+        <span class="file-title">
+            <a href="{{ file.document.url }}">
+                {{ file.title }}
+            </a>
+        </span>
+        <span class="file-description">
+            {{ file.description }}
+        </span>
+    </div>
+    <div class="file-added">
+        &mdash;
+        {{ file.added }}
+    </div>
+
+    {% if "files" in perms %}
+        <div class="usercontent-list-admin-actions admin-only">
+
+            {% if "files.change_file" in perms %}
+                <a href="{% url "admin:files_file_change" file.pk %}" class="btn btn-small btn-warning">
+                    {% trans "Edit this file" %}
+                </a>
+            {% endif %}
+
+            {% if "files.delete_file" in perms %}
+                <a href="{% url "admin:files_file_delete" file.pk %}" class="btn btn-small btn-warning">
+                    {% trans "Delete this file" %}
+                </a>
+            {% endif %}
+
+        </div>
+    {% endif %}
+</div>

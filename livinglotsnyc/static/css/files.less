@@ -1,15 +1,26 @@
-.file-list {
-    .user-content-list();
-
-    .file-added-by-name {
-        .user-content-added-by-name();
-    }
-
-    &-item {
+.usercontent-list {
+    .file {
         .user-content-list-item();
-    }
-}
 
-.file-added {
-    .user-content-added();
+        &-added {
+            .user-content-added();
+        }
+
+        &-added-by-name {
+            .user-content-added-by-name();
+        }
+
+        &-details {
+            margin-bottom: 10px;
+            margin-top: 10px;
+
+            .file-title {
+                font-size: 18px;
+            }
+
+            .file-description {
+                display: block;
+            }
+        }
+    }
 }

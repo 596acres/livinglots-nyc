@@ -1,0 +1,33 @@
+{% load i18n %}
+
+<div class="note">
+    <span class="note-added-by-name">
+        {{ note.added_by_name }}
+    </span>
+    {% trans "said" %}
+    <span class="note-text">
+        {{ note.text|urlize|linebreaks }}
+    </span>
+    <div class="note-added">
+        &mdash;
+        {{ note.added }}
+    </div>
+
+    {% if "notes" in perms %}
+        <div class="usercontent-list-admin-actions admin-only">
+
+            {% if "notes.change_note" in perms %}
+                <a href="{% url "admin:notes_note_change" note.pk %}" class="btn">
+                    {% trans "Edit this note" %}
+                </a>
+            {% endif %}
+
+            {% if "notes.delete_note" in perms %}
+                <a href="{% url "admin:notes_note_delete" note.pk %}" class="btn">
+                    {% trans "Delete this note" %}
+                </a>
+            {% endif %}
+
+        </div>
+    {% endif %}
+</div>

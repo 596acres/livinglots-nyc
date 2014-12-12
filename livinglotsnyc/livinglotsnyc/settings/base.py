@@ -169,6 +169,7 @@ INSTALLED_APPS = (
     'livinglots_owners',
     'livinglots_pathways',
     'livinglots_steward',
+    'livinglots_usercontent',
     'livinglots_usercontent.files',
     'livinglots_usercontent.notes',
     'livinglots_usercontent.photos',

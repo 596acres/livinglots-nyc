@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load files_tags flatblock_tags i18n inplace_tags notes_tags organize_tags steward_tags pathways_tags photos_tags %}
+{% load flatblock_tags i18n inplace_tags organize_tags steward_tags pathways_tags usercontent_tags %}
 
 {% block title %}
     {{ lot.display_name|title|default:"unknown" }} |
@@ -127,42 +127,31 @@
             </div>
         {% endif %}
 
-        <div id="notes" class="notes lot-detail-main-section">
+        <div id="usercontent" class="usercontent lot-detail-main-section">
             <h2>
-                {% trans "Notes" %}
+                {% trans "News feed" %}
             </h2>
-            <a class="btn btn-default" href="{% url "usercontent:add_note" pk=lot.pk %}">
-                {% trans "Add your note" %}
-            </a>
-            {% render_note_list for lot %}
+            <div class="usercontent-actions">
+                <span>Add a</span>
+                <a class="btn btn-default" href="{% url "usercontent:add_note" pk=lot.pk %}">
+                    {% trans "note" %}
+                </a>
+                <a class="btn btn-default" href="{% url "usercontent:add_file" pk=lot.pk %}">
+                    {% trans "file" %}
+                </a>
+                <a class="btn btn-default" href="{% url "usercontent:add_photo" pk=lot.pk %}">
+                    {% trans "photo" %}
+                </a>
+            </div>
+            <div class="usercontent-list">
+                {% render_user_content_list for lot %}
+            </div>
         </div>
-
-        <div id="files" class="files lot-detail-main-section">
-            <h2>
-                {% trans "Files" %}
-            </h2>
-            <a class="btn btn-default" href="{% url "usercontent:add_file" pk=lot.pk %}">
-                {% trans "Add a file" %}
-            </a>
-            {% render_file_list for lot %}
-        </div>
-
     </div>
 {% endblock %}
 
 {% block sidebar %}
     <aside id="aside-right" class="col-sm-3">
-
-        <section class="lot-detail-side-section photos">
-            <h2>{% trans "Photos" %}</h2>
-            <div class="photos-actions">
-                <a class="btn btn-default" href="{% url "usercontent:add_photo" pk=lot.pk %}">
-                    {% trans "Submit a photo" %}
-                </a>
-            </div>
-            {% render_photo_list for lot %}
-        </section>
-
         <section class="lot-detail-organizers">
             {% get_organizer_count for lot as organizer_count %}
             <h2>Number of organizers: {{ organizer_count }}</h2>

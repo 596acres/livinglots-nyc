@@ -1,0 +1,37 @@
+{% load i18n imagekit %}
+
+<div class="photo">
+    <span class="photo-added-by-name">
+        {{ photo.added_by_name }}
+    </span>
+    {% trans "posted" %}
+
+    <div class="photo-details">
+        <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-image" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
+            {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
+        </a>
+        <div>
+            <span class="photo-name">{{ photo.name }}</span>
+            <span class="photo-description">{{ photo.description }}</span>
+        </div>
+    </div>
+
+    <div class="photo-added">
+        &mdash;
+        {{ photo.added }}
+    </div>
+
+    {% if "photos" in perms %}
+        <div class="usercontent-list-admin-actions admin-only">
+
+            {% if "photos.change_photo" in perms %}
+                <a class="btn" href="{% url "admin:photos_photo_change" photo.pk %}">{% trans "Edit this photo" %}</a>
+            {% endif %}
+
+            {% if "photos.delete_photo" in perms %}
+                <a class="btn" href="{% url "admin:photos_photo_delete" photo.pk %}">{% trans "Delete this photo" %}</a>
+            {% endif %}
+
+        </div>
+    {% endif %}
+</div>
