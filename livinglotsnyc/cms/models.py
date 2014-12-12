@@ -7,6 +7,7 @@ from feincms.module.page.models import Page
 from feincms.content.application.models import ApplicationContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.richtext.models import RichTextContent
+from feincms.content.video.models import VideoContent
 
 from livinglots_pathways.cms import PathwayListContent
 
@@ -130,7 +131,7 @@ Page.register_templates({
 })
 
 Page.create_content_type(RichTextContent)
-
+Page.create_content_type(VideoContent)
 Page.create_content_type(CollapsibleSectionContent)
 Page.create_content_type(PathwayListContent)
 Page.create_content_type(RecentActivitiesContent)
