@@ -3929,6 +3929,7 @@ footer .footer-middle-right {
   margin-top: -15px;
   padding: 10px;
   position: absolute;
+  z-index: 5010;
 }
 .page-header .submenu li {
   padding: 3px;
@@ -4183,7 +4184,7 @@ td.map-page .map-header {
   height: 34px;
   position: absolute;
   width: 70px;
-  z-index: 6000;
+  z-index: 5100;
 }
 .overlay-news-button:hover,
 .overlay-news-button:focus,
@@ -4235,7 +4236,7 @@ fieldset[disabled] .overlay-news-button.active {
   width: 143px;
   left: -21.5px;
   top: -58px;
-  z-index: 5999;
+  z-index: 5099;
 }
 .btn-show-details {
   position: relative;
@@ -4296,7 +4297,7 @@ fieldset[disabled] .btn-show-details.active {
   min-height: 10px;
 }
 .overlaymenu-news {
-  z-index: 6001;
+  z-index: 5101;
 }
 .overlaymenu-details,
 .overlaymenu-filter,
