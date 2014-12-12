@@ -3882,14 +3882,26 @@ footer .footer-middle-left {
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px;
+  white-space: nowrap;
 }
-@media (min-width: 992px) {
+@media (min-width: 768px) {
+  footer .footer-middle-left {
+    float: left;
+    width: 16.66666667%;
+  }
+}
+@media (min-width: 768px) {
+  footer .footer-middle-left {
+    margin-left: 16.66666667%;
+  }
+}
+@media (min-width: 1200px) {
   footer .footer-middle-left {
     float: left;
     width: 8.33333333%;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   footer .footer-middle-left {
     margin-left: 25%;
   }
@@ -3900,7 +3912,7 @@ footer .footer-middle-right {
   padding-left: 15px;
   padding-right: 15px;
 }
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   footer .footer-middle-right {
     float: left;
     width: 33.33333333%;
