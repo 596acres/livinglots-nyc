@@ -3906,13 +3906,15 @@ footer .footer-middle-right {
     padding-left: 15px;
     padding-right: 15px;
   }
-  .page-header .navbar-header .navbar-toggle {
+  .page-header .navbar-header .navbar-toggle-wrapper {
     position: relative;
     float: left;
     width: 16.66666667%;
     min-height: 1px;
     padding-left: 15px;
     padding-right: 15px;
+  }
+  .page-header .navbar-header .navbar-toggle-wrapper .navbar-toggle {
     margin-top: 0;
   }
 }
