@@ -3859,6 +3859,11 @@ footer .footer-middle-right {
   font-size: 24px;
   margin-left: 20px;
 }
+@media (max-width: 767px) {
+  .page-header .navbar-nav {
+    margin-left: 0;
+  }
+}
 .page-header .navbar-nav > li > a {
   line-height: 75px;
   padding-bottom: 0;
@@ -3932,6 +3937,12 @@ footer .footer-middle-right {
 }
 .page-header .submenu a:hover {
   text-decoration: none;
+}
+@media (max-width: 767px) {
+  .page-header .submenu {
+    margin-left: 15px;
+    position: static;
+  }
 }
 .legend {
   background: rgba(246, 248, 247, 0.9);

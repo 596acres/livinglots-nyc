@@ -6018,6 +6018,22 @@ $(document).ready(function () {
         }
     });
 
+    /*
+     * Allow dropdowns on smallest screens (xs in Bootstrap)
+     */
+    if ($(window).width() < 767) {
+        console.log('xs');
+        $('.mainmenu-item > a').click(function () {
+            // If submenu already visible, follow link
+            if ($(this).hasClass('open')) {
+                return true;
+            }
+
+            // Else show submenu, don't follow link
+            $(this).toggleClass('open');
+            return false;
+        });
+    }
 });
 
 

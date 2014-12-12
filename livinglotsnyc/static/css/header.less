@@ -17,6 +17,10 @@
         font-size: 24px;
         margin-left: 20px;
 
+        @media (max-width: @screen-xs-max) {
+            margin-left: 0;
+        }
+
         > li > a {
             line-height: 75px;
             padding-bottom: 0;
@@ -73,6 +77,11 @@
             &:hover {
                 text-decoration: none;
             }
+        }
+
+        @media (max-width: @screen-xs-max) {
+            margin-left: @xs-padding;
+            position: static;
         }
     }
 }
