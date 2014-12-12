@@ -4285,9 +4285,10 @@ td.map-page .map-header {
   color: #000000;
   background-color: transparent;
   border-color: transparent;
-  height: 34px;
+  height: 50px;
   position: absolute;
-  width: 70px;
+  white-space: normal;
+  width: 95px;
   z-index: 5100;
 }
 .overlay-news-button:hover,
@@ -4338,8 +4339,8 @@ fieldset[disabled] .overlay-news-button.active {
   height: 150px;
   position: absolute;
   width: 143px;
-  left: -21.5px;
-  top: -58px;
+  left: -9px;
+  top: -50px;
   z-index: 5099;
 }
 .btn-show-details {
