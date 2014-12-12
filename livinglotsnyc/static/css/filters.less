@@ -1,3 +1,8 @@
+.filter-select {
+    margin-left: 10%;
+    width: 80%;
+}
+
 .filter-section {
     border-bottom: 1px solid black;
     padding-bottom: 10px;
@@ -26,8 +31,7 @@
     }
 
     select {
-        margin-left: 10%;
-        width: 80%;
+        .filter-select();
     }
 }
 
@@ -38,5 +42,9 @@
         &:first-child {
             margin-top: 0;
         }
+    }
+
+    select {
+        .filter-select();
     }
 }
