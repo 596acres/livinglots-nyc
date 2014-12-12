@@ -1,6 +1,9 @@
 {% load i18n imagekit usercontent_tags %}
 
-<div class="photo">
+<div class="photo" id="photo-{{ photo.pk }}">
+    <div class="user-content-actions">
+        <a href="#photo-{{ photo.pk }}" class="user-content-actions-permalink">permalink</a>
+    </div>
     <div class="photo-meta">
         <div class="photo-added">
             {{ photo.added }}
@@ -25,4 +28,5 @@
     </div>
 
     {% admin_actions photo %}
+    <div class="user-content-separator"></div>
 </div>

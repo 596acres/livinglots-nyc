@@ -1,6 +1,9 @@
 {% load i18n usercontent_tags %}
 
-<div class="note">
+<div class="note" id="note-{{ note.pk }}">
+    <div class="user-content-actions">
+        <a href="#note-{{ note.pk }}" class="user-content-actions-permalink">permalink</a>
+    </div>
     <div class="note-meta">
         <div class="note-added">
             {{ note.added }}
@@ -19,4 +22,5 @@
     </span>
 
     {% admin_actions note %}
+    <div class="user-content-separator"></div>
 </div>

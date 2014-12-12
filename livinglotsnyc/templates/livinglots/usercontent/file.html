@@ -1,6 +1,9 @@
 {% load i18n usercontent_tags %}
 
-<div class="file">
+<div class="file" id="file-{{ file.pk }}">
+    <div class="user-content-actions">
+        <a href="#file-{{ file.pk }}" class="user-content-actions-permalink">permalink</a>
+    </div>
     <div class="file-meta">
         <div class="file-added">
             {{ file.added }}
@@ -26,4 +29,5 @@
     </div>
 
     {% admin_actions file %}
+    <div class="user-content-separator"></div>
 </div>
