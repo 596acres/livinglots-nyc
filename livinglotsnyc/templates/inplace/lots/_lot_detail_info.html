@@ -40,7 +40,8 @@
 
         <div>
             {% trans "Area" %}:
-            {{ lot.area_acres|floatformat:"2"|default:"unknown" }} acres
+            {{ lot.area_acres|floatformat:"2"|default:"unknown" }} {% trans "acres" %}
+            ({{ lot.area|floatformat:"0"|default:"unknown" }} {% trans "square feet" %})
         </div>
 
         {% if lot.bbl %}
