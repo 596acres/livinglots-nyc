@@ -3707,6 +3707,12 @@ fieldset[disabled] .usercontent-list-admin-actions .btn.active {
   position: absolute;
   width: 50px;
 }
+.user-content-actions-permalink {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gwMFQwDRJf6awAAAcFJREFUSMfdl00oRFEUx3/IjJXSJFLWJiLJgiRZKGKhRMmCpY2FEkXyUbPykWIpY2Pto0hCQqKsFFlZGCXlKxaUz82ZOk1vZl7vvpni1NScc//z/717e/feM/APIyXZwFpgH7gCzoG+RAPTgU3gx+JzC5QmApoKHCnQLjAABIFnqb3Kw7kal2L+Bfgtxm9kfNUtYBpwpmZaGUXXLuMfQIYb0D0FrYuhzVVgnyn4WMw+gfI42goFzjSBXqiZltjQr4s2ZALdsbm84ZhX+gKn0CZlUm9DH1D6cZPZhg+IaVXLi3I8Tilor+kL9SJG+ZJ3SX4SY3m7nW6ZBXl6gHsxK5S8TAF6LGY65nSGW8rECyzK90ulGZXameTvkgecQk8VNLxP/ao2KDWP5O+SZwNFTqEHCtAQMdYMvAGNkueI7sH08l5T0BYbvzkU7bIJeENMvoEaG/ph9ZBVTqGdyqTahn7G4o12tMTXYhK0oZ9Q0IDJEnuAJzEqjqPtV9BZ0xPJAzzauG1GFXTErVY0JIZLUTSTFnvYlWhTxh2q7pWbxbXltYqViLb0LiKfS2T3PxSlN25Nxt8Mn+zlLGnGt6W3+vvxCwAiopTrKgYuAAAAAElFTkSuQmCC");
+  display: block;
+  height: 30px;
+  width: 30px;
+}
 .user-content-separator {
   border-bottom: 1px solid #bdcbc4;
   padding-top: 35px;
