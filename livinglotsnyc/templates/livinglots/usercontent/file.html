@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n usercontent_tags %}
 
 <div class="file">
     <span class="file-added-by-name">
@@ -20,21 +20,5 @@
         {{ file.added }}
     </div>
 
-    {% if "files" in perms %}
-        <div class="usercontent-list-admin-actions admin-only">
-
-            {% if "files.change_file" in perms %}
-                <a href="{% url "admin:files_file_change" file.pk %}" class="btn btn-small btn-warning">
-                    {% trans "Edit this file" %}
-                </a>
-            {% endif %}
-
-            {% if "files.delete_file" in perms %}
-                <a href="{% url "admin:files_file_delete" file.pk %}" class="btn btn-small btn-warning">
-                    {% trans "Delete this file" %}
-                </a>
-            {% endif %}
-
-        </div>
-    {% endif %}
+    {% admin_actions file %}
 </div>
