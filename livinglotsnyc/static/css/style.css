@@ -4103,6 +4103,10 @@ footer .footer-middle-right {
 .lot-detail-page .alert {
   margin-top: 20px;
 }
+.lot-detail-section {
+  margin-bottom: 50px;
+  margin-top: 50px;
+}
 .lot-detail-actions .btn {
   margin-right: 15px;
   margin-top: 10px;
