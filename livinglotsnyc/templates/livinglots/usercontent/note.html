@@ -1,17 +1,22 @@
 {% load i18n usercontent_tags %}
 
 <div class="note">
-    <span class="note-added-by-name">
-        {{ note.added_by_name }}
-    </span>
-    {% trans "said" %}
+    <div class="note-meta">
+        <div class="note-added">
+            {{ note.added }}
+        </div>
+        <div class="note-added-by">
+            <span class="note-added-by-name">
+                {{ note.added_by_name }}
+            </span>
+            <span class="note-added-by-verb">
+                {% trans "said" %}
+            </span>
+        </div>
+    </div>
     <span class="note-text">
         {{ note.text|urlize|linebreaks }}
     </span>
-    <div class="note-added">
-        &mdash;
-        {{ note.added }}
-    </div>
 
     {% admin_actions note %}
 </div>

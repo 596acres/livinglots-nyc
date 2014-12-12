@@ -1,10 +1,19 @@
 {% load i18n usercontent_tags %}
 
 <div class="file">
-    <span class="file-added-by-name">
-        {{ file.added_by_name }}
-    </span>
-    {% trans "uploaded" %}
+    <div class="file-meta">
+        <div class="file-added">
+            {{ file.added }}
+        </div>
+        <div class="file-added-by">
+            <span class="file-added-by-name">
+                {{ file.added_by_name }}
+            </span>
+            <span class="file-added-by-verb">
+                {% trans "uploaded" %}
+            </span>
+        </div>
+    </div>
     <div class="file-details">
         <span class="file-title">
             <a href="{{ file.document.url }}">
@@ -14,10 +23,6 @@
         <span class="file-description">
             {{ file.description }}
         </span>
-    </div>
-    <div class="file-added">
-        &mdash;
-        {{ file.added }}
     </div>
 
     {% admin_actions file %}

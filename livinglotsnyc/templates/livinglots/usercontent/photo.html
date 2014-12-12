@@ -1,11 +1,19 @@
 {% load i18n imagekit usercontent_tags %}
 
 <div class="photo">
-    <span class="photo-added-by-name">
-        {{ photo.added_by_name }}
-    </span>
-    {% trans "posted" %}
-
+    <div class="photo-meta">
+        <div class="photo-added">
+            {{ photo.added }}
+        </div>
+        <div class="photo-added-by">
+            <span class="photo-added-by-name">
+                {{ photo.added_by_name }}
+            </span>
+            <span class="photo-added-by-verb">
+                {% trans "posted" %}
+            </span>
+        </div>
+    </div>
     <div class="photo-details">
         <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-image" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
             {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
@@ -14,11 +22,6 @@
             <span class="photo-name">{{ photo.name }}</span>
             <span class="photo-description">{{ photo.description }}</span>
         </div>
-    </div>
-
-    <div class="photo-added">
-        &mdash;
-        {{ photo.added }}
     </div>
 
     {% admin_actions photo %}

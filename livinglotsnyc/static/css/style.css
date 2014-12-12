@@ -3512,18 +3512,26 @@ a.thumbnail.active {
   padding: 0;
 }
 .user-content-list-item {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  border-bottom: 1px solid #bdcbc4;
+  margin-top: 35px;
+  padding-bottom: 35px;
+}
+.user-content-list-item:last-of-type {
+  border-bottom: none;
 }
 .user-content-added {
+  float: right !important;
   font-size: 12px;
 }
 .user-content-added-by-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 22px;
+  line-height: 22px;
+}
+.user-content-content {
+  display: block;
 }
 body {
   font-family: "Cooper Hewitt", sans-serif;
@@ -3691,20 +3699,26 @@ fieldset[disabled] .usercontent-list-admin-actions .btn.active {
   background-color: #fff;
 }
 .usercontent-list .file {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  border-bottom: 1px solid #bdcbc4;
+  margin-top: 35px;
+  padding-bottom: 35px;
+}
+.usercontent-list .file:last-of-type {
+  border-bottom: none;
 }
 .usercontent-list .file-added {
+  float: right !important;
   font-size: 12px;
 }
 .usercontent-list .file-added-by-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 22px;
+  line-height: 22px;
 }
 .usercontent-list .file-details {
+  display: block;
   margin-bottom: 10px;
   margin-top: 10px;
 }
@@ -4127,8 +4141,8 @@ footer .footer-middle-right {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 22px;
+  line-height: 22px;
 }
 .nearby-lots-list {
   list-style: none;
@@ -4568,59 +4582,78 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   margin-top: 5px;
 }
 .usercontent-list .note {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  border-bottom: 1px solid #bdcbc4;
+  margin-top: 35px;
+  padding-bottom: 35px;
+}
+.usercontent-list .note:last-of-type {
+  border-bottom: none;
 }
 .usercontent-list .note-added {
+  float: right !important;
   font-size: 12px;
 }
 .usercontent-list .note-added-by-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 22px;
+  line-height: 22px;
+}
+.usercontent-list .note-text {
+  display: block;
 }
 .organizer-list {
   list-style: none;
   padding: 0;
 }
 .organizer-list-item {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  border-bottom: 1px solid #bdcbc4;
+  margin-top: 35px;
+  padding-bottom: 35px;
+}
+.organizer-list-item:last-of-type {
+  border-bottom: none;
 }
 .organizer-list-item .organizer-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 22px;
+  line-height: 22px;
 }
 .add-organizer-page input[name=post_publicly] {
   box-shadow: none;
   width: 10%;
 }
 .usercontent-list .photo {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  border-bottom: 1px solid #bdcbc4;
+  margin-top: 35px;
+  padding-bottom: 35px;
+}
+.usercontent-list .photo:last-of-type {
+  border-bottom: none;
 }
 .usercontent-list .photo-added {
+  float: right !important;
   font-size: 12px;
 }
 .usercontent-list .photo-added-by-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
   color: #58595b;
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 22px;
+  line-height: 22px;
 }
 .usercontent-list .photo-image {
   display: block;
 }
 .usercontent-list .photo-image img {
+  height: auto;
   max-width: 100%;
 }
 .usercontent-list .photo-details {
+  display: block;
   margin-bottom: 10px;
   margin-top: 10px;
 }
