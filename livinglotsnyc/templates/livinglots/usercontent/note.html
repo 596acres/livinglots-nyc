@@ -1,26 +1,10 @@
-{% load i18n usercontent_tags %}
+{% extends "livinglots/usercontent/detail_base.html" %}
+{% load i18n %}
 
-<div class="note" id="note-{{ note.pk }}">
-    <div class="user-content-actions">
-        <a href="#note-{{ note.pk }}" class="user-content-actions-permalink">permalink</a>
-    </div>
-    <div class="note-meta">
-        <div class="note-added">
-            {{ note.added }}
-        </div>
-        <div class="note-added-by">
-            <span class="note-added-by-name">
-                {{ note.added_by_name }}
-            </span>
-            <span class="note-added-by-verb">
-                {% trans "said" %}
-            </span>
-        </div>
-    </div>
-    <span class="note-text">
-        {{ note.text|urlize|linebreaks }}
-    </span>
+{% block verb %}
+    {% trans "said" %}
+{% endblock %}
 
-    {% admin_actions note %}
-    <div class="user-content-separator"></div>
-</div>
+{% block details %}
+    {{ note.text|urlize|linebreaks }}
+{% endblock %}

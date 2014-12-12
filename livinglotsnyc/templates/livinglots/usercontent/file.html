@@ -1,33 +1,17 @@
-{% load i18n usercontent_tags %}
+{% extends "livinglots/usercontent/detail_base.html" %}
+{% load i18n %}
 
-<div class="file" id="file-{{ file.pk }}">
-    <div class="user-content-actions">
-        <a href="#file-{{ file.pk }}" class="user-content-actions-permalink">permalink</a>
-    </div>
-    <div class="file-meta">
-        <div class="file-added">
-            {{ file.added }}
-        </div>
-        <div class="file-added-by">
-            <span class="file-added-by-name">
-                {{ file.added_by_name }}
-            </span>
-            <span class="file-added-by-verb">
-                {% trans "uploaded" %}
-            </span>
-        </div>
-    </div>
-    <div class="file-details">
-        <span class="file-title">
-            <a href="{{ file.document.url }}">
-                {{ file.title }}
-            </a>
-        </span>
-        <span class="file-description">
-            {{ file.description }}
-        </span>
-    </div>
+{% block verb %}
+    {% trans "uploaded" %}
+{% endblock %}
 
-    {% admin_actions file %}
-    <div class="user-content-separator"></div>
-</div>
+{% block details %}
+    <span class="file-title">
+        <a href="{{ file.document.url }}">
+            {{ file.title }}
+        </a>
+    </span>
+    <span class="file-description">
+        {{ file.description }}
+    </span>
+{% endblock %}

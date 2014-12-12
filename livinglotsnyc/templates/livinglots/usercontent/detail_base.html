@@ -1,0 +1,26 @@
+{% load i18n usercontent_tags %}
+
+<div class="{{ model_name }}" id="{{ model_name }}-{{ obj.pk }}">
+    <div class="user-content-actions">
+        <a href="#{{ model_name }}-{{ obj.pk }}" class="user-content-actions-permalink">permalink</a>
+    </div>
+    <div class="{{ model_name }}-meta">
+        <div class="{{ model_name }}-added">
+            {{ obj.added }}
+        </div>
+        <div class="{{ model_name }}-added-by">
+            <span class="{{ model_name }}-added-by-name">
+                {{ obj.added_by_name }}
+            </span>
+            <span class="{{ model_name }}-added-by-verb">
+                {% block verb %}{% trans "posted" %}{% endblock %}
+            </span>
+        </div>
+    </div>
+    <span class="{{ model_name }}-details">
+        {% block details %}{% endblock %}
+    </span>
+
+    {% admin_actions obj %}
+    <div class="user-content-separator"></div>
+</div>

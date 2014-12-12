@@ -1,32 +1,16 @@
-{% load i18n imagekit usercontent_tags %}
+{% extends "livinglots/usercontent/detail_base.html" %}
+{% load i18n imagekit %}
 
-<div class="photo" id="photo-{{ photo.pk }}">
-    <div class="user-content-actions">
-        <a href="#photo-{{ photo.pk }}" class="user-content-actions-permalink">permalink</a>
-    </div>
-    <div class="photo-meta">
-        <div class="photo-added">
-            {{ photo.added }}
-        </div>
-        <div class="photo-added-by">
-            <span class="photo-added-by-name">
-                {{ photo.added_by_name }}
-            </span>
-            <span class="photo-added-by-verb">
-                {% trans "posted" %}
-            </span>
-        </div>
-    </div>
-    <div class="photo-details">
-        <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-image" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
-            {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
-        </a>
-        <div>
-            <span class="photo-name">{{ photo.name }}</span>
-            <span class="photo-description">{{ photo.description }}</span>
-        </div>
-    </div>
+{% block verb %}
+    {% trans "posted" %}
+{% endblock %}
 
-    {% admin_actions photo %}
-    <div class="user-content-separator"></div>
-</div>
+{% block details %}
+    <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-image" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
+        {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
+    </a>
+    <div>
+        <span class="photo-name">{{ photo.name }}</span>
+        <span class="photo-description">{{ photo.description }}</span>
+    </div>
+{% endblock %}
