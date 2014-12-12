@@ -4,6 +4,8 @@
 // Scripts that should run on every page.
 //
 
+require('bootstrap_transition');
+require('bootstrap_collapse');
 require('fancybox');
 
 

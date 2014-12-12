@@ -3,6 +3,10 @@ footer {
     color: white;
     padding: 50px;
 
+    @media (max-width: @screen-xs-max) {
+        padding: @xs-padding;
+    }
+
     a {
         &:link, &:visited, &:hover, &:active {
             color: white;

@@ -6,6 +6,11 @@
         margin-left: @header-left-padding - 5;
 
         max-width: 500px;
+
+        @media (max-width: @screen-xs-max) {
+            max-width: 95%;
+            margin-left: 0;
+        }
     }
 
     .navbar-nav {
@@ -16,6 +21,29 @@
             line-height: 75px;
             padding-bottom: 0;
             padding-top: 0;
+
+            @media (max-width: @screen-xs-max) {
+                line-height: 50px;
+            }
+        }
+    }
+
+    // Smallest screens, use grid to keep logo and collapse button side-by-side
+    @media (max-width: @screen-xs-max) {
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .navbar-header {
+            .make-row(0);
+
+            .page-header-home-link {
+                .make-xs-column(9);
+            }
+            .navbar-toggle {
+                .make-xs-column(2);
+                margin-top: 0;
+            }
         }
     }
 

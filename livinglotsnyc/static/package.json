@@ -33,8 +33,10 @@
   },
   "browser": {
     "bootstrap_button": "./bower_components/bootstrap/js/button.js",
+    "bootstrap_collapse": "./bower_components/bootstrap/js/collapse.js",
     "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
     "bootstrap_tooltip": "./bower_components/bootstrap/js/tooltip.js",
+    "bootstrap_transition": "./bower_components/bootstrap/js/transition.js",
     "fancybox": "./bower_components/fancybox/source/jquery.fancybox.js",
     "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
     "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",

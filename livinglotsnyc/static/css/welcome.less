@@ -5,12 +5,21 @@
     background-size: cover;
     color: @welcome-text-color;
 
+    @media (max-width: @screen-xs-max) {
+        background-image: none;
+        background-color: @green;
+    }
+
     h1 {
         .header-font();
         font-size: 28px;
         font-style: italic;
         margin: 0;
         padding-left: @header-left-padding;
+
+        @media (max-width: @screen-xs-max) {
+            padding-left: @xs-padding;
+        }
     }
 
     &-close-button,
@@ -44,5 +53,10 @@
         padding-bottom: 10px;
         padding-left: @header-left-padding;
         padding-right: 35px;
+
+        @media (max-width: @screen-xs-max) {
+            padding-left: @xs-padding;
+            padding-right: @xs-padding;
+        }
     }
 }
