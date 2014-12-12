@@ -113,19 +113,17 @@
             </div>
         {% endif %}
 
-        {% if not lot.known_use %}
-            <div id="pathways" class="pathways lot-detail-main-section">
-                <h2>
-                    {% trans "Pathways" %}
-                </h2>
-                <div>
-                    {% blocktrans %}
-                        Here are some pathways you might follow to use this piece of land legally:
-                    {% endblocktrans %}
-                    {% render_pathway_summary_list for lot %}
-                </div>
+        <div id="pathways" class="pathways lot-detail-main-section">
+            <h2>
+                {% trans "Pathways" %}
+            </h2>
+            <div>
+                {% blocktrans %}
+                    Here are some pathways you might follow to use this piece of land legally:
+                {% endblocktrans %}
+                {% render_pathway_summary_list for lot %}
             </div>
-        {% endif %}
+        </div>
 
         <div id="usercontent" class="usercontent lot-detail-main-section">
             <h2>
