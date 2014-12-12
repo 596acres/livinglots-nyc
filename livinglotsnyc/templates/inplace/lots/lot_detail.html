@@ -84,11 +84,23 @@
         <div class="lot-detail-info-box">
             {% include "inplace/lots/_lot_detail_info.html" with lot=lot %}
 
+            {% include "inplace/lots/_lot_detail_reasons.html" with lot=lot %}
+
             {% ifequal lot.owners|length 1 %}
                 {% include "inplace/lots/_lot_detail_owner.html" with owner=lot.owners.0 owner_contact=lot.owner_contacts.0 %}
             {% endifequal %}
+        </div>
 
-            {% include "inplace/lots/_lot_detail_reasons.html" with lot=lot %}
+        <div id="pathways" class="pathways lot-detail-section lot-detail-main-section">
+            <h2>
+                {% trans "Pathways" %}
+            </h2>
+            <div>
+                {% blocktrans %}
+                    Here are some pathways you might follow to use this piece of land legally:
+                {% endblocktrans %}
+                {% render_pathway_summary_list for lot %}
+            </div>
         </div>
 
         {% get_steward_project_list for lot as stewards %}
@@ -112,18 +124,6 @@
                 {% endif %}
             </div>
         {% endif %}
-
-        <div id="pathways" class="pathways lot-detail-main-section">
-            <h2>
-                {% trans "Pathways" %}
-            </h2>
-            <div>
-                {% blocktrans %}
-                    Here are some pathways you might follow to use this piece of land legally:
-                {% endblocktrans %}
-                {% render_pathway_summary_list for lot %}
-            </div>
-        </div>
 
         <div id="usercontent" class="usercontent lot-detail-main-section">
             <h2>
