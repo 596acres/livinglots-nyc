@@ -10,6 +10,7 @@
     "leaflet": "~0.7.3",
     "leaflet-pip": "^0.1.1",
     "livinglots-map": "git://github.com/596acres/livinglots-map",
+    "proj4": "^2.3.3",
     "spin.js": "~2.0.1",
     "tinymce": "^4.0.28",
     "underscore": "~1.7.0"

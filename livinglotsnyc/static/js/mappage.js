@@ -10,6 +10,7 @@ var L = require('leaflet');
 var Spinner = require('spin.js');
 var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
+var oasis = require('./oasis');
 
 require('bootstrap_button');
 require('bootstrap_tooltip');
@@ -290,7 +291,10 @@ $(document).ready(function () {
                 map.removeUserLayer();
             })
             .on('searchresultfound', function (e, result) {
-                map.addUserLayer([result.latitude, result.longitude]);
+                var oasisUrl = oasis.vacantLotsUrl(result.latitude, result.longitude);
+                map.addUserLayer([result.latitude, result.longitude], {
+                    popupContent: '<p>This is the point we found when we searched.</p><p>Not seeing a vacant lot here that you expected? Check <a href="' + oasisUrl + '" target="_blank">OASIS in this area</a>.</p>'
+                });
             });
 
         $('.filter').change(function () {

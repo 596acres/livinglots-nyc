@@ -236,10 +236,14 @@ L.LotMap = L.Map.extend({
         updateDisplayedLotsForLayer(this.polygonsLayer);
     },
 
-    addUserLayer: function (latlng) {
+    addUserLayer: function (latlng, opts) {
+        opts = opts || {};
         this.userLayer = L.userMarker(latlng, {
             smallIcon: true,
         }).addTo(this);
+        if (opts.popupContent) {
+            this.userLayer.bindPopup(opts.popupContent).openPopup();
+        }
         this.setView(latlng, this.userLocationZoom);
     },
 
