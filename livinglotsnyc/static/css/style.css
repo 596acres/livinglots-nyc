@@ -4290,6 +4290,105 @@ td.map-page .map-header {
   margin-top: 5px;
   padding-left: 20px;
 }
+.map-page .map-header-actions {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .map-page .map-header-actions {
+    float: left;
+    width: 25%;
+  }
+}
+@media (min-width: 992px) {
+  .map-page .map-header-actions {
+    float: left;
+    width: 16.66666667%;
+  }
+}
+.map-page .map-header-search {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .map-page .map-header-search {
+    float: left;
+    width: 33.33333333%;
+  }
+}
+@media (min-width: 992px) {
+  .map-page .map-header-search {
+    float: left;
+    width: 25%;
+  }
+}
+.map-page .map-header-search input {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .map-page .map-header-search input {
+    float: left;
+    width: 75%;
+  }
+}
+.map-page .map-header-search button {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .map-page .map-header-search button {
+    float: left;
+    width: 25%;
+  }
+}
+.map-page .map-header-filter {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .map-page .map-header-filter {
+    float: left;
+    width: 16.66666667%;
+  }
+}
+@media (min-width: 992px) {
+  .map-page .map-header-filter {
+    float: left;
+    width: 8.33333333%;
+  }
+}
+.map-page .map-header-filter .btn {
+  width: 100%;
+}
+.map-page .map-header-news {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media (min-width: 768px) {
+  .map-page .map-header-news {
+    float: left;
+    width: 16.66666667%;
+  }
+}
+@media (min-width: 992px) {
+  .map-page .map-header-news {
+    float: left;
+    width: 8.33333333%;
+  }
+}
 .overlay-admin-button {
   margin-top: 5px;
 }

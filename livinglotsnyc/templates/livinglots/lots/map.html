@@ -58,7 +58,7 @@
             </ul>
         </div>
 
-        <div class="col-sm-2">
+        <div class="map-header-actions">
             <a class="btn btn-default overlay-details-button btn-block" href="#">
                 details
             </a>
@@ -67,11 +67,11 @@
             </a>
         </div>
 
-        <div class="col-sm-4">
+        <div class="map-header-search">
             <div class="map-search">
-                <form class="map-search-form row" data-bounds="[-74.304657,40.476203,-73.678436,40.939452]" data-city="New York" data-state="NY" data-error-message="Could not find your location. Try again?" data-warning-selector="map-search.warning">
-                    <input class="col-sm-6 form-control" id="search" name="search" placeholder="{% trans "Search by address, zip code" %}" type="text" />
-                    <button class="map-search-submit col-sm-2 btn btn-default" type="submit">{% trans "GO" %}</button>
+                <form class="map-search-form" data-bounds="[-74.304657,40.476203,-73.678436,40.939452]" data-city="New York" data-state="NY" data-error-message="Could not find your location. Try again?" data-warning-selector="map-search.warning">
+                    <input class="form-control" id="search" name="search" placeholder="{% trans "Search by address, zip code" %}" type="text" />
+                    <button class="map-search-submit btn btn-default" type="submit">{% trans "GO" %}</button>
                     <div class="warning" style="display: none;"></div>
                 </form>
             </div>
@@ -85,12 +85,12 @@
             {% endif %}
         </div>
 
-        <div class="col-sm-1">
+        <div class="map-header-filter">
             <a class="btn btn-default overlay-filter-button" href="#">
-                filter
+                {% trans "filter" %}
             </a>
         </div>
-        <div class="col-sm-1">
+        <div class="map-header-news">
             <div class="overlay-news-button-background"></div>
             <a class="btn btn-default overlay-news-button" href="#">
                 {% trans "organizing updates" %}
