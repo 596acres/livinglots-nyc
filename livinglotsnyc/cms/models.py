@@ -144,6 +144,7 @@ Page.create_content_type(ExternallyLinkedMediaFileContent)
 Page.create_content_type(MailchimpSignup)
 
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
+    ('faq.urls', _('FAQ')),
     ('livinglots_lots.map_urls', _('Lots map')),
     ('elephantblog.urls', _('Blog')),
     ('extraadmin.cms_urls', _('Extra admin functions')),

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load feincms_tags %}
+
+{% block page_title %}FAQ{% endblock %}
+
+{% block content %}
+    {% for article in object_list %}  
+        <div class="faq short" id="{{ article.slug }}">
+            <div class="faq-actions">
+                <a href="#{{ article.slug }}" class="faq-actions-permalink"></a>
+            </div>
+            <div class="faq-question">
+                {% feincms_render_region article 'question' request %}
+            </div>
+            <div class="faq-answer">
+                {% feincms_render_region article 'answer' request %}
+            </div>
+            <div class="faq-separator"></div>
+        </div>
+    {% endfor %}
+{% endblock %}

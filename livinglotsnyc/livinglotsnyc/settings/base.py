@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     #
     'actstream',
     'admin_enhancer',
+    'articles',
     'contact_form',
     'django_monitor',
     'djangojs',
@@ -150,6 +151,7 @@ INSTALLED_APPS = (
     'mptt',
     'reversion',
     'reversion_compare',
+    'taggit',
     'widget_tweaks',
 
     #
@@ -189,6 +191,7 @@ INSTALLED_APPS = (
     'blog',
     'cms',
     'contact',
+    'faq',
     'groundtruth',
     'lots',
     'organize',

@@ -1,0 +1,35 @@
+.faq {
+    padding-bottom: 20px;
+    padding-top: 20px;
+
+    // Ensure that hover will keep the actions visible
+    margin-left: -@user-content-actions-width;
+    padding-left: @user-content-actions-width;
+
+    &:hover .faq-actions {
+        display: block;
+    }
+
+    &-question {
+        font-weight: bold;
+    }
+
+    &-actions {
+        display: none;
+        left: -@user-content-actions-width;
+        position: absolute;
+        width: @user-content-actions-width;
+
+        &-permalink {
+            background-image: @permalink-image;
+            display: block;
+            height: 30px;
+            width: 30px;
+        }
+    }
+
+    &-separator {
+        border-bottom: 1px solid darken(@fill-color, 20%);
+        padding-top: 35px;
+    }
+}

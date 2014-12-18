@@ -41,7 +41,9 @@ django-mptt==0.6.1
 django-reversion==1.8.4
 git+git://github.com/ebrelsford/django-reversion-compare/@master
 git+git://github.com/596acres/django-sizecompare/@master
+django-taggit==0.12.2
 django.js==0.8.1
+feincms-articles==1.1.2
 feincms-cleanse==2
 feincms-elephantblog==1.0.0
 git+git://github.com/ebrelsford/feincms-pagepermissions@master
