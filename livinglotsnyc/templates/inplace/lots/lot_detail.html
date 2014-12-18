@@ -81,8 +81,8 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a class="share-facebook" href="#" target="_blank">Facebook</a></li>
-                    <li><a class="share-twitter" href="#" target="_blank" data-tweet="{% trans "Here is an opportunity to start organizing a space for community with the help of @596acres" %}: ">Twitter</a></li>
+                    <li><a class="share-facebook" href="#" target="_blank">{% trans "Facebook" %}</a></li>
+                    <li><a class="share-twitter" href="#" target="_blank" data-tweet="{% trans "Here is an opportunity to start organizing a space for community with the help of @596acres" %}: ">{% trans "Twitter" %}</a></li>
                 </ul>
             </div>
         {% endif %}
@@ -127,7 +127,7 @@
         {% if "lots.view_all_details" in perms %}
             <div class="lot-detail-details lot-detail-section lot-detail-main-section">
                 <h2>{% trans "Admin Details" %}</h2>
-                <div class="help-text">(This section is only visible to admins.)</div>
+                <div class="help-text">{% trans "(This section is only visible to admins.)" %}</div>
 
                 {% if stewards %}
                     {% trans "steward's land tenure" %}:
@@ -141,7 +141,7 @@
                 {% trans "News feed" %}
             </h2>
             <div class="usercontent-actions">
-                <span>Add a</span>
+                <span>{% trans "Add a" %}</span>
                 <a class="btn btn-default" href="{% url "usercontent:add_note" pk=lot.pk %}">
                     {% trans "note" %}
                 </a>

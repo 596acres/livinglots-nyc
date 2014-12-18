@@ -22,6 +22,6 @@
         {% trans "You were added as an organizer for" %}
         {{ participant.content_object.display_name|title|default:"unknown" }}
     </div>
-    <h1>Organize this lot!</h1>
-    <p>You're now growing community at {{ participant.content_object.display_name|title|default:"unknown" }}.</p>
+    <h1>{% trans "Organize this lot!" %}</h1>
+    <p>{% trans "You're now growing community at" %} {{ participant.content_object.display_name|title|default:"unknown" }}.</p>
 {% endblock %}

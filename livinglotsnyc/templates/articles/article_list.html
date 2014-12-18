@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load faq_tags feincms_tags %}
+{% load faq_tags feincms_tags i18n %}
 
-{% block page_title %}FAQ{% endblock %}
+{% block page_title %}{% trans "FAQ" %}{% endblock %}
 
 {% block content %}
-    <h1>Frequently Asked Questions</h1>
+    <h1>{% trans "Frequently Asked Questions" %}</h1>
     <div class="faq-tags">
-        <span>Jump to questions about:
+        <span>{% trans "Jump to questions about" %}:
         {% faq_tags as tags %}
         <ul>
             {% for tag in tags %}
@@ -19,7 +19,7 @@
 
     {% faqs_tag_groups as grouped_faqs %}
     {% for tag, faqs in grouped_faqs.items %}
-        <h2 id="{{ tag.slug }}">Questions about {{ tag }}</h2>
+        <h2 id="{{ tag.slug }}">{% trans "Questions about" %} {{ tag }}</h2>
 
         {% for faq in faqs %}  
             <div class="faq short" id="{{ faq.slug }}">

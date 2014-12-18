@@ -1,5 +1,6 @@
 {% extends "actstream/action_detail_content.html" %}
+{% load i18n %}
 
 {% block action_object %}
-    <a href="{{ action.target.get_absolute_url }}#notes" target="_blank">"{{ action.action_object.text|striptags|truncatewords:"15" }}"</a> on
+    <a href="{{ action.target.get_absolute_url }}#notes" target="_blank">"{{ action.action_object.text|striptags|truncatewords:"15" }}"</a> {% trans "on" %}
 {% endblock %}
