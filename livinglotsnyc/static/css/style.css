@@ -3870,6 +3870,9 @@ fieldset[disabled] .usercontent-list-admin-actions .btn.active {
   border-bottom: 1px solid #bdcbc4;
   padding-top: 35px;
 }
+.faq:last-of-type .faq-separator {
+  display: none;
+}
 .usercontent-list .file {
   padding-top: 35px;
   margin-left: -50px;
