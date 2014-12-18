@@ -58,6 +58,22 @@ function addLotsLayer(map) {
     var lotsLayer = L.lotLayer(url, vectorLayerOptions, lotLayerOptions).addTo(map);
 }
 
+function initFacebookLink($link) {
+    var url = 'http://www.facebook.com/sharer/sharer.php?' + $.param({
+        u: window.location.href
+    });
+    $link.attr('href', url);
+}
+
+function initTwitterLink($link) {
+    var url = 'http://twitter.com/intent/tweet?' + $.param({
+        related: '596acres',
+        text: $link.data('tweet'),
+        url: window.location.href
+    });
+    $link.attr('href', url);
+}
+
 $(document).ready(function () {
     if ($('.lot-detail-page').length > 0) {
         var map = L.map('lot-detail-map', {
@@ -99,4 +115,7 @@ $(document).ready(function () {
         });
         return false;
     });
+
+    initFacebookLink($('.share-facebook'));
+    initTwitterLink($('.share-twitter'));
 });

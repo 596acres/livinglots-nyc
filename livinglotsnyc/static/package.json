@@ -34,6 +34,7 @@
   "browser": {
     "bootstrap_button": "./bower_components/bootstrap/js/button.js",
     "bootstrap_collapse": "./bower_components/bootstrap/js/collapse.js",
+    "bootstrap_dropdown": "./bower_components/bootstrap/js/dropdown.js",
     "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
     "bootstrap_tooltip": "./bower_components/bootstrap/js/tooltip.js",
     "bootstrap_transition": "./bower_components/bootstrap/js/transition.js",

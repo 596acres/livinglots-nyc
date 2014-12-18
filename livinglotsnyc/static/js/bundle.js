@@ -298,6 +298,162 @@
 
 },{}],3:[function(require,module,exports){
 /* ========================================================================
+ * Bootstrap: dropdown.js v3.0.3
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2013 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ======================================================================== */
+
+
++function ($) { "use strict";
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle=dropdown]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $('<div class="dropdown-backdrop"/>').insertAfter($(this)).on('click', clearMenus)
+      }
+
+      $parent.trigger(e = $.Event('show.bs.dropdown'))
+
+      if (e.isDefaultPrevented()) return
+
+      $parent
+        .toggleClass('open')
+        .trigger('shown.bs.dropdown')
+
+      $this.focus()
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27)/.test(e.keyCode)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive || (isActive && e.keyCode == 27)) {
+      if (e.which == 27) $parent.find(toggle).focus()
+      return $this.click()
+    }
+
+    var $items = $('[role=menu] li:not(.divider):visible a', $parent)
+
+    if (!$items.length) return
+
+    var index = $items.index($items.filter(':focus'))
+
+    if (e.keyCode == 38 && index > 0)                 index--                        // up
+    if (e.keyCode == 40 && index < $items.length - 1) index++                        // down
+    if (!~index)                                      index=0
+
+    $items.eq(index).focus()
+  }
+
+  function clearMenus() {
+    $(backdrop).remove()
+    $(toggle).each(function (e) {
+      var $parent = getParent($(this))
+      if (!$parent.hasClass('open')) return
+      $parent.trigger(e = $.Event('hide.bs.dropdown'))
+      if (e.isDefaultPrevented()) return
+      $parent.removeClass('open').trigger('hidden.bs.dropdown')
+    })
+  }
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown = function (option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api'  , toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
+
+}(jQuery);
+
+},{}],4:[function(require,module,exports){
+/* ========================================================================
  * Bootstrap: tooltip.js v3.0.3
  * http://getbootstrap.com/javascript/#tooltip
  * Inspired by the original jQuery.tipsy by Jason Frame
@@ -684,7 +840,7 @@
 
 }(jQuery);
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: transition.js v3.0.3
  * http://getbootstrap.com/javascript/#transitions
@@ -742,7 +898,7 @@
 
 }(jQuery);
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*!
  * fancyBox - jQuery Plugin
  * version: 2.1.5 (Fri, 14 Jun 2013)
@@ -2763,7 +2919,7 @@
 	});
 
 }(window, document, jQuery));
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*jshint undef: true */
 /*global jQuery: true */
 
@@ -3579,7 +3735,7 @@
 
 })(window, jQuery);
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function(window) {
 	var HAS_HASHCHANGE = (function() {
 		var doc_mode = window.documentMode;
@@ -3743,7 +3899,7 @@
 	};
 })(window);
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
@@ -3868,7 +4024,7 @@ L.bingLayer = function (key, options) {
     return new L.BingLayer(key, options);
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (global){
 ;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /*! communist 2013-05-30*/
@@ -3881,7 +4037,7 @@ L.bingLayer = function (key, options) {
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 (function () {
 
@@ -3926,7 +4082,7 @@ L.bingLayer = function (key, options) {
 
 })();
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (global){
 
 ; communist = global.communist = require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js");
@@ -4020,7 +4176,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":9,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":10,"leaflet":57}],12:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":10,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":11,"leaflet":58}],13:[function(require,module,exports){
 /**
  * Simple tile cache to keep tiles while zooming with overzoom
  */
@@ -4132,7 +4288,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (global){
 
 ; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js");
@@ -4398,7 +4554,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":11,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":12,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":15}],14:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":12,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":13,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":16}],15:[function(require,module,exports){
 (function (global){
 
 ; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js");
@@ -4523,7 +4679,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js":13}],15:[function(require,module,exports){
+},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js":14}],16:[function(require,module,exports){
 (function () {
 
     function defineTileQueue(L) {
@@ -4602,7 +4758,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 //
 // leaflet.dataoptions
 //
@@ -4687,7 +4843,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*
  * L.Control.Loading is a control that shows a loading indicator when tiles are
  * loading or when map-related AJAX requests are taking place.
@@ -4951,7 +5107,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
 
 })();
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Leaflet.UserMarker v1.0
  * 
@@ -5057,7 +5213,7 @@ require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_comp
     };
 })(window);
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var _ = require('underscore');
 var leafletPip = require('leaflet-pip');
 
@@ -5133,7 +5289,7 @@ module.exports = {
     }
 };
 
-},{"leaflet-pip":55,"underscore":82}],20:[function(require,module,exports){
+},{"leaflet-pip":56,"underscore":83}],21:[function(require,module,exports){
 var geocoder = new google.maps.Geocoder();
 
 function geocode(address, bounds, state, f) {
@@ -5206,7 +5362,7 @@ module.exports = {
     geocode: geocode
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var Handlebars = require('handlebars');
 
 /*
@@ -5233,7 +5389,7 @@ Handlebars.registerHelper('pick-area', function (acres, sqft) {
     return sqft + ' sq ft';
 });
 
-},{"handlebars":54}],22:[function(require,module,exports){
+},{"handlebars":55}],23:[function(require,module,exports){
 var L = require('leaflet');
 
 require('TileLayer.GeoJSON');
@@ -5249,7 +5405,7 @@ L.TileLayer.Vector.include({
 
 });
 
-},{"TileLayer.GeoJSON":13,"leaflet":57}],23:[function(require,module,exports){
+},{"TileLayer.GeoJSON":14,"leaflet":58}],24:[function(require,module,exports){
 var L = require('leaflet');
 var _ = require('underscore');
 
@@ -5381,7 +5537,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":22,"./leaflet.lotmultipolygon":26,"./leaflet.lotpolygon":28,"TileLayer.GeoJSON":13,"TileLayer.Overzoom":14,"leaflet":57,"underscore":82}],24:[function(require,module,exports){
+},{"./leaflet.geojson.tile":23,"./leaflet.lotmultipolygon":27,"./leaflet.lotpolygon":29,"TileLayer.GeoJSON":14,"TileLayer.Overzoom":15,"leaflet":58,"underscore":83}],25:[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -5638,7 +5794,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":19,"./leaflet.lotlayer":23,"./leaflet.lotmarker":25,"./map.styles":32,"handlebars":54,"leaflet":57,"leaflet.bing":8,"leaflet.dataoptions":16,"leaflet.hash":7,"leaflet.usermarker":18,"livinglots-map/src/livinglots.boundaries":78,"spin.js":81,"underscore":82}],25:[function(require,module,exports){
+},{"./filters":20,"./leaflet.lotlayer":24,"./leaflet.lotmarker":26,"./map.styles":33,"handlebars":55,"leaflet":58,"leaflet.bing":9,"leaflet.dataoptions":17,"leaflet.hash":8,"leaflet.usermarker":19,"livinglots-map/src/livinglots.boundaries":79,"spin.js":82,"underscore":83}],26:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -5706,7 +5862,7 @@ L.lotMarker = function (latlng, options) {
     return new L.LotMarker(latlng, options);
 };
 
-},{"./leaflet.lotpath":27,"leaflet":57}],26:[function(require,module,exports){
+},{"./leaflet.lotpath":28,"leaflet":58}],27:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpolygon');
@@ -5762,7 +5918,7 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
     }
 });
 
-},{"./leaflet.lotpolygon":28,"leaflet":57}],27:[function(require,module,exports){
+},{"./leaflet.lotpolygon":29,"leaflet":58}],28:[function(require,module,exports){
 var L = require('leaflet');
 
 
@@ -5818,7 +5974,7 @@ L.LotPathMixin = {
 
 };
 
-},{"leaflet":57}],28:[function(require,module,exports){
+},{"leaflet":58}],29:[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -5861,7 +6017,7 @@ L.lotPolygon = function (latlngs, options) {
     return new L.LotPolygon(latlngs, options);
 };
 
-},{"./leaflet.lotpath":27,"leaflet":57}],29:[function(require,module,exports){
+},{"./leaflet.lotpath":28,"leaflet":58}],30:[function(require,module,exports){
 //
 // lotdetailpage.js
 //
@@ -5922,6 +6078,22 @@ function addLotsLayer(map) {
     var lotsLayer = L.lotLayer(url, vectorLayerOptions, lotLayerOptions).addTo(map);
 }
 
+function initFacebookLink($link) {
+    var url = 'http://www.facebook.com/sharer/sharer.php?' + $.param({
+        u: window.location.href
+    });
+    $link.attr('href', url);
+}
+
+function initTwitterLink($link) {
+    var url = 'http://twitter.com/intent/tweet?' + $.param({
+        related: '596acres',
+        text: $link.data('tweet'),
+        url: window.location.href
+    });
+    $link.attr('href', url);
+}
+
 $(document).ready(function () {
     if ($('.lot-detail-page').length > 0) {
         var map = L.map('lot-detail-map', {
@@ -5963,15 +6135,19 @@ $(document).ready(function () {
         });
         return false;
     });
+
+    initFacebookLink($('.share-facebook'));
+    initTwitterLink($('.share-twitter'));
 });
 
-},{"./leaflet.lotlayer":23,"./leaflet.lotmarker":25,"./map.styles":32,"./overlaymenu":34,"./streetview":36,"handlebars":54,"leaflet":57,"leaflet.dataoptions":16}],30:[function(require,module,exports){
+},{"./leaflet.lotlayer":24,"./leaflet.lotmarker":26,"./map.styles":33,"./overlaymenu":35,"./streetview":37,"handlebars":55,"leaflet":58,"leaflet.dataoptions":17}],31:[function(require,module,exports){
 //
 // main.js
 //
 // Scripts that should run on every page.
 //
 
+require('bootstrap_dropdown');
 require('bootstrap_transition');
 require('bootstrap_collapse');
 require('fancybox');
@@ -6042,7 +6218,7 @@ $(document).ready(function () {
 require('./mappage.js');
 require('./lotdetailpage.js');
 
-},{"./lotdetailpage.js":29,"./mappage.js":33,"bootstrap_collapse":2,"bootstrap_transition":4,"fancybox":5}],31:[function(require,module,exports){
+},{"./lotdetailpage.js":30,"./mappage.js":34,"bootstrap_collapse":2,"bootstrap_dropdown":3,"bootstrap_transition":5,"fancybox":6}],32:[function(require,module,exports){
 var L = require('leaflet');
 
 var geocode = require('./geocode').geocode;
@@ -6115,7 +6291,7 @@ $.fn.mapsearch = function (options) {
     return this;
 };
 
-},{"./geocode":20,"leaflet":57}],32:[function(require,module,exports){
+},{"./geocode":21,"leaflet":58}],33:[function(require,module,exports){
 //
 // Lot map styles by layer for maps
 //
@@ -6149,7 +6325,7 @@ module.exports = {
     }
 };
 
-},{"underscore":82}],33:[function(require,module,exports){
+},{"underscore":83}],34:[function(require,module,exports){
 //
 // mappage.js
 //
@@ -6483,7 +6659,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./handlebars.helpers":21,"./leaflet.lotmap":24,"./map.search.js":31,"./overlaymenu":34,"./singleminded":35,"./welcome":37,"bootstrap_button":1,"bootstrap_tooltip":3,"handlebars":54,"jquery.infinitescroll":6,"leaflet":57,"leaflet.loading":17,"livinglots-map/src/livinglots.addlot":77,"livinglots-map/src/livinglots.mail":79,"spin.js":81,"underscore":82}],34:[function(require,module,exports){
+},{"./handlebars.helpers":22,"./leaflet.lotmap":25,"./map.search.js":32,"./overlaymenu":35,"./singleminded":36,"./welcome":38,"bootstrap_button":1,"bootstrap_tooltip":4,"handlebars":55,"jquery.infinitescroll":7,"leaflet":58,"leaflet.loading":18,"livinglots-map/src/livinglots.addlot":78,"livinglots-map/src/livinglots.mail":80,"spin.js":82,"underscore":83}],35:[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -6564,7 +6740,7 @@ $.fn.overlaymenu = function (options) {
     return this;
 };
 
-},{"underscore":82}],35:[function(require,module,exports){
+},{"underscore":83}],36:[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -6596,7 +6772,7 @@ module.exports = {
     remember: remember
 };
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 
 function get_heading(lon0, lat0, lon1, lat1) {
@@ -6646,7 +6822,7 @@ module.exports = {
     load_streetview: load_streetview
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 //
 // Welcome header
 //
@@ -6676,9 +6852,9 @@ module.exports = {
     }
 };
 
-},{}],38:[function(require,module,exports){
-
 },{}],39:[function(require,module,exports){
+
+},{}],40:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -6718,7 +6894,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":40,"./handlebars/compiler/ast":42,"./handlebars/compiler/base":43,"./handlebars/compiler/compiler":44,"./handlebars/compiler/javascript-compiler":46}],40:[function(require,module,exports){
+},{"./handlebars.runtime":41,"./handlebars/compiler/ast":43,"./handlebars/compiler/base":44,"./handlebars/compiler/compiler":45,"./handlebars/compiler/javascript-compiler":47}],41:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -6754,7 +6930,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":41,"./handlebars/exception":50,"./handlebars/runtime":51,"./handlebars/safe-string":52,"./handlebars/utils":53}],41:[function(require,module,exports){
+},{"./handlebars/base":42,"./handlebars/exception":51,"./handlebars/runtime":52,"./handlebars/safe-string":53,"./handlebars/utils":54}],42:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -6986,7 +7162,7 @@ var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":50,"./utils":53}],42:[function(require,module,exports){
+},{"./exception":51,"./utils":54}],43:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -7201,7 +7377,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":50}],43:[function(require,module,exports){
+},{"../exception":51}],44:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -7223,7 +7399,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"../utils":53,"./ast":42,"./helpers":45,"./parser":47}],44:[function(require,module,exports){
+},{"../utils":54,"./ast":43,"./helpers":46,"./parser":48}],45:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 var isArray = require("../utils").isArray;
@@ -7676,7 +7852,7 @@ exports.compile = compile;function argEquals(a, b) {
     return true;
   }
 }
-},{"../exception":50,"../utils":53}],45:[function(require,module,exports){
+},{"../exception":51,"../utils":54}],46:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -7864,7 +8040,7 @@ function omitLeft(statements, i, multiple) {
   current.leftStripped = current.string !== original;
   return current.leftStripped;
 }
-},{"../exception":50}],46:[function(require,module,exports){
+},{"../exception":51}],47:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -8829,7 +9005,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":41,"../exception":50}],47:[function(require,module,exports){
+},{"../base":42,"../exception":51}],48:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* istanbul ignore next */
@@ -9330,7 +9506,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -9472,7 +9648,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":49}],49:[function(require,module,exports){
+},{"./visitor":50}],50:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -9485,7 +9661,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -9514,7 +9690,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -9708,7 +9884,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":41,"./exception":50,"./utils":53}],52:[function(require,module,exports){
+},{"./base":42,"./exception":51,"./utils":54}],53:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -9720,7 +9896,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -9809,7 +9985,7 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":52}],54:[function(require,module,exports){
+},{"./safe-string":53}],55:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -9837,7 +10013,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":39,"../dist/cjs/handlebars/compiler/printer":48,"../dist/cjs/handlebars/compiler/visitor":49,"fs":38}],55:[function(require,module,exports){
+},{"../dist/cjs/handlebars":40,"../dist/cjs/handlebars/compiler/printer":49,"../dist/cjs/handlebars/compiler/visitor":50,"fs":39}],56:[function(require,module,exports){
 var gju = require('geojson-utils');
 
 var leafletPip = {
@@ -9866,7 +10042,7 @@ var leafletPip = {
 
 module.exports = leafletPip;
 
-},{"geojson-utils":56}],56:[function(require,module,exports){
+},{"geojson-utils":57}],57:[function(require,module,exports){
 (function () {
   var gju = this.gju = {};
 
@@ -10276,7 +10452,7 @@ module.exports = leafletPip;
 
 })();
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -19457,41 +19633,41 @@ L.Map.include({
 
 
 }(window, document));
-},{}],58:[function(require,module,exports){
-module.exports=require(39)
-},{"./handlebars.runtime":59,"./handlebars/compiler/ast":61,"./handlebars/compiler/base":62,"./handlebars/compiler/compiler":63,"./handlebars/compiler/javascript-compiler":65}],59:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module.exports=require(40)
-},{"./handlebars/base":60,"./handlebars/exception":69,"./handlebars/runtime":70,"./handlebars/safe-string":71,"./handlebars/utils":72}],60:[function(require,module,exports){
+},{"./handlebars.runtime":60,"./handlebars/compiler/ast":62,"./handlebars/compiler/base":63,"./handlebars/compiler/compiler":64,"./handlebars/compiler/javascript-compiler":66}],60:[function(require,module,exports){
 module.exports=require(41)
-},{"./exception":69,"./utils":72}],61:[function(require,module,exports){
+},{"./handlebars/base":61,"./handlebars/exception":70,"./handlebars/runtime":71,"./handlebars/safe-string":72,"./handlebars/utils":73}],61:[function(require,module,exports){
 module.exports=require(42)
-},{"../exception":69}],62:[function(require,module,exports){
+},{"./exception":70,"./utils":73}],62:[function(require,module,exports){
 module.exports=require(43)
-},{"../utils":72,"./ast":61,"./helpers":64,"./parser":66}],63:[function(require,module,exports){
+},{"../exception":70}],63:[function(require,module,exports){
 module.exports=require(44)
-},{"../exception":69,"../utils":72}],64:[function(require,module,exports){
+},{"../utils":73,"./ast":62,"./helpers":65,"./parser":67}],64:[function(require,module,exports){
 module.exports=require(45)
-},{"../exception":69}],65:[function(require,module,exports){
+},{"../exception":70,"../utils":73}],65:[function(require,module,exports){
 module.exports=require(46)
-},{"../base":60,"../exception":69}],66:[function(require,module,exports){
+},{"../exception":70}],66:[function(require,module,exports){
 module.exports=require(47)
-},{}],67:[function(require,module,exports){
+},{"../base":61,"../exception":70}],67:[function(require,module,exports){
 module.exports=require(48)
-},{"./visitor":68}],68:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports=require(49)
-},{}],69:[function(require,module,exports){
+},{"./visitor":69}],69:[function(require,module,exports){
 module.exports=require(50)
 },{}],70:[function(require,module,exports){
 module.exports=require(51)
-},{"./base":60,"./exception":69,"./utils":72}],71:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 module.exports=require(52)
-},{}],72:[function(require,module,exports){
+},{"./base":61,"./exception":70,"./utils":73}],72:[function(require,module,exports){
 module.exports=require(53)
-},{"./safe-string":71}],73:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module.exports=require(54)
-},{"../dist/cjs/handlebars":58,"../dist/cjs/handlebars/compiler/printer":67,"../dist/cjs/handlebars/compiler/visitor":68,"fs":38}],74:[function(require,module,exports){
-module.exports=require(57)
-},{}],75:[function(require,module,exports){
+},{"./safe-string":72}],74:[function(require,module,exports){
+module.exports=require(55)
+},{"../dist/cjs/handlebars":59,"../dist/cjs/handlebars/compiler/printer":68,"../dist/cjs/handlebars/compiler/visitor":69,"fs":39}],75:[function(require,module,exports){
+module.exports=require(58)
+},{}],76:[function(require,module,exports){
 /**
  * Copyright (c) 2011-2014 Felix Gnass
  * Licensed under the MIT license
@@ -19842,7 +20018,7 @@ module.exports=require(57)
 
 }));
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -21259,7 +21435,7 @@ module.exports=require(57)
   }
 }.call(this));
 
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -21463,7 +21639,7 @@ L.Map.include({
 
 });
 
-},{"./templates":80,"handlebars":73,"leaflet":74,"spin.js":75,"underscore":76}],78:[function(require,module,exports){
+},{"./templates":81,"handlebars":74,"leaflet":75,"spin.js":76,"underscore":77}],79:[function(require,module,exports){
 //
 // livinglots.boundaries.js
 //
@@ -21499,7 +21675,7 @@ L.Map.include({
 
 L.Map.addInitHook('_initBoundaries');
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -21626,7 +21802,7 @@ L.Map.include({
     }
 });
 
-},{"./templates":80,"handlebars":73,"leaflet":74,"spin.js":75,"underscore":76}],80:[function(require,module,exports){
+},{"./templates":81,"handlebars":74,"leaflet":75,"spin.js":76,"underscore":77}],81:[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -21707,8 +21883,8 @@ templates["mail.window.hbs"] = Handlebars.template({"1":function(depth0,helpers,
 return templates;
 
 };
-},{}],81:[function(require,module,exports){
-module.exports=require(75)
 },{}],82:[function(require,module,exports){
 module.exports=require(76)
-},{}]},{},[30]);
+},{}],83:[function(require,module,exports){
+module.exports=require(77)
+},{}]},{},[31]);
