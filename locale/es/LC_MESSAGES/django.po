@@ -1,0 +1,762 @@
+# Living Lots NYC translations
+# Copyright (C) 2014 596 Acres
+# This file is distributed under the same license as the Living Lots NYC package.
+# 596 Acres, 2014
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-12-18 17:55-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: livinglotsnyc/blog/models.py:16 livinglotsnyc/cms/models.py:110
+#: livinglotsnyc/cms/models.py:123 livinglotsnyc/cms/models.py:163
+msgid "Main content area"
+msgstr ""
+
+#: livinglotsnyc/blog/models.py:17
+msgid "Blog entry teaser"
+msgstr ""
+
+#: livinglotsnyc/blog/models.py:27 livinglotsnyc/cms/models.py:140
+#: livinglotsnyc/cms/models.py:169 livinglotsnyc/faq/models.py:21
+msgid "default"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:19
+msgid "title"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:20
+msgid "start collapsed"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:24
+msgid "collapsible section"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:25
+msgid "collapsible sections"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:36
+msgid "recent activity list"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:37
+msgid "recent activity lists"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:49
+msgid "externally linked media file"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:50
+msgid "externally linked media files"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:54
+msgid "external url"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:68
+msgid "header text"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:72
+msgid "button text"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:76
+msgid "Mailchimp user id"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:78
+msgid "Provided when generating an embed code (u parameter)"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:81
+msgid "Mailchimp list id"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:83
+msgid "Provided under List > Settings > Unique id"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:88 livinglotsnyc/cms/models.py:89
+msgid "Mailchimp signup"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:107
+msgid "Standard template"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:111 livinglotsnyc/cms/models.py:125
+msgid "Sidebar"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:112 livinglotsnyc/cms/models.py:126
+msgid "Footer Main"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:113 livinglotsnyc/cms/models.py:127
+msgid "Footer Left"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:114 livinglotsnyc/cms/models.py:128
+msgid "Footer Right"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:115 livinglotsnyc/cms/models.py:129
+msgid "Footer Bottom"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:120
+msgid "Map template"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:124
+msgid "Welcome text"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:147
+#: livinglotsnyc/templates/articles/article_list.html:4
+msgid "FAQ"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:148
+msgid "Lots map"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:149
+msgid "Blog"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:150
+msgid "Extra admin functions"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:151
+msgid "Contact form"
+msgstr ""
+
+#: livinglotsnyc/cms/models.py:154
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:107
+msgid "Pathways"
+msgstr ""
+
+#: livinglotsnyc/faq/models.py:11
+msgid "Question"
+msgstr ""
+
+#: livinglotsnyc/faq/models.py:12
+msgid "Answer"
+msgstr ""
+
+#: livinglotsnyc/groundtruth/models.py:13
+msgid "use"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/admindashboard.py:13
+msgid "Site Content"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/admindashboard.py:21
+msgid "Applications"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/admindashboard.py:31
+msgid "Lot Content"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/admindashboard.py:36
+msgid "Administration"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/admindashboard.py:41
+msgid "Recent Actions"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/settings/base.py:48
+msgid "English"
+msgstr ""
+
+#: livinglotsnyc/livinglotsnyc/settings/base.py:49
+msgid "Spanish"
+msgstr ""
+
+#: livinglotsnyc/lots/models.py:54
+msgid "group"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:15
+msgid "organizer"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:18
+msgid "The organizer associated with this project."
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:20
+msgid "external id"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:24
+msgid "The external id for this project, if it is stored in other databases"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:27
+msgid "date started"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:30
+msgid "When did this project start?"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:33
+msgid "steward notification"
+msgstr ""
+
+#: livinglotsnyc/steward/models.py:36
+msgid "The notification that led to the creation of this project, if any."
+msgstr ""
+
+#: livinglotsnyc/templates/404.html:6
+msgid ""
+"\n"
+"        We couldn't find the page you're trying to access. Please contact us "
+"at <a href=\"mailto:admin@livinglotsnyc.org\">admin@livinglotsnyc.org</a> if "
+"you think this is incorrect.\n"
+"    "
+msgstr ""
+
+#: livinglotsnyc/templates/500.html:6
+msgid ""
+"\n"
+"        Oops! An error occurred. Please contact us at <a href=\"mailto:TODO"
+"\">TODO</a> if this keeps happening.\n"
+"    "
+msgstr ""
+
+#: livinglotsnyc/templates/_form.html:60
+msgid "cancel"
+msgstr ""
+
+#: livinglotsnyc/templates/_form.html:64
+msgid "submit"
+msgstr ""
+
+#: livinglotsnyc/templates/_header.html:14
+#: livinglotsnyc/templates/base.html:12
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:6
+#: livinglotsnyc/templates/livinglots/groundtruth/add_groundtruthrecord.html:6
+#: livinglotsnyc/templates/livinglots/steward/add_stewardnotification.html:6
+#: livinglotsnyc/templates/livinglots/usercontent/base.html:6
+msgid "Living Lots NYC"
+msgstr ""
+
+#: livinglotsnyc/templates/_header.html:20
+msgid "Toggle navigation"
+msgstr ""
+
+#: livinglotsnyc/templates/_header.html:49
+msgid "Admin"
+msgstr ""
+
+#: livinglotsnyc/templates/actstream/action_detail_base.html:36
+msgid "ago"
+msgstr ""
+
+#: livinglotsnyc/templates/actstream/posted_a_file/action.html:5
+#: livinglotsnyc/templates/actstream/posted_a_picture/action.html:5
+msgid "posted a"
+msgstr ""
+
+#: livinglotsnyc/templates/actstream/posted_a_file/action.html:7
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:149
+msgid "file"
+msgstr ""
+
+#: livinglotsnyc/templates/actstream/posted_a_file/action.html:9
+#: livinglotsnyc/templates/actstream/posted_a_picture/action.html:9
+#: livinglotsnyc/templates/actstream/wrote/action.html:5
+msgid "on"
+msgstr ""
+
+#: livinglotsnyc/templates/actstream/posted_a_picture/action.html:7
+msgid "picture"
+msgstr ""
+
+#: livinglotsnyc/templates/articles/article_list.html:7
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: livinglotsnyc/templates/articles/article_list.html:9
+msgid "Jump to questions about"
+msgstr ""
+
+#: livinglotsnyc/templates/articles/article_list.html:22
+msgid "Questions about"
+msgstr ""
+
+#: livinglotsnyc/templates/elephantblog/entry_archive.html:31
+#: livinglotsnyc/templates/elephantblog/entry_detail.html:31
+msgid "by"
+msgstr ""
+
+#: livinglotsnyc/templates/elephantblog/entry_detail.html:11
+#: livinglotsnyc/templates/livinglots/groundtruth/add_groundtruthrecord.html:14
+#: livinglotsnyc/templates/livinglots/organize/add_organizer.html:9
+#: livinglotsnyc/templates/livinglots/organize/add_organizer_success.html:9
+#: livinglotsnyc/templates/livinglots/steward/add_stewardnotification.html:14
+#: livinglotsnyc/templates/livinglots/usercontent/base.html:14
+#: livinglotsnyc/templates/pathways/pathway_detail.html:9
+#: livinglotsnyc/templates/registration/login.html:7
+msgid "Home"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:4
+msgid "Information about this lot"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:9
+msgid "There are"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:9
+msgid "lots grouped here"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:17
+msgid "More details at"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:18
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:51
+msgid "OASIS"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:32
+msgid "Known Use"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:37
+msgid "Address"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:42
+msgid "Area"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:43
+msgid "acres"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:44
+msgid "square feet"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:49
+msgid "More information about this lot at"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:57
+msgid "Find elected officials for this lot at"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:59
+msgid "Who Represents Me? NYC"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_owner.html:4
+msgid "Owner"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_owner.html:11
+msgid "Contact"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_owner.html:42
+msgid "View all lots this owner owns"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_reasons.html:4
+msgid "Why is this lot here?"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_reasons.html:7
+msgid ""
+"\n"
+"                Actually, it should not be here. Let us know so we can "
+"take \n"
+"                care of it.\n"
+"            "
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_reasons.html:15
+msgid "We think this lot is vacant because:"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_reasons.html:23
+#, python-format
+msgid ""
+"\n"
+"            The lot is being used as a %(use)s.\n"
+"        "
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_stewardproject.html:5
+msgid "Steward"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_stewardproject.html:6
+msgid "This land is being stewarded by the following group"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_stewardproject.html:38
+msgid "supported by"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_stewardproject.html:46
+msgid "Edit this steward's contact information"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/_lot_detail_stewardproject.html:49
+msgid "Edit this steward's other information"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:23
+msgid "Sorry, we could not load streetview imagery for this lot."
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:55
+msgid "Edit this lot"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:59
+msgid ""
+"Get involved with this lot or let people know you are already working "
+"towards growing community here."
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:60
+msgid "Organize"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:65
+msgid "Find lots nearby"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:70
+msgid "Tell us more about your project."
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:71
+msgid "Is this an active project?"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:74
+msgid "Let us know that this lot's actual use is not correctly identified."
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:75
+msgid "Have we made a mistake?"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:79
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:80
+msgid "Share"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:84
+msgid "Facebook"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:85
+msgid ""
+"Here is an opportunity to start organizing a space for community with the "
+"help of @596acres"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:85
+msgid "Twitter"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:110
+msgid ""
+"\n"
+"                    Here are some pathways you might follow to use this "
+"piece of land legally:\n"
+"                "
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:129
+msgid "Admin Details"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:130
+msgid "(This section is only visible to admins.)"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:133
+msgid "steward's land tenure"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:141
+msgid "News feed"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:144
+msgid "Add a"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:146
+msgid "note"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:152
+msgid "photo"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:166
+msgid "Number of organizers"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:169
+msgid "Hey organizers!"
+msgstr ""
+
+#: livinglotsnyc/templates/inplace/lots/lot_detail.html:192
+msgid "Group with this lot"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/groundtruth/add_groundtruthrecord.html:21
+#: livinglotsnyc/templates/livinglots/groundtruth/add_groundtruthrecord.html:26
+msgid "Make a correction"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/details.html:63
+msgid "link to this view"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:12
+msgid "public land"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:16
+#: livinglotsnyc/templates/livinglots/lots/filters.html:35
+msgid "all owners"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:29
+msgid "private land"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:52
+msgid "land where people are organizing"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:59
+msgid "land where people have access"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:66
+msgid "vacant land with no people involved"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:73
+msgid "596 Acres network"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:80
+msgid "gutterspaces"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:89
+msgid "city council districts"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:91
+#: livinglotsnyc/templates/livinglots/lots/filters.html:105
+msgid "all"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/filters.html:103
+msgid "community districts"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:32
+msgid "Welcome!"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:33
+msgid "close"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:34
+msgid "show"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:44
+msgid "You are currently viewing"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:48
+msgid "acres of opportunity on"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:50
+#: livinglotsnyc/templates/livinglots/lots/map.html:56
+msgid "lots"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:54
+msgid "acres of community projects on"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:64
+msgid "details"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:67
+msgid "download"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:73
+msgid "Could not find your location. Try again?"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:74
+msgid "Search by address, zip code"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:75
+msgid "GO"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:83
+msgid "admin"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:91
+msgid "filter"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:97
+msgid "organizing updates"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:126
+msgid "vacant public land"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:132
+msgid "private land opportunities"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:138
+msgid "people have access"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:144
+msgid "people are organizing"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:161
+msgid ""
+"\n"
+"                Download currently viewed lots. GeoJSON and KML are "
+"mapping \n"
+"                formats, so you can make your own maps!\n"
+"            "
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:169
+msgid "spreadsheet"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:172
+msgid "GeoJSON"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:175
+msgid "KML"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:189
+msgid "email organizers"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:192
+msgid "add lot"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/lots/map.html:208
+msgid "Recent Activity"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/organize/add_organizer.html:16
+#: livinglotsnyc/templates/livinglots/organize/add_organizer.html:21
+#: livinglotsnyc/templates/livinglots/organize/add_organizer_success.html:16
+#: livinglotsnyc/templates/livinglots/organize/add_organizer_success.html:25
+msgid "Organize this lot!"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/organize/add_organizer_success.html:22
+msgid "You were added as an organizer for"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/organize/add_organizer_success.html:26
+msgid "You're now growing community at"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/steward/add_stewardnotification.html:21
+#: livinglotsnyc/templates/livinglots/steward/add_stewardnotification.html:26
+msgid "Add an existing project"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/usercontent/add_file.html:5
+#: livinglotsnyc/templates/livinglots/usercontent/add_file.html:9
+msgid "Add a file"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/usercontent/add_note.html:5
+#: livinglotsnyc/templates/livinglots/usercontent/add_note.html:9
+msgid "Add a note"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/usercontent/add_photo.html:5
+#: livinglotsnyc/templates/livinglots/usercontent/add_photo.html:9
+msgid "Add a photo"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/usercontent/detail_base.html:17
+#: livinglotsnyc/templates/livinglots/usercontent/photo.html:5
+msgid "posted"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/usercontent/file.html:5
+msgid "uploaded"
+msgstr ""
+
+#: livinglotsnyc/templates/livinglots/usercontent/note.html:5
+msgid "said"
+msgstr ""
+
+#: livinglotsnyc/templates/pathways/pathway_detail.html:28
+msgid "Edit this pathway"
+msgstr ""
+
+#: livinglotsnyc/templates/registration/login.html:4
+#: livinglotsnyc/templates/registration/login.html:8
+msgid "Login"
+msgstr ""
