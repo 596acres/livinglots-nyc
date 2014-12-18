@@ -11,7 +11,7 @@
         </div>
         <div class="{{ model_name }}-added-by">
             <span class="{{ model_name }}-added-by-name">
-                {{ obj.added_by_name }}
+                {{ obj.added_by_name|default:"someone" }}
             </span>
             <span class="{{ model_name }}-added-by-verb">
                 {% block verb %}{% trans "posted" %}{% endblock %}

@@ -10,7 +10,11 @@
         {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
     </a>
     <div>
-        <span class="photo-name">{{ photo.name }}</span>
-        <span class="photo-description">{{ photo.description }}</span>
+        {% if photo.name %}
+            <span class="photo-name">{{ photo.name }}</span>
+        {% endif %}
+        {% if photo.description %}
+            <span class="photo-description">{{ photo.description }}</span>
+        {% endif %}
     </div>
 {% endblock %}
