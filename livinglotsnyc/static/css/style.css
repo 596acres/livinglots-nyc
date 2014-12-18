@@ -4523,9 +4523,6 @@ fieldset[disabled] .btn-show-details.active {
 .overlaymenu-admin .overlaymenu-menu-content {
   min-height: 10px;
 }
-.overlaymenu-news {
-  z-index: 5101;
-}
 .overlaymenu-details,
 .overlaymenu-filter,
 .overlaymenu-news {
@@ -4535,6 +4532,18 @@ fieldset[disabled] .btn-show-details.active {
 .overlaymenu-filter .overlaymenu-tip-container,
 .overlaymenu-news .overlaymenu-tip-container {
   left: 140px;
+}
+.overlaymenu-news {
+  z-index: 5101;
+}
+.overlaymenu-news .overlaymenu-tip {
+  height: 40px;
+  width: 20px;
+}
+.overlaymenu-news .overlaymenu-tip-container {
+  height: 15px;
+  left: 115px;
+  margin-top: -30px;
 }
 .overlaymenu-news .activity-stream-container {
   min-height: 200px;

@@ -124,10 +124,6 @@
         min-height: 10px;
     }
 
-    &-news {
-        z-index: @news-button-z-index + 1;
-    }
-
     &-details,
     &-filter,
     &-news {
@@ -140,8 +136,23 @@
         left: 140px;
     }
 
-    &-news .activity-stream-container {
-        min-height: 200px;
+    &-news {
+        z-index: @news-button-z-index + 1;
+
+        .overlaymenu-tip {
+            height: 40px;
+            width: 20px;
+
+            &-container {
+                height: 15px;
+                left: 115px;
+                margin-top: -30px;
+            }
+        }
+
+        .activity-stream-container {
+            min-height: 200px;
+        }
     }
 
     &-details {
