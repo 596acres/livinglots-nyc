@@ -13,7 +13,7 @@
                 </label>
 
                 <select class="filter filter-owner-public form-control">
-                    <option value="">all owners</option>
+                    <option value="">{% trans "all owners" %}</option>
 
                     {% get_owners type "public" True as owners %}
                     {% for owner in owners %}
@@ -32,7 +32,7 @@
                 {% get_owners type "private" True as owners %}
                 {% if owners %}
                     <select class="filter filter-owner-private form-control">
-                        <option value="">all owners</option>
+                        <option value="">{% trans "all owners" %}</option>
 
                         {% for owner in owners %}
                             <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
@@ -86,9 +86,9 @@
         {% all_boundaries "city council districts" as ccs %}
         {% if ccs %}
             <div class="filter-section-boundaries-item">
-                <label for="city-council-districts">city council districts</label>
+                <label for="city-council-districts">{% trans "city council districts" %}</label>
                 <select id="city-council-districts" name="city-council-districts" class="form-control filter-boundaries filter-city-council-districts" data-layer="city council districts">
-                    <option value="">all</option>
+                    <option value="">{% trans "all" %}</option>
                     {% sort_city_council_districts ccs as sorted_ccs %}
                     {% for cc in sorted_ccs %}
                         <option value="{{ cc.pk }}">{{ cc.label }}</option>
@@ -100,9 +100,9 @@
         {% all_boundaries "community districts" as cds %}
         {% if cds %}
             <div class="filter-section-boundaries-item">
-                <label for="community-districts">community districts</label>
+                <label for="community-districts">{% trans "community districts" %}</label>
                 <select id="community-districts" name="community-districts" class="form-control filter-boundaries filter-community-districts" data-layer="community districts">
-                    <option value="">all</option>
+                    <option value="">{% trans "all" %}</option>
                     {% for cd in cds %}
                         <option value="{{ cd.pk }}">{{ cd.label|community_district_label }}</option>
                     {% endfor %}

@@ -82,7 +82,7 @@
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <li><a class="share-facebook" href="#" target="_blank">Facebook</a></li>
-                    <li><a class="share-twitter" href="#" target="_blank" data-tweet="Here is an opportunity to start organizing a space for community with the help of @596acres: ">Twitter</a></li>
+                    <li><a class="share-twitter" href="#" target="_blank" data-tweet="{% trans "Here is an opportunity to start organizing a space for community with the help of @596acres" %}: ">Twitter</a></li>
                 </ul>
             </div>
         {% endif %}
@@ -163,10 +163,10 @@
     <aside id="aside-right" class="col-sm-3">
         <section class="lot-detail-organizers">
             {% get_organizer_count for lot as organizer_count %}
-            <h2>Number of organizers: {{ organizer_count }}</h2>
+            <h2>{% trans "Number of organizers" %}: {{ organizer_count }}</h2>
             <div>
                 <section class="lot-detail-organizer-intro">
-                    <h3>Hey organizers!</h3>
+                    <h3>{% trans "Hey organizers!" %}</h3>
                     {% flatblock "lotdetail.organizer.intro" %}
                 </section>
                 {% render_organizer_list for lot %}
