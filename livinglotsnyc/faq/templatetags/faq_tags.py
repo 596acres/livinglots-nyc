@@ -17,7 +17,7 @@ def _faq_tags():
     content_type = ContentType.objects.get_for_model(Article)
     return Tag.objects.filter(
         taggit_taggeditem_items=TaggedItem.objects.filter(content_type=content_type)
-    ).order_by('name')
+    ).order_by('name').distinct()
 
 
 class FaqTags(AsTag):
