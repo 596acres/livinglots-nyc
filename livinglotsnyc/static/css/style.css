@@ -3873,6 +3873,9 @@ fieldset[disabled] .usercontent-list-admin-actions .btn.active {
 .faq:last-of-type .faq-separator {
   display: none;
 }
+.faq-tags {
+  margin-bottom: 50px;
+}
 .usercontent-list .file {
   padding-top: 35px;
   margin-left: -50px;
