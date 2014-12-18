@@ -17,6 +17,10 @@
             .make-md-column(4);
             padding-left: @header-left-padding;
 
+            @media (max-width: @screen-sm-max) {
+                margin-bottom: 15px;
+            }
+
             h2 {
                 margin: 0;
             }
@@ -25,6 +29,13 @@
                 margin-bottom: 5px;
                 margin-top: 5px;
                 padding-left: 20px;
+
+                @media (max-width: @screen-sm-max) {
+                    li {
+                        float: left;
+                        margin-left: 25px;
+                    }
+                }
             }
         }
 

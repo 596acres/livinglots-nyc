@@ -4282,6 +4282,11 @@ td.map-page .map-header {
     width: 33.33333333%;
   }
 }
+@media (max-width: 991px) {
+  .map-page .map-header-currently-viewing {
+    margin-bottom: 15px;
+  }
+}
 .map-page .map-header-currently-viewing h2 {
   margin: 0;
 }
@@ -4289,6 +4294,12 @@ td.map-page .map-header {
   margin-bottom: 5px;
   margin-top: 5px;
   padding-left: 20px;
+}
+@media (max-width: 991px) {
+  .map-page .map-header-currently-viewing ul li {
+    float: left;
+    margin-left: 25px;
+  }
 }
 .map-page .map-header-actions {
   position: relative;
