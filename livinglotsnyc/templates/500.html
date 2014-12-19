@@ -1,9 +1,6 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 
 {% block content %}
-    {% blocktrans %}
-        Oops! An error occurred. Please contact us at <a href="mailto:TODO">TODO</a> if this keeps happening.
-    {% endblocktrans %}
+    {% trans "Oops! An error occurred. Please contact us at" %} <a href="mailto:admin@livinglotsnyc.org">admin@livinglotsnyc.org</a> {% trans "if this keeps happening" %}.
 {% endblock %}

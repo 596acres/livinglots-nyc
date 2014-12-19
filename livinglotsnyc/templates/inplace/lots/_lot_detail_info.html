@@ -15,7 +15,7 @@
                             {{ child.display_name }}
                             ({{ child.address_line1 }}).
                             {% trans "More details at" %}
-                            <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">{% trans "OASIS" %}</a>.
+                            <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">OASIS</a>.
                         </div>
                         {% ifnotequal lot.owners|length 1 %}
                             <div>
@@ -48,7 +48,7 @@
             <div>
                 {% trans "More information about this lot at" %}
                 <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
-                    {% trans "OASIS" %}
+                    OASIS
                 </a>
             </div>
         {% endif %}

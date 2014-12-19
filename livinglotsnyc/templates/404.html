@@ -1,9 +1,6 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 
 {% block content %}
-    {% blocktrans %}
-        We couldn't find the page you're trying to access. Please contact us at <a href="mailto:admin@livinglotsnyc.org">admin@livinglotsnyc.org</a> if you think this is incorrect.
-    {% endblocktrans %}
+    {% trans "We couldn't find the page you're trying to access. Please contact us at" %} <a href="mailto:admin@livinglotsnyc.org">admin@livinglotsnyc.org</a> {% trans "if you think this is incorrect" %}.
 {% endblock %}

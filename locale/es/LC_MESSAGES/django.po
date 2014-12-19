@@ -2,20 +2,20 @@
 # Copyright (C) 2014 596 Acres
 # This file is distributed under the same license as the Living Lots NYC package.
 # 596 Acres, 2014
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-18 17:55-0500\n"
+"POT-Creation-Date: 2014-12-19 01:14-0500\n"
 "PO-Revision-Date: 2014-12-19 01:02-0500\n"
 "Last-Translator:   <ebrelsford@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.7.4\n"
 
@@ -231,18 +231,20 @@ msgstr ""
 msgid "The notification that led to the creation of this project, if any."
 msgstr ""
 
-#: livinglotsnyc/templates/404.html:6
-msgid ""
-"\n"
-"        We couldn't find the page you're trying to access. Please contact us at <a href=\"mailto:admin@livinglotsnyc.org\">admin@livinglotsnyc.org</a> if you think this is incorrect.\n"
-"    "
+#: livinglotsnyc/templates/404.html:5
+msgid "We couldn't find the page you're trying to access. Please contact us at"
 msgstr ""
 
-#: livinglotsnyc/templates/500.html:6
-msgid ""
-"\n"
-"        Oops! An error occurred. Please contact us at <a href=\"mailto:TODO\">TODO</a> if this keeps happening.\n"
-"    "
+#: livinglotsnyc/templates/404.html:5
+msgid "if you think this is incorrect"
+msgstr ""
+
+#: livinglotsnyc/templates/500.html:5
+msgid "Oops! An error occurred. Please contact us at"
+msgstr ""
+
+#: livinglotsnyc/templates/500.html:5
+msgid "if this keeps happening"
 msgstr ""
 
 #: livinglotsnyc/templates/_form.html:60
@@ -338,11 +340,6 @@ msgstr ""
 msgid "More details at"
 msgstr ""
 
-#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:18
-#: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:51
-msgid "OASIS"
-msgstr ""
-
 #: livinglotsnyc/templates/inplace/lots/_lot_detail_info.html:32
 msgid "Known Use"
 msgstr ""
@@ -394,7 +391,8 @@ msgstr ""
 #: livinglotsnyc/templates/inplace/lots/_lot_detail_reasons.html:7
 msgid ""
 "\n"
-"                Actually, it should not be here. Let us know so we can take \n"
+"                Actually, it should not be here. Let us know so we can "
+"take \n"
 "                care of it.\n"
 "            "
 msgstr ""
@@ -491,7 +489,8 @@ msgstr ""
 #: livinglotsnyc/templates/inplace/lots/lot_detail.html:110
 msgid ""
 "\n"
-"                    Here are some pathways you might follow to use this piece of land legally:\n"
+"                    Here are some pathways you might follow to use this "
+"piece of land legally:\n"
 "                "
 msgstr ""
 
@@ -670,7 +669,8 @@ msgstr ""
 #: livinglotsnyc/templates/livinglots/lots/map.html:161
 msgid ""
 "\n"
-"                Download currently viewed lots. GeoJSON and KML are mapping \n"
+"                Download currently viewed lots. GeoJSON and KML are "
+"mapping \n"
 "                formats, so you can make your own maps!\n"
 "            "
 msgstr ""
