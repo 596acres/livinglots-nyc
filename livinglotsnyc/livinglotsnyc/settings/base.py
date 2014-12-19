@@ -49,7 +49,11 @@ LANGUAGES = (
     ('es', gettext('Spanish')),
 )
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'en-us'
+
+LOCALE_PATHS = (
+    'locale',
+)
 
 SITE_ID = 1
 
@@ -151,6 +155,7 @@ INSTALLED_APPS = (
     'mptt',
     'reversion',
     'reversion_compare',
+    'rosetta',
     'taggit',
     'widget_tweaks',
 

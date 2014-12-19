@@ -38,6 +38,9 @@ urlpatterns += patterns('',
     # Size Compare
     url('^compare/', include('sizecompare.urls')),
 
+    # Rosetta
+    url(r'^rosetta/', include('rosetta.urls')),
+
     # Django.js
     url(r'^djangojs/', include('djangojs.urls')),
 
