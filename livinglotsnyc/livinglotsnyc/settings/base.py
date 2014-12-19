@@ -117,6 +117,9 @@ INSTALLED_APPS = (
     'admin_tools.menu',
     'admin_tools.dashboard',
 
+    # autocomplete_light has to come before django.contrib.admin
+    'autocomplete_light',
+
     #
     # django contrib
     #
