@@ -127,7 +127,11 @@ class LotMixin(models.Model):
 
     def _area(self):
         if not self.polygon_area:
-            self.polygon_area = self.calculate_polygon_area()
+            try:
+                # Try to get area from parcel's PLUTO data
+                self.polygon_area = self.parcel.lotarea
+            except Exception:
+                self.polygon_area = self.calculate_polygon_area()
             self.save()
         return self.polygon_area
 
