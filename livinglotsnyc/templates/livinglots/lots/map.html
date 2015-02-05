@@ -29,9 +29,9 @@
 
 <section class="map-welcome hidden-print">
     <h1>
+        <a href="#" class="map-welcome-close-button">►</a>
+        <a href="#" class="map-welcome-open-button">▼</a>
         {% trans "Welcome!" %}
-        <a href="#" class="map-welcome-close-button">{% trans "close" %}</a>
-        <a href="#" class="map-welcome-open-button">{% trans "show" %}</a>
     </h1>
     <div class="map-welcome-body">
         {% feincms_render_region feincms_page "welcome" request %}

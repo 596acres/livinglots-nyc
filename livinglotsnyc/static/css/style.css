@@ -5066,10 +5066,10 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
 .map-welcome-open-button:active,
 .map-welcome-open-button:hover {
   color: #ffffff;
-  font-size: 14px;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
   font-style: normal;
-  margin-left: 50px;
-  margin-top: 10px;
+  margin-left: -25px;
   text-decoration: none;
 }
 .map-welcome.closed .map-welcome-close-button {
