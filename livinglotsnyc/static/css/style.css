@@ -5049,6 +5049,7 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
 .map-welcome h1 {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;
+  cursor: pointer;
   font-size: 28px;
   font-style: italic;
   margin: 0;
