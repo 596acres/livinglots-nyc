@@ -35,7 +35,6 @@ git+git://github.com/ebrelsford/django-inplace/@master
 git+git://github.com/ebrelsford/django-inplace-activity-stream/@master
 django-jsonfield==0.9.12
 git+git://github.com/ebrelsford/django-mailchimp/@8318ba4
-django-model-utils==1.4.0
 git+git://github.com/ebrelsford/Django-monitor/@master
 django-mptt==0.6.1
 django-reversion==1.8.4
