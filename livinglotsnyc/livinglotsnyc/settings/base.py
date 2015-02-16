@@ -323,3 +323,4 @@ MAILCHIMP_PARTCICIPATION_GROUP = {
     'name':'Participation',
     'groups':'Watchers and Organizers'
 }
+MAILCHIMP_WEBHOOK_KEY = '** Unused setting, set to avoid warnings **'
