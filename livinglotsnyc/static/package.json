@@ -10,6 +10,7 @@
     "url": "https://github.com/596acres/livinglots-nyc"
   },
   "dependencies": {
+    "bootstrap": "^3.3.2",
     "fancybox": "git://github.com/ebrelsford/fancybox#features/fixpackagejson",
     "handlebars": "^2.0.0",
     "jquery-infinite-scroll": "git://github.com/paulirish/infinite-scroll",
@@ -46,12 +47,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "browser": {
-    "bootstrap_button": "./bower_components/bootstrap/js/button.js",
-    "bootstrap_collapse": "./bower_components/bootstrap/js/collapse.js",
-    "bootstrap_dropdown": "./bower_components/bootstrap/js/dropdown.js",
-    "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
-    "bootstrap_tooltip": "./bower_components/bootstrap/js/tooltip.js",
-    "bootstrap_transition": "./bower_components/bootstrap/js/transition.js",
+    "bootstrap_button": "./node_modules/bootstrap/js/button.js",
+    "bootstrap_collapse": "./node_modules/bootstrap/js/collapse.js",
+    "bootstrap_dropdown": "./node_modules/bootstrap/js/dropdown.js",
+    "bootstrap_modal": "./node_modules/bootstrap/js/modal.js",
+    "bootstrap_tooltip": "./node_modules/bootstrap/js/tooltip.js",
+    "bootstrap_transition": "./node_modules/bootstrap/js/transition.js",
     "jquery-infinite-scroll": "./node_modules/jquery-infinite-scroll/jquery.infinitescroll.js",
     "leaflet-plugins-bing": "./node_modules/leaflet-plugins/layer/tile/Bing.js"
   },
