@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.2",
-    "fancybox": "git://github.com/ebrelsford/fancybox#features/fixpackagejson",
+    "fancybox": "^2.1.7",
     "handlebars": "^2.0.0",
     "jquery-infinite-scroll": "git://github.com/paulirish/infinite-scroll",
     "leaflet": "~0.7.3",
