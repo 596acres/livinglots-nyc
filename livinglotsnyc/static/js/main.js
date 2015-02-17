@@ -7,7 +7,7 @@
 require('bootstrap_dropdown');
 require('bootstrap_transition');
 require('bootstrap_collapse');
-require('fancybox');
+require('fancybox')($);
 
 
 /*

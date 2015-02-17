@@ -1,16 +1,19 @@
-global.window = {
-  location: {
+global.window = global;
+global.location = {
     host: 'localhost:8081',
     port: 8081,
     protocol: 'http:'
-  }
 };
 
 var noop = function() {};
-global.window.XMLHttpRequest = function() {
+global.XMLHttpRequest = function() {
   this.open = noop;
   this.send = noop;
 };
+
+global.FormData = function () {};
+global.Blob = function () {};
+global.ArrayBuffer = function () {};
 
 var test = require('tape').test;
 var http = require('../index.js');
@@ -85,4 +88,27 @@ test('Test withCredentials param', function(t) {
   t.equal( request.xhr.withCredentials, true, 'xhr.withCredentials should be true');
 
   t.end();
+});
+
+test('Test POST XHR2 types', function(t) {
+  t.plan(3);
+  var url = '/api/foo';
+
+  var request = http.request({ url: url, method: 'POST' }, noop);
+  request.xhr.send = function (data) {
+    t.ok(data instanceof global.ArrayBuffer, 'data should be instanceof ArrayBuffer');
+  };
+  request.end(new global.ArrayBuffer());
+
+  request = http.request({ url: url, method: 'POST' }, noop);
+  request.xhr.send = function (data) {
+    t.ok(data instanceof global.Blob, 'data should be instanceof Blob');
+  };
+  request.end(new global.Blob());
+
+  request = http.request({ url: url, method: 'POST' }, noop);
+  request.xhr.send = function (data) {
+    t.ok(data instanceof global.FormData, 'data should be instanceof FormData');
+  };
+  request.end(new global.FormData());
 });

@@ -7,7 +7,7 @@
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 
-require('leaflet.dataoptions');
+require('leaflet-dataoptions');
 
 require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');

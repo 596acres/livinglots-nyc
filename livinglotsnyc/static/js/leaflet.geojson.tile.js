@@ -1,6 +1,6 @@
 var L = require('leaflet');
 
-require('TileLayer.GeoJSON');
+require('leaflet-tilelayer-vector');
 
 L.TileLayer.Vector.include({
 

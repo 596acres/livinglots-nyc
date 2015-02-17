@@ -5,29 +5,42 @@
   "author": "Eric Brelsford",
   "license": "BSD-2-Clause",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/596acres/livinglots-nyc"
+  },
   "dependencies": {
+    "fancybox": "git://github.com/ebrelsford/fancybox#features/fixpackagejson",
     "handlebars": "^2.0.0",
+    "jquery-infinite-scroll": "git://github.com/paulirish/infinite-scroll",
     "leaflet": "~0.7.3",
+    "leaflet-dataoptions": "^1.0.0",
+    "leaflet-hash": "^0.2.1",
+    "leaflet-loading": "^0.1.15",
     "leaflet-pip": "^0.1.1",
+    "leaflet-plugins": "^1.2.0",
+    "leaflet-tilelayer-vector": "git://github.com/ebrelsford/leaflet-tilelayer-vector",
+    "leaflet-usermarker": "^1.0.0",
     "livinglots-map": "git://github.com/596acres/livinglots-map",
     "proj4": "^2.3.3",
-    "spin.js": "~2.0.1",
-    "tinymce": "^4.0.28",
-    "underscore": "~1.7.0"
+    "select2": "^3.5.2-browserify",
+    "spin.js": "^2.0.2",
+    "tinymce": "^4.1.7",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "browserify": "^4.1.10",
-    "browserify-shim": "^3.6.0",
+    "browserify": "^8.1.3",
+    "browserify-shim": "^3.8.2",
     "grunt": "^0.4.5",
-    "grunt-browserify": "^2.1.0",
+    "grunt-browserify": "^3.3.0",
     "grunt-cli": "^0.1.13",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-cssmin": "^0.12.1",
     "grunt-contrib-handlebars": "git://github.com/gruntjs/grunt-contrib-handlebars",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-less": "^0.11.2",
+    "grunt-contrib-jshint": "^0.11.0",
+    "grunt-contrib-less": "^1.0.0",
     "grunt-contrib-watch": "^0.6.1",
-    "watchify": "^1.0.0"
+    "watchify": "^2.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -39,21 +52,8 @@
     "bootstrap_modal": "./bower_components/bootstrap/js/modal.js",
     "bootstrap_tooltip": "./bower_components/bootstrap/js/tooltip.js",
     "bootstrap_transition": "./bower_components/bootstrap/js/transition.js",
-    "fancybox": "./bower_components/fancybox/source/jquery.fancybox.js",
-    "jquery.infinitescroll": "./bower_components/infinite-scroll/jquery.infinitescroll.js",
-    "leaflet-active-area": "./bower_components/leaflet-active-area/src/leaflet.activearea.js",
-    "leaflet.bing": "./bower_components/leaflet-plugins/layer/tile/Bing.js",
-    "leaflet.dataoptions": "./bower_components/leaflet.dataoptions/src/leaflet.dataoptions.js",
-    "leaflet.hash": "./bower_components/leaflet-hash/leaflet-hash.js",
-    "leaflet.loading": "./bower_components/leaflet.loading/src/Control.Loading.js",
-    "leaflet.usermarker": "./bower_components/leaflet.usermarker/src/leaflet.usermarker.js",
-    "communist": "./bower_components/leaflet-tilelayer-vector/lib/communist.min.js",
-    "AbstractWorker": "./bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js",
-    "CommunistWorker": "./bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js",
-    "TileCache": "./bower_components/leaflet-tilelayer-vector/src/TileCache.js",
-    "TileLayer.GeoJSON": "./bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js",
-    "TileLayer.Overzoom": "./bower_components/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js",
-    "TileQueue": "./bower_components/leaflet-tilelayer-vector/src/TileQueue.js"
+    "jquery-infinite-scroll": "./node_modules/jquery-infinite-scroll/jquery.infinitescroll.js",
+    "leaflet-plugins-bing": "./node_modules/leaflet-plugins/layer/tile/Bing.js"
   },
   "browserify": {
     "transform": [
@@ -61,25 +61,9 @@
     ]
   },
   "browserify-shim": {
-    "communist": "communist",
-    "CommunistWorker": {
+    "leaflet-plugins-bing": {
       "depends": [
-        "communist:communist",
-        "leaflet",
-        "AbstractWorker"
-      ]
-    },
-    "spinjs": "Spinner",
-    "TileLayer.Overzoom": {
-      "depends": [
-        "TileLayer.GeoJSON"
-      ]
-    },
-    "TileLayer.GeoJSON": {
-      "depends": [
-        "CommunistWorker",
-        "TileCache",
-        "TileQueue"
+        "leaflet:L"
       ]
     }
   }

@@ -14,8 +14,8 @@ var oasis = require('./oasis');
 
 require('bootstrap_button');
 require('bootstrap_tooltip');
-require('jquery.infinitescroll');
-require('leaflet.loading');
+require('jquery-infinite-scroll');
+require('leaflet-loading');
 require('livinglots-map/src/livinglots.addlot');
 require('livinglots-map/src/livinglots.mail');
 require('./handlebars.helpers');

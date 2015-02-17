@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/button.js":[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: button.js v3.0.3
  * http://getbootstrap.com/javascript/#buttons
@@ -115,7 +115,7 @@
 
 }(jQuery);
 
-},{}],2:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/collapse.js":[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: collapse.js v3.0.3
  * http://getbootstrap.com/javascript/#collapse
@@ -296,7 +296,7 @@
 
 }(jQuery);
 
-},{}],3:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/dropdown.js":[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: dropdown.js v3.0.3
  * http://getbootstrap.com/javascript/#dropdowns
@@ -452,7 +452,7 @@
 
 }(jQuery);
 
-},{}],4:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/tooltip.js":[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tooltip.js v3.0.3
  * http://getbootstrap.com/javascript/#tooltip
@@ -840,7 +840,7 @@
 
 }(jQuery);
 
-},{}],5:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/transition.js":[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: transition.js v3.0.3
  * http://getbootstrap.com/javascript/#transitions
@@ -898,4322 +898,7 @@
 
 }(jQuery);
 
-},{}],6:[function(require,module,exports){
-/*!
- * fancyBox - jQuery Plugin
- * version: 2.1.5 (Fri, 14 Jun 2013)
- * @requires jQuery v1.6 or later
- *
- * Examples at http://fancyapps.com/fancybox/
- * License: www.fancyapps.com/fancybox/#license
- *
- * Copyright 2012 Janis Skarnelis - janis@fancyapps.com
- *
- */
-
-(function (window, document, $, undefined) {
-	"use strict";
-
-	var H = $("html"),
-		W = $(window),
-		D = $(document),
-		F = $.fancybox = function () {
-			F.open.apply( this, arguments );
-		},
-		IE =  navigator.userAgent.match(/msie/i),
-		didUpdate	= null,
-		isTouch		= document.createTouch !== undefined,
-
-		isQuery	= function(obj) {
-			return obj && obj.hasOwnProperty && obj instanceof $;
-		},
-		isString = function(str) {
-			return str && $.type(str) === "string";
-		},
-		isPercentage = function(str) {
-			return isString(str) && str.indexOf('%') > 0;
-		},
-		isScrollable = function(el) {
-			return (el && !(el.style.overflow && el.style.overflow === 'hidden') && ((el.clientWidth && el.scrollWidth > el.clientWidth) || (el.clientHeight && el.scrollHeight > el.clientHeight)));
-		},
-		getScalar = function(orig, dim) {
-			var value = parseInt(orig, 10) || 0;
-
-			if (dim && isPercentage(orig)) {
-				value = F.getViewport()[ dim ] / 100 * value;
-			}
-
-			return Math.ceil(value);
-		},
-		getValue = function(value, dim) {
-			return getScalar(value, dim) + 'px';
-		};
-
-	$.extend(F, {
-		// The current version of fancyBox
-		version: '2.1.5',
-
-		defaults: {
-			padding : 15,
-			margin  : 20,
-
-			width     : 800,
-			height    : 600,
-			minWidth  : 100,
-			minHeight : 100,
-			maxWidth  : 9999,
-			maxHeight : 9999,
-			pixelRatio: 1, // Set to 2 for retina display support
-
-			autoSize   : true,
-			autoHeight : false,
-			autoWidth  : false,
-
-			autoResize  : true,
-			autoCenter  : !isTouch,
-			fitToView   : true,
-			aspectRatio : false,
-			topRatio    : 0.5,
-			leftRatio   : 0.5,
-
-			scrolling : 'auto', // 'auto', 'yes' or 'no'
-			wrapCSS   : '',
-
-			arrows     : true,
-			closeBtn   : true,
-			closeClick : false,
-			nextClick  : false,
-			mouseWheel : true,
-			autoPlay   : false,
-			playSpeed  : 3000,
-			preload    : 3,
-			modal      : false,
-			loop       : true,
-
-			ajax  : {
-				dataType : 'html',
-				headers  : { 'X-fancyBox': true }
-			},
-			iframe : {
-				scrolling : 'auto',
-				preload   : true
-			},
-			swf : {
-				wmode: 'transparent',
-				allowfullscreen   : 'true',
-				allowscriptaccess : 'always'
-			},
-
-			keys  : {
-				next : {
-					13 : 'left', // enter
-					34 : 'up',   // page down
-					39 : 'left', // right arrow
-					40 : 'up'    // down arrow
-				},
-				prev : {
-					8  : 'right',  // backspace
-					33 : 'down',   // page up
-					37 : 'right',  // left arrow
-					38 : 'down'    // up arrow
-				},
-				close  : [27], // escape key
-				play   : [32], // space - start/stop slideshow
-				toggle : [70]  // letter "f" - toggle fullscreen
-			},
-
-			direction : {
-				next : 'left',
-				prev : 'right'
-			},
-
-			scrollOutside  : true,
-
-			// Override some properties
-			index   : 0,
-			type    : null,
-			href    : null,
-			content : null,
-			title   : null,
-
-			// HTML templates
-			tpl: {
-				wrap     : '<div class="fancybox-wrap" tabIndex="-1"><div class="fancybox-skin"><div class="fancybox-outer"><div class="fancybox-inner"></div></div></div></div>',
-				image    : '<img class="fancybox-image" src="{href}" alt="" />',
-				iframe   : '<iframe id="fancybox-frame{rnd}" name="fancybox-frame{rnd}" class="fancybox-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>',
-				error    : '<p class="fancybox-error">The requested content cannot be loaded.<br/>Please try again later.</p>',
-				closeBtn : '<a title="Close" class="fancybox-item fancybox-close" href="javascript:;"></a>',
-				next     : '<a title="Next" class="fancybox-nav fancybox-next" href="javascript:;"><span></span></a>',
-				prev     : '<a title="Previous" class="fancybox-nav fancybox-prev" href="javascript:;"><span></span></a>'
-			},
-
-			// Properties for each animation type
-			// Opening fancyBox
-			openEffect  : 'fade', // 'elastic', 'fade' or 'none'
-			openSpeed   : 250,
-			openEasing  : 'swing',
-			openOpacity : true,
-			openMethod  : 'zoomIn',
-
-			// Closing fancyBox
-			closeEffect  : 'fade', // 'elastic', 'fade' or 'none'
-			closeSpeed   : 250,
-			closeEasing  : 'swing',
-			closeOpacity : true,
-			closeMethod  : 'zoomOut',
-
-			// Changing next gallery item
-			nextEffect : 'elastic', // 'elastic', 'fade' or 'none'
-			nextSpeed  : 250,
-			nextEasing : 'swing',
-			nextMethod : 'changeIn',
-
-			// Changing previous gallery item
-			prevEffect : 'elastic', // 'elastic', 'fade' or 'none'
-			prevSpeed  : 250,
-			prevEasing : 'swing',
-			prevMethod : 'changeOut',
-
-			// Enable default helpers
-			helpers : {
-				overlay : true,
-				title   : true
-			},
-
-			// Callbacks
-			onCancel     : $.noop, // If canceling
-			beforeLoad   : $.noop, // Before loading
-			afterLoad    : $.noop, // After loading
-			beforeShow   : $.noop, // Before changing in current item
-			afterShow    : $.noop, // After opening
-			beforeChange : $.noop, // Before changing gallery item
-			beforeClose  : $.noop, // Before closing
-			afterClose   : $.noop  // After closing
-		},
-
-		//Current state
-		group    : {}, // Selected group
-		opts     : {}, // Group options
-		previous : null,  // Previous element
-		coming   : null,  // Element being loaded
-		current  : null,  // Currently loaded element
-		isActive : false, // Is activated
-		isOpen   : false, // Is currently open
-		isOpened : false, // Have been fully opened at least once
-
-		wrap  : null,
-		skin  : null,
-		outer : null,
-		inner : null,
-
-		player : {
-			timer    : null,
-			isActive : false
-		},
-
-		// Loaders
-		ajaxLoad   : null,
-		imgPreload : null,
-
-		// Some collections
-		transitions : {},
-		helpers     : {},
-
-		/*
-		 *	Static methods
-		 */
-
-		open: function (group, opts) {
-			if (!group) {
-				return;
-			}
-
-			if (!$.isPlainObject(opts)) {
-				opts = {};
-			}
-
-			// Close if already active
-			if (false === F.close(true)) {
-				return;
-			}
-
-			// Normalize group
-			if (!$.isArray(group)) {
-				group = isQuery(group) ? $(group).get() : [group];
-			}
-
-			// Recheck if the type of each element is `object` and set content type (image, ajax, etc)
-			$.each(group, function(i, element) {
-				var obj = {},
-					href,
-					title,
-					content,
-					type,
-					rez,
-					hrefParts,
-					selector;
-
-				if ($.type(element) === "object") {
-					// Check if is DOM element
-					if (element.nodeType) {
-						element = $(element);
-					}
-
-					if (isQuery(element)) {
-						obj = {
-							href    : element.data('fancybox-href') || element.attr('href'),
-							title   : element.data('fancybox-title') || element.attr('title'),
-							isDom   : true,
-							element : element
-						};
-
-						if ($.metadata) {
-							$.extend(true, obj, element.metadata());
-						}
-
-					} else {
-						obj = element;
-					}
-				}
-
-				href  = opts.href  || obj.href || (isString(element) ? element : null);
-				title = opts.title !== undefined ? opts.title : obj.title || '';
-
-				content = opts.content || obj.content;
-				type    = content ? 'html' : (opts.type  || obj.type);
-
-				if (!type && obj.isDom) {
-					type = element.data('fancybox-type');
-
-					if (!type) {
-						rez  = element.prop('class').match(/fancybox\.(\w+)/);
-						type = rez ? rez[1] : null;
-					}
-				}
-
-				if (isString(href)) {
-					// Try to guess the content type
-					if (!type) {
-						if (F.isImage(href)) {
-							type = 'image';
-
-						} else if (F.isSWF(href)) {
-							type = 'swf';
-
-						} else if (href.charAt(0) === '#') {
-							type = 'inline';
-
-						} else if (isString(element)) {
-							type    = 'html';
-							content = element;
-						}
-					}
-
-					// Split url into two pieces with source url and content selector, e.g,
-					// "/mypage.html #my_id" will load "/mypage.html" and display element having id "my_id"
-					if (type === 'ajax') {
-						hrefParts = href.split(/\s+/, 2);
-						href      = hrefParts.shift();
-						selector  = hrefParts.shift();
-					}
-				}
-
-				if (!content) {
-					if (type === 'inline') {
-						if (href) {
-							content = $( isString(href) ? href.replace(/.*(?=#[^\s]+$)/, '') : href ); //strip for ie7
-
-						} else if (obj.isDom) {
-							content = element;
-						}
-
-					} else if (type === 'html') {
-						content = href;
-
-					} else if (!type && !href && obj.isDom) {
-						type    = 'inline';
-						content = element;
-					}
-				}
-
-				$.extend(obj, {
-					href     : href,
-					type     : type,
-					content  : content,
-					title    : title,
-					selector : selector
-				});
-
-				group[ i ] = obj;
-			});
-
-			// Extend the defaults
-			F.opts = $.extend(true, {}, F.defaults, opts);
-
-			// All options are merged recursive except keys
-			if (opts.keys !== undefined) {
-				F.opts.keys = opts.keys ? $.extend({}, F.defaults.keys, opts.keys) : false;
-			}
-
-			F.group = group;
-
-			return F._start(F.opts.index);
-		},
-
-		// Cancel image loading or abort ajax request
-		cancel: function () {
-			var coming = F.coming;
-
-			if (!coming || false === F.trigger('onCancel')) {
-				return;
-			}
-
-			F.hideLoading();
-
-			if (F.ajaxLoad) {
-				F.ajaxLoad.abort();
-			}
-
-			F.ajaxLoad = null;
-
-			if (F.imgPreload) {
-				F.imgPreload.onload = F.imgPreload.onerror = null;
-			}
-
-			if (coming.wrap) {
-				coming.wrap.stop(true, true).trigger('onReset').remove();
-			}
-
-			F.coming = null;
-
-			// If the first item has been canceled, then clear everything
-			if (!F.current) {
-				F._afterZoomOut( coming );
-			}
-		},
-
-		// Start closing animation if is open; remove immediately if opening/closing
-		close: function (event) {
-			F.cancel();
-
-			if (false === F.trigger('beforeClose')) {
-				return;
-			}
-
-			F.unbindEvents();
-
-			if (!F.isActive) {
-				return;
-			}
-
-			if (!F.isOpen || event === true) {
-				$('.fancybox-wrap').stop(true).trigger('onReset').remove();
-
-				F._afterZoomOut();
-
-			} else {
-				F.isOpen = F.isOpened = false;
-				F.isClosing = true;
-
-				$('.fancybox-item, .fancybox-nav').remove();
-
-				F.wrap.stop(true, true).removeClass('fancybox-opened');
-
-				F.transitions[ F.current.closeMethod ]();
-			}
-		},
-
-		// Manage slideshow:
-		//   $.fancybox.play(); - toggle slideshow
-		//   $.fancybox.play( true ); - start
-		//   $.fancybox.play( false ); - stop
-		play: function ( action ) {
-			var clear = function () {
-					clearTimeout(F.player.timer);
-				},
-				set = function () {
-					clear();
-
-					if (F.current && F.player.isActive) {
-						F.player.timer = setTimeout(F.next, F.current.playSpeed);
-					}
-				},
-				stop = function () {
-					clear();
-
-					D.unbind('.player');
-
-					F.player.isActive = false;
-
-					F.trigger('onPlayEnd');
-				},
-				start = function () {
-					if (F.current && (F.current.loop || F.current.index < F.group.length - 1)) {
-						F.player.isActive = true;
-
-						D.bind({
-							'onCancel.player beforeClose.player' : stop,
-							'onUpdate.player'   : set,
-							'beforeLoad.player' : clear
-						});
-
-						set();
-
-						F.trigger('onPlayStart');
-					}
-				};
-
-			if (action === true || (!F.player.isActive && action !== false)) {
-				start();
-			} else {
-				stop();
-			}
-		},
-
-		// Navigate to next gallery item
-		next: function ( direction ) {
-			var current = F.current;
-
-			if (current) {
-				if (!isString(direction)) {
-					direction = current.direction.next;
-				}
-
-				F.jumpto(current.index + 1, direction, 'next');
-			}
-		},
-
-		// Navigate to previous gallery item
-		prev: function ( direction ) {
-			var current = F.current;
-
-			if (current) {
-				if (!isString(direction)) {
-					direction = current.direction.prev;
-				}
-
-				F.jumpto(current.index - 1, direction, 'prev');
-			}
-		},
-
-		// Navigate to gallery item by index
-		jumpto: function ( index, direction, router ) {
-			var current = F.current;
-
-			if (!current) {
-				return;
-			}
-
-			index = getScalar(index);
-
-			F.direction = direction || current.direction[ (index >= current.index ? 'next' : 'prev') ];
-			F.router    = router || 'jumpto';
-
-			if (current.loop) {
-				if (index < 0) {
-					index = current.group.length + (index % current.group.length);
-				}
-
-				index = index % current.group.length;
-			}
-
-			if (current.group[ index ] !== undefined) {
-				F.cancel();
-
-				F._start(index);
-			}
-		},
-
-		// Center inside viewport and toggle position type to fixed or absolute if needed
-		reposition: function (e, onlyAbsolute) {
-			var current = F.current,
-				wrap    = current ? current.wrap : null,
-				pos;
-
-			if (wrap) {
-				pos = F._getPosition(onlyAbsolute);
-
-				if (e && e.type === 'scroll') {
-					delete pos.position;
-
-					wrap.stop(true, true).animate(pos, 200);
-
-				} else {
-					wrap.css(pos);
-
-					current.pos = $.extend({}, current.dim, pos);
-				}
-			}
-		},
-
-		update: function (e) {
-			var type = (e && e.type),
-				anyway = !type || type === 'orientationchange';
-
-			if (anyway) {
-				clearTimeout(didUpdate);
-
-				didUpdate = null;
-			}
-
-			if (!F.isOpen || didUpdate) {
-				return;
-			}
-
-			didUpdate = setTimeout(function() {
-				var current = F.current;
-
-				if (!current || F.isClosing) {
-					return;
-				}
-
-				F.wrap.removeClass('fancybox-tmp');
-
-				if (anyway || type === 'load' || (type === 'resize' && current.autoResize)) {
-					F._setDimension();
-				}
-
-				if (!(type === 'scroll' && current.canShrink)) {
-					F.reposition(e);
-				}
-
-				F.trigger('onUpdate');
-
-				didUpdate = null;
-
-			}, (anyway && !isTouch ? 0 : 300));
-		},
-
-		// Shrink content to fit inside viewport or restore if resized
-		toggle: function ( action ) {
-			if (F.isOpen) {
-				F.current.fitToView = $.type(action) === "boolean" ? action : !F.current.fitToView;
-
-				// Help browser to restore document dimensions
-				if (isTouch) {
-					F.wrap.removeAttr('style').addClass('fancybox-tmp');
-
-					F.trigger('onUpdate');
-				}
-
-				F.update();
-			}
-		},
-
-		hideLoading: function () {
-			D.unbind('.loading');
-
-			$('#fancybox-loading').remove();
-		},
-
-		showLoading: function () {
-			var el, viewport;
-
-			F.hideLoading();
-
-			el = $('<div id="fancybox-loading"><div></div></div>').click(F.cancel).appendTo('body');
-
-			// If user will press the escape-button, the request will be canceled
-			D.bind('keydown.loading', function(e) {
-				if ((e.which || e.keyCode) === 27) {
-					e.preventDefault();
-
-					F.cancel();
-				}
-			});
-
-			if (!F.defaults.fixed) {
-				viewport = F.getViewport();
-
-				el.css({
-					position : 'absolute',
-					top  : (viewport.h * 0.5) + viewport.y,
-					left : (viewport.w * 0.5) + viewport.x
-				});
-			}
-		},
-
-		getViewport: function () {
-			var locked = (F.current && F.current.locked) || false,
-				rez    = {
-					x: W.scrollLeft(),
-					y: W.scrollTop()
-				};
-
-			if (locked) {
-				rez.w = locked[0].clientWidth;
-				rez.h = locked[0].clientHeight;
-
-			} else {
-				// See http://bugs.jquery.com/ticket/6724
-				rez.w = isTouch && window.innerWidth  ? window.innerWidth  : W.width();
-				rez.h = isTouch && window.innerHeight ? window.innerHeight : W.height();
-			}
-
-			return rez;
-		},
-
-		// Unbind the keyboard / clicking actions
-		unbindEvents: function () {
-			if (F.wrap && isQuery(F.wrap)) {
-				F.wrap.unbind('.fb');
-			}
-
-			D.unbind('.fb');
-			W.unbind('.fb');
-		},
-
-		bindEvents: function () {
-			var current = F.current,
-				keys;
-
-			if (!current) {
-				return;
-			}
-
-			// Changing document height on iOS devices triggers a 'resize' event,
-			// that can change document height... repeating infinitely
-			W.bind('orientationchange.fb' + (isTouch ? '' : ' resize.fb') + (current.autoCenter && !current.locked ? ' scroll.fb' : ''), F.update);
-
-			keys = current.keys;
-
-			if (keys) {
-				D.bind('keydown.fb', function (e) {
-					var code   = e.which || e.keyCode,
-						target = e.target || e.srcElement;
-
-					// Skip esc key if loading, because showLoading will cancel preloading
-					if (code === 27 && F.coming) {
-						return false;
-					}
-
-					// Ignore key combinations and key events within form elements
-					if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && !(target && (target.type || $(target).is('[contenteditable]')))) {
-						$.each(keys, function(i, val) {
-							if (current.group.length > 1 && val[ code ] !== undefined) {
-								F[ i ]( val[ code ] );
-
-								e.preventDefault();
-								return false;
-							}
-
-							if ($.inArray(code, val) > -1) {
-								F[ i ] ();
-
-								e.preventDefault();
-								return false;
-							}
-						});
-					}
-				});
-			}
-
-			if ($.fn.mousewheel && current.mouseWheel) {
-				F.wrap.bind('mousewheel.fb', function (e, delta, deltaX, deltaY) {
-					var target = e.target || null,
-						parent = $(target),
-						canScroll = false;
-
-					while (parent.length) {
-						if (canScroll || parent.is('.fancybox-skin') || parent.is('.fancybox-wrap')) {
-							break;
-						}
-
-						canScroll = isScrollable( parent[0] );
-						parent    = $(parent).parent();
-					}
-
-					if (delta !== 0 && !canScroll) {
-						if (F.group.length > 1 && !current.canShrink) {
-							if (deltaY > 0 || deltaX > 0) {
-								F.prev( deltaY > 0 ? 'down' : 'left' );
-
-							} else if (deltaY < 0 || deltaX < 0) {
-								F.next( deltaY < 0 ? 'up' : 'right' );
-							}
-
-							e.preventDefault();
-						}
-					}
-				});
-			}
-		},
-
-		trigger: function (event, o) {
-			var ret, obj = o || F.coming || F.current;
-
-			if (!obj) {
-				return;
-			}
-
-			if ($.isFunction( obj[event] )) {
-				ret = obj[event].apply(obj, Array.prototype.slice.call(arguments, 1));
-			}
-
-			if (ret === false) {
-				return false;
-			}
-
-			if (obj.helpers) {
-				$.each(obj.helpers, function (helper, opts) {
-					if (opts && F.helpers[helper] && $.isFunction(F.helpers[helper][event])) {
-						F.helpers[helper][event]($.extend(true, {}, F.helpers[helper].defaults, opts), obj);
-					}
-				});
-			}
-
-			D.trigger(event);
-		},
-
-		isImage: function (str) {
-			return isString(str) && str.match(/(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i);
-		},
-
-		isSWF: function (str) {
-			return isString(str) && str.match(/\.(swf)((\?|#).*)?$/i);
-		},
-
-		_start: function (index) {
-			var coming = {},
-				obj,
-				href,
-				type,
-				margin,
-				padding;
-
-			index = getScalar( index );
-			obj   = F.group[ index ] || null;
-
-			if (!obj) {
-				return false;
-			}
-
-			coming = $.extend(true, {}, F.opts, obj);
-
-			// Convert margin and padding properties to array - top, right, bottom, left
-			margin  = coming.margin;
-			padding = coming.padding;
-
-			if ($.type(margin) === 'number') {
-				coming.margin = [margin, margin, margin, margin];
-			}
-
-			if ($.type(padding) === 'number') {
-				coming.padding = [padding, padding, padding, padding];
-			}
-
-			// 'modal' propery is just a shortcut
-			if (coming.modal) {
-				$.extend(true, coming, {
-					closeBtn   : false,
-					closeClick : false,
-					nextClick  : false,
-					arrows     : false,
-					mouseWheel : false,
-					keys       : null,
-					helpers: {
-						overlay : {
-							closeClick : false
-						}
-					}
-				});
-			}
-
-			// 'autoSize' property is a shortcut, too
-			if (coming.autoSize) {
-				coming.autoWidth = coming.autoHeight = true;
-			}
-
-			if (coming.width === 'auto') {
-				coming.autoWidth = true;
-			}
-
-			if (coming.height === 'auto') {
-				coming.autoHeight = true;
-			}
-
-			/*
-			 * Add reference to the group, so it`s possible to access from callbacks, example:
-			 * afterLoad : function() {
-			 *     this.title = 'Image ' + (this.index + 1) + ' of ' + this.group.length + (this.title ? ' - ' + this.title : '');
-			 * }
-			 */
-
-			coming.group  = F.group;
-			coming.index  = index;
-
-			// Give a chance for callback or helpers to update coming item (type, title, etc)
-			F.coming = coming;
-
-			if (false === F.trigger('beforeLoad')) {
-				F.coming = null;
-
-				return;
-			}
-
-			type = coming.type;
-			href = coming.href;
-
-			if (!type) {
-				F.coming = null;
-
-				//If we can not determine content type then drop silently or display next/prev item if looping through gallery
-				if (F.current && F.router && F.router !== 'jumpto') {
-					F.current.index = index;
-
-					return F[ F.router ]( F.direction );
-				}
-
-				return false;
-			}
-
-			F.isActive = true;
-
-			if (type === 'image' || type === 'swf') {
-				coming.autoHeight = coming.autoWidth = false;
-				coming.scrolling  = 'visible';
-			}
-
-			if (type === 'image') {
-				coming.aspectRatio = true;
-			}
-
-			if (type === 'iframe' && isTouch) {
-				coming.scrolling = 'scroll';
-			}
-
-			// Build the neccessary markup
-			coming.wrap = $(coming.tpl.wrap).addClass('fancybox-' + (isTouch ? 'mobile' : 'desktop') + ' fancybox-type-' + type + ' fancybox-tmp ' + coming.wrapCSS).appendTo( coming.parent || 'body' );
-
-			$.extend(coming, {
-				skin  : $('.fancybox-skin',  coming.wrap),
-				outer : $('.fancybox-outer', coming.wrap),
-				inner : $('.fancybox-inner', coming.wrap)
-			});
-
-			$.each(["Top", "Right", "Bottom", "Left"], function(i, v) {
-				coming.skin.css('padding' + v, getValue(coming.padding[ i ]));
-			});
-
-			F.trigger('onReady');
-
-			// Check before try to load; 'inline' and 'html' types need content, others - href
-			if (type === 'inline' || type === 'html') {
-				if (!coming.content || !coming.content.length) {
-					return F._error( 'content' );
-				}
-
-			} else if (!href) {
-				return F._error( 'href' );
-			}
-
-			if (type === 'image') {
-				F._loadImage();
-
-			} else if (type === 'ajax') {
-				F._loadAjax();
-
-			} else if (type === 'iframe') {
-				F._loadIframe();
-
-			} else {
-				F._afterLoad();
-			}
-		},
-
-		_error: function ( type ) {
-			$.extend(F.coming, {
-				type       : 'html',
-				autoWidth  : true,
-				autoHeight : true,
-				minWidth   : 0,
-				minHeight  : 0,
-				scrolling  : 'no',
-				hasError   : type,
-				content    : F.coming.tpl.error
-			});
-
-			F._afterLoad();
-		},
-
-		_loadImage: function () {
-			// Reset preload image so it is later possible to check "complete" property
-			var img = F.imgPreload = new Image();
-
-			img.onload = function () {
-				this.onload = this.onerror = null;
-
-				F.coming.width  = this.width / F.opts.pixelRatio;
-				F.coming.height = this.height / F.opts.pixelRatio;
-
-				F._afterLoad();
-			};
-
-			img.onerror = function () {
-				this.onload = this.onerror = null;
-
-				F._error( 'image' );
-			};
-
-			img.src = F.coming.href;
-
-			if (img.complete !== true) {
-				F.showLoading();
-			}
-		},
-
-		_loadAjax: function () {
-			var coming = F.coming;
-
-			F.showLoading();
-
-			F.ajaxLoad = $.ajax($.extend({}, coming.ajax, {
-				url: coming.href,
-				error: function (jqXHR, textStatus) {
-					if (F.coming && textStatus !== 'abort') {
-						F._error( 'ajax', jqXHR );
-
-					} else {
-						F.hideLoading();
-					}
-				},
-				success: function (data, textStatus) {
-					if (textStatus === 'success') {
-						coming.content = data;
-
-						F._afterLoad();
-					}
-				}
-			}));
-		},
-
-		_loadIframe: function() {
-			var coming = F.coming,
-				iframe = $(coming.tpl.iframe.replace(/\{rnd\}/g, new Date().getTime()))
-					.attr('scrolling', isTouch ? 'auto' : coming.iframe.scrolling)
-					.attr('src', coming.href);
-
-			// This helps IE
-			$(coming.wrap).bind('onReset', function () {
-				try {
-					$(this).find('iframe').hide().attr('src', '//about:blank').end().empty();
-				} catch (e) {}
-			});
-
-			if (coming.iframe.preload) {
-				F.showLoading();
-
-				iframe.one('load', function() {
-					$(this).data('ready', 1);
-
-					// iOS will lose scrolling if we resize
-					if (!isTouch) {
-						$(this).bind('load.fb', F.update);
-					}
-
-					// Without this trick:
-					//   - iframe won't scroll on iOS devices
-					//   - IE7 sometimes displays empty iframe
-					$(this).parents('.fancybox-wrap').width('100%').removeClass('fancybox-tmp').show();
-
-					F._afterLoad();
-				});
-			}
-
-			coming.content = iframe.appendTo( coming.inner );
-
-			if (!coming.iframe.preload) {
-				F._afterLoad();
-			}
-		},
-
-		_preloadImages: function() {
-			var group   = F.group,
-				current = F.current,
-				len     = group.length,
-				cnt     = current.preload ? Math.min(current.preload, len - 1) : 0,
-				item,
-				i;
-
-			for (i = 1; i <= cnt; i += 1) {
-				item = group[ (current.index + i ) % len ];
-
-				if (item.type === 'image' && item.href) {
-					new Image().src = item.href;
-				}
-			}
-		},
-
-		_afterLoad: function () {
-			var coming   = F.coming,
-				previous = F.current,
-				placeholder = 'fancybox-placeholder',
-				current,
-				content,
-				type,
-				scrolling,
-				href,
-				embed;
-
-			F.hideLoading();
-
-			if (!coming || F.isActive === false) {
-				return;
-			}
-
-			if (false === F.trigger('afterLoad', coming, previous)) {
-				coming.wrap.stop(true).trigger('onReset').remove();
-
-				F.coming = null;
-
-				return;
-			}
-
-			if (previous) {
-				F.trigger('beforeChange', previous);
-
-				previous.wrap.stop(true).removeClass('fancybox-opened')
-					.find('.fancybox-item, .fancybox-nav')
-					.remove();
-			}
-
-			F.unbindEvents();
-
-			current   = coming;
-			content   = coming.content;
-			type      = coming.type;
-			scrolling = coming.scrolling;
-
-			$.extend(F, {
-				wrap  : current.wrap,
-				skin  : current.skin,
-				outer : current.outer,
-				inner : current.inner,
-				current  : current,
-				previous : previous
-			});
-
-			href = current.href;
-
-			switch (type) {
-				case 'inline':
-				case 'ajax':
-				case 'html':
-					if (current.selector) {
-						content = $('<div>').html(content).find(current.selector);
-
-					} else if (isQuery(content)) {
-						if (!content.data(placeholder)) {
-							content.data(placeholder, $('<div class="' + placeholder + '"></div>').insertAfter( content ).hide() );
-						}
-
-						content = content.show().detach();
-
-						current.wrap.bind('onReset', function () {
-							if ($(this).find(content).length) {
-								content.hide().replaceAll( content.data(placeholder) ).data(placeholder, false);
-							}
-						});
-					}
-				break;
-
-				case 'image':
-					content = current.tpl.image.replace('{href}', href);
-				break;
-
-				case 'swf':
-					content = '<object id="fancybox-swf" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%"><param name="movie" value="' + href + '"></param>';
-					embed   = '';
-
-					$.each(current.swf, function(name, val) {
-						content += '<param name="' + name + '" value="' + val + '"></param>';
-						embed   += ' ' + name + '="' + val + '"';
-					});
-
-					content += '<embed src="' + href + '" type="application/x-shockwave-flash" width="100%" height="100%"' + embed + '></embed></object>';
-				break;
-			}
-
-			if (!(isQuery(content) && content.parent().is(current.inner))) {
-				current.inner.append( content );
-			}
-
-			// Give a chance for helpers or callbacks to update elements
-			F.trigger('beforeShow');
-
-			// Set scrolling before calculating dimensions
-			current.inner.css('overflow', scrolling === 'yes' ? 'scroll' : (scrolling === 'no' ? 'hidden' : scrolling));
-
-			// Set initial dimensions and start position
-			F._setDimension();
-
-			F.reposition();
-
-			F.isOpen = false;
-			F.coming = null;
-
-			F.bindEvents();
-
-			if (!F.isOpened) {
-				$('.fancybox-wrap').not( current.wrap ).stop(true).trigger('onReset').remove();
-
-			} else if (previous.prevMethod) {
-				F.transitions[ previous.prevMethod ]();
-			}
-
-			F.transitions[ F.isOpened ? current.nextMethod : current.openMethod ]();
-
-			F._preloadImages();
-		},
-
-		_setDimension: function () {
-			var viewport   = F.getViewport(),
-				steps      = 0,
-				canShrink  = false,
-				canExpand  = false,
-				wrap       = F.wrap,
-				skin       = F.skin,
-				inner      = F.inner,
-				current    = F.current,
-				width      = current.width,
-				height     = current.height,
-				minWidth   = current.minWidth,
-				minHeight  = current.minHeight,
-				maxWidth   = current.maxWidth,
-				maxHeight  = current.maxHeight,
-				scrolling  = current.scrolling,
-				scrollOut  = current.scrollOutside ? current.scrollbarWidth : 0,
-				margin     = current.margin,
-				wMargin    = getScalar(margin[1] + margin[3]),
-				hMargin    = getScalar(margin[0] + margin[2]),
-				wPadding,
-				hPadding,
-				wSpace,
-				hSpace,
-				origWidth,
-				origHeight,
-				origMaxWidth,
-				origMaxHeight,
-				ratio,
-				width_,
-				height_,
-				maxWidth_,
-				maxHeight_,
-				iframe,
-				body;
-
-			// Reset dimensions so we could re-check actual size
-			wrap.add(skin).add(inner).width('auto').height('auto').removeClass('fancybox-tmp');
-
-			wPadding = getScalar(skin.outerWidth(true)  - skin.width());
-			hPadding = getScalar(skin.outerHeight(true) - skin.height());
-
-			// Any space between content and viewport (margin, padding, border, title)
-			wSpace = wMargin + wPadding;
-			hSpace = hMargin + hPadding;
-
-			origWidth  = isPercentage(width)  ? (viewport.w - wSpace) * getScalar(width)  / 100 : width;
-			origHeight = isPercentage(height) ? (viewport.h - hSpace) * getScalar(height) / 100 : height;
-
-			if (current.type === 'iframe') {
-				iframe = current.content;
-
-				if (current.autoHeight && iframe.data('ready') === 1) {
-					try {
-						if (iframe[0].contentWindow.document.location) {
-							inner.width( origWidth ).height(9999);
-
-							body = iframe.contents().find('body');
-
-							if (scrollOut) {
-								body.css('overflow-x', 'hidden');
-							}
-
-							origHeight = body.outerHeight(true);
-						}
-
-					} catch (e) {}
-				}
-
-			} else if (current.autoWidth || current.autoHeight) {
-				inner.addClass( 'fancybox-tmp' );
-
-				// Set width or height in case we need to calculate only one dimension
-				if (!current.autoWidth) {
-					inner.width( origWidth );
-				}
-
-				if (!current.autoHeight) {
-					inner.height( origHeight );
-				}
-
-				if (current.autoWidth) {
-					origWidth = inner.width();
-				}
-
-				if (current.autoHeight) {
-					origHeight = inner.height();
-				}
-
-				inner.removeClass( 'fancybox-tmp' );
-			}
-
-			width  = getScalar( origWidth );
-			height = getScalar( origHeight );
-
-			ratio  = origWidth / origHeight;
-
-			// Calculations for the content
-			minWidth  = getScalar(isPercentage(minWidth) ? getScalar(minWidth, 'w') - wSpace : minWidth);
-			maxWidth  = getScalar(isPercentage(maxWidth) ? getScalar(maxWidth, 'w') - wSpace : maxWidth);
-
-			minHeight = getScalar(isPercentage(minHeight) ? getScalar(minHeight, 'h') - hSpace : minHeight);
-			maxHeight = getScalar(isPercentage(maxHeight) ? getScalar(maxHeight, 'h') - hSpace : maxHeight);
-
-			// These will be used to determine if wrap can fit in the viewport
-			origMaxWidth  = maxWidth;
-			origMaxHeight = maxHeight;
-
-			if (current.fitToView) {
-				maxWidth  = Math.min(viewport.w - wSpace, maxWidth);
-				maxHeight = Math.min(viewport.h - hSpace, maxHeight);
-			}
-
-			maxWidth_  = viewport.w - wMargin;
-			maxHeight_ = viewport.h - hMargin;
-
-			if (current.aspectRatio) {
-				if (width > maxWidth) {
-					width  = maxWidth;
-					height = getScalar(width / ratio);
-				}
-
-				if (height > maxHeight) {
-					height = maxHeight;
-					width  = getScalar(height * ratio);
-				}
-
-				if (width < minWidth) {
-					width  = minWidth;
-					height = getScalar(width / ratio);
-				}
-
-				if (height < minHeight) {
-					height = minHeight;
-					width  = getScalar(height * ratio);
-				}
-
-			} else {
-				width = Math.max(minWidth, Math.min(width, maxWidth));
-
-				if (current.autoHeight && current.type !== 'iframe') {
-					inner.width( width );
-
-					height = inner.height();
-				}
-
-				height = Math.max(minHeight, Math.min(height, maxHeight));
-			}
-
-			// Try to fit inside viewport (including the title)
-			if (current.fitToView) {
-				inner.width( width ).height( height );
-
-				wrap.width( width + wPadding );
-
-				// Real wrap dimensions
-				width_  = wrap.width();
-				height_ = wrap.height();
-
-				if (current.aspectRatio) {
-					while ((width_ > maxWidth_ || height_ > maxHeight_) && width > minWidth && height > minHeight) {
-						if (steps++ > 19) {
-							break;
-						}
-
-						height = Math.max(minHeight, Math.min(maxHeight, height - 10));
-						width  = getScalar(height * ratio);
-
-						if (width < minWidth) {
-							width  = minWidth;
-							height = getScalar(width / ratio);
-						}
-
-						if (width > maxWidth) {
-							width  = maxWidth;
-							height = getScalar(width / ratio);
-						}
-
-						inner.width( width ).height( height );
-
-						wrap.width( width + wPadding );
-
-						width_  = wrap.width();
-						height_ = wrap.height();
-					}
-
-				} else {
-					width  = Math.max(minWidth,  Math.min(width,  width  - (width_  - maxWidth_)));
-					height = Math.max(minHeight, Math.min(height, height - (height_ - maxHeight_)));
-				}
-			}
-
-			if (scrollOut && scrolling === 'auto' && height < origHeight && (width + wPadding + scrollOut) < maxWidth_) {
-				width += scrollOut;
-			}
-
-			inner.width( width ).height( height );
-
-			wrap.width( width + wPadding );
-
-			width_  = wrap.width();
-			height_ = wrap.height();
-
-			canShrink = (width_ > maxWidth_ || height_ > maxHeight_) && width > minWidth && height > minHeight;
-			canExpand = current.aspectRatio ? (width < origMaxWidth && height < origMaxHeight && width < origWidth && height < origHeight) : ((width < origMaxWidth || height < origMaxHeight) && (width < origWidth || height < origHeight));
-
-			$.extend(current, {
-				dim : {
-					width	: getValue( width_ ),
-					height	: getValue( height_ )
-				},
-				origWidth  : origWidth,
-				origHeight : origHeight,
-				canShrink  : canShrink,
-				canExpand  : canExpand,
-				wPadding   : wPadding,
-				hPadding   : hPadding,
-				wrapSpace  : height_ - skin.outerHeight(true),
-				skinSpace  : skin.height() - height
-			});
-
-			if (!iframe && current.autoHeight && height > minHeight && height < maxHeight && !canExpand) {
-				inner.height('auto');
-			}
-		},
-
-		_getPosition: function (onlyAbsolute) {
-			var current  = F.current,
-				viewport = F.getViewport(),
-				margin   = current.margin,
-				width    = F.wrap.width()  + margin[1] + margin[3],
-				height   = F.wrap.height() + margin[0] + margin[2],
-				rez      = {
-					position: 'absolute',
-					top  : margin[0],
-					left : margin[3]
-				};
-
-			if (current.autoCenter && current.fixed && !onlyAbsolute && height <= viewport.h && width <= viewport.w) {
-				rez.position = 'fixed';
-
-			} else if (!current.locked) {
-				rez.top  += viewport.y;
-				rez.left += viewport.x;
-			}
-
-			rez.top  = getValue(Math.max(rez.top,  rez.top  + ((viewport.h - height) * current.topRatio)));
-			rez.left = getValue(Math.max(rez.left, rez.left + ((viewport.w - width)  * current.leftRatio)));
-
-			return rez;
-		},
-
-		_afterZoomIn: function () {
-			var current = F.current;
-
-			if (!current) {
-				return;
-			}
-
-			F.isOpen = F.isOpened = true;
-
-			F.wrap.css('overflow', 'visible').addClass('fancybox-opened');
-
-			F.update();
-
-			// Assign a click event
-			if ( current.closeClick || (current.nextClick && F.group.length > 1) ) {
-				F.inner.css('cursor', 'pointer').bind('click.fb', function(e) {
-					if (!$(e.target).is('a') && !$(e.target).parent().is('a')) {
-						e.preventDefault();
-
-						F[ current.closeClick ? 'close' : 'next' ]();
-					}
-				});
-			}
-
-			// Create a close button
-			if (current.closeBtn) {
-				$(current.tpl.closeBtn).appendTo(F.skin).bind('click.fb', function(e) {
-					e.preventDefault();
-
-					F.close();
-				});
-			}
-
-			// Create navigation arrows
-			if (current.arrows && F.group.length > 1) {
-				if (current.loop || current.index > 0) {
-					$(current.tpl.prev).appendTo(F.outer).bind('click.fb', F.prev);
-				}
-
-				if (current.loop || current.index < F.group.length - 1) {
-					$(current.tpl.next).appendTo(F.outer).bind('click.fb', F.next);
-				}
-			}
-
-			F.trigger('afterShow');
-
-			// Stop the slideshow if this is the last item
-			if (!current.loop && current.index === current.group.length - 1) {
-				F.play( false );
-
-			} else if (F.opts.autoPlay && !F.player.isActive) {
-				F.opts.autoPlay = false;
-
-				F.play();
-			}
-		},
-
-		_afterZoomOut: function ( obj ) {
-			obj = obj || F.current;
-
-			$('.fancybox-wrap').trigger('onReset').remove();
-
-			$.extend(F, {
-				group  : {},
-				opts   : {},
-				router : false,
-				current   : null,
-				isActive  : false,
-				isOpened  : false,
-				isOpen    : false,
-				isClosing : false,
-				wrap   : null,
-				skin   : null,
-				outer  : null,
-				inner  : null
-			});
-
-			F.trigger('afterClose', obj);
-		}
-	});
-
-	/*
-	 *	Default transitions
-	 */
-
-	F.transitions = {
-		getOrigPosition: function () {
-			var current  = F.current,
-				element  = current.element,
-				orig     = current.orig,
-				pos      = {},
-				width    = 50,
-				height   = 50,
-				hPadding = current.hPadding,
-				wPadding = current.wPadding,
-				viewport = F.getViewport();
-
-			if (!orig && current.isDom && element.is(':visible')) {
-				orig = element.find('img:first');
-
-				if (!orig.length) {
-					orig = element;
-				}
-			}
-
-			if (isQuery(orig)) {
-				pos = orig.offset();
-
-				if (orig.is('img')) {
-					width  = orig.outerWidth();
-					height = orig.outerHeight();
-				}
-
-			} else {
-				pos.top  = viewport.y + (viewport.h - height) * current.topRatio;
-				pos.left = viewport.x + (viewport.w - width)  * current.leftRatio;
-			}
-
-			if (F.wrap.css('position') === 'fixed' || current.locked) {
-				pos.top  -= viewport.y;
-				pos.left -= viewport.x;
-			}
-
-			pos = {
-				top     : getValue(pos.top  - hPadding * current.topRatio),
-				left    : getValue(pos.left - wPadding * current.leftRatio),
-				width   : getValue(width  + wPadding),
-				height  : getValue(height + hPadding)
-			};
-
-			return pos;
-		},
-
-		step: function (now, fx) {
-			var ratio,
-				padding,
-				value,
-				prop       = fx.prop,
-				current    = F.current,
-				wrapSpace  = current.wrapSpace,
-				skinSpace  = current.skinSpace;
-
-			if (prop === 'width' || prop === 'height') {
-				ratio = fx.end === fx.start ? 1 : (now - fx.start) / (fx.end - fx.start);
-
-				if (F.isClosing) {
-					ratio = 1 - ratio;
-				}
-
-				padding = prop === 'width' ? current.wPadding : current.hPadding;
-				value   = now - padding;
-
-				F.skin[ prop ](  getScalar( prop === 'width' ?  value : value - (wrapSpace * ratio) ) );
-				F.inner[ prop ]( getScalar( prop === 'width' ?  value : value - (wrapSpace * ratio) - (skinSpace * ratio) ) );
-			}
-		},
-
-		zoomIn: function () {
-			var current  = F.current,
-				startPos = current.pos,
-				effect   = current.openEffect,
-				elastic  = effect === 'elastic',
-				endPos   = $.extend({opacity : 1}, startPos);
-
-			// Remove "position" property that breaks older IE
-			delete endPos.position;
-
-			if (elastic) {
-				startPos = this.getOrigPosition();
-
-				if (current.openOpacity) {
-					startPos.opacity = 0.1;
-				}
-
-			} else if (effect === 'fade') {
-				startPos.opacity = 0.1;
-			}
-
-			F.wrap.css(startPos).animate(endPos, {
-				duration : effect === 'none' ? 0 : current.openSpeed,
-				easing   : current.openEasing,
-				step     : elastic ? this.step : null,
-				complete : F._afterZoomIn
-			});
-		},
-
-		zoomOut: function () {
-			var current  = F.current,
-				effect   = current.closeEffect,
-				elastic  = effect === 'elastic',
-				endPos   = {opacity : 0.1};
-
-			if (elastic) {
-				endPos = this.getOrigPosition();
-
-				if (current.closeOpacity) {
-					endPos.opacity = 0.1;
-				}
-			}
-
-			F.wrap.animate(endPos, {
-				duration : effect === 'none' ? 0 : current.closeSpeed,
-				easing   : current.closeEasing,
-				step     : elastic ? this.step : null,
-				complete : F._afterZoomOut
-			});
-		},
-
-		changeIn: function () {
-			var current   = F.current,
-				effect    = current.nextEffect,
-				startPos  = current.pos,
-				endPos    = { opacity : 1 },
-				direction = F.direction,
-				distance  = 200,
-				field;
-
-			startPos.opacity = 0.1;
-
-			if (effect === 'elastic') {
-				field = direction === 'down' || direction === 'up' ? 'top' : 'left';
-
-				if (direction === 'down' || direction === 'right') {
-					startPos[ field ] = getValue(getScalar(startPos[ field ]) - distance);
-					endPos[ field ]   = '+=' + distance + 'px';
-
-				} else {
-					startPos[ field ] = getValue(getScalar(startPos[ field ]) + distance);
-					endPos[ field ]   = '-=' + distance + 'px';
-				}
-			}
-
-			// Workaround for http://bugs.jquery.com/ticket/12273
-			if (effect === 'none') {
-				F._afterZoomIn();
-
-			} else {
-				F.wrap.css(startPos).animate(endPos, {
-					duration : current.nextSpeed,
-					easing   : current.nextEasing,
-					complete : F._afterZoomIn
-				});
-			}
-		},
-
-		changeOut: function () {
-			var previous  = F.previous,
-				effect    = previous.prevEffect,
-				endPos    = { opacity : 0.1 },
-				direction = F.direction,
-				distance  = 200;
-
-			if (effect === 'elastic') {
-				endPos[ direction === 'down' || direction === 'up' ? 'top' : 'left' ] = ( direction === 'up' || direction === 'left' ? '-' : '+' ) + '=' + distance + 'px';
-			}
-
-			previous.wrap.animate(endPos, {
-				duration : effect === 'none' ? 0 : previous.prevSpeed,
-				easing   : previous.prevEasing,
-				complete : function () {
-					$(this).trigger('onReset').remove();
-				}
-			});
-		}
-	};
-
-	/*
-	 *	Overlay helper
-	 */
-
-	F.helpers.overlay = {
-		defaults : {
-			closeClick : true,      // if true, fancyBox will be closed when user clicks on the overlay
-			speedOut   : 200,       // duration of fadeOut animation
-			showEarly  : true,      // indicates if should be opened immediately or wait until the content is ready
-			css        : {},        // custom CSS properties
-			locked     : !isTouch,  // if true, the content will be locked into overlay
-			fixed      : true       // if false, the overlay CSS position property will not be set to "fixed"
-		},
-
-		overlay : null,      // current handle
-		fixed   : false,     // indicates if the overlay has position "fixed"
-		el      : $('html'), // element that contains "the lock"
-
-		// Public methods
-		create : function(opts) {
-			opts = $.extend({}, this.defaults, opts);
-
-			if (this.overlay) {
-				this.close();
-			}
-
-			this.overlay = $('<div class="fancybox-overlay"></div>').appendTo( F.coming ? F.coming.parent : opts.parent );
-			this.fixed   = false;
-
-			if (opts.fixed && F.defaults.fixed) {
-				this.overlay.addClass('fancybox-overlay-fixed');
-
-				this.fixed = true;
-			}
-		},
-
-		open : function(opts) {
-			var that = this;
-
-			opts = $.extend({}, this.defaults, opts);
-
-			if (this.overlay) {
-				this.overlay.unbind('.overlay').width('auto').height('auto');
-
-			} else {
-				this.create(opts);
-			}
-
-			if (!this.fixed) {
-				W.bind('resize.overlay', $.proxy( this.update, this) );
-
-				this.update();
-			}
-
-			if (opts.closeClick) {
-				this.overlay.bind('click.overlay', function(e) {
-					if ($(e.target).hasClass('fancybox-overlay')) {
-						if (F.isActive) {
-							F.close();
-						} else {
-							that.close();
-						}
-
-						return false;
-					}
-				});
-			}
-
-			this.overlay.css( opts.css ).show();
-		},
-
-		close : function() {
-			var scrollV, scrollH;
-
-			W.unbind('resize.overlay');
-
-			if (this.el.hasClass('fancybox-lock')) {
-				$('.fancybox-margin').removeClass('fancybox-margin');
-
-				scrollV = W.scrollTop();
-				scrollH = W.scrollLeft();
-
-				this.el.removeClass('fancybox-lock');
-
-				W.scrollTop( scrollV ).scrollLeft( scrollH );
-			}
-
-			$('.fancybox-overlay').remove().hide();
-
-			$.extend(this, {
-				overlay : null,
-				fixed   : false
-			});
-		},
-
-		// Private, callbacks
-
-		update : function () {
-			var width = '100%', offsetWidth;
-
-			// Reset width/height so it will not mess
-			this.overlay.width(width).height('100%');
-
-			// jQuery does not return reliable result for IE
-			if (IE) {
-				offsetWidth = Math.max(document.documentElement.offsetWidth, document.body.offsetWidth);
-
-				if (D.width() > offsetWidth) {
-					width = D.width();
-				}
-
-			} else if (D.width() > W.width()) {
-				width = D.width();
-			}
-
-			this.overlay.width(width).height(D.height());
-		},
-
-		// This is where we can manipulate DOM, because later it would cause iframes to reload
-		onReady : function (opts, obj) {
-			var overlay = this.overlay;
-
-			$('.fancybox-overlay').stop(true, true);
-
-			if (!overlay) {
-				this.create(opts);
-			}
-
-			if (opts.locked && this.fixed && obj.fixed) {
-				if (!overlay) {
-					this.margin = D.height() > W.height() ? $('html').css('margin-right').replace("px", "") : false;
-				}
-
-				obj.locked = this.overlay.append( obj.wrap );
-				obj.fixed  = false;
-			}
-
-			if (opts.showEarly === true) {
-				this.beforeShow.apply(this, arguments);
-			}
-		},
-
-		beforeShow : function(opts, obj) {
-			var scrollV, scrollH;
-
-			if (obj.locked) {
-				if (this.margin !== false) {
-					$('*').filter(function(){
-						return ($(this).css('position') === 'fixed' && !$(this).hasClass("fancybox-overlay") && !$(this).hasClass("fancybox-wrap") );
-					}).addClass('fancybox-margin');
-
-					this.el.addClass('fancybox-margin');
-				}
-
-				scrollV = W.scrollTop();
-				scrollH = W.scrollLeft();
-
-				this.el.addClass('fancybox-lock');
-
-				W.scrollTop( scrollV ).scrollLeft( scrollH );
-			}
-
-			this.open(opts);
-		},
-
-		onUpdate : function() {
-			if (!this.fixed) {
-				this.update();
-			}
-		},
-
-		afterClose: function (opts) {
-			// Remove overlay if exists and fancyBox is not opening
-			// (e.g., it is not being open using afterClose callback)
-			//if (this.overlay && !F.isActive) {
-			if (this.overlay && !F.coming) {
-				this.overlay.fadeOut(opts.speedOut, $.proxy( this.close, this ));
-			}
-		}
-	};
-
-	/*
-	 *	Title helper
-	 */
-
-	F.helpers.title = {
-		defaults : {
-			type     : 'float', // 'float', 'inside', 'outside' or 'over',
-			position : 'bottom' // 'top' or 'bottom'
-		},
-
-		beforeShow: function (opts) {
-			var current = F.current,
-				text    = current.title,
-				type    = opts.type,
-				title,
-				target;
-
-			if ($.isFunction(text)) {
-				text = text.call(current.element, current);
-			}
-
-			if (!isString(text) || $.trim(text) === '') {
-				return;
-			}
-
-			title = $('<div class="fancybox-title fancybox-title-' + type + '-wrap">' + text + '</div>');
-
-			switch (type) {
-				case 'inside':
-					target = F.skin;
-				break;
-
-				case 'outside':
-					target = F.wrap;
-				break;
-
-				case 'over':
-					target = F.inner;
-				break;
-
-				default: // 'float'
-					target = F.skin;
-
-					title.appendTo('body');
-
-					if (IE) {
-						title.width( title.width() );
-					}
-
-					title.wrapInner('<span class="child"></span>');
-
-					//Increase bottom margin so this title will also fit into viewport
-					F.current.margin[2] += Math.abs( getScalar(title.css('margin-bottom')) );
-				break;
-			}
-
-			title[ (opts.position === 'top' ? 'prependTo'  : 'appendTo') ](target);
-		}
-	};
-
-	// jQuery plugin initialization
-	$.fn.fancybox = function (options) {
-		var index,
-			that     = $(this),
-			selector = this.selector || '',
-			run      = function(e) {
-				var what = $(this).blur(), idx = index, relType, relVal;
-
-				if (!(e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) && !what.is('.fancybox-wrap')) {
-					relType = options.groupAttr || 'data-fancybox-group';
-					relVal  = what.attr(relType);
-
-					if (!relVal) {
-						relType = 'rel';
-						relVal  = what.get(0)[ relType ];
-					}
-
-					if (relVal && relVal !== '' && relVal !== 'nofollow') {
-						what = selector.length ? $(selector) : that;
-						what = what.filter('[' + relType + '="' + relVal + '"]');
-						idx  = what.index(this);
-					}
-
-					options.index = idx;
-
-					// Stop an event from bubbling if everything is fine
-					if (F.open(what, options) !== false) {
-						e.preventDefault();
-					}
-				}
-			};
-
-		options = options || {};
-		index   = options.index || 0;
-
-		if (!selector || options.live === false) {
-			that.unbind('click.fb-start').bind('click.fb-start', run);
-
-		} else {
-			D.undelegate(selector, 'click.fb-start').delegate(selector + ":not('.fancybox-item, .fancybox-nav')", 'click.fb-start', run);
-		}
-
-		this.filter('[data-fancybox-start=1]').trigger('click');
-
-		return this;
-	};
-
-	// Tests that need a body at doc ready
-	D.ready(function() {
-		var w1, w2;
-
-		if ( $.scrollbarWidth === undefined ) {
-			// http://benalman.com/projects/jquery-misc-plugins/#scrollbarwidth
-			$.scrollbarWidth = function() {
-				var parent = $('<div style="width:50px;height:50px;overflow:auto"><div/></div>').appendTo('body'),
-					child  = parent.children(),
-					width  = child.innerWidth() - child.height( 99 ).innerWidth();
-
-				parent.remove();
-
-				return width;
-			};
-		}
-
-		if ( $.support.fixedPosition === undefined ) {
-			$.support.fixedPosition = (function() {
-				var elem  = $('<div style="position:fixed;top:20px;"></div>').appendTo('body'),
-					fixed = ( elem[0].offsetTop === 20 || elem[0].offsetTop === 15 );
-
-				elem.remove();
-
-				return fixed;
-			}());
-		}
-
-		$.extend(F.defaults, {
-			scrollbarWidth : $.scrollbarWidth(),
-			fixed  : $.support.fixedPosition,
-			parent : $('body')
-		});
-
-		//Get real width of page scroll-bar
-		w1 = $(window).width();
-
-		H.addClass('fancybox-lock-test');
-
-		w2 = $(window).width();
-
-		H.removeClass('fancybox-lock-test');
-
-		$("<style type='text/css'>.fancybox-margin{margin-right:" + (w2 - w1) + "px;}</style>").appendTo("head");
-	});
-
-}(window, document, jQuery));
-},{}],7:[function(require,module,exports){
-/*jshint undef: true */
-/*global jQuery: true */
-
-/*!
-   --------------------------------
-   Infinite Scroll
-   --------------------------------
-   + https://github.com/paulirish/infinite-scroll
-   + version 2.0.2
-   + Copyright 2011/12 Paul Irish & Luke Shumard
-   + Licensed under the MIT license
-
-   + Documentation: http://infinite-scroll.com/
-*/
-
-(function (window, $, undefined) {
-	"use strict";
-
-    $.infinitescroll = function infscr(options, callback, element) {
-        this.element = $(element);
-
-        // Flag the object in the event of a failed creation
-        if (!this._create(options, callback)) {
-            this.failed = true;
-        }
-    };
-
-    $.infinitescroll.defaults = {
-        loading: {
-            finished: undefined,
-            finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
-			img: "data:image/gif;base64,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",
-            msg: null,
-            msgText: "<em>Loading the next set of posts...</em>",
-            selector: null,
-            speed: 'fast',
-            start: undefined
-        },
-        state: {
-            isDuringAjax: false,
-            isInvalidPage: false,
-            isDestroyed: false,
-            isDone: false, // For when it goes all the way through the archive.
-            isPaused: false,
-            isBeyondMaxPage: false,
-            currPage: 1
-        },
-        debug: false,
-		behavior: undefined,
-        binder: $(window), // used to cache the selector
-        nextSelector: "div.navigation a:first",
-        navSelector: "div.navigation",
-        contentSelector: null, // rename to pageFragment
-        extraScrollPx: 150,
-        itemSelector: "div.post",
-        animate: false,
-        pathParse: undefined,
-        dataType: 'html',
-        appendCallback: true,
-        bufferPx: 40,
-        errorCallback: function () { },
-        infid: 0, //Instance ID
-        pixelsFromNavToBottom: undefined,
-        path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
-		prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
-        maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
-	};
-
-    $.infinitescroll.prototype = {
-
-        /*
-            ----------------------------
-            Private methods
-            ----------------------------
-            */
-
-        // Bind or unbind from scroll
-        _binding: function infscr_binding(binding) {
-
-            var instance = this,
-            opts = instance.options;
-
-            opts.v = '2.0b2.120520';
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
-                this['_binding_'+opts.behavior].call(this);
-                return;
-            }
-
-            if (binding !== 'bind' && binding !== 'unbind') {
-                this._debug('Binding value  ' + binding + ' not valid');
-                return false;
-            }
-
-            if (binding === 'unbind') {
-                (this.options.binder).unbind('smartscroll.infscr.' + instance.options.infid);
-            } else {
-                (this.options.binder)[binding]('smartscroll.infscr.' + instance.options.infid, function () {
-                    instance.scroll();
-                });
-            }
-
-            this._debug('Binding', binding);
-        },
-
-        // Fundamental aspects of the plugin are initialized
-        _create: function infscr_create(options, callback) {
-
-            // Add custom options to defaults
-            var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
-			this.options = opts;
-			var $window = $(window);
-			var instance = this;
-
-			// Validate selectors
-            if (!instance._validate(options)) {
-				return false;
-			}
-
-            // Validate page fragment path
-            var path = $(opts.nextSelector).attr('href');
-            if (!path) {
-                this._debug('Navigation selector not found');
-                return false;
-            }
-
-            // Set the path to be a relative URL from root.
-            opts.path = opts.path || this._determinepath(path);
-
-            // contentSelector is 'page fragment' option for .load() / .ajax() calls
-            opts.contentSelector = opts.contentSelector || this.element;
-
-            // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
-            opts.loading.selector = opts.loading.selector || opts.contentSelector;
-
-            // Define loading.msg
-            opts.loading.msg = opts.loading.msg || $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
-
-            // Preload loading.img
-            (new Image()).src = opts.loading.img;
-
-            // distance from nav links to bottom
-            // computed as: height of the document + top offset of container - top offset of nav link
-            if(opts.pixelsFromNavToBottom === undefined) {
-				opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
-				this._debug("pixelsFromNavToBottom: " + opts.pixelsFromNavToBottom);
-			}
-
-			var self = this;
-
-            // determine loading.start actions
-            opts.loading.start = opts.loading.start || function() {
-                $(opts.navSelector).hide();
-                opts.loading.msg
-                .appendTo(opts.loading.selector)
-                .show(opts.loading.speed, $.proxy(function() {
-					this.beginAjax(opts);
-				}, self));
-            };
-
-            // determine loading.finished actions
-            opts.loading.finished = opts.loading.finished || function() {
-                if (!opts.state.isBeyondMaxPage)
-                    opts.loading.msg.fadeOut(opts.loading.speed);
-            };
-
-			// callback loading
-            opts.callback = function(instance, data, url) {
-                if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
-                    instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data, url);
-                }
-
-                if (callback) {
-                    callback.call($(opts.contentSelector)[0], data, opts, url);
-                }
-
-				if (opts.prefill) {
-					$window.bind("resize.infinite-scroll", instance._prefill);
-				}
-            };
-
-			if (options.debug) {
-				// Tell IE9 to use its built-in console
-				if (Function.prototype.bind && (typeof console === 'object' || typeof console === 'function') && typeof console.log === "object") {
-					["log","info","warn","error","assert","dir","clear","profile","profileEnd"]
-						.forEach(function (method) {
-							console[method] = this.call(console[method], console);
-						}, Function.prototype.bind);
-				}
-			}
-
-            this._setup();
-
-			// Setups the prefill method for use
-			if (opts.prefill) {
-				this._prefill();
-			}
-
-            // Return true to indicate successful creation
-            return true;
-        },
-
-		_prefill: function infscr_prefill() {
-			var instance = this;
-			var $window = $(window);
-
-			function needsPrefill() {
-				return (instance.options.contentSelector.height() <= $window.height());
-			}
-
-			this._prefill = function() {
-				if (needsPrefill()) {
-					instance.scroll();
-				}
-
-				$window.bind("resize.infinite-scroll", function() {
-					if (needsPrefill()) {
-						$window.unbind("resize.infinite-scroll");
-						instance.scroll();
-					}
-				});
-			};
-
-			// Call self after setting up the new function
-			this._prefill();
-		},
-
-        // Console log wrapper
-        _debug: function infscr_debug() {
-			if (true !== this.options.debug) {
-				return;
-			}
-
-			if (typeof console !== 'undefined' && typeof console.log === 'function') {
-				// Modern browsers
-				// Single argument, which is a string
-				if ((Array.prototype.slice.call(arguments)).length === 1 && typeof Array.prototype.slice.call(arguments)[0] === 'string') {
-					console.log( (Array.prototype.slice.call(arguments)).toString() );
-				} else {
-					console.log( Array.prototype.slice.call(arguments) );
-				}
-			} else if (!Function.prototype.bind && typeof console !== 'undefined' && typeof console.log === 'object') {
-				// IE8
-				Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
-			}
-        },
-
-        // find the number to increment in the path.
-        _determinepath: function infscr_determinepath(path) {
-
-            var opts = this.options;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
-                return this['_determinepath_'+opts.behavior].call(this,path);
-            }
-
-            if (!!opts.pathParse) {
-
-                this._debug('pathParse manual');
-                return opts.pathParse(path, this.options.state.currPage+1);
-
-            } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
-                path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
-
-                // if there is any 2 in the url at all.
-            } else if (path.match(/^(.*?)2(.*?$)/)) {
-
-                // page= is used in django:
-                // http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-                if (path.match(/^(.*?page=)2(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
-                    return path;
-                }
-
-                path = path.match(/^(.*?)2(.*?$)/).slice(1);
-
-            } else {
-
-                // page= is used in drupal too but second page is page=1 not page=2:
-                // thx Jerod Fritz, vladikoff
-                if (path.match(/^(.*?page=)1(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
-                    return path;
-                } else {
-                    this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
-                    // Get rid of isInvalidPage to allow permalink to state
-                    opts.state.isInvalidPage = true;  //prevent it from running on this page.
-                }
-            }
-            this._debug('determinePath', path);
-            return path;
-
-        },
-
-        // Custom error
-        _error: function infscr_error(xhr) {
-
-            var opts = this.options;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_error_'+opts.behavior] !== undefined) {
-                this['_error_'+opts.behavior].call(this,xhr);
-                return;
-            }
-
-            if (xhr !== 'destroy' && xhr !== 'end') {
-                xhr = 'unknown';
-            }
-
-            this._debug('Error', xhr);
-
-            if (xhr === 'end' || opts.state.isBeyondMaxPage) {
-                this._showdonemsg();
-            }
-
-            opts.state.isDone = true;
-            opts.state.currPage = 1; // if you need to go back to this instance
-            opts.state.isPaused = false;
-            opts.state.isBeyondMaxPage = false;
-            this._binding('unbind');
-
-        },
-
-        // Load Callback
-        _loadcallback: function infscr_loadcallback(box, data, url) {
-            var opts = this.options,
-            callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
-            result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
-            frag;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
-                this['_loadcallback_'+opts.behavior].call(this,box,data);
-                return;
-            }
-
-			switch (result) {
-				case 'done':
-					this._showdonemsg();
-					return false;
-
-				case 'no-append':
-					if (opts.dataType === 'html') {
-						data = '<div>' + data + '</div>';
-						data = $(data).find(opts.itemSelector);
-					}
-					break;
-
-				case 'append':
-					var children = box.children();
-					// if it didn't return anything
-					if (children.length === 0) {
-						return this._error('end');
-					}
-
-					// use a documentFragment because it works when content is going into a table or UL
-					frag = document.createDocumentFragment();
-					while (box[0].firstChild) {
-						frag.appendChild(box[0].firstChild);
-					}
-
-					this._debug('contentSelector', $(opts.contentSelector)[0]);
-					$(opts.contentSelector)[0].appendChild(frag);
-					// previously, we would pass in the new DOM element as context for the callback
-					// however we're now using a documentfragment, which doesn't have parents or children,
-					// so the context is the contentContainer guy, and we pass in an array
-					// of the elements collected as the first argument.
-
-					data = children.get();
-					break;
-			}
-
-            // loadingEnd function
-            opts.loading.finished.call($(opts.contentSelector)[0],opts);
-
-            // smooth scroll to ease in the new content
-            if (opts.animate) {
-                var scrollTo = $(window).scrollTop() + $(opts.loading.msg).height() + opts.extraScrollPx + 'px';
-                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
-            }
-
-            if (!opts.animate) {
-				// once the call is done, we can allow it again.
-				opts.state.isDuringAjax = false;
-			}
-
-            callback(this, data, url);
-
-			if (opts.prefill) {
-				this._prefill();
-			}
-		},
-
-        _nearbottom: function infscr_nearbottom() {
-
-            var opts = this.options,
-            pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
-                return this['_nearbottom_'+opts.behavior].call(this);
-            }
-
-            this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
-
-            // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
-            return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
-
-        },
-
-        // Pause / temporarily disable plugin from firing
-        _pausing: function infscr_pausing(pause) {
-
-            var opts = this.options;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_pausing_'+opts.behavior] !== undefined) {
-                this['_pausing_'+opts.behavior].call(this,pause);
-                return;
-            }
-
-            // If pause is not 'pause' or 'resume', toggle it's value
-            if (pause !== 'pause' && pause !== 'resume' && pause !== null) {
-                this._debug('Invalid argument. Toggling pause value instead');
-            }
-
-            pause = (pause && (pause === 'pause' || pause === 'resume')) ? pause : 'toggle';
-
-            switch (pause) {
-                case 'pause':
-                    opts.state.isPaused = true;
-                break;
-
-                case 'resume':
-                    opts.state.isPaused = false;
-                break;
-
-                case 'toggle':
-                    opts.state.isPaused = !opts.state.isPaused;
-                break;
-            }
-
-            this._debug('Paused', opts.state.isPaused);
-            return false;
-
-        },
-
-        // Behavior is determined
-        // If the behavior option is undefined, it will set to default and bind to scroll
-        _setup: function infscr_setup() {
-
-            var opts = this.options;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
-                this['_setup_'+opts.behavior].call(this);
-                return;
-            }
-
-            this._binding('bind');
-
-            return false;
-
-        },
-
-        // Show done message
-        _showdonemsg: function infscr_showdonemsg() {
-
-            var opts = this.options;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['_showdonemsg_'+opts.behavior] !== undefined) {
-                this['_showdonemsg_'+opts.behavior].call(this);
-                return;
-            }
-
-            opts.loading.msg
-            .find('img')
-            .hide()
-            .parent()
-            .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
-                $(this).parent().fadeOut(opts.loading.speed);
-            });
-
-            // user provided callback when done
-            opts.errorCallback.call($(opts.contentSelector)[0],'done');
-        },
-
-        // grab each selector option and see if any fail
-        _validate: function infscr_validate(opts) {
-            for (var key in opts) {
-                if (key.indexOf && key.indexOf('Selector') > -1 && $(opts[key]).length === 0) {
-                    this._debug('Your ' + key + ' found no elements.');
-                    return false;
-                }
-            }
-
-            return true;
-        },
-
-        /*
-            ----------------------------
-            Public methods
-            ----------------------------
-            */
-
-        // Bind to scroll
-        bind: function infscr_bind() {
-            this._binding('bind');
-        },
-
-        // Destroy current instance of plugin
-        destroy: function infscr_destroy() {
-            this.options.state.isDestroyed = true;
-			this.options.loading.finished();
-            return this._error('destroy');
-        },
-
-        // Set pause value to false
-        pause: function infscr_pause() {
-            this._pausing('pause');
-        },
-
-        // Set pause value to false
-        resume: function infscr_resume() {
-            this._pausing('resume');
-        },
-
-		beginAjax: function infscr_ajax(opts) {
-			var instance = this,
-				path = opts.path,
-				box, desturl, method, condition;
-
-			// increment the URL bit. e.g. /page/3/
-			opts.state.currPage++;
-
-            // Manually control maximum page
-            if ( opts.maxPage != undefined && opts.state.currPage > opts.maxPage ){
-                opts.state.isBeyondMaxPage = true;
-                this.destroy();
-                return;
-            }
-
-			// if we're dealing with a table we can't use DIVs
-			box = $(opts.contentSelector).is('table, tbody') ? $('<tbody/>') : $('<div/>');
-
-			desturl = (typeof path === 'function') ? path(opts.state.currPage) : path.join(opts.state.currPage);
-			instance._debug('heading into ajax', desturl);
-
-			method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
-			if (opts.appendCallback && opts.dataType === 'html') {
-				method += '+callback';
-			}
-
-			switch (method) {
-				case 'html+callback':
-					instance._debug('Using HTML via .load() method');
-					box.load(desturl + ' ' + opts.itemSelector, undefined, function infscr_ajax_callback(responseText) {
-						instance._loadcallback(box, responseText, desturl);
-					});
-
-					break;
-
-				case 'html':
-					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-					$.ajax({
-						// params
-						url: desturl,
-						dataType: opts.dataType,
-						complete: function infscr_ajax_callback(jqXHR, textStatus) {
-							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-							if (condition) {
-								instance._loadcallback(box, jqXHR.responseText, desturl);
-							} else {
-								instance._error('end');
-							}
-						}
-					});
-
-					break;
-				case 'json':
-					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-					$.ajax({
-						dataType: 'json',
-						type: 'GET',
-						url: desturl,
-						success: function (data, textStatus, jqXHR) {
-							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-							if (opts.appendCallback) {
-								// if appendCallback is true, you must defined template in options.
-								// note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
-								if (opts.template !== undefined) {
-									var theData = opts.template(data);
-									box.append(theData);
-									if (condition) {
-										instance._loadcallback(box, theData);
-									} else {
-										instance._error('end');
-									}
-								} else {
-									instance._debug("template must be defined.");
-									instance._error('end');
-								}
-							} else {
-								// if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
-								if (condition) {
-									instance._loadcallback(box, data, desturl);
-								} else {
-									instance._error('end');
-								}
-							}
-						},
-						error: function() {
-							instance._debug("JSON ajax request failed.");
-							instance._error('end');
-						}
-					});
-
-					break;
-			}
-		},
-
-        // Retrieve next set of content items
-        retrieve: function infscr_retrieve(pageNum) {
-			pageNum = pageNum || null;
-
-			var instance = this,
-            opts = instance.options;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
-                this['retrieve_'+opts.behavior].call(this,pageNum);
-                return;
-            }
-
-            // for manual triggers, if destroyed, get out of here
-            if (opts.state.isDestroyed) {
-                this._debug('Instance is destroyed');
-                return false;
-            }
-
-            // we dont want to fire the ajax multiple times
-            opts.state.isDuringAjax = true;
-
-            opts.loading.start.call($(opts.contentSelector)[0],opts);
-        },
-
-        // Check to see next page is needed
-        scroll: function infscr_scroll() {
-
-            var opts = this.options,
-            state = opts.state;
-
-            // if behavior is defined and this function is extended, call that instead of default
-            if (!!opts.behavior && this['scroll_'+opts.behavior] !== undefined) {
-                this['scroll_'+opts.behavior].call(this);
-                return;
-            }
-
-            if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) {
-				return;
-			}
-
-            if (!this._nearbottom()) {
-				return;
-			}
-
-            this.retrieve();
-
-        },
-
-        // Toggle pause value
-        toggle: function infscr_toggle() {
-            this._pausing();
-        },
-
-        // Unbind from scroll
-        unbind: function infscr_unbind() {
-            this._binding('unbind');
-        },
-
-        // update options
-        update: function infscr_options(key) {
-            if ($.isPlainObject(key)) {
-                this.options = $.extend(true,this.options,key);
-            }
-        }
-    };
-
-
-    /*
-        ----------------------------
-        Infinite Scroll function
-        ----------------------------
-
-        Borrowed logic from the following...
-
-        jQuery UI
-        - https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.widget.js
-
-        jCarousel
-        - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
-
-        Masonry
-        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js
-
-*/
-
-    $.fn.infinitescroll = function infscr_init(options, callback) {
-
-
-        var thisCall = typeof options;
-
-        switch (thisCall) {
-
-            // method
-            case 'string':
-                var args = Array.prototype.slice.call(arguments, 1);
-
-				this.each(function () {
-					var instance = $.data(this, 'infinitescroll');
-
-					if (!instance) {
-						// not setup yet
-						// return $.error('Method ' + options + ' cannot be called until Infinite Scroll is setup');
-						return false;
-					}
-
-					if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
-						// return $.error('No such method ' + options + ' for Infinite Scroll');
-						return false;
-					}
-
-					// no errors!
-					instance[options].apply(instance, args);
-				});
-
-            break;
-
-            // creation
-            case 'object':
-
-                this.each(function () {
-
-                var instance = $.data(this, 'infinitescroll');
-
-                if (instance) {
-
-                    // update options of current instance
-                    instance.update(options);
-
-                } else {
-
-                    // initialize new instance
-                    instance = new $.infinitescroll(options, callback, this);
-
-                    // don't attach if instantiation failed
-                    if (!instance.failed) {
-                        $.data(this, 'infinitescroll', instance);
-                    }
-
-                }
-
-            });
-
-            break;
-
-        }
-
-        return this;
-    };
-
-
-
-    /*
-     * smartscroll: debounced scroll event for jQuery *
-     * https://github.com/lukeshumard/smartscroll
-     * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *
-     * Copyright 2011 Louis-Remi & Luke Shumard * Licensed under the MIT license. *
-     */
-
-    var event = $.event,
-    scrollTimeout;
-
-    event.special.smartscroll = {
-        setup: function () {
-            $(this).bind("scroll", event.special.smartscroll.handler);
-        },
-        teardown: function () {
-            $(this).unbind("scroll", event.special.smartscroll.handler);
-        },
-        handler: function (event, execAsap) {
-            // Save the context
-            var context = this,
-            args = arguments;
-
-            // set correct event type
-            event.type = "smartscroll";
-
-            if (scrollTimeout) { clearTimeout(scrollTimeout); }
-            scrollTimeout = setTimeout(function () {
-                $(context).trigger('smartscroll', args);
-            }, execAsap === "execAsap" ? 0 : 100);
-        }
-    };
-
-    $.fn.smartscroll = function (fn) {
-        return fn ? this.bind("smartscroll", fn) : this.trigger("smartscroll", ["execAsap"]);
-    };
-
-
-})(window, jQuery);
-
-},{}],8:[function(require,module,exports){
-(function(window) {
-	var HAS_HASHCHANGE = (function() {
-		var doc_mode = window.documentMode;
-		return ('onhashchange' in window) &&
-			(doc_mode === undefined || doc_mode > 7);
-	})();
-
-	L.Hash = function(map) {
-		this.onHashChange = L.Util.bind(this.onHashChange, this);
-
-		if (map) {
-			this.init(map);
-		}
-	};
-
-	L.Hash.parseHash = function(hash) {
-		if(hash.indexOf('#') === 0) {
-			hash = hash.substr(1);
-		}
-		var args = hash.split("/");
-		if (args.length == 3) {
-			var zoom = parseInt(args[0], 10),
-			lat = parseFloat(args[1]),
-			lon = parseFloat(args[2]);
-			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
-				return false;
-			} else {
-				return {
-					center: new L.LatLng(lat, lon),
-					zoom: zoom
-				};
-			}
-		} else {
-			return false;
-		}
-	};
-
-	L.Hash.formatHash = function(map) {
-		var center = map.getCenter(),
-		    zoom = map.getZoom(),
-		    precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
-
-		return "#" + [zoom,
-			center.lat.toFixed(precision),
-			center.lng.toFixed(precision)
-		].join("/");
-	},
-
-	L.Hash.prototype = {
-		map: null,
-		lastHash: null,
-
-		parseHash: L.Hash.parseHash,
-		formatHash: L.Hash.formatHash,
-
-		init: function(map) {
-			this.map = map;
-
-			// reset the hash
-			this.lastHash = null;
-			this.onHashChange();
-
-			if (!this.isListening) {
-				this.startListening();
-			}
-		},
-
-		removeFrom: function(map) {
-			if (this.changeTimeout) {
-				clearTimeout(this.changeTimeout);
-			}
-
-			if (this.isListening) {
-				this.stopListening();
-			}
-
-			this.map = null;
-		},
-
-		onMapMove: function() {
-			// bail if we're moving the map (updating from a hash),
-			// or if the map is not yet loaded
-
-			if (this.movingMap || !this.map._loaded) {
-				return false;
-			}
-
-			var hash = this.formatHash(this.map);
-			if (this.lastHash != hash) {
-				location.replace(hash);
-				this.lastHash = hash;
-			}
-		},
-
-		movingMap: false,
-		update: function() {
-			var hash = location.hash;
-			if (hash === this.lastHash) {
-				return;
-			}
-			var parsed = this.parseHash(hash);
-			if (parsed) {
-				this.movingMap = true;
-
-				this.map.setView(parsed.center, parsed.zoom);
-
-				this.movingMap = false;
-			} else {
-				this.onMapMove(this.map);
-			}
-		},
-
-		// defer hash change updates every 100ms
-		changeDefer: 100,
-		changeTimeout: null,
-		onHashChange: function() {
-			// throttle calls to update() so that they only happen every
-			// `changeDefer` ms
-			if (!this.changeTimeout) {
-				var that = this;
-				this.changeTimeout = setTimeout(function() {
-					that.update();
-					that.changeTimeout = null;
-				}, this.changeDefer);
-			}
-		},
-
-		isListening: false,
-		hashChangeInterval: null,
-		startListening: function() {
-			this.map.on("moveend", this.onMapMove, this);
-
-			if (HAS_HASHCHANGE) {
-				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
-			} else {
-				clearInterval(this.hashChangeInterval);
-				this.hashChangeInterval = setInterval(this.onHashChange, 50);
-			}
-			this.isListening = true;
-		},
-
-		stopListening: function() {
-			this.map.off("moveend", this.onMapMove, this);
-
-			if (HAS_HASHCHANGE) {
-				L.DomEvent.removeListener(window, "hashchange", this.onHashChange);
-			} else {
-				clearInterval(this.hashChangeInterval);
-			}
-			this.isListening = false;
-		}
-	};
-	L.hash = function(map) {
-		return new L.Hash(map);
-	};
-	L.Map.prototype.addHash = function() {
-		this._hash = L.hash(this);
-	};
-	L.Map.prototype.removeHash = function() {
-		this._hash.removeFrom();
-	};
-})(window);
-
-},{}],9:[function(require,module,exports){
-L.BingLayer = L.TileLayer.extend({
-	options: {
-		subdomains: [0, 1, 2, 3],
-		type: 'Aerial',
-		attribution: 'Bing',
-		culture: ''
-	},
-
-	initialize: function(key, options) {
-		L.Util.setOptions(this, options);
-
-		this._key = key;
-		this._url = null;
-		this.meta = {};
-		this.loadMetadata();
-	},
-
-	tile2quad: function(x, y, z) {
-		var quad = '';
-		for (var i = z; i > 0; i--) {
-			var digit = 0;
-			var mask = 1 << (i - 1);
-			if ((x & mask) !== 0) digit += 1;
-			if ((y & mask) !== 0) digit += 2;
-			quad = quad + digit;
-		}
-		return quad;
-	},
-
-	getTileUrl: function(p, z) {
-		var zoom = this._getZoomForUrl();
-		var subdomains = this.options.subdomains,
-			s = this.options.subdomains[Math.abs((p.x + p.y) % subdomains.length)];
-		return this._url.replace('{subdomain}', s)
-				.replace('{quadkey}', this.tile2quad(p.x, p.y, zoom))
-				.replace('{culture}', this.options.culture);
-	},
-
-	loadMetadata: function() {
-		var _this = this;
-		var cbid = '_bing_metadata_' + L.Util.stamp(this);
-		window[cbid] = function (meta) {
-			_this.meta = meta;
-			window[cbid] = undefined;
-			var e = document.getElementById(cbid);
-			e.parentNode.removeChild(e);
-			if (meta.errorDetails) {
-				return;
-			}
-			_this.initMetadata();
-		};
-		var url = document.location.protocol + '//dev.virtualearth.net/REST/v1/Imagery/Metadata/' + this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
-		          '&key=' + this._key + '&UriScheme=' + document.location.protocol.slice(0, -1);
-		var script = document.createElement('script');
-		script.type = 'text/javascript';
-		script.src = url;
-		script.id = cbid;
-		document.getElementsByTagName('head')[0].appendChild(script);
-	},
-
-	initMetadata: function() {
-		var r = this.meta.resourceSets[0].resources[0];
-		this.options.subdomains = r.imageUrlSubdomains;
-		this._url = r.imageUrl;
-		this._providers = [];
-		if (r.imageryProviders) {
-			for (var i = 0; i < r.imageryProviders.length; i++) {
-				var p = r.imageryProviders[i];
-				for (var j = 0; j < p.coverageAreas.length; j++) {
-					var c = p.coverageAreas[j];
-					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
-					var bounds = new L.LatLngBounds(
-							new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
-							new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
-					);
-					coverage.bounds = bounds;
-					coverage.attrib = p.attribution;
-					this._providers.push(coverage);
-				}
-			}
-		}
-		this._update();
-	},
-
-	_update: function() {
-		if (this._url === null || !this._map) return;
-		this._update_attribution();
-		L.TileLayer.prototype._update.apply(this, []);
-	},
-
-	_update_attribution: function() {
-		var bounds = this._map.getBounds();
-		var zoom = this._map.getZoom();
-		for (var i = 0; i < this._providers.length; i++) {
-			var p = this._providers[i];
-			if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
-					bounds.intersects(p.bounds)) {
-				if (!p.active && this._map.attributionControl)
-					this._map.attributionControl.addAttribution(p.attrib);
-				p.active = true;
-			} else {
-				if (p.active && this._map.attributionControl)
-					this._map.attributionControl.removeAttribution(p.attrib);
-				p.active = false;
-			}
-		}
-	},
-
-	onRemove: function(map) {
-		for (var i = 0; i < this._providers.length; i++) {
-			var p = this._providers[i];
-			if (p.active && this._map.attributionControl) {
-				this._map.attributionControl.removeAttribution(p.attrib);
-				p.active = false;
-			}
-		}
-        	L.TileLayer.prototype.onRemove.apply(this, [map]);
-	}
-});
-
-L.bingLayer = function (key, options) {
-    return new L.BingLayer(key, options);
-};
-
-},{}],10:[function(require,module,exports){
-(function (global){
-;__browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
-/*! communist 2013-05-30*/
-/*!(c)2013 Calvin Metcalf @license MIT https://github.com/calvinmetcalf/communist */
-/*!Includes Promiscuous (c)2013 Ruben Verborgh @license MIT https://github.com/RubenVerborgh/promiscuous*/
-/*!Includes Material from setImmediate Copyright (c) 2012 Barnesandnoble.com, llc, Donavon West, and Domenic Denicola @license MIT https://github.com/NobleJS/setImmediate */
-"undefined"==typeof document?(self._noTransferable=!0,self.onmessage=function(e){eval(e.data)}):function(){"use strict";function moveImports(e){var n,t=e.match(/(importScripts\(.*\);)/);return n=t?t[0].replace(/importScripts\((.*\.js\')\);?/,function(e,n){return n?"importScripts("+n.split(",").map(function(e){return"'"+c.makeUrl(e.slice(1,-1))+"'"})+");\n":""})+e.replace(/(importScripts\(.*\.js\'\);?)/,"\n"):e}function getPath(){if("undefined"!=typeof SHIM_WORKER_PATH)return SHIM_WORKER_PATH;for(var e=document.getElementsByTagName("script"),n=e.length,t=0;n>t;){if(/communist(\.min)?\.js/.test(e[t].src))return e[t].src;t++}}function makeWorker(e){var n,t=moveImports(e.join(""));c.URL=c.URL||window.URL||window.webkitURL;try{n=new Worker(c.URL.createObjectURL(new Blob([t],{type:"text/javascript"})))}catch(r){c._noTransferable=!0,n=new Worker(getPath()),n.postMessage(t)}finally{return n}}function single(e,n){var t=c.deferred(),r=makeWorker(["var _self={};\n_self.fun = ",e,";\n	_self.cb=function(data,transfer){\n			!self._noTransferable?self.postMessage(data,transfer):self.postMessage(data);\n			self.close();\n		};\n		_self.result = _self.fun(",JSON.stringify(n),',_self.cb);\n		if(typeof _self.result !== "undefined"){\n			_self.cb(_self.result);\n		}']);return r.onmessage=function(e){t.resolve(e.data)},r.onerror=function(e){e.preventDefault(),t.reject(e.message)},t.promise}function mapWorker(e,n,t){var r=new Communist,a=makeWorker(["\n	var _db={};\n	_db.__close__=function(){\n		self.close();\n	};\n	var _self={};\n	_db.__fun__ = ",e,';\n	_self.cb=function(data,transfer){\n		!self._noTransferable?self.postMessage(data,transfer):self.postMessage(data);\n	};\n	self.onmessage=function(e){\n		_self.result = _db.__fun__(e.data,_self.cb);\n			if(typeof _self.result !== "undefined"){\n				_self.cb(_self.result);\n		}\n	}']);return a.onmessage=function(e){n(e.data)},a.onerror=t?t:function(){n()},r.data=function(e,n){return c._noTransferable?a.postMessage(e):a.postMessage(e,n),r},r.close=function(){return a.terminate()},r}function multiUse(e){return object({data:e})}function object(e){var n=new Communist,t=0,r=[],a=function(e){"string"!=typeof e&&e.preventDefault&&(e.preventDefault(),e=e.message),r.forEach(function(n){n&&n.reject(e)})};"initialize"in e||(e.initialize=function(){});var o="{",s=function(e){var n=function(n,t){var a=r.length;return r[a]=c.deferred(),c._noTransferable?i.postMessage([a,e,n]):i.postMessage([a,e,n],t),r[a].promise};return n};for(var u in e)0!==t?o+=",":t++,o=o+u+":"+(""+e[u]),n[u]=s(u);o+="}";var i=makeWorker(["\n	var _db="+o+';\n	self.onmessage=function(e){\n	var cb=function(data,transfer){\n		!self._noTransferable?self.postMessage([e.data[0],data],transfer):self.postMessage([e.data[0],data]);\n	};\n		var result = _db[e.data[1]](e.data[2],cb);\n			if(typeof result !== "undefined"){\n				cb(result);\n			}\n	}\n	_db.initialize()']);return i.onmessage=function(e){r[e.data[0]].resolve(e.data[1]),r[e.data[0]]=0},i.onerror=a,n._close=function(){return i.terminate(),a("closed"),c.resolve()},"close"in n||(n.close=n._close),n}function queue(e,n,t){function r(e){return function(n,t){return f(e,n,t)}}function a(e){return function(n){return c.all(n.map(function(n){return f(e,n)}))}}function o(e){return function(n){var t=this;return c.all(n.map(function(n){return f(e,n).then(t.__cb__)}))}}function s(e){return function(n){return c.all(n.map(function(n){return f(e,n[0],n[1])}))}}function u(e){return function(n){var t=this;return c.all(n.map(function(n){return f(e,n[0],n[1]).then(t.__cb__)}))}}function i(e){var n;v?(n=p.shift(),v--,d[e][n[0]](n[1],n[2]).then(function(t){i(e),n[3].resolve(t)},function(t){i(e),n[3].reject(t)})):(m++,_.push(e))}function f(e,r,a){if(t)return d[~~(Math.random()*n)][e](r,a);var o,s=c.deferred();return!v&&m?(o=_.pop(),m--,d[o][e](r,a).then(function(e){i(o),s.resolve(e)},function(e){i(o),s.reject(e)})):(v||!m)&&(v=p.push([e,r,a,s])),s.promise}var l=new Communist;l.__batchcb__=new Communist,l.__batchtcb__=new Communist,l.batch=function(e){return l.__batchcb__.__cb__=e,l.__batchcb__},l.batchTransfer=function(e){return l.__batchtcb__.__cb__=e,l.__batchtcb__};for(var d=Array(n),m=0,_=[],p=[],v=0;n>m;)d[m]=object(e),_.push(m),m++;e._close=function(){};for(var b in e)l[b]=r(b),l.batch[b]=a(b),l.__batchcb__[b]=o(b),l.batchTransfer[b]=s(b),l.__batchtcb__[b]=u(b);return"close"in l||(l.close=l._close),l}function rWorker(e,n){var t=new Communist,r="function(dat,cb){ var fun = "+e+';\n		switch(dat[0]){\n			case "data":\n				if(!this._r){\n					this._r = dat[1];\n				}else{\n					this._r = fun(this._r,dat[1]);\n				}\n				break;\n			case "get":\n				return cb(this._r);\n			case "close":\n				cb(this._r);\n				this.__close__();\n				break;\n		}\n	};',a=function(e){n(e)},o=mapWorker(r,a);return t.data=function(e,n){return c._noTransferable?o.data(["data",e]):o.data(["data",e],n),t},t.fetch=function(){return o.data(["get"]),t},t.close=function(e){e&&(n=function(){}),o.data(["close"])},t}function incrementalMapReduce(e){function n(){for(var e=0,n=u.length;n>e&&s>0&&f>0;)s--,u[e].data(i.pop()),e++,f--;return o}function t(){a.close(),u.forEach(function(e){e.close()})}var r,a,o=new Communist,s=0,u=[],i=[],f=e,l=!1,d=!1,m={map:!1,reduce:!1,data:!1},_=function(){return m.map&&m.reduce&&m.data?n():o};return o.map=function(n,r){function c(){var o,c=mapWorker(n,function(n){void 0!==typeof n&&a.data(n),s>0?(s--,o=i.pop(),r?c.data(o,[o]):c.data(o)):(f++,f===e&&(m.data=!1,d?t():l&&(l=!1,a.fetch())))});u.push(c)}if(m.map)return o;for(var p=0;e>p;)c(),p++;return m.map=!0,_()},o.reduce=function(e){return m.reduce?o:(a=rWorker(e,function(e){r&&(r.resolve(e),r=!1)}),m.reduce=!0,_())},o.data=function(e){return d?void 0:(s+=e.length,i=i.concat(e),m.data=!0,_())},o.fetch=function(n){return r||(r=c.deferred()),e>f&&!n?l=!0:a.fetch(),r.promise},o.close=function(){return r||(r=c.deferred()),e>f?d=!0:t(),r.promise},o}function nonIncrementalMapReduce(e){function n(){return a.data&&a.map&&a.reduce?r.close():t}var t=new Communist,r=incrementalMapReduce(e),a={data:!1,map:!1,reduce:!1};return t.map=function(e,t){return a.map=!0,r.map(e,t),n()},t.reduce=function(e){return a.reduce=!0,r.reduce(e),n()},t.data=function(e){return a.data=!0,r.data(e),n()},t}function c(e,n,t){return"number"!=typeof e&&"function"==typeof n?mapWorker(e,n,t):"object"!=typeof e||Array.isArray(e)?"number"!=typeof e?n?single(e,n):multiUse(e):"number"==typeof e?n?nonIncrementalMapReduce(e):incrementalMapReduce(e):void 0:"number"==typeof n?queue(e,n,t):object(e)}(function(attachTo,global){function isStringAndStartsWith(e,n){return"string"==typeof e&&e.substring(0,n.length)===n}function onGlobalMessage(e){if(e.source===global&&isStringAndStartsWith(e.data,MESSAGE_PREFIX)){var n=e.data.substring(MESSAGE_PREFIX.length);tasks.runIfPresent(n)}}var tasks=function(){function Task(e,n){this.handler=e,this.args=n}Task.prototype.run=function(){if("function"==typeof this.handler)this.handler.apply(void 0,this.args);else{var scriptSource=""+this.handler;eval(scriptSource)}};var nextHandle=1,tasksByHandle={},currentlyRunningATask=!1;return{addFromSetImmediateArguments:function(e){var n=e[0],t=Array.prototype.slice.call(e,1),r=new Task(n,t),a=nextHandle++;return tasksByHandle[a]=r,a},runIfPresent:function(e){if(currentlyRunningATask)global.setTimeout(function(){tasks.runIfPresent(e)},0);else{var n=tasksByHandle[e];if(n){currentlyRunningATask=!0;try{n.run()}finally{delete tasksByHandle[e],currentlyRunningATask=!1}}}},remove:function(e){delete tasksByHandle[e]}}}(),MESSAGE_PREFIX="com.communistjs.setImmediate"+Math.random();global.addEventListener?global.addEventListener("message",onGlobalMessage,!1):global.attachEvent("onmessage",onGlobalMessage),attachTo.setImmediate=function(){var e=tasks.addFromSetImmediateArguments(arguments);return global.postMessage(MESSAGE_PREFIX+e,"*"),e}})(c,window),function(e){function n(){var e=function(c,s,u){var i;if(c!==e)return i=n(),e.c.push({d:i,resolve:c,reject:s}),i.promise;for(var f,l,d,m=s?"resolve":"reject",_=0,p=e.c.length;p>_;_++)f=e.c[_],l=f.d,d=f[m],typeof d!==a?l[m](u):r(d,u,l);e=t(o,u,s)},o={then:function(n,t){return e(n,t)}};return e.c=[],{promise:o,resolve:function(n){e.c&&e(e,!0,n)},reject:function(n){e.c&&e(e,!1,n)}}}function t(e,t,o){return function(c,s){var u,i=o?c:s;return typeof i!==a?e:(r(i,t,u=n()),u.promise)}}function r(n,t,r){e.setImmediate(function(){var e;try{e=n(t),e&&typeof e.then===a?e.then(r.resolve,r.reject):r.resolve(e)}catch(o){r.reject(o)}})}var a="function";e.resolve=function(e){var n={};return n.then=t(n,e,!0),n},e.reject=function(e){var n={};return n.then=t(n,e,!1),n},e.deferred=n}(c),c.all=function(e){var n=c.deferred(),t=e.length,r=0,a=Array(t),o=function(e){return function(o){a[e]=o,r++,r===t&&n.resolve(a)}};return e.forEach(function(e,t){e.then(o(t),function(e){n.reject(e)})}),n.promise};var Communist=function(){};c.reducer=rWorker,c.worker=makeWorker,c.makeUrl=function(e){var n=document.createElement("link");return n.href=e,n.href},c.ajax=function(e,n,t){var r=t?"request.responseText":"JSON.parse(request.responseText)",a=n?"("+(""+n)+")("+r+",_cb)":r,o='function (url, _cb) {\n		var request = new XMLHttpRequest();\n		request.open("GET", url);\n			request.onreadystatechange = function() {\n				var _resp;\n				if (request.readyState === 4 && request.status === 200) {\n_resp = '+a+';\n					if(typeof _resp!=="undefined"){_cb(_resp);}\n					}\n			};\n			request.onerror=function(e){throw(e);}\n		request.send();\n	}';return c(o,c.makeUrl(e))},"undefined"==typeof module?window.communist=c:module.exports=c}();
-; browserify_shim__define__module__export__(typeof communist != "undefined" ? communist : window.communist);
-
-}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],11:[function(require,module,exports){
-
-(function () {
-
-    function defineAbstractWorker(L) {
-        L.AbstractWorker = L.Class.extend({
-            initialize: function () {
-            },
-
-            onAdd: function (map) {
-            },
-
-            onRemove: function (map) {
-            },
-
-            process: function(tile, callback) {
-                callback(tile);
-            },
-            
-            abort: function(tile) {
-            },
-            
-            clear: function() {
-            }
-        });
-
-        // dummy worker (= no worker) when used directly
-        L.noWorker = function () {
-            return new L.AbstractWorker();
-        };
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add to Leaflet using AMD
-        define(['leaflet'], function (L) {
-            defineAbstractWorker(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineAbstractWorker(L);
-    }
-
-})();
-
-},{}],12:[function(require,module,exports){
-(function (global){
-
-; communist = global.communist = require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js");
-require("leaflet");
-require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js");
-;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
-
-(function () {
-
-    function defineCommunistWorker(L, communist) {
-        L.CommunistWorker = L.AbstractWorker.extend({
-
-            statics: {
-                // number of web workers, not using web workers when falsy
-                NUM_WORKERS: 2
-            },
-
-            initialize: function (workerFunc) {
-                this.workerFunc = workerFunc;
-            },
-
-            onAdd: function (map) {
-                this._workers = L.CommunistWorker.createWorkers(this.workerFunc);
-            },
-
-            onRemove: function (map) {
-                if (this._workers) {
-                    // TODO do not close when other layers are still using the static instance
-                    //this._workers.close();
-                }
-            },
-
-            process: function(tile, callback) {
-                if (this._workers){ 
-                    tile._worker = this._workers.data(tile.datum).then(function(parsed) {
-                        if (tile._worker) {
-                            tile._worker = null;
-                            tile.parsed = parsed;
-                            tile.datum = null;
-                            callback(tile);
-                        } else {
-                            // tile has been unloaded, don't continue with adding
-                            //console.log('worker aborted ' + tile.key);
-                        }
-                    });
-                } else {
-                    callback(tile);
-                }
-            },
-            
-            abort: function(tile) {
-                if (tile._worker) {
-                    // TODO abort worker, would need to recreate after close
-                    //tile._worker.close();
-                    tile._worker = null;
-                }
-            }
-        });
-
-        L.communistWorker = function (workerFunc) {
-            return new L.CommunistWorker(workerFunc);
-        };
-
-        L.extend(L.CommunistWorker, {
-            createWorkers: function(workerFunc) {
-                if ( L.CommunistWorker.NUM_WORKERS && typeof Worker === "function" && typeof communist === "function"
-                        && !("workers" in L.CommunistWorker)) {
-                    L.CommunistWorker.workers = communist({
-                        //data : L.TileLayer.Vector.parseData
-                        data : workerFunc
-                    }, L.CommunistWorker.NUM_WORKERS);
-                }
-                return L.CommunistWorker.workers;
-            }
-        });
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add to Leaflet using AMD
-        define(['leaflet', 'communist', 'AbstractWorker'], function (L, communist) {
-            defineCommunistWorker(L, communist);
-        });
-    }
-    else {
-        // Else use the global L, communist
-        defineCommunistWorker(L, communist);
-    }
-
-})();
-
-}).call(global, module, undefined, undefined);
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/lib/communist.min.js":10,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/AbstractWorker.js":11,"leaflet":60}],13:[function(require,module,exports){
-/**
- * Simple tile cache to keep tiles while zooming with overzoom
- */
-
-(function () {
-
-    function defineTileCache(L) {
-        L.TileCache = function() {
-        };
-
-        L.TileCache.prototype = {
-            // cache key: tile (String: Object)
-            _cache: {},
-
-            // flag to determine switch between tile unloading (put) and loading (get) phase
-            _unloading: false,
-
-            // flag to only cache tiles when zooming, not when moving
-            _zooming: false,
-
-            onAdd: function(map) {
-                this._map = map;
-                
-                map.on('zoomstart', this._onZoomStart, this);
-                map.on('zoomend', this._onZoomEnd, this);
-            },
-
-            onRemove: function(map) {
-                this._map = null;
-
-                map.off('zoomstart', this._onZoomStart, this);
-                map.off('zoomend', this._onZoomEnd, this);
-            },
-
-            _onZoomStart: function(evt) {
-                this._zooming = true;
-            },
-
-            _onZoomEnd: function(evt) {
-                this._zooming = false;
-            },
-
-            get: function(key, urlZoom) {
-                var ckey = this._getCacheKey(key, urlZoom);
-                var tile = this._cache[ckey];
-                this._unloading = false;
-                //console.log('cache ' + (tile ? 'hit ' : 'miss') + ': ' + ckey);
-                return tile;
-            },
-            
-            put: function(tile) {
-                if (!this._zooming) return;
-
-                if (!this._unloading) {
-                    // clear old entries before adding newly removed tiles after zoom or move
-                    this.clear();
-                    this._unloading = true;
-                }
-
-                var ckey = this._getCacheKeyFromTile(tile);
-                if (!(ckey in this._cache)) {
-                    // vector layer is recreated because of feature filter
-                    delete tile.layer;
-                    this._cache[ckey] = tile;
-                    //console.log('cache put : ' + ckey + ' (' + Object.keys(this._cache).length + ')');
-                }
-            },
-            
-            clear: function() {
-                //console.log('cache clear');
-                this._cache = {};
-            },
-
-            _getCacheKeyFromTile: function(tile) {
-                return this._getCacheKey(tile.key, tile.urlZoom);
-            },
-
-            _getCacheKey: function(key, urlZoom) {
-                return urlZoom + ':' + key
-            }
-        };
-
-        L.tileCache = function() {
-            return new L.TileCache();
-        };
-
-        // dummy impl. to turn caching off
-        L.tileCacheNone = function() {
-            return {
-                onAdd: function(map) {},
-                onRemove: function(map) {},
-                get: function(key, urlZoom) {},
-                put: function(tile) {},
-                clear: function() {}
-            };
-        };
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add to Leaflet using AMD
-        define(['leaflet'], function (L) {
-            defineTileCache(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineTileCache(L);
-    }
-
-})();
-
-},{}],14:[function(require,module,exports){
-(function (global){
-
-; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js");
-require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js");
-require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js");
-;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
-// Load data tiles using the JQuery ajax function
-
-(function () {
-
-    function defineTileLayerGeoJSON(L) {
-
-        L.TileLayer.Ajax = L.TileLayer.extend({
-            options: {
-                // use L.tileCacheNone to turn caching off
-                tileCacheFactory: L.tileCache
-            },
-
-            _tileCache: null,
-
-            initialize: function (url, options) {
-                L.TileLayer.prototype.initialize.call(this, url, options);
-                
-                this._tileCache = this.options.tileCacheFactory();
-            },
-
-            onAdd: function (map) {
-                L.TileLayer.prototype.onAdd.call(this, map);
-                this.on('tileunload', this._unloadTile);
-            },
-
-            onRemove: function (map) {
-                L.TileLayer.prototype.onRemove.call(this, map);
-                this.off('tileunload', this._unloadTile);
-            },
-
-            _addTile: function(tilePoint, container) {
-                var cached = null;
-                var key = tilePoint.x + ':' + tilePoint.y;
-                var urlZoom = this._getZoomForUrl();
-                var tile = cached = this._tileCache.get(key, urlZoom);
-                if (!tile) {
-                    tile = { key: key, urlZoom: urlZoom, datum: null, loading: true };
-                } else {
-                    tile.loading = true;
-                }
-
-                this._tiles[key] = tile;
-                this.fire('tileloadstart', {tile: tile});
-
-                if (cached) {
-                    this._addTileData(tile);
-                } else {
-                    this._loadTile(tile, tilePoint);
-                }
-            },
-
-            _addTileData: function(tile) {
-                // override in subclass
-            },
-
-            // XMLHttpRequest handler; closure over the XHR object, the layer, and the tile
-            _xhrHandler: function (req, layer, tile) {
-                return function() {
-                    if (req.readyState != 4) {
-                        return;
-                    }
-                    var s = req.status;
-
-                    // Fire dataload for Leaflet.loading
-                    layer._map.fire('dataload');
-
-                    if ((s >= 200 && s < 300) || s == 304) {
-                        // check if request is about to be aborted, avoid rare error when aborted while parsing
-                        if (tile._request) {
-                            tile._request = null;
-                            layer.fire('tileresponse', {tile: tile, request: req});
-                            tile.datum = req.responseText;
-                            layer._addTileData(tile);
-                        }
-                    } else {
-                        tile.loading = false;
-                        tile._request = null;
-                        layer.fire('tileerror', {tile: tile, request: req});
-                        layer._tileLoaded();
-                    }
-                }
-            },
-
-            // Load the requested tile via AJAX
-            _loadTile: function (tile, tilePoint) {
-                this._adjustTilePoint(tilePoint);
-                var layer = this;
-
-                // File dataloading for Leaflet.loading
-                layer._map.fire('dataloading');
-
-                var req = new XMLHttpRequest();
-                tile._request = req;
-                req.onreadystatechange = this._xhrHandler(req, layer, tile);
-                this.fire('tilerequest', {tile: tile, request: req});
-                req.open('GET', this.getTileUrl(tilePoint), true);
-                req.send();
-            },
-
-            _unloadTile: function(evt) {
-                var tile = evt.tile,
-                    req = tile._request;
-                if (req) {
-                    tile._request = null;
-                    req.abort();
-                    this.fire('tilerequestabort', {tile: tile, request: req});
-                }
-            }
-        });
-
-
-        L.TileLayer.Vector = L.TileLayer.Ajax.extend({
-            options: {
-                // factory function to create the vector tile layers (defaults to L.GeoJSON)
-                layerFactory: L.geoJson,
-                // factory function to create a web worker for parsing/preparing tile data
-                workerFactory: L.communistWorker
-                //workerFactory: L.noWorker
-            },
-
-            initialize: function (url, options, vectorOptions) {
-                L.TileLayer.Ajax.prototype.initialize.call(this, url, options);
-                this.vectorOptions = vectorOptions || {};
-                this._worker = this.options.workerFactory(L.TileLayer.Vector.parseData);
-                this._addQueue = new L.TileQueue(L.bind(this._addTileDataInternal, this));
-            },
-
-            onAdd: function (map) {
-                this._map = map;
-                
-                L.TileLayer.Ajax.prototype.onAdd.call(this, map);
-
-                // root vector layer, contains tile vector layers as children 
-                this.vectorLayer = this._createVectorLayer(); 
-                map.addLayer(this.vectorLayer);
-
-                this._worker.onAdd(map);
-                this._tileCache.onAdd(map);
-            },
-
-            onRemove: function (map) {
-                // unload tiles (L.TileLayer only calls _reset in onAdd)
-                this._reset();
-                map.removeLayer(this.vectorLayer);
-
-                L.TileLayer.Ajax.prototype.onRemove.call(this, map);
-
-                this._worker.onRemove(map);
-                this._tileCache.onRemove(map);
-
-                this.vectorLayer = null;
-                this._map = null;
-            },
-
-            _createVectorLayer: function() {
-                return this.options.layerFactory(null, this.vectorOptions);
-            },
-
-            _createTileLayer: function() {
-                return this._createVectorLayer();
-            },
-
-            _addTileData: function(tile) {
-                if (!tile.parsed) {
-                    this._worker.process(tile, L.bind(function(tile) {
-                        this._addQueue.add(tile);
-                    },this));
-                } else {
-                    // from cache
-                    this._addQueue.add(tile);
-                }
-            },
-
-            _addTileDataInternal: function(tile) {
-                var tileLayer = this._createTileLayer();
-                if (!tile.parsed) {
-                    // when no worker for parsing
-                    tile.parsed = L.TileLayer.Vector.parseData(tile.datum);
-                    tile.datum = null;
-                }
-                tileLayer.addData(tile.parsed);
-                tile.layer = tileLayer;
-                this.vectorLayer.addLayer(tileLayer);
-
-                tile.loading = false;
-                this.fire('tileload', {tile: tile});
-                this._tileLoaded();
-            },
-
-            _unloadTile: function(evt) {
-                L.TileLayer.Ajax.prototype._unloadTile.apply(this, arguments);
-
-                var tile = evt.tile,
-                    tileLayer = tile.layer;
-                if (tile.loading) {
-                    this._addQueue.remove(tile);
-                    // not from cache or not loaded and parsed yet
-                    if (!tile.parsed) {
-                        this._worker.abort(tile);
-                    }
-                    this.fire('tileabort', {tile: tile});
-                    this._tileLoaded();
-                }
-                if (tileLayer && this.vectorLayer.hasLayer(tileLayer)) {
-                    if (this._shouldRemoveLayersAtZoom(this._map.getZoom())) {
-                        this.vectorLayer.removeLayer(tileLayer);
-                    }
-                }
-
-                if (tile.parsed) {
-                    this._tileCache.put(tile);
-                }
-            },
-
-            _shouldRemoveLayersAtZoom: function(zoom) {
-                return true;
-            },
-
-            _retainTiles: function() {
-                return {};
-            },
-
-            _reset: function(e) {
-                var tilesToRetain = this._retainTiles();
-
-                L.TileLayer.Ajax.prototype._reset.apply(this, arguments);
-
-                // Restore useful tiles
-                L.extend(this._tiles, tilesToRetain);
-
-                this._addQueue.clear();
-                this._worker.clear();
-            }
-        });
-
-
-        L.extend(L.TileLayer.Vector, {
-            parseData: function(data) {
-                return JSON.parse(data);
-            }
-        });
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add to Leaflet using AMD
-        define(['leaflet', 'CommunistWorker', 'TileCache', 'TileQueue'], function (L) {
-            defineTileLayerGeoJSON(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineTileLayerGeoJSON(L);
-    }
-
-})();
-
-}).call(global, module, undefined, undefined);
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/CommunistWorker.js":12,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileCache.js":13,"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileQueue.js":16}],15:[function(require,module,exports){
-(function (global){
-
-; require("/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js");
-;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
-(function () {
-
-    function defineOverzoom(L) {
-        L.TileLayer.Overzoom = {
-            
-            overzoomOptions: {
-                // List of available server zoom levels in ascending order. Empty means all  
-                // client zooms are available (default). Allows to only request tiles at certain
-                // zooms and resizes tiles on the other zooms.
-                serverZooms: [],
-                // workaround: wrapping loads tiles multiple times when zoom < serverZooms[0]
-                noWrap: true
-            },
-
-            // override _getTileSize to add serverZooms (when maxNativeZoom is not defined)
-            _getTileSize: function() {
-                var map = this._map,
-                    options = this.options,
-                    zoom = map.getZoom() + options.zoomOffset,
-                    zoomN = options.maxNativeZoom || this._getServerZoom(zoom);
-
-                // increase tile size when overscaling
-                //return zoomN && zoom > zoomN ?
-                var tileSize = zoomN && zoom !== zoomN ?
-                    Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * options.tileSize) :
-                    options.tileSize;
-
-                //console.log('tileSize = ' + tileSize + ', zoomOffset = ' + this.options.zoomOffset + ', serverZoom = ' + zoomN + ', zoom = ' + zoom);
-                return tileSize;
-            },
-
-            _getZoomForUrl: function () {
-                var zoom = L.TileLayer.prototype._getZoomForUrl.call(this);
-                var result = this._getServerZoom(zoom);
-                //console.log('zoomForUrl = ' + result);
-                return result;
-            },
-
-            // Returns the appropriate server zoom to request tiles for the current zoom level.
-            // Next lower or equal server zoom to current zoom, or minimum server zoom if no lower 
-            // (should be restricted by setting minZoom to avoid loading too many tiles).
-            _getServerZoom: function(zoom) {
-                var serverZooms = this.options.serverZooms || [],
-                    result = zoom;
-                // expects serverZooms to be sorted ascending
-                for (var i = 0, len = serverZooms.length; i < len; i++) {
-                    if (serverZooms[i] <= zoom) {
-                        result = serverZooms[i];
-                    } else {
-                        if (i === 0) {
-                            // zoom < smallest serverZoom
-                            result = serverZooms[0];
-                        }
-                        break;
-                    }
-                }
-                return result;
-            },
-
-            _shouldRemoveLayersAtZoom: function(zoom) {
-                if (this.options.serverZooms) {
-                    if (this._map.getZoom() in this.options.serverZooms) {
-                        return true;
-                    }
-                    else {
-                        return false;
-                    }
-                }
-                return true;
-            },
-
-            // Only keep the tiles that are going to be useful on the map's current zoom
-            _retainTiles: function() {
-                var tiles = L.extend({}, this._tiles),
-                    zoom = this._getServerZoom(this._map.getZoom());
-
-                for (var key in tiles) {
-                    // Do not retain tiles that won't be used at this zoom
-                    if (tiles[key].urlZoom !== zoom) {
-                        delete tiles[key];
-                    }
-
-                    // Do not retain tiles that don't have a layer. They might
-                    // have been interrupted from loading that layer because the
-                    // user zoomed in or out very quickly, for example.
-                    if (!tiles[key] || !tiles[key].layer) {
-                        delete tiles[key];
-                    }
-                }
-                return tiles;
-            }
-        };
-
-        if (typeof L.TileLayer.Vector !== 'undefined') {
-            L.TileLayer.Vector.include(L.TileLayer.Overzoom);
-            L.TileLayer.Vector.mergeOptions(L.TileLayer.Overzoom.overzoomOptions);
-        }
-
-        if (typeof L.TileLayer.Div !== 'undefined') {
-            L.TileLayer.Div.include(L.TileLayer.Overzoom);
-            L.TileLayer.Div.mergeOptions(L.TileLayer.Overzoom.overzoomOptions);
-        }
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add to Leaflet using AMD
-        define(['leaflet', 'TileLayer.GeoJSON'], function (L) {
-            defineOverzoom(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineOverzoom(L);
-    }
-
-})();
-
-}).call(global, module, undefined, undefined);
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js":14}],16:[function(require,module,exports){
-(function () {
-
-    function defineTileQueue(L) {
-        L.TileQueue = function(callback) {
-            this.callback = callback;
-        };
-
-        L.TileQueue.prototype = {
-
-            _queue: [],
-            _queueTimeout: null,
-            
-            add: function(aTile) {
-                this._queue.push(aTile);
-                if (!this._queueTimeout) {
-                    this._queueTimeout = setTimeout(L.bind(function(){
-                        var time, timeout, start = +new Date, tile;
-
-                        // handle empty elements, see remove
-                        do { 
-                            tile = this._queue.shift();
-                        }
-                        while (!tile && this._queue.length > 0);
-
-                        if (tile) {
-                            //console.log('adding ' + tile.key + ' ...');
-
-                            this.callback(tile);
-
-                            // pause a percentage of adding time to keep UI responsive
-                            time = +new Date - start;
-                            timeout = Math.floor(time * 0.3);
-                            //console.log('added  ' + tile.key + ' (' + time + 'ms > ' + timeout + 'ms)');
-                            this._queueTimeout = setTimeout(L.bind(arguments.callee, this), timeout);
-                        } else {
-                            this._queueTimeout = null;
-                        }
-                    }, this), 0);
-                }
-            },
-
-            remove: function(tile) {
-                var key = tile.key, 
-                    val;
-                for (var i = 0, len = this._queue.length; i < len; i++) {
-                    val = this._queue[i];
-                    if (val && val.key === key) {
-                        //console.log('##### delete ' + key);
-                        // set entry to undefined only for better performance (?) - 
-                        // queue consumer needs to handle empty entries!
-                        delete this._queue[i];
-                    }
-                }
-            },
-
-            clear: function() {
-                if (this._queueTimeout) {
-                    clearTimeout(this._queueTimeout);
-                    this._queueTimeout = null;
-                }
-                this._queue = [];
-            }
-        };
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add to Leaflet using AMD
-        define(['leaflet'], function (L) {
-            defineTileQueue(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineTileQueue(L);
-    }
-
-})();
-
-},{}],17:[function(require,module,exports){
-//
-// leaflet.dataoptions
-//
-// A Leaflet plugin that makes it easy to configure a Leaflet map using data
-// attributes on the map's DOM element.
-//
-
-(function () {
-    
-    function defineDataOptions(L) {
-
-        L.Map = L.Map.extend({
-
-            // Override the default constructor to get options from data 
-            // attributes
-            initialize: function (id, options) {
-                // Get the data prefix for attribute names
-                var prefix = 'data-l-';
-                if (options !== undefined && options.dataOptionsPrefix !== undefined) {
-                    prefix = options.dataOptionsPrefix;
-                }
-
-                // Find options given by data attribute, add to existing options
-                var dataAttributeOptions = this.loadDataAttributeOptions(id, prefix);
-                options = L.extend(dataAttributeOptions, options);
-
-                // Carry on as usual
-                L.Map.__super__.initialize.call(this, id, options);
-            },
-
-            loadDataAttributeOptions: function (id, prefix) {
-                var element = L.DomUtil.get(id),
-                    attributes = element.attributes,
-                    length = attributes.length,
-                    newOptions = {};
-                for (var i = 0; i < length; i++) {
-                    var attribute = attributes[i];
-                    if (attribute.name.search(prefix) === 0) {
-                        var name = attribute.name.slice(prefix.length),
-                            camelCaseName = this.camelCaseDataAttributeName(name),
-                            value = this.parseDataAttributeValue(attribute.value);
-                        newOptions[camelCaseName] = newOptions[name] = value;
-                    }
-                }
-                return newOptions;
-            },
-
-            camelCaseDataAttributeName: function (name) {
-                var nameParts = name.split('-'),
-                    camelCaseName = nameParts[0];
-                for (var i = 1; i < nameParts.length; i++) {
-                    camelCaseName += nameParts[i][0].toUpperCase();
-                    camelCaseName += nameParts[i].slice(1);
-                }
-                return camelCaseName;
-            },
-
-            parseDataAttributeValue: function (value) {
-                try {
-                    return JSON.parse(value);
-                }
-                catch (e) {
-                    // If parsing as JSON fails, return original string
-                    return value;
-                }
-            }
-
-        });
-
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add dataoptions to Leaflet using AMD
-        define(['leaflet'], function (L) {
-            defineDataOptions(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineDataOptions(L);
-    }
-
-})();
-
-},{}],18:[function(require,module,exports){
-/*
- * L.Control.Loading is a control that shows a loading indicator when tiles are
- * loading or when map-related AJAX requests are taking place.
- */
-
-(function () {
-
-    function defineLeafletLoading(L) {
-        L.Control.Loading = L.Control.extend({
-            options: {
-                position: 'topleft',
-                separate: false,
-                zoomControl: null,
-                spinjs: false,
-                spin: { 
-                  lines: 7, 
-                  length: 3, 
-                  width: 3, 
-                  radius: 5, 
-                  rotate: 13, 
-                  top: "83%"
-                }
-            },
-
-            initialize: function(options) {
-                L.setOptions(this, options);
-                this._dataLoaders = {};
-
-                // Try to set the zoom control this control is attached to from the 
-                // options
-                if (this.options.zoomControl !== null) {
-                    this.zoomControl = this.options.zoomControl;
-                }
-            },
-
-            onAdd: function(map) {
-                if (this.options.spinjs && (typeof Spinner !== 'function')) {
-                    return console.error("Leaflet.loading cannot load because you didn't load spin.js (http://fgnass.github.io/spin.js/), even though you set it in options.");
-                }
-                this._addLayerListeners(map);
-                this._addMapListeners(map);
-
-                // Try to set the zoom control this control is attached to from the map
-                // the control is being added to
-                if (!this.options.separate && !this.zoomControl) {
-                    if (map.zoomControl) {
-                        this.zoomControl = map.zoomControl;
-                    } else if (map.zoomsliderControl) {
-                        this.zoomControl = map.zoomsliderControl;
-                    }
-                }
-
-                // Create the loading indicator
-                var classes = 'leaflet-control-loading';
-                var container;
-                if (this.zoomControl && !this.options.separate) {
-                    // If there is a zoom control, hook into the bottom of it
-                    container = this.zoomControl._container;
-                    // These classes are no longer used as of Leaflet 0.6
-                    classes += ' leaflet-bar-part-bottom leaflet-bar-part last';
-                }
-                else {
-                    // Otherwise, create a container for the indicator
-                    container = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-bar');
-                }
-                this._indicator = L.DomUtil.create('a', classes, container);
-                if (this.options.spinjs) {
-                  this._spinner = new Spinner(this.options.spin).spin();
-                  this._indicator.appendChild(this._spinner.el);
-                }
-                return container;
-            },
-
-            onRemove: function(map) {
-                this._removeLayerListeners(map);
-                this._removeMapListeners(map);
-            },
-
-            removeFrom: function (map) {
-                if (this.zoomControl && !this.options.separate) {
-                    // Override Control.removeFrom() to avoid clobbering the entire
-                    // _container, which is the same as zoomControl's
-                    this._container.removeChild(this._indicator);
-                    this._map = null;
-                    this.onRemove(map);
-                    return this;
-                }
-                else {
-                    // If this control is separate from the zoomControl, call the
-                    // parent method so we don't leave behind an empty container
-                    return L.Control.prototype.removeFrom.call(this, map);
-                }
-            },
-
-            addLoader: function(id) {
-                this._dataLoaders[id] = true;
-                this.updateIndicator();
-            },
-
-            removeLoader: function(id) {
-                delete this._dataLoaders[id];
-                this.updateIndicator();
-            },
-
-            updateIndicator: function() {
-                if (this.isLoading()) {
-                    this._showIndicator();
-                }
-                else {
-                    this._hideIndicator();
-                }
-            },
-
-            isLoading: function() {
-                return this._countLoaders() > 0;
-            },
-
-            _countLoaders: function() {
-                var size = 0, key;
-                for (key in this._dataLoaders) {
-                    if (this._dataLoaders.hasOwnProperty(key)) size++;
-                }
-                return size;
-            },
-
-            _showIndicator: function() {
-                // Show loading indicator
-                L.DomUtil.addClass(this._indicator, 'is-loading');
-
-                // If zoomControl exists, make the zoom-out button not last
-                if (!this.options.separate) {
-                    if (this.zoomControl instanceof L.Control.Zoom) {
-                        L.DomUtil.removeClass(this.zoomControl._zoomOutButton, 'leaflet-bar-part-bottom');
-                    }
-                    else if (typeof L.Control.Zoomslider === 'function' && this.zoomControl instanceof L.Control.Zoomslider) {
-                        L.DomUtil.removeClass(this.zoomControl._ui.zoomOut, 'leaflet-bar-part-bottom');
-                    }
-                }
-            },
-
-            _hideIndicator: function() {
-                // Hide loading indicator
-                L.DomUtil.removeClass(this._indicator, 'is-loading');
-
-                // If zoomControl exists, make the zoom-out button last
-                if (!this.options.separate) {
-                    if (this.zoomControl instanceof L.Control.Zoom) {
-                        L.DomUtil.addClass(this.zoomControl._zoomOutButton, 'leaflet-bar-part-bottom');
-                    }
-                    else if (typeof L.Control.Zoomslider === 'function' && this.zoomControl instanceof L.Control.Zoomslider) {
-                        L.DomUtil.addClass(this.zoomControl._ui.zoomOut, 'leaflet-bar-part-bottom');
-                    }
-                }
-            },
-
-            _handleLoading: function(e) {
-                this.addLoader(this.getEventId(e));
-            },
-
-            _handleLoad: function(e) {
-                this.removeLoader(this.getEventId(e));
-            },
-
-            getEventId: function(e) {
-                if (e.id) {
-                    return e.id;
-                }
-                else if (e.layer) {
-                    return e.layer._leaflet_id;
-                }
-                return e.target._leaflet_id;
-            },
-
-            _layerAdd: function(e) {
-                if (!e.layer || !e.layer.on) return
-                try {
-                    e.layer.on({
-                        loading: this._handleLoading,
-                        load: this._handleLoad
-                    }, this);
-                }
-                catch (exception) {
-                    console.warn('L.Control.Loading: Tried and failed to add ' +
-                                 ' event handlers to layer', e.layer);
-                    console.warn('L.Control.Loading: Full details', exception);
-                }
-            },
-
-            _addLayerListeners: function(map) {
-                // Add listeners for begin and end of load to any layers already on the 
-                // map
-                map.eachLayer(function(layer) {
-                    if (!layer.on) return;
-                    layer.on({
-                        loading: this._handleLoading,
-                        load: this._handleLoad
-                    }, this);
-                }, this);
-
-                // When a layer is added to the map, add listeners for begin and end
-                // of load
-                map.on('layeradd', this._layerAdd, this);
-            },
-
-            _removeLayerListeners: function(map) {
-                // Remove listeners for begin and end of load from all layers
-                map.eachLayer(function(layer) {
-                    if (!layer.off) return;
-                    layer.off({
-                        loading: this._handleLoading,
-                        load: this._handleLoad
-                    }, this);
-                }, this);
-
-                // Remove layeradd listener from map
-                map.off('layeradd', this._layerAdd, this);
-            },
-
-            _addMapListeners: function(map) {
-                // Add listeners to the map for (custom) dataloading and dataload
-                // events, eg, for AJAX calls that affect the map but will not be
-                // reflected in the above layer events.
-                map.on({
-                    dataloading: this._handleLoading,
-                    dataload: this._handleLoad,
-                    layerremove: this._handleLoad
-                }, this);
-            },
-
-            _removeMapListeners: function(map) {
-                map.off({
-                    dataloading: this._handleLoading,
-                    dataload: this._handleLoad,
-                    layerremove: this._handleLoad
-                }, this);
-            }
-        });
-
-        L.Map.addInitHook(function () {
-            if (this.options.loadingControl) {
-                this.loadingControl = new L.Control.Loading();
-                this.addControl(this.loadingControl);
-            }
-        });
-
-        L.Control.loading = function(options) {
-            return new L.Control.Loading(options);
-        };
-    }
-
-    if (typeof define === 'function' && define.amd) {
-        // Try to add leaflet.loading to Leaflet using AMD
-        define(['leaflet'], function (L) {
-            defineLeafletLoading(L);
-        });
-    }
-    else {
-        // Else use the global L
-        defineLeafletLoading(L);
-    }
-
-})();
-
-},{}],19:[function(require,module,exports){
-/**
- * Leaflet.UserMarker v1.0
- * 
- * Author: Jonatan Heyman <http://heyman.info>
- */
-
-(function(window) {
-    var icon = L.divIcon({
-        className: "leaflet-usermarker",
-        iconSize: [34, 34],
-        iconAnchor: [17, 17],
-        popupAnchor: [0, -20],
-        labelAnchor: [11, -3],
-        html: ''
-    });
-    var iconPulsing = L.divIcon({
-        className: "leaflet-usermarker",
-        iconSize: [34, 34],
-        iconAnchor: [17, 17],
-        popupAnchor: [0, -20],
-        labelAnchor: [11, -3],
-        html: '<i class="pulse"></i>'
-    });
-    
-    var iconSmall = L.divIcon({
-        className: "leaflet-usermarker-small",
-        iconSize: [17, 17],
-        iconAnchor: [9, 9],
-        popupAnchor: [0, -10],
-        labelAnchor: [3, -4],
-        html: ''
-    });
-    var iconPulsingSmall = L.divIcon({
-        className: "leaflet-usermarker-small",
-        iconSize: [17, 17],
-        iconAnchor: [9, 9],
-        popupAnchor: [0, -10],
-        labelAnchor: [3, -4],
-        html: '<i class="pulse"></i>'
-    });
-    var circleStyle = {
-        stroke: true,
-        color: "#03f",
-        weight: 3,
-        opacity: 0.5,
-        fillOpacity: 0.15,
-        fillColor: "#03f",
-        clickable: false
-    };
-
-    L.UserMarker = L.Marker.extend({
-        options: {
-            pulsing: false,
-            smallIcon: false,
-            accuracy: 0,
-            circleOpts: circleStyle
-        },
-
-        initialize: function(latlng, options) {
-            options = L.Util.setOptions(this, options);
-            
-            this.setPulsing(this.options.pulsing);
-            this._accMarker = L.circle(latlng, this.options.accuracy, this.options.circleOpts);
-        
-            // call super
-            L.Marker.prototype.initialize.call(this, latlng, this.options);
-        
-            this.on("move", function() {
-                this._accMarker.setLatLng(this.getLatLng());
-            }).on("remove", function() {
-                this._map.removeLayer(this._accMarker);
-            });
-        },
-    
-        setPulsing: function(pulsing) {
-            this._pulsing = pulsing;
-            
-            if (this.options.smallIcon) {
-                this.setIcon(!!this._pulsing ? iconPulsingSmall : iconSmall);
-            } else {
-                this.setIcon(!!this._pulsing ? iconPulsing : icon);
-            }
-        },
-    
-        setAccuracy: function(accuracy)	{
-            this._accuracy = accuracy;
-            if (!this._accMarker) {
-                this._accMarker = L.circle(this._latlng, accuracy, this.options.circleOpts).addTo(this._map);
-            } else {
-                this._accMarker.setRadius(accuracy);
-            }
-        },
-    
-        onAdd: function(map) {
-            // super
-            L.Marker.prototype.onAdd.call(this, map);
-            this._accMarker.addTo(map);
-        }
-    });
-
-    L.userMarker = function (latlng, options) {
-        return new L.UserMarker(latlng, options);
-    };
-})(window);
-
-},{}],20:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js":[function(require,module,exports){
 var _ = require('underscore');
 var leafletPip = require('leaflet-pip');
 
@@ -5289,7 +974,7 @@ module.exports = {
     }
 };
 
-},{"leaflet-pip":58,"underscore":153}],21:[function(require,module,exports){
+},{"leaflet-pip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-pip/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/geocode.js":[function(require,module,exports){
 var geocoder = new google.maps.Geocoder();
 
 function geocode(address, bounds, state, f) {
@@ -5362,7 +1047,7 @@ module.exports = {
     geocode: geocode
 };
 
-},{}],22:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js":[function(require,module,exports){
 var Handlebars = require('handlebars');
 
 /*
@@ -5389,10 +1074,10 @@ Handlebars.registerHelper('pick-area', function (acres, sqft) {
     return sqft + ' sq ft';
 });
 
-},{"handlebars":57}],23:[function(require,module,exports){
+},{"handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js":[function(require,module,exports){
 var L = require('leaflet');
 
-require('TileLayer.GeoJSON');
+require('leaflet-tilelayer-vector');
 
 L.TileLayer.Vector.include({
 
@@ -5405,12 +1090,11 @@ L.TileLayer.Vector.include({
 
 });
 
-},{"TileLayer.GeoJSON":14,"leaflet":60}],24:[function(require,module,exports){
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js":[function(require,module,exports){
 var L = require('leaflet');
 var _ = require('underscore');
 
-require('TileLayer.GeoJSON');
-require('TileLayer.Overzoom');
+require('leaflet-tilelayer-vector');
 
 require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');
@@ -5537,7 +1221,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":23,"./leaflet.lotmultipolygon":27,"./leaflet.lotpolygon":29,"TileLayer.GeoJSON":14,"TileLayer.Overzoom":15,"leaflet":60,"underscore":153}],25:[function(require,module,exports){
+},{"./leaflet.geojson.tile":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js","./leaflet.lotmultipolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmultipolygon.js","./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js":[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -5545,10 +1229,10 @@ var L = require('leaflet');
 var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
 
-require('leaflet.bing');
-require('leaflet.dataoptions');
-require('leaflet.hash');
-require('leaflet.usermarker');
+require('leaflet-plugins-bing');
+require('leaflet-dataoptions');
+require('leaflet-hash');
+require('leaflet-usermarker');
 require('livinglots-map/src/livinglots.boundaries');
 
 require('./leaflet.lotlayer');
@@ -5798,7 +1482,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":20,"./leaflet.lotlayer":24,"./leaflet.lotmarker":26,"./map.styles":33,"handlebars":57,"leaflet":60,"leaflet.bing":9,"leaflet.dataoptions":17,"leaflet.hash":8,"leaflet.usermarker":19,"livinglots-map/src/livinglots.boundaries":81,"spin.js":152,"underscore":153}],26:[function(require,module,exports){
+},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js","leaflet-hash":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js","leaflet-plugins-bing":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-plugins/layer/tile/Bing.js","leaflet-usermarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-usermarker/src/leaflet.usermarker.js","livinglots-map/src/livinglots.boundaries":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.boundaries.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -5866,7 +1550,7 @@ L.lotMarker = function (latlng, options) {
     return new L.LotMarker(latlng, options);
 };
 
-},{"./leaflet.lotpath":28,"leaflet":60}],27:[function(require,module,exports){
+},{"./leaflet.lotpath":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpath.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmultipolygon.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpolygon');
@@ -5922,7 +1606,7 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
     }
 });
 
-},{"./leaflet.lotpolygon":29,"leaflet":60}],28:[function(require,module,exports){
+},{"./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpath.js":[function(require,module,exports){
 var L = require('leaflet');
 
 
@@ -5978,7 +1662,7 @@ L.LotPathMixin = {
 
 };
 
-},{"leaflet":60}],29:[function(require,module,exports){
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -6021,7 +1705,7 @@ L.lotPolygon = function (latlngs, options) {
     return new L.LotPolygon(latlngs, options);
 };
 
-},{"./leaflet.lotpath":28,"leaflet":60}],30:[function(require,module,exports){
+},{"./leaflet.lotpath":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpath.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/lotdetailpage.js":[function(require,module,exports){
 //
 // lotdetailpage.js
 //
@@ -6031,7 +1715,7 @@ L.lotPolygon = function (latlngs, options) {
 var Handlebars = require('handlebars');
 var L = require('leaflet');
 
-require('leaflet.dataoptions');
+require('leaflet-dataoptions');
 
 require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
@@ -6144,7 +1828,7 @@ $(document).ready(function () {
     initTwitterLink($('.share-twitter'));
 });
 
-},{"./leaflet.lotlayer":24,"./leaflet.lotmarker":26,"./map.styles":33,"./overlaymenu":36,"./streetview":39,"handlebars":57,"leaflet":60,"leaflet.dataoptions":17}],31:[function(require,module,exports){
+},{"./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./streetview":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/streetview.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/main.js":[function(require,module,exports){
 //
 // main.js
 //
@@ -6154,7 +1838,7 @@ $(document).ready(function () {
 require('bootstrap_dropdown');
 require('bootstrap_transition');
 require('bootstrap_collapse');
-require('fancybox');
+require('fancybox')($);
 
 
 /*
@@ -6222,7 +1906,7 @@ $(document).ready(function () {
 require('./mappage.js');
 require('./lotdetailpage.js');
 
-},{"./lotdetailpage.js":30,"./mappage.js":34,"bootstrap_collapse":2,"bootstrap_dropdown":3,"bootstrap_transition":5,"fancybox":6}],32:[function(require,module,exports){
+},{"./lotdetailpage.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/lotdetailpage.js","./mappage.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/mappage.js","bootstrap_collapse":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/collapse.js","bootstrap_dropdown":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/dropdown.js","bootstrap_transition":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/transition.js","fancybox":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/fancybox/dist/js/jquery.fancybox.cjs.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js":[function(require,module,exports){
 var L = require('leaflet');
 
 var geocode = require('./geocode').geocode;
@@ -6295,7 +1979,7 @@ $.fn.mapsearch = function (options) {
     return this;
 };
 
-},{"./geocode":21,"leaflet":60}],33:[function(require,module,exports){
+},{"./geocode":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/geocode.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js":[function(require,module,exports){
 //
 // Lot map styles by layer for maps
 //
@@ -6329,7 +2013,7 @@ module.exports = {
     }
 };
 
-},{"underscore":153}],34:[function(require,module,exports){
+},{"underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/mappage.js":[function(require,module,exports){
 //
 // mappage.js
 //
@@ -6346,8 +2030,8 @@ var oasis = require('./oasis');
 
 require('bootstrap_button');
 require('bootstrap_tooltip');
-require('jquery.infinitescroll');
-require('leaflet.loading');
+require('jquery-infinite-scroll');
+require('leaflet-loading');
 require('livinglots-map/src/livinglots.addlot');
 require('livinglots-map/src/livinglots.mail');
 require('./handlebars.helpers');
@@ -6667,7 +2351,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./handlebars.helpers":22,"./leaflet.lotmap":25,"./map.search.js":32,"./oasis":35,"./overlaymenu":36,"./singleminded":38,"./welcome":40,"bootstrap_button":1,"bootstrap_tooltip":4,"handlebars":57,"jquery.infinitescroll":7,"leaflet":60,"leaflet.loading":18,"livinglots-map/src/livinglots.addlot":80,"livinglots-map/src/livinglots.mail":82,"spin.js":152,"underscore":153}],35:[function(require,module,exports){
+},{"./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/bower_components/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","livinglots-map/src/livinglots.addlot":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.addlot.js","livinglots-map/src/livinglots.mail":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.mail.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
 var _ = require('underscore');
 var proj4 = require('proj4');
 require('./proj4.defs');
@@ -6687,7 +2371,7 @@ module.exports = {
     }
 };
 
-},{"./proj4.defs":37,"proj4":119,"underscore":153}],36:[function(require,module,exports){
+},{"./proj4.defs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/proj4.defs.js","proj4":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js":[function(require,module,exports){
 //
 // overlaymenu.js
 //
@@ -6768,12 +2452,12 @@ $.fn.overlaymenu = function (options) {
     return this;
 };
 
-},{"underscore":153}],37:[function(require,module,exports){
+},{"underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/proj4.defs.js":[function(require,module,exports){
 var proj4 = require('proj4');
 
 proj4.defs('EPSG:2263', '+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs');
 
-},{"proj4":119}],38:[function(require,module,exports){
+},{"proj4":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js":[function(require,module,exports){
 var thoughts = {};
 
 function forget(name) {
@@ -6805,7 +2489,7 @@ module.exports = {
     remember: remember
 };
 
-},{}],39:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/streetview.js":[function(require,module,exports){
 
 
 function get_heading(lon0, lat0, lon1, lat1) {
@@ -6855,7 +2539,7 @@ module.exports = {
     load_streetview: load_streetview
 };
 
-},{}],40:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js":[function(require,module,exports){
 //
 // Welcome header
 //
@@ -6871,9 +2555,2038 @@ module.exports = {
     }
 };
 
-},{}],41:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/browserify/lib/_empty.js":[function(require,module,exports){
 
-},{}],42:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/fancybox/dist/js/jquery.fancybox.cjs.js":[function(require,module,exports){
+/*!
+ * fancyBox - jQuery Plugin
+ * version: 2.1.5 (Fri, 14 Jun 2013)
+ * requires jQuery v1.6 or later
+ *
+ * Examples at http://fancyapps.com/fancybox/
+ * License: www.fancyapps.com/fancybox/#license
+ *
+ * Copyright 2012 Janis Skarnelis - janis@fancyapps.com
+ *
+ */
+
+module.exports = function(jQuery) {
+    "use strict";
+
+    var H = jQuery("html"),
+        W = jQuery(window),
+        D = jQuery(document),
+        F = jQuery.fancybox = function() {
+            F.open.apply(this, arguments);
+        },
+        IE = navigator.userAgent.match(/msie/i),
+        didUpdate = null,
+        isTouch = document.createTouch !== undefined,
+
+        isQuery = function(obj) {
+            return obj && obj.hasOwnProperty && obj instanceof jQuery;
+        },
+        isString = function(str) {
+            return str && jQuery.type(str) === "string";
+        },
+        isPercentage = function(str) {
+            return isString(str) && str.indexOf('%') > 0;
+        },
+        isScrollable = function(el) {
+            return (el && !(el.style.overflow && el.style.overflow === 'hidden') && ((el.clientWidth && el.scrollWidth > el.clientWidth) || (el.clientHeight && el.scrollHeight > el.clientHeight)));
+        },
+        getScalar = function(orig, dim) {
+            var value = parseInt(orig, 10) || 0;
+
+            if (dim && isPercentage(orig)) {
+                value = F.getViewport()[dim] / 100 * value;
+            }
+
+            return Math.ceil(value);
+        },
+        getValue = function(value, dim) {
+            return getScalar(value, dim) + 'px';
+        };
+
+    jQuery.extend(F, {
+        // The current version of fancyBox
+        version: '2.1.5',
+
+        defaults: {
+            padding: 15,
+            margin: 20,
+
+            width: 800,
+            height: 600,
+            minWidth: 100,
+            minHeight: 100,
+            maxWidth: 9999,
+            maxHeight: 9999,
+            pixelRatio: 1, // Set to 2 for retina display support
+
+            autoSize: true,
+            autoHeight: false,
+            autoWidth: false,
+
+            autoResize: true,
+            autoCenter: !isTouch,
+            fitToView: true,
+            aspectRatio: false,
+            topRatio: 0.5,
+            leftRatio: 0.5,
+
+            scrolling: 'auto', // 'auto', 'yes' or 'no'
+            wrapCSS: '',
+
+            arrows: true,
+            closeBtn: true,
+            closeClick: false,
+            nextClick: false,
+            mouseWheel: true,
+            autoPlay: false,
+            playSpeed: 3000,
+            preload: 3,
+            modal: false,
+            loop: true,
+
+            ajax: {
+                dataType: 'html',
+                headers: {
+                    'X-fancyBox': true
+                }
+            },
+            iframe: {
+                scrolling: 'auto',
+                preload: true
+            },
+            swf: {
+                wmode: 'transparent',
+                allowfullscreen: 'true',
+                allowscriptaccess: 'always'
+            },
+
+            keys: {
+                next: {
+                    13: 'left', // enter
+                    34: 'up', // page down
+                    39: 'left', // right arrow
+                    40: 'up' // down arrow
+                },
+                prev: {
+                    8: 'right', // backspace
+                    33: 'down', // page up
+                    37: 'right', // left arrow
+                    38: 'down' // up arrow
+                },
+                close: [27], // escape key
+                play: [32], // space - start/stop slideshow
+                toggle: [70] // letter "f" - toggle fullscreen
+            },
+
+            direction: {
+                next: 'left',
+                prev: 'right'
+            },
+
+            scrollOutside: true,
+
+            // Override some properties
+            index: 0,
+            type: null,
+            href: null,
+            content: null,
+            title: null,
+
+            // HTML templates
+            tpl: {
+                wrap: '<div class="fancybox-wrap" tabIndex="-1"><div class="fancybox-skin"><div class="fancybox-outer"><div class="fancybox-inner"></div></div></div></div>',
+                image: '<img class="fancybox-image" src="{href}" alt="" />',
+                iframe: '<iframe id="fancybox-frame{rnd}" name="fancybox-frame{rnd}" class="fancybox-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>',
+                error: '<p class="fancybox-error">The requested content cannot be loaded.<br/>Please try again later.</p>',
+                closeBtn: '<a title="Close" class="fancybox-item fancybox-close" href="javascript:;"></a>',
+                next: '<a title="Next" class="fancybox-nav fancybox-next" href="javascript:;"><span></span></a>',
+                prev: '<a title="Previous" class="fancybox-nav fancybox-prev" href="javascript:;"><span></span></a>',
+                loading: '<div id="fancybox-loading"><div></div></div>'
+            },
+
+            // Properties for each animation type
+            // Opening fancyBox
+            openEffect: 'fade', // 'elastic', 'fade' or 'none'
+            openSpeed: 250,
+            openEasing: 'swing',
+            openOpacity: true,
+            openMethod: 'zoomIn',
+
+            // Closing fancyBox
+            closeEffect: 'fade', // 'elastic', 'fade' or 'none'
+            closeSpeed: 250,
+            closeEasing: 'swing',
+            closeOpacity: true,
+            closeMethod: 'zoomOut',
+
+            // Changing next gallery item
+            nextEffect: 'elastic', // 'elastic', 'fade' or 'none'
+            nextSpeed: 250,
+            nextEasing: 'swing',
+            nextMethod: 'changeIn',
+
+            // Changing previous gallery item
+            prevEffect: 'elastic', // 'elastic', 'fade' or 'none'
+            prevSpeed: 250,
+            prevEasing: 'swing',
+            prevMethod: 'changeOut',
+
+            // Enable default helpers
+            helpers: {
+                overlay: true,
+                title: true
+            },
+
+            // Callbacks
+            onCancel: jQuery.noop, // If canceling
+            beforeLoad: jQuery.noop, // Before loading
+            afterLoad: jQuery.noop, // After loading
+            beforeShow: jQuery.noop, // Before changing in current item
+            afterShow: jQuery.noop, // After opening
+            beforeChange: jQuery.noop, // Before changing gallery item
+            beforeClose: jQuery.noop, // Before closing
+            afterClose: jQuery.noop // After closing
+        },
+
+        //Current state
+        group: {}, // Selected group
+        opts: {}, // Group options
+        previous: null, // Previous element
+        coming: null, // Element being loaded
+        current: null, // Currently loaded element
+        isActive: false, // Is activated
+        isOpen: false, // Is currently open
+        isOpened: false, // Have been fully opened at least once
+
+        wrap: null,
+        skin: null,
+        outer: null,
+        inner: null,
+
+        player: {
+            timer: null,
+            isActive: false
+        },
+
+        // Loaders
+        ajaxLoad: null,
+        imgPreload: null,
+
+        // Some collections
+        transitions: {},
+        helpers: {},
+
+        /*
+         *	Static methods
+         */
+
+        open: function(group, opts) {
+            if (!group) {
+                return;
+            }
+
+            if (!jQuery.isPlainObject(opts)) {
+                opts = {};
+            }
+
+            // Close if already active
+            if (false === F.close(true)) {
+                return;
+            }
+
+            // Normalize group
+            if (!jQuery.isArray(group)) {
+                group = isQuery(group) ? jQuery(group).get() : [group];
+            }
+
+            // Recheck if the type of each element is `object` and set content type (image, ajax, etc)
+            jQuery.each(group, function(i, element) {
+                var obj = {},
+                    href,
+                    title,
+                    content,
+                    type,
+                    rez,
+                    hrefParts,
+                    selector;
+
+                if (jQuery.type(element) === "object") {
+                    // Check if is DOM element
+                    if (element.nodeType) {
+                        element = jQuery(element);
+                    }
+
+                    if (isQuery(element)) {
+                        obj = {
+                            href: element.data('fancybox-href') || element.attr('href'),
+                            title: jQuery('<div/>').text(element.data('fancybox-title') || element.attr('title') || '').html(),
+                            isDom: true,
+                            element: element
+                        };
+
+                        if (jQuery.metadata) {
+                            jQuery.extend(true, obj, element.metadata());
+                        }
+
+                    } else {
+                        obj = element;
+                    }
+                }
+
+                href = opts.href || obj.href || (isString(element) ? element : null);
+                title = opts.title !== undefined ? opts.title : obj.title || '';
+
+                content = opts.content || obj.content;
+                type = content ? 'html' : (opts.type || obj.type);
+
+                if (!type && obj.isDom) {
+                    type = element.data('fancybox-type');
+
+                    if (!type) {
+                        rez = element.prop('class').match(/fancybox\.(\w+)/);
+                        type = rez ? rez[1] : null;
+                    }
+                }
+
+                if (isString(href)) {
+                    // Try to guess the content type
+                    if (!type) {
+                        if (F.isImage(href)) {
+                            type = 'image';
+
+                        } else if (F.isSWF(href)) {
+                            type = 'swf';
+
+                        } else if (href.charAt(0) === '#') {
+                            type = 'inline';
+
+                        } else if (isString(element)) {
+                            type = 'html';
+                            content = element;
+                        }
+                    }
+
+                    // Split url into two pieces with source url and content selector, e.g,
+                    // "/mypage.html #my_id" will load "/mypage.html" and display element having id "my_id"
+                    if (type === 'ajax') {
+                        hrefParts = href.split(/\s+/, 2);
+                        href = hrefParts.shift();
+                        selector = hrefParts.shift();
+                    }
+                }
+
+                if (!content) {
+                    if (type === 'inline') {
+                        if (href) {
+                            content = jQuery(isString(href) ? href.replace(/.*(?=#[^\s]+$)/, '') : href); //strip for ie7
+
+                        } else if (obj.isDom) {
+                            content = element;
+                        }
+
+                    } else if (type === 'html') {
+                        content = href;
+
+                    } else if (!type && !href && obj.isDom) {
+                        type = 'inline';
+                        content = element;
+                    }
+                }
+
+                jQuery.extend(obj, {
+                    href: href,
+                    type: type,
+                    content: content,
+                    title: title,
+                    selector: selector
+                });
+
+                group[i] = obj;
+            });
+
+            // Extend the defaults
+            F.opts = jQuery.extend(true, {}, F.defaults, opts);
+
+            // All options are merged recursive except keys
+            if (opts.keys !== undefined) {
+                F.opts.keys = opts.keys ? jQuery.extend({}, F.defaults.keys, opts.keys) : false;
+            }
+
+            F.group = group;
+
+            return F._start(F.opts.index);
+        },
+
+        // Cancel image loading or abort ajax request
+        cancel: function() {
+            var coming = F.coming;
+
+            if (coming && false === F.trigger('onCancel')) {
+                return;
+            }
+
+            F.hideLoading();
+
+            if (!coming) {
+                return;
+            }
+
+            if (F.ajaxLoad) {
+                F.ajaxLoad.abort();
+            }
+
+            F.ajaxLoad = null;
+
+            if (F.imgPreload) {
+                F.imgPreload.onload = F.imgPreload.onerror = null;
+            }
+
+            if (coming.wrap) {
+                coming.wrap.stop(true, true).trigger('onReset').remove();
+            }
+
+            F.coming = null;
+
+            // If the first item has been canceled, then clear everything
+            if (!F.current) {
+                F._afterZoomOut(coming);
+            }
+        },
+
+        // Start closing animation if is open; remove immediately if opening/closing
+        close: function(event) {
+            F.cancel();
+
+            if (false === F.trigger('beforeClose')) {
+                return;
+            }
+
+            F.unbindEvents();
+
+            if (!F.isActive) {
+                return;
+            }
+
+            if (!F.isOpen || event === true) {
+                jQuery('.fancybox-wrap').stop(true).trigger('onReset').remove();
+
+                F._afterZoomOut();
+
+            } else {
+                F.isOpen = F.isOpened = false;
+                F.isClosing = true;
+
+                jQuery('.fancybox-item, .fancybox-nav').remove();
+
+                F.wrap.stop(true, true).removeClass('fancybox-opened');
+
+                F.transitions[F.current.closeMethod]();
+            }
+        },
+
+        // Manage slideshow:
+        //   jQuery.fancybox.play(); - toggle slideshow
+        //   jQuery.fancybox.play( true ); - start
+        //   jQuery.fancybox.play( false ); - stop
+        play: function(action) {
+            var clear = function() {
+                    clearTimeout(F.player.timer);
+                },
+                set = function() {
+                    clear();
+
+                    if (F.current && F.player.isActive) {
+                        F.player.timer = setTimeout(F.next, F.current.playSpeed);
+                    }
+                },
+                stop = function() {
+                    clear();
+
+                    D.unbind('.player');
+
+                    F.player.isActive = false;
+
+                    F.trigger('onPlayEnd');
+                },
+                start = function() {
+                    if (F.current && (F.current.loop || F.current.index < F.group.length - 1)) {
+                        F.player.isActive = true;
+
+                        D.bind({
+                            'onCancel.player beforeClose.player': stop,
+                            'onUpdate.player': set,
+                            'beforeLoad.player': clear
+                        });
+
+                        set();
+
+                        F.trigger('onPlayStart');
+                    }
+                };
+
+            if (action === true || (!F.player.isActive && action !== false)) {
+                start();
+            } else {
+                stop();
+            }
+        },
+
+        // Navigate to next gallery item
+        next: function(direction) {
+            var current = F.current;
+
+            if (current) {
+                if (!isString(direction)) {
+                    direction = current.direction.next;
+                }
+
+                F.jumpto(current.index + 1, direction, 'next');
+            }
+        },
+
+        // Navigate to previous gallery item
+        prev: function(direction) {
+            var current = F.current;
+
+            if (current) {
+                if (!isString(direction)) {
+                    direction = current.direction.prev;
+                }
+
+                F.jumpto(current.index - 1, direction, 'prev');
+            }
+        },
+
+        // Navigate to gallery item by index
+        jumpto: function(index, direction, router) {
+            var current = F.current;
+
+            if (!current) {
+                return;
+            }
+
+            index = getScalar(index);
+
+            F.direction = direction || current.direction[(index >= current.index ? 'next' : 'prev')];
+            F.router = router || 'jumpto';
+
+            if (current.loop) {
+                if (index < 0) {
+                    index = current.group.length + (index % current.group.length);
+                }
+
+                index = index % current.group.length;
+            }
+
+            if (current.group[index] !== undefined) {
+                F.cancel();
+
+                F._start(index);
+            }
+        },
+
+        // Center inside viewport and toggle position type to fixed or absolute if needed
+        reposition: function(e, onlyAbsolute) {
+            var current = F.current,
+                wrap = current ? current.wrap : null,
+                pos;
+
+            if (wrap) {
+                pos = F._getPosition(onlyAbsolute);
+
+                if (e && e.type === 'scroll') {
+                    delete pos.position;
+
+                    wrap.stop(true, true).animate(pos, 200);
+
+                } else {
+                    wrap.css(pos);
+
+                    current.pos = jQuery.extend({}, current.dim, pos);
+                }
+            }
+        },
+
+        update: function(e) {
+            var type = (e && e.originalEvent && e.originalEvent.type),
+                anyway = !type || type === 'orientationchange';
+
+            if (anyway) {
+                clearTimeout(didUpdate);
+
+                didUpdate = null;
+            }
+
+            if (!F.isOpen || didUpdate) {
+                return;
+            }
+
+            didUpdate = setTimeout(function() {
+                var current = F.current;
+
+                if (!current || F.isClosing) {
+                    return;
+                }
+
+                F.wrap.removeClass('fancybox-tmp');
+
+                if (anyway || type === 'load' || (type === 'resize' && current.autoResize)) {
+                    F._setDimension();
+                }
+
+                if (!(type === 'scroll' && current.canShrink)) {
+                    F.reposition(e);
+                }
+
+                F.trigger('onUpdate');
+
+                didUpdate = null;
+
+            }, (anyway && !isTouch ? 0 : 300));
+        },
+
+        // Shrink content to fit inside viewport or restore if resized
+        toggle: function(action) {
+            if (F.isOpen) {
+                F.current.fitToView = jQuery.type(action) === "boolean" ? action : !F.current.fitToView;
+
+                // Help browser to restore document dimensions
+                if (isTouch) {
+                    F.wrap.removeAttr('style').addClass('fancybox-tmp');
+
+                    F.trigger('onUpdate');
+                }
+
+                F.update();
+            }
+        },
+
+        hideLoading: function() {
+            D.unbind('.loading');
+
+            jQuery('#fancybox-loading').remove();
+        },
+
+        showLoading: function() {
+            var el, viewport;
+
+            F.hideLoading();
+
+            el = jQuery(F.opts.tpl.loading).click(F.cancel).appendTo('body');
+
+            // If user will press the escape-button, the request will be canceled
+            D.bind('keydown.loading', function(e) {
+                if ((e.which || e.keyCode) === 27) {
+                    e.preventDefault();
+
+                    F.cancel();
+                }
+            });
+
+            if (!F.defaults.fixed) {
+                viewport = F.getViewport();
+
+                el.css({
+                    position: 'absolute',
+                    top: (viewport.h * 0.5) + viewport.y,
+                    left: (viewport.w * 0.5) + viewport.x
+                });
+            }
+
+            F.trigger('onLoading');
+        },
+
+        getViewport: function() {
+            var locked = (F.current && F.current.locked) || false,
+                rez = {
+                    x: W.scrollLeft(),
+                    y: W.scrollTop()
+                };
+
+            if (locked && locked.length) {
+                rez.w = locked[0].clientWidth;
+                rez.h = locked[0].clientHeight;
+
+            } else {
+                // See http://bugs.jquery.com/ticket/6724
+                rez.w = isTouch && window.innerWidth ? window.innerWidth : W.width();
+                rez.h = isTouch && window.innerHeight ? window.innerHeight : W.height();
+            }
+
+            return rez;
+        },
+
+        // Unbind the keyboard / clicking actions
+        unbindEvents: function() {
+            if (F.wrap && isQuery(F.wrap)) {
+                F.wrap.unbind('.fb');
+            }
+
+            D.unbind('.fb');
+            W.unbind('.fb');
+        },
+
+        bindEvents: function() {
+            var current = F.current,
+                keys;
+
+            if (!current) {
+                return;
+            }
+
+            // Changing document height on iOS devices triggers a 'resize' event,
+            // that can change document height... repeating infinitely
+            W.bind('orientationchange.fb' + (isTouch ? '' : ' resize.fb') + (current.autoCenter && !current.locked ? ' scroll.fb' : ''), F.update);
+
+            keys = current.keys;
+
+            if (keys) {
+                D.bind('keydown.fb', function(e) {
+                    var code = e.which || e.keyCode,
+                        target = e.target || e.srcElement;
+
+                    // Skip esc key if loading, because showLoading will cancel preloading
+                    if (code === 27 && F.coming) {
+                        return false;
+                    }
+
+                    // Ignore key combinations and key events within form elements
+                    if (!e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey && !(target && (target.type || jQuery(target).is('[contenteditable]')))) {
+                        jQuery.each(keys, function(i, val) {
+                            if (current.group.length > 1 && val[code] !== undefined) {
+                                F[i](val[code]);
+
+                                e.preventDefault();
+                                return false;
+                            }
+
+                            if (jQuery.inArray(code, val) > -1) {
+                                F[i]();
+
+                                e.preventDefault();
+                                return false;
+                            }
+                        });
+                    }
+                });
+            }
+
+            if (jQuery.fn.mousewheel && current.mouseWheel) {
+                F.wrap.bind('mousewheel.fb', function(e, delta, deltaX, deltaY) {
+                    var target = e.target || null,
+                        parent = jQuery(target),
+                        canScroll = false;
+
+                    while (parent.length) {
+                        if (canScroll || parent.is('.fancybox-skin') || parent.is('.fancybox-wrap')) {
+                            break;
+                        }
+
+                        canScroll = isScrollable(parent[0]);
+                        parent = jQuery(parent).parent();
+                    }
+
+                    if (delta !== 0 && !canScroll) {
+                        if (F.group.length > 1 && !current.canShrink) {
+                            if (deltaY > 0 || deltaX > 0) {
+                                F.prev(deltaY > 0 ? 'down' : 'left');
+
+                            } else if (deltaY < 0 || deltaX < 0) {
+                                F.next(deltaY < 0 ? 'up' : 'right');
+                            }
+
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
+        },
+
+        trigger: function(event, o) {
+            var ret, obj = o || F.coming || F.current;
+
+            if (obj) {
+                if (jQuery.isFunction(obj[event])) {
+                    ret = obj[event].apply(obj, Array.prototype.slice.call(arguments, 1));
+                }
+
+                if (ret === false) {
+                    return false;
+                }
+
+                if (obj.helpers) {
+                    jQuery.each(obj.helpers, function(helper, opts) {
+                        if (opts && F.helpers[helper] && jQuery.isFunction(F.helpers[helper][event])) {
+                            F.helpers[helper][event](jQuery.extend(true, {}, F.helpers[helper].defaults, opts), obj);
+                        }
+                    });
+                }
+            }
+
+            D.trigger(event);
+        },
+
+        isImage: function(str) {
+            return isString(str) && str.match(/(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i);
+        },
+
+        isSWF: function(str) {
+            return isString(str) && str.match(/\.(swf)((\?|#).*)?$/i);
+        },
+
+        _start: function(index) {
+            var coming = {},
+                obj,
+                href,
+                type,
+                margin,
+                padding;
+
+            index = getScalar(index);
+            obj = F.group[index] || null;
+
+            if (!obj) {
+                return false;
+            }
+
+            coming = jQuery.extend(true, {}, F.opts, obj);
+
+            // Convert margin and padding properties to array - top, right, bottom, left
+            margin = coming.margin;
+            padding = coming.padding;
+
+            if (jQuery.type(margin) === 'number') {
+                coming.margin = [margin, margin, margin, margin];
+            }
+
+            if (jQuery.type(padding) === 'number') {
+                coming.padding = [padding, padding, padding, padding];
+            }
+
+            // 'modal' propery is just a shortcut
+            if (coming.modal) {
+                jQuery.extend(true, coming, {
+                    closeBtn: false,
+                    closeClick: false,
+                    nextClick: false,
+                    arrows: false,
+                    mouseWheel: false,
+                    keys: null,
+                    helpers: {
+                        overlay: {
+                            closeClick: false
+                        }
+                    }
+                });
+            }
+
+            // 'autoSize' property is a shortcut, too
+            if (coming.autoSize) {
+                coming.autoWidth = coming.autoHeight = true;
+            }
+
+            if (coming.width === 'auto') {
+                coming.autoWidth = true;
+            }
+
+            if (coming.height === 'auto') {
+                coming.autoHeight = true;
+            }
+
+            /*
+             * Add reference to the group, so it`s possible to access from callbacks, example:
+             * afterLoad : function() {
+             *     this.title = 'Image ' + (this.index + 1) + ' of ' + this.group.length + (this.title ? ' - ' + this.title : '');
+             * }
+             */
+
+            coming.group = F.group;
+            coming.index = index;
+
+            // Give a chance for callback or helpers to update coming item (type, title, etc)
+            F.coming = coming;
+
+            if (false === F.trigger('beforeLoad')) {
+                F.coming = null;
+
+                return;
+            }
+
+            type = coming.type;
+            href = coming.href;
+
+            if (!type) {
+                F.coming = null;
+
+                //If we can not determine content type then drop silently or display next/prev item if looping through gallery
+                if (F.current && F.router && F.router !== 'jumpto') {
+                    F.current.index = index;
+
+                    return F[F.router](F.direction);
+                }
+
+                return false;
+            }
+
+            F.isActive = true;
+
+            if (type === 'image' || type === 'swf') {
+                coming.autoHeight = coming.autoWidth = false;
+                coming.scrolling = 'visible';
+            }
+
+            if (type === 'image') {
+                coming.aspectRatio = true;
+            }
+
+            if (type === 'iframe' && isTouch) {
+                coming.scrolling = 'scroll';
+            }
+
+            // Build the neccessary markup
+            coming.wrap = jQuery(coming.tpl.wrap).addClass('fancybox-' + (isTouch ? 'mobile' : 'desktop') + ' fancybox-type-' + type + ' fancybox-tmp ' + coming.wrapCSS).appendTo(coming.parent || 'body');
+
+            jQuery.extend(coming, {
+                skin: jQuery('.fancybox-skin', coming.wrap),
+                outer: jQuery('.fancybox-outer', coming.wrap),
+                inner: jQuery('.fancybox-inner', coming.wrap)
+            });
+
+            jQuery.each(["Top", "Right", "Bottom", "Left"], function(i, v) {
+                coming.skin.css('padding' + v, getValue(coming.padding[i]));
+            });
+
+            F.trigger('onReady');
+
+            // Check before try to load; 'inline' and 'html' types need content, others - href
+            if (type === 'inline' || type === 'html') {
+                if (!coming.content || !coming.content.length) {
+                    return F._error('content');
+                }
+
+            } else if (!href) {
+                return F._error('href');
+            }
+
+            if (type === 'image') {
+                F._loadImage();
+
+            } else if (type === 'ajax') {
+                F._loadAjax();
+
+            } else if (type === 'iframe') {
+                F._loadIframe();
+
+            } else {
+                F._afterLoad();
+            }
+        },
+
+        _error: function(type) {
+            jQuery.extend(F.coming, {
+                type: 'html',
+                autoWidth: true,
+                autoHeight: true,
+                minWidth: 0,
+                minHeight: 0,
+                scrolling: 'no',
+                hasError: type,
+                content: F.coming.tpl.error
+            });
+
+            F._afterLoad();
+        },
+
+        _loadImage: function() {
+            // Reset preload image so it is later possible to check "complete" property
+            var img = F.imgPreload = new Image();
+
+            img.onload = function() {
+                this.onload = this.onerror = null;
+
+                F.coming.width = this.width / F.opts.pixelRatio;
+                F.coming.height = this.height / F.opts.pixelRatio;
+
+                F._afterLoad();
+            };
+
+            img.onerror = function() {
+                this.onload = this.onerror = null;
+
+                F._error('image');
+            };
+
+            img.src = F.coming.href;
+
+            if (img.complete !== true) {
+                F.showLoading();
+            }
+        },
+
+        _loadAjax: function() {
+            var coming = F.coming;
+
+            F.showLoading();
+
+            F.ajaxLoad = jQuery.ajax(jQuery.extend({}, coming.ajax, {
+                url: coming.href,
+                error: function(jqXHR, textStatus) {
+                    if (F.coming && textStatus !== 'abort') {
+                        F._error('ajax', jqXHR);
+
+                    } else {
+                        F.hideLoading();
+                    }
+                },
+                success: function(data, textStatus) {
+                    if (textStatus === 'success') {
+                        coming.content = data;
+
+                        F._afterLoad();
+                    }
+                }
+            }));
+        },
+
+        _loadIframe: function() {
+            var coming = F.coming,
+                iframe = jQuery(coming.tpl.iframe.replace(/\{rnd\}/g, new Date().getTime()))
+                .attr('scrolling', isTouch ? 'auto' : coming.iframe.scrolling)
+                .attr('src', coming.href);
+
+            // This helps IE
+            jQuery(coming.wrap).bind('onReset', function() {
+                try {
+                    jQuery(this).find('iframe').hide().attr('src', '//about:blank').end().empty();
+                } catch (e) {}
+            });
+
+            if (coming.iframe.preload) {
+                F.showLoading();
+
+                iframe.one('load', function() {
+                    jQuery(this).data('ready', 1);
+
+                    // iOS will lose scrolling if we resize
+                    if (!isTouch) {
+                        jQuery(this).bind('load.fb', F.update);
+                    }
+
+                    // Without this trick:
+                    //   - iframe won't scroll on iOS devices
+                    //   - IE7 sometimes displays empty iframe
+                    jQuery(this).parents('.fancybox-wrap').width('100%').removeClass('fancybox-tmp').show();
+
+                    F._afterLoad();
+                });
+            }
+
+            coming.content = iframe.appendTo(coming.inner);
+
+            if (!coming.iframe.preload) {
+                F._afterLoad();
+            }
+        },
+
+        _preloadImages: function() {
+            var group = F.group,
+                current = F.current,
+                len = group.length,
+                cnt = current.preload ? Math.min(current.preload, len - 1) : 0,
+                item,
+                i;
+
+            for (i = 1; i <= cnt; i += 1) {
+                item = group[(current.index + i) % len];
+
+                if (item.type === 'image' && item.href) {
+                    new Image().src = item.href;
+                }
+            }
+        },
+
+        _afterLoad: function() {
+            var coming = F.coming,
+                previous = F.current,
+                placeholder = 'fancybox-placeholder',
+                current,
+                content,
+                type,
+                scrolling,
+                href,
+                embed;
+
+            F.hideLoading();
+
+            if (!coming || F.isActive === false) {
+                return;
+            }
+
+            if (false === F.trigger('afterLoad', coming, previous)) {
+                coming.wrap.stop(true).trigger('onReset').remove();
+
+                F.coming = null;
+
+                return;
+            }
+
+            if (previous) {
+                F.trigger('beforeChange', previous);
+
+                previous.wrap.stop(true).removeClass('fancybox-opened')
+                    .find('.fancybox-item, .fancybox-nav')
+                    .remove();
+            }
+
+            F.unbindEvents();
+
+            current = coming;
+            content = coming.content;
+            type = coming.type;
+            scrolling = coming.scrolling;
+
+            jQuery.extend(F, {
+                wrap: current.wrap,
+                skin: current.skin,
+                outer: current.outer,
+                inner: current.inner,
+                current: current,
+                previous: previous
+            });
+
+            href = current.href;
+
+            switch (type) {
+                case 'inline':
+                case 'ajax':
+                case 'html':
+                    if (current.selector) {
+                        content = jQuery('<div>').html(content).find(current.selector);
+
+                    } else if (isQuery(content)) {
+                        if (!content.data(placeholder)) {
+                            content.data(placeholder, jQuery('<div class="' + placeholder + '"></div>').insertAfter(content).hide());
+                        }
+
+                        content = content.show().detach();
+
+                        current.wrap.bind('onReset', function() {
+                            if (jQuery(this).find(content).length) {
+                                content.hide().replaceAll(content.data(placeholder)).data(placeholder, false);
+                            }
+                        });
+                    }
+                    break;
+
+                case 'image':
+                    content = current.tpl.image.replace(/\{href\}/g, href);
+                    break;
+
+                case 'swf':
+                    content = '<object id="fancybox-swf" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%"><param name="movie" value="' + href + '"></param>';
+                    embed = '';
+
+                    jQuery.each(current.swf, function(name, val) {
+                        content += '<param name="' + name + '" value="' + val + '"></param>';
+                        embed += ' ' + name + '="' + val + '"';
+                    });
+
+                    content += '<embed src="' + href + '" type="application/x-shockwave-flash" width="100%" height="100%"' + embed + '></embed></object>';
+                    break;
+            }
+
+            if (!(isQuery(content) && content.parent().is(current.inner))) {
+                current.inner.append(content);
+            }
+
+            // Give a chance for helpers or callbacks to update elements
+            F.trigger('beforeShow');
+
+            // Set scrolling before calculating dimensions
+            current.inner.css('overflow', scrolling === 'yes' ? 'scroll' : (scrolling === 'no' ? 'hidden' : scrolling));
+
+            // Set initial dimensions and start position
+            F._setDimension();
+
+            F.reposition();
+
+            F.isOpen = false;
+            F.coming = null;
+
+            F.bindEvents();
+
+            if (!F.isOpened) {
+                jQuery('.fancybox-wrap').not(current.wrap).stop(true).trigger('onReset').remove();
+
+            } else if (previous.prevMethod) {
+                F.transitions[previous.prevMethod]();
+            }
+
+            F.transitions[F.isOpened ? current.nextMethod : current.openMethod]();
+
+            F._preloadImages();
+        },
+
+        _setDimension: function() {
+            var viewport = F.getViewport(),
+                steps = 0,
+                canShrink = false,
+                canExpand = false,
+                wrap = F.wrap,
+                skin = F.skin,
+                inner = F.inner,
+                current = F.current,
+                width = current.width,
+                height = current.height,
+                minWidth = current.minWidth,
+                minHeight = current.minHeight,
+                maxWidth = current.maxWidth,
+                maxHeight = current.maxHeight,
+                scrolling = current.scrolling,
+                scrollOut = current.scrollOutside ? current.scrollbarWidth : 0,
+                margin = current.margin,
+                wMargin = getScalar(margin[1] + margin[3]),
+                hMargin = getScalar(margin[0] + margin[2]),
+                wPadding,
+                hPadding,
+                wSpace,
+                hSpace,
+                origWidth,
+                origHeight,
+                origMaxWidth,
+                origMaxHeight,
+                ratio,
+                width_,
+                height_,
+                maxWidth_,
+                maxHeight_,
+                iframe,
+                body;
+
+            // Reset dimensions so we could re-check actual size
+            wrap.add(skin).add(inner).width('auto').height('auto').removeClass('fancybox-tmp');
+
+            wPadding = getScalar(skin.outerWidth(true) - skin.width());
+            hPadding = getScalar(skin.outerHeight(true) - skin.height());
+
+            // Any space between content and viewport (margin, padding, border, title)
+            wSpace = wMargin + wPadding;
+            hSpace = hMargin + hPadding;
+
+            origWidth = isPercentage(width) ? (viewport.w - wSpace) * getScalar(width) / 100 : width;
+            origHeight = isPercentage(height) ? (viewport.h - hSpace) * getScalar(height) / 100 : height;
+
+            if (current.type === 'iframe') {
+                iframe = current.content;
+
+                if (current.autoHeight && iframe.data('ready') === 1) {
+                    try {
+                        if (iframe[0].contentWindow.document.location) {
+                            inner.width(origWidth).height(9999);
+
+                            body = iframe.contents().find('body');
+
+                            if (scrollOut) {
+                                body.css('overflow-x', 'hidden');
+                            }
+
+                            origHeight = body.outerHeight(true);
+                        }
+
+                    } catch (e) {}
+                }
+
+            } else if (current.autoWidth || current.autoHeight) {
+                inner.addClass('fancybox-tmp');
+
+                // Set width or height in case we need to calculate only one dimension
+                if (!current.autoWidth) {
+                    inner.width(origWidth);
+                }
+
+                if (!current.autoHeight) {
+                    inner.height(origHeight);
+                }
+
+                if (current.autoWidth) {
+                    origWidth = inner.width();
+                }
+
+                if (current.autoHeight) {
+                    origHeight = inner.height();
+                }
+
+                inner.removeClass('fancybox-tmp');
+            }
+
+            width = getScalar(origWidth);
+            height = getScalar(origHeight);
+
+            ratio = origWidth / origHeight;
+
+            // Calculations for the content
+            minWidth = getScalar(isPercentage(minWidth) ? getScalar(minWidth, 'w') - wSpace : minWidth);
+            maxWidth = getScalar(isPercentage(maxWidth) ? getScalar(maxWidth, 'w') - wSpace : maxWidth);
+
+            minHeight = getScalar(isPercentage(minHeight) ? getScalar(minHeight, 'h') - hSpace : minHeight);
+            maxHeight = getScalar(isPercentage(maxHeight) ? getScalar(maxHeight, 'h') - hSpace : maxHeight);
+
+            // These will be used to determine if wrap can fit in the viewport
+            origMaxWidth = maxWidth;
+            origMaxHeight = maxHeight;
+
+            if (current.fitToView) {
+                maxWidth = Math.min(viewport.w - wSpace, maxWidth);
+                maxHeight = Math.min(viewport.h - hSpace, maxHeight);
+            }
+
+            maxWidth_ = viewport.w - wMargin;
+            maxHeight_ = viewport.h - hMargin;
+
+            if (current.aspectRatio) {
+                if (width > maxWidth) {
+                    width = maxWidth;
+                    height = getScalar(width / ratio);
+                }
+
+                if (height > maxHeight) {
+                    height = maxHeight;
+                    width = getScalar(height * ratio);
+                }
+
+                if (width < minWidth) {
+                    width = minWidth;
+                    height = getScalar(width / ratio);
+                }
+
+                if (height < minHeight) {
+                    height = minHeight;
+                    width = getScalar(height * ratio);
+                }
+
+            } else {
+                width = Math.max(minWidth, Math.min(width, maxWidth));
+
+                if (current.autoHeight && current.type !== 'iframe') {
+                    inner.width(width);
+
+                    height = inner.height();
+                }
+
+                height = Math.max(minHeight, Math.min(height, maxHeight));
+            }
+
+            // Try to fit inside viewport (including the title)
+            if (current.fitToView) {
+                inner.width(width).height(height);
+
+                wrap.width(width + wPadding);
+
+                // Real wrap dimensions
+                width_ = wrap.width();
+                height_ = wrap.height();
+
+                if (current.aspectRatio) {
+                    while ((width_ > maxWidth_ || height_ > maxHeight_) && width > minWidth && height > minHeight) {
+                        if (steps++ > 19) {
+                            break;
+                        }
+
+                        height = Math.max(minHeight, Math.min(maxHeight, height - 10));
+                        width = getScalar(height * ratio);
+
+                        if (width < minWidth) {
+                            width = minWidth;
+                            height = getScalar(width / ratio);
+                        }
+
+                        if (width > maxWidth) {
+                            width = maxWidth;
+                            height = getScalar(width / ratio);
+                        }
+
+                        inner.width(width).height(height);
+
+                        wrap.width(width + wPadding);
+
+                        width_ = wrap.width();
+                        height_ = wrap.height();
+                    }
+
+                } else {
+                    width = Math.max(minWidth, Math.min(width, width - (width_ - maxWidth_)));
+                    height = Math.max(minHeight, Math.min(height, height - (height_ - maxHeight_)));
+                }
+            }
+
+            if (scrollOut && scrolling === 'auto' && height < origHeight && (width + wPadding + scrollOut) < maxWidth_) {
+                width += scrollOut;
+            }
+
+            inner.width(width).height(height);
+
+            wrap.width(width + wPadding);
+
+            width_ = wrap.width();
+            height_ = wrap.height();
+
+            canShrink = (width_ > maxWidth_ || height_ > maxHeight_) && width > minWidth && height > minHeight;
+            canExpand = current.aspectRatio ? (width < origMaxWidth && height < origMaxHeight && width < origWidth && height < origHeight) : ((width < origMaxWidth || height < origMaxHeight) && (width < origWidth || height < origHeight));
+
+            jQuery.extend(current, {
+                dim: {
+                    width: getValue(width_),
+                    height: getValue(height_)
+                },
+                origWidth: origWidth,
+                origHeight: origHeight,
+                canShrink: canShrink,
+                canExpand: canExpand,
+                wPadding: wPadding,
+                hPadding: hPadding,
+                wrapSpace: height_ - skin.outerHeight(true),
+                skinSpace: skin.height() - height
+            });
+
+            if (!iframe && current.autoHeight && height > minHeight && height < maxHeight && !canExpand) {
+                inner.height('auto');
+            }
+        },
+
+        _getPosition: function(onlyAbsolute) {
+            var current = F.current,
+                viewport = F.getViewport(),
+                margin = current.margin,
+                width = F.wrap.width() + margin[1] + margin[3],
+                height = F.wrap.height() + margin[0] + margin[2],
+                rez = {
+                    position: 'absolute',
+                    top: margin[0],
+                    left: margin[3]
+                };
+
+            if (current.autoCenter && current.fixed && !onlyAbsolute && height <= viewport.h && width <= viewport.w) {
+                rez.position = 'fixed';
+
+            } else if (!current.locked) {
+                rez.top += viewport.y;
+                rez.left += viewport.x;
+            }
+
+            rez.top = getValue(Math.max(rez.top, rez.top + ((viewport.h - height) * current.topRatio)));
+            rez.left = getValue(Math.max(rez.left, rez.left + ((viewport.w - width) * current.leftRatio)));
+
+            return rez;
+        },
+
+        _afterZoomIn: function() {
+            var current = F.current;
+
+            if (!current) {
+                return;
+            }
+
+            F.isOpen = F.isOpened = true;
+
+            F.wrap.css('overflow', 'visible').addClass('fancybox-opened').hide().show(0);
+
+            F.update();
+
+            // Assign a click event
+            if (current.closeClick || (current.nextClick && F.group.length > 1)) {
+                F.inner.css('cursor', 'pointer').bind('click.fb', function(e) {
+                    if (!jQuery(e.target).is('a') && !jQuery(e.target).parent().is('a')) {
+                        e.preventDefault();
+
+                        F[current.closeClick ? 'close' : 'next']();
+                    }
+                });
+            }
+
+            // Create a close button
+            if (current.closeBtn) {
+                jQuery(current.tpl.closeBtn).appendTo(F.skin).bind('click.fb', function(e) {
+                    e.preventDefault();
+
+                    F.close();
+                });
+            }
+
+            // Create navigation arrows
+            if (current.arrows && F.group.length > 1) {
+                if (current.loop || current.index > 0) {
+                    jQuery(current.tpl.prev).appendTo(F.outer).bind('click.fb', F.prev);
+                }
+
+                if (current.loop || current.index < F.group.length - 1) {
+                    jQuery(current.tpl.next).appendTo(F.outer).bind('click.fb', F.next);
+                }
+            }
+
+            F.trigger('afterShow');
+
+            // Stop the slideshow if this is the last item
+            if (!current.loop && current.index === current.group.length - 1) {
+
+                F.play(false);
+
+            } else if (F.opts.autoPlay && !F.player.isActive) {
+                F.opts.autoPlay = false;
+
+                F.play(true);
+            }
+        },
+
+        _afterZoomOut: function(obj) {
+            obj = obj || F.current;
+
+            jQuery('.fancybox-wrap').trigger('onReset').remove();
+
+            jQuery.extend(F, {
+                group: {},
+                opts: {},
+                router: false,
+                current: null,
+                isActive: false,
+                isOpened: false,
+                isOpen: false,
+                isClosing: false,
+                wrap: null,
+                skin: null,
+                outer: null,
+                inner: null
+            });
+
+            F.trigger('afterClose', obj);
+        }
+    });
+
+    /*
+     *	Default transitions
+     */
+
+    F.transitions = {
+        getOrigPosition: function() {
+            var current = F.current,
+                element = current.element,
+                orig = current.orig,
+                pos = {},
+                width = 50,
+                height = 50,
+                hPadding = current.hPadding,
+                wPadding = current.wPadding,
+                viewport = F.getViewport();
+
+            if (!orig && current.isDom && element.is(':visible')) {
+                orig = element.find('img:first');
+
+                if (!orig.length) {
+                    orig = element;
+                }
+            }
+
+            if (isQuery(orig)) {
+                pos = orig.offset();
+
+                if (orig.is('img')) {
+                    width = orig.outerWidth();
+                    height = orig.outerHeight();
+                }
+
+            } else {
+                pos.top = viewport.y + (viewport.h - height) * current.topRatio;
+                pos.left = viewport.x + (viewport.w - width) * current.leftRatio;
+            }
+
+            if (F.wrap.css('position') === 'fixed' || current.locked) {
+                pos.top -= viewport.y;
+                pos.left -= viewport.x;
+            }
+
+            pos = {
+                top: getValue(pos.top - hPadding * current.topRatio),
+                left: getValue(pos.left - wPadding * current.leftRatio),
+                width: getValue(width + wPadding),
+                height: getValue(height + hPadding)
+            };
+
+            return pos;
+        },
+
+        step: function(now, fx) {
+            var ratio,
+                padding,
+                value,
+                prop = fx.prop,
+                current = F.current,
+                wrapSpace = current.wrapSpace,
+                skinSpace = current.skinSpace;
+
+            if (prop === 'width' || prop === 'height') {
+                ratio = fx.end === fx.start ? 1 : (now - fx.start) / (fx.end - fx.start);
+
+                if (F.isClosing) {
+                    ratio = 1 - ratio;
+                }
+
+                padding = prop === 'width' ? current.wPadding : current.hPadding;
+                value = now - padding;
+
+                F.skin[prop](getScalar(prop === 'width' ? value : value - (wrapSpace * ratio)));
+                F.inner[prop](getScalar(prop === 'width' ? value : value - (wrapSpace * ratio) - (skinSpace * ratio)));
+            }
+        },
+
+        zoomIn: function() {
+            var current = F.current,
+                startPos = current.pos,
+                effect = current.openEffect,
+                elastic = effect === 'elastic',
+                endPos = jQuery.extend({
+                    opacity: 1
+                }, startPos);
+
+            // Remove "position" property that breaks older IE
+            delete endPos.position;
+
+            if (elastic) {
+                startPos = this.getOrigPosition();
+
+                if (current.openOpacity) {
+                    startPos.opacity = 0.1;
+                }
+
+            } else if (effect === 'fade') {
+                startPos.opacity = 0.1;
+            }
+
+            F.wrap.css(startPos).animate(endPos, {
+                duration: effect === 'none' ? 0 : current.openSpeed,
+                easing: current.openEasing,
+                step: elastic ? this.step : null,
+                complete: F._afterZoomIn
+            });
+        },
+
+        zoomOut: function() {
+            var current = F.current,
+                effect = current.closeEffect,
+                elastic = effect === 'elastic',
+                endPos = {
+                    opacity: 0.1
+                };
+
+            if (elastic) {
+                endPos = this.getOrigPosition();
+
+                if (current.closeOpacity) {
+                    endPos.opacity = 0.1;
+                }
+            }
+
+            F.wrap.animate(endPos, {
+                duration: effect === 'none' ? 0 : current.closeSpeed,
+                easing: current.closeEasing,
+                step: elastic ? this.step : null,
+                complete: F._afterZoomOut
+            });
+        },
+
+        changeIn: function() {
+            var current = F.current,
+                effect = current.nextEffect,
+                startPos = current.pos,
+                endPos = {
+                    opacity: 1
+                },
+                direction = F.direction,
+                distance = 200,
+                field;
+
+            startPos.opacity = 0.1;
+
+            if (effect === 'elastic') {
+                field = direction === 'down' || direction === 'up' ? 'top' : 'left';
+
+                if (direction === 'down' || direction === 'right') {
+                    startPos[field] = getValue(getScalar(startPos[field]) - distance);
+                    endPos[field] = '+=' + distance + 'px';
+
+                } else {
+                    startPos[field] = getValue(getScalar(startPos[field]) + distance);
+                    endPos[field] = '-=' + distance + 'px';
+                }
+            }
+
+            // Workaround for http://bugs.jquery.com/ticket/12273
+            if (effect === 'none') {
+                F._afterZoomIn();
+
+            } else {
+                F.wrap.css(startPos).animate(endPos, {
+                    duration: current.nextSpeed,
+                    easing: current.nextEasing,
+                    complete: F._afterZoomIn
+                });
+            }
+        },
+
+        changeOut: function() {
+            var previous = F.previous,
+                effect = previous.prevEffect,
+                endPos = {
+                    opacity: 0.1
+                },
+                direction = F.direction,
+                distance = 200;
+
+            if (effect === 'elastic') {
+                endPos[direction === 'down' || direction === 'up' ? 'top' : 'left'] = (direction === 'up' || direction === 'left' ? '-' : '+') + '=' + distance + 'px';
+            }
+
+            previous.wrap.animate(endPos, {
+                duration: effect === 'none' ? 0 : previous.prevSpeed,
+                easing: previous.prevEasing,
+                complete: function() {
+                    jQuery(this).trigger('onReset').remove();
+                }
+            });
+        }
+    };
+
+    /*
+     *	Overlay helper
+     */
+
+    F.helpers.overlay = {
+        defaults: {
+            closeClick: true, // if true, fancyBox will be closed when user clicks on the overlay
+            speedOut: 200, // duration of fadeOut animation
+            showEarly: true, // indicates if should be opened immediately or wait until the content is ready
+            css: {}, // custom CSS properties
+            locked: !isTouch, // if true, the content will be locked into overlay
+            fixed: true // if false, the overlay CSS position property will not be set to "fixed"
+        },
+
+        overlay: null, // current handle
+        fixed: false, // indicates if the overlay has position "fixed"
+        el: jQuery('html'), // element that contains "the lock"
+
+        // Public methods
+        create: function(opts) {
+            var parent;
+
+            opts = jQuery.extend({}, this.defaults, opts);
+
+            if (this.overlay) {
+                this.close();
+            }
+
+            parent = F.coming ? F.coming.parent : opts.parent;
+
+            this.overlay = jQuery('<div class="fancybox-overlay"></div>').appendTo(parent && parent.length ? parent : 'body');
+            this.fixed = false;
+
+            if (opts.fixed && F.defaults.fixed) {
+                this.overlay.addClass('fancybox-overlay-fixed');
+
+                this.fixed = true;
+            }
+        },
+
+        open: function(opts) {
+            var that = this;
+
+            opts = jQuery.extend({}, this.defaults, opts);
+
+            if (this.overlay) {
+                this.overlay.unbind('.overlay').width('auto').height('auto');
+
+            } else {
+                this.create(opts);
+            }
+
+            if (!this.fixed) {
+                W.bind('resize.overlay', jQuery.proxy(this.update, this));
+
+                this.update();
+            }
+
+            if (opts.closeClick) {
+                this.overlay.bind('click.overlay', function(e) {
+                    if (jQuery(e.target).hasClass('fancybox-overlay')) {
+                        if (F.isActive) {
+                            F.close();
+                        } else {
+                            that.close();
+                        }
+
+                        return false;
+                    }
+                });
+            }
+
+            this.overlay.css(opts.css).show();
+        },
+
+        close: function() {
+            W.unbind('resize.overlay');
+
+            if (this.el.hasClass('fancybox-lock')) {
+                jQuery('.fancybox-margin').removeClass('fancybox-margin');
+
+                this.el.removeClass('fancybox-lock');
+
+                W.scrollTop(this.scrollV).scrollLeft(this.scrollH);
+            }
+
+            jQuery('.fancybox-overlay').remove().hide();
+
+            jQuery.extend(this, {
+                overlay: null,
+                fixed: false
+            });
+        },
+
+        // Private, callbacks
+
+        update: function() {
+            var width = '100%', offsetWidth;
+
+            // Reset width/height so it will not mess
+            this.overlay.width(width).height('100%');
+
+            // jQuery does not return reliable result for IE
+            if (IE) {
+                offsetWidth = Math.max(document.documentElement.offsetWidth, document.body.offsetWidth);
+
+                if (D.width() > offsetWidth) {
+                    width = D.width();
+                }
+
+            } else if (D.width() > W.width()) {
+                width = D.width();
+            }
+
+            this.overlay.width(width).height(D.height());
+        },
+
+        // This is where we can manipulate DOM, because later it would cause iframes to reload
+        onReady: function(opts, obj) {
+            var overlay = this.overlay;
+
+            jQuery('.fancybox-overlay').stop(true, true);
+
+            if (!overlay) {
+                this.create(opts);
+            }
+
+            if (opts.locked && this.fixed && obj.fixed) {
+                obj.locked = this.overlay.append(obj.wrap);
+                obj.fixed = false;
+            }
+
+            if (opts.showEarly === true) {
+                this.beforeShow.apply(this, arguments);
+            }
+        },
+
+        beforeShow: function(opts, obj) {
+            if (obj.locked && !this.el.hasClass('fancybox-lock')) {
+                if (this.fixPosition !== false) {
+                    jQuery('*').filter(function() {
+                        return (jQuery(this).css('position') === 'fixed' && !jQuery(this).hasClass("fancybox-overlay") && !jQuery(this).hasClass("fancybox-wrap"));
+                    }).addClass('fancybox-margin');
+                }
+
+                this.el.addClass('fancybox-margin');
+
+                this.scrollV = W.scrollTop();
+                this.scrollH = W.scrollLeft();
+
+                this.el.addClass('fancybox-lock');
+
+                W.scrollTop(this.scrollV).scrollLeft(this.scrollH);
+            }
+
+            this.open(opts);
+        },
+
+        onUpdate: function() {
+            if (!this.fixed) {
+                this.update();
+            }
+        },
+
+        afterClose: function(opts) {
+            // Remove overlay if exists and fancyBox is not opening
+            // (e.g., it is not being open using afterClose callback)
+            if (this.overlay && !F.coming) {
+                this.overlay.fadeOut(opts.speedOut, jQuery.proxy(this.close, this));
+            }
+        }
+    };
+
+    /*
+     *	Title helper
+     */
+
+    F.helpers.title = {
+        defaults: {
+            type: 'float', // 'float', 'inside', 'outside' or 'over',
+            position: 'bottom' // 'top' or 'bottom'
+        },
+
+        beforeShow: function(opts) {
+            var current = F.current,
+                text = current.title,
+                type = opts.type,
+                title,
+                target;
+
+            if (jQuery.isFunction(text)) {
+                text = text.call(current.element, current);
+            }
+
+            if (!isString(text) || jQuery.trim(text) === '') {
+                return;
+            }
+
+            title = jQuery('<div class="fancybox-title fancybox-title-' + type + '-wrap">' + text + '</div>');
+
+            switch (type) {
+                case 'inside':
+                    target = F.skin;
+                    break;
+
+                case 'outside':
+                    target = F.wrap;
+                    break;
+
+                case 'over':
+                    target = F.inner;
+                    break;
+
+                default: // 'float'
+                    target = F.skin;
+
+                    title.appendTo('body');
+
+                    if (IE) {
+                        title.width(title.width());
+                    }
+
+                    title.wrapInner('<span class="child"></span>');
+
+                    //Increase bottom margin so this title will also fit into viewport
+                    F.current.margin[2] += Math.abs(getScalar(title.css('margin-bottom')));
+                    break;
+            }
+
+            title[(opts.position === 'top' ? 'prependTo' : 'appendTo')](target);
+        }
+    };
+
+    // jQuery plugin initialization
+    jQuery.fn.fancybox = function(options) {
+        var index,
+            that = jQuery(this),
+            selector = this.selector || '',
+            run = function(e) {
+                var what = jQuery(this).blur(), idx = index, relType, relVal;
+
+                if (!(e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) && !what.is('.fancybox-wrap')) {
+                    relType = options.groupAttr || 'data-fancybox-group';
+                    relVal = what.attr(relType);
+
+                    if (!relVal) {
+                        relType = 'rel';
+                        relVal = what.get(0)[relType];
+                    }
+
+                    if (relVal && relVal !== '' && relVal !== 'nofollow') {
+                        what = selector.length ? jQuery(selector) : that;
+                        what = what.filter('[' + relType + '="' + relVal + '"]');
+                        idx = what.index(this);
+                    }
+
+                    options.index = idx;
+
+                    // Stop an event from bubbling if everything is fine
+                    if (F.open(what, options) !== false) {
+                        e.preventDefault();
+                    }
+                }
+            };
+
+        options = options || {};
+        index = options.index || 0;
+
+        if (!selector || options.live === false) {
+            that.unbind('click.fb-start').bind('click.fb-start', run);
+
+        } else {
+            D.undelegate(selector, 'click.fb-start').delegate(selector + ":not('.fancybox-item, .fancybox-nav')", 'click.fb-start', run);
+        }
+
+        this.filter('[data-fancybox-start=1]').trigger('click');
+
+        return this;
+    };
+
+    // Tests that need a body at doc ready
+    D.ready(function() {
+        var w1, w2;
+
+        if (jQuery.scrollbarWidth === undefined) {
+            // http://benalman.com/projects/jquery-misc-plugins/#scrollbarwidth
+            jQuery.scrollbarWidth = function() {
+                var parent = jQuery('<div style="width:50px;height:50px;overflow:auto"><div/></div>').appendTo('body'),
+                    child = parent.children(),
+                    width = child.innerWidth() - child.height(99).innerWidth();
+
+                parent.remove();
+
+                return width;
+            };
+        }
+
+        if (jQuery.support.fixedPosition === undefined) {
+            jQuery.support.fixedPosition = (function() {
+                var elem = jQuery('<div style="position:fixed;top:20px;"></div>').appendTo('body'),
+                    fixed = (elem[0].offsetTop === 20 || elem[0].offsetTop === 15);
+
+                elem.remove();
+
+                return fixed;
+            }());
+        }
+
+        jQuery.extend(F.defaults, {
+            scrollbarWidth: jQuery.scrollbarWidth(),
+            fixed: jQuery.support.fixedPosition,
+            parent: jQuery('body')
+        });
+
+        //Get real width of page scroll-bar
+        w1 = jQuery(window).width();
+
+        H.addClass('fancybox-lock-test');
+
+        w2 = jQuery(window).width();
+
+        H.removeClass('fancybox-lock-test');
+
+        jQuery("<style type='text/css'>.fancybox-margin{margin-right:" + (w2 - w1) + "px;}</style>").appendTo("head");
+    });
+}
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.js":[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -6913,7 +4626,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":43,"./handlebars/compiler/ast":45,"./handlebars/compiler/base":46,"./handlebars/compiler/compiler":47,"./handlebars/compiler/javascript-compiler":49}],43:[function(require,module,exports){
+},{"./handlebars.runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.runtime.js","./handlebars/compiler/ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./handlebars/compiler/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js","./handlebars/compiler/compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js","./handlebars/compiler/javascript-compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -6949,7 +4662,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":44,"./handlebars/exception":53,"./handlebars/runtime":54,"./handlebars/safe-string":55,"./handlebars/utils":56}],44:[function(require,module,exports){
+},{"./handlebars/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/base.js","./handlebars/exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js","./handlebars/runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/runtime.js","./handlebars/safe-string":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/safe-string.js","./handlebars/utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/base.js":[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -7181,7 +4894,7 @@ var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":53,"./utils":56}],45:[function(require,module,exports){
+},{"./exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js":[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -7396,7 +5109,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":53}],46:[function(require,module,exports){
+},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js":[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -7418,7 +5131,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"../utils":56,"./ast":45,"./helpers":48,"./parser":50}],47:[function(require,module,exports){
+},{"../utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js","./ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js","./parser":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js":[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 var isArray = require("../utils").isArray;
@@ -7871,7 +5584,7 @@ exports.compile = compile;function argEquals(a, b) {
     return true;
   }
 }
-},{"../exception":53,"../utils":56}],48:[function(require,module,exports){
+},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js","../utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js":[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -8059,7 +5772,7 @@ function omitLeft(statements, i, multiple) {
   current.leftStripped = current.string !== original;
   return current.leftStripped;
 }
-},{"../exception":53}],49:[function(require,module,exports){
+},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js":[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -9024,7 +6737,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":44,"../exception":53}],50:[function(require,module,exports){
+},{"../base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/base.js","../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js":[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* istanbul ignore next */
@@ -9525,7 +7238,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],51:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js":[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -9667,7 +7380,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":52}],52:[function(require,module,exports){
+},{"./visitor":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js":[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -9680,7 +7393,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],53:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js":[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -9709,7 +7422,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],54:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/runtime.js":[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -9903,7 +7616,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":44,"./exception":53,"./utils":56}],55:[function(require,module,exports){
+},{"./base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/base.js","./exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/safe-string.js":[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -9915,7 +7628,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],56:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js":[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -10004,7 +7717,7 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":55}],57:[function(require,module,exports){
+},{"./safe-string":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js":[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -10032,7 +7745,1370 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":42,"../dist/cjs/handlebars/compiler/printer":51,"../dist/cjs/handlebars/compiler/visitor":52,"fs":41}],58:[function(require,module,exports){
+},{"../dist/cjs/handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","../dist/cjs/handlebars/compiler/visitor":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js","fs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/browserify/lib/_empty.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js":[function(require,module,exports){
+/*global jQuery: true */
+
+/*!
+   --------------------------------
+   Infinite Scroll
+   --------------------------------
+   + https://github.com/paulirish/infinite-scroll
+   + version 2.1.0
+   + Copyright 2011/12 Paul Irish & Luke Shumard
+   + Licensed under the MIT license
+
+   + Documentation: http://infinite-scroll.com/
+*/
+
+// Uses AMD or browser globals to create a jQuery plugin.
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery'], factory);
+    } else {
+        // Browser globals
+        factory(jQuery);
+    }
+}(function ($, undefined) {
+    'use strict';
+
+    $.infinitescroll = function infscr(options, callback, element) {
+        this.element = $(element);
+
+        // Flag the object in the event of a failed creation
+        if (!this._create(options, callback)) {
+            this.failed = true;
+        }
+    };
+
+    $.infinitescroll.defaults = {
+        loading: {
+            finished: undefined,
+            finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
+            img: 'data:image/gif;base64,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',
+            msg: null,
+            msgText: '<em>Loading the next set of posts...</em>',
+            selector: null,
+            speed: 'fast',
+            start: undefined
+        },
+        state: {
+            isDuringAjax: false,
+            isInvalidPage: false,
+            isDestroyed: false,
+            isDone: false, // For when it goes all the way through the archive.
+            isPaused: false,
+            isBeyondMaxPage: false,
+            currPage: 1
+        },
+        debug: false,
+        behavior: undefined,
+        binder: $(window), // used to cache the selector
+        nextSelector: 'div.navigation a:first',
+        navSelector: 'div.navigation',
+        contentSelector: null, // rename to pageFragment
+        extraScrollPx: 150,
+        itemSelector: 'div.post',
+        animate: false,
+        pathParse: undefined,
+        dataType: 'html',
+        appendCallback: true,
+        bufferPx: 40,
+        errorCallback: function () { },
+        infid: 0, //Instance ID
+        pixelsFromNavToBottom: undefined,
+        path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
+        prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
+        maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+    };
+
+    $.infinitescroll.prototype = {
+
+        /*
+            ----------------------------
+            Private methods
+            ----------------------------
+            */
+
+        // Bind or unbind from scroll
+        _binding: function infscr_binding(binding) {
+
+            var instance = this,
+            opts = instance.options;
+
+            opts.v = '2.0b2.120520';
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
+                this['_binding_'+opts.behavior].call(this);
+                return;
+            }
+
+            if (binding !== 'bind' && binding !== 'unbind') {
+                this._debug('Binding value  ' + binding + ' not valid');
+                return false;
+            }
+
+            if (binding === 'unbind') {
+                (this.options.binder).unbind('smartscroll.infscr.' + instance.options.infid);
+            } else {
+                (this.options.binder)[binding]('smartscroll.infscr.' + instance.options.infid, function () {
+                    instance.scroll();
+                });
+            }
+
+            this._debug('Binding', binding);
+        },
+
+        // Fundamental aspects of the plugin are initialized
+        _create: function infscr_create(options, callback) {
+
+            // Add custom options to defaults
+            var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
+            this.options = opts;
+            var $window = $(window);
+            var instance = this;
+
+            // Validate selectors
+            if (!instance._validate(options)) {
+                return false;
+            }
+
+            // Validate page fragment path
+            var path = $(opts.nextSelector).attr('href');
+            if (!path) {
+                this._debug('Navigation selector not found');
+                return false;
+            }
+
+            // Set the path to be a relative URL from root.
+            opts.path = opts.path || this._determinepath(path);
+
+            // contentSelector is 'page fragment' option for .load() / .ajax() calls
+            opts.contentSelector = opts.contentSelector || this.element;
+
+            // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
+            opts.loading.selector = opts.loading.selector || opts.contentSelector;
+
+            // Define loading.msg
+            opts.loading.msg = opts.loading.msg || $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
+
+            // Preload loading.img
+            (new Image()).src = opts.loading.img;
+
+            // distance from nav links to bottom
+            // computed as: height of the document + top offset of container - top offset of nav link
+            if(opts.pixelsFromNavToBottom === undefined) {
+                opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
+                this._debug('pixelsFromNavToBottom: ' + opts.pixelsFromNavToBottom);
+            }
+
+            var self = this;
+
+            // determine loading.start actions
+            opts.loading.start = opts.loading.start || function() {
+                $(opts.navSelector).hide();
+                opts.loading.msg
+                .appendTo(opts.loading.selector)
+                .show(opts.loading.speed, $.proxy(function() {
+                    this.beginAjax(opts);
+                }, self));
+            };
+
+            // determine loading.finished actions
+            opts.loading.finished = opts.loading.finished || function() {
+                if (!opts.state.isBeyondMaxPage)
+                    opts.loading.msg.fadeOut(opts.loading.speed);
+            };
+
+            // callback loading
+            opts.callback = function(instance, data, url) {
+                if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
+                    instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data, url);
+                }
+
+                if (callback) {
+                    callback.call($(opts.contentSelector)[0], data, opts, url);
+                }
+
+                if (opts.prefill) {
+                    $window.bind('resize.infinite-scroll', instance._prefill);
+                }
+            };
+
+            if (options.debug) {
+                // Tell IE9 to use its built-in console
+                if (Function.prototype.bind && (typeof console === 'object' || typeof console === 'function') && typeof console.log === 'object') {
+                    ['log','info','warn','error','assert','dir','clear','profile','profileEnd']
+                        .forEach(function (method) {
+                            console[method] = this.call(console[method], console);
+                        }, Function.prototype.bind);
+                }
+            }
+
+            this._setup();
+
+            // Setups the prefill method for use
+            if (opts.prefill) {
+                this._prefill();
+            }
+
+            // Return true to indicate successful creation
+            return true;
+        },
+
+        _prefill: function infscr_prefill() {
+            var instance = this;
+            var $window = $(window);
+
+            function needsPrefill() {
+                return ( $(instance.options.contentSelector).height() <= $window.height() );
+            }
+
+            this._prefill = function() {
+                if (needsPrefill()) {
+                    instance.scroll();
+                }
+
+                $window.bind('resize.infinite-scroll', function() {
+                    if (needsPrefill()) {
+                        $window.unbind('resize.infinite-scroll');
+                        instance.scroll();
+                    }
+                });
+            };
+
+            // Call self after setting up the new function
+            this._prefill();
+        },
+
+        // Console log wrapper
+        _debug: function infscr_debug() {
+            if (true !== this.options.debug) {
+                return;
+            }
+
+            if (typeof console !== 'undefined' && typeof console.log === 'function') {
+                // Modern browsers
+                // Single argument, which is a string
+                if ((Array.prototype.slice.call(arguments)).length === 1 && typeof Array.prototype.slice.call(arguments)[0] === 'string') {
+                    console.log( (Array.prototype.slice.call(arguments)).toString() );
+                } else {
+                    console.log( Array.prototype.slice.call(arguments) );
+                }
+            } else if (!Function.prototype.bind && typeof console !== 'undefined' && typeof console.log === 'object') {
+                // IE8
+                Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+            }
+        },
+
+        // find the number to increment in the path.
+        _determinepath: function infscr_determinepath(path) {
+
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
+                return this['_determinepath_'+opts.behavior].call(this,path);
+            }
+
+            if (!!opts.pathParse) {
+
+                this._debug('pathParse manual');
+                return opts.pathParse(path, this.options.state.currPage+1);
+
+            } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
+                path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
+
+                // if there is any 2 in the url at all.
+            } else if (path.match(/^(.*?)2(.*?$)/)) {
+
+                // page= is used in django:
+                // http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
+                if (path.match(/^(.*?page=)2(\/.*|$)/)) {
+                    path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
+                    return path;
+                }
+
+                path = path.match(/^(.*?)2(.*?$)/).slice(1);
+
+            } else {
+
+                // page= is used in drupal too but second page is page=1 not page=2:
+                // thx Jerod Fritz, vladikoff
+                if (path.match(/^(.*?page=)1(\/.*|$)/)) {
+                    path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
+                    return path;
+                } else {
+                    this._debug("Sorry, we couldn't parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.");
+                    // Get rid of isInvalidPage to allow permalink to state
+                    opts.state.isInvalidPage = true;  //prevent it from running on this page.
+                }
+            }
+            this._debug('determinePath', path);
+            return path;
+
+        },
+
+        // Custom error
+        _error: function infscr_error(xhr) {
+
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_error_'+opts.behavior] !== undefined) {
+                this['_error_'+opts.behavior].call(this,xhr);
+                return;
+            }
+
+            if (xhr !== 'destroy' && xhr !== 'end') {
+                xhr = 'unknown';
+            }
+
+            this._debug('Error', xhr);
+
+            if (xhr === 'end' || opts.state.isBeyondMaxPage) {
+                this._showdonemsg();
+            }
+
+            opts.state.isDone = true;
+            opts.state.currPage = 1; // if you need to go back to this instance
+            opts.state.isPaused = false;
+            opts.state.isBeyondMaxPage = false;
+            this._binding('unbind');
+
+        },
+
+        // Load Callback
+        _loadcallback: function infscr_loadcallback(box, data, url) {
+            var opts = this.options,
+            callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
+            result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
+            frag;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
+                this['_loadcallback_'+opts.behavior].call(this,box,data,url);
+                return;
+            }
+
+            switch (result) {
+                case 'done':
+                    this._showdonemsg();
+                    return false;
+
+                case 'no-append':
+                    if (opts.dataType === 'html') {
+                        data = '<div>' + data + '</div>';
+                        data = $(data).find(opts.itemSelector);
+                    }
+
+                    // if it didn't return anything
+                    if (data.length === 0) {
+                        return this._error('end');
+                    }
+
+                    break;
+
+                case 'append':
+                    var children = box.children();
+                    // if it didn't return anything
+                    if (children.length === 0) {
+                        return this._error('end');
+                    }
+
+                    // use a documentFragment because it works when content is going into a table or UL
+                    frag = document.createDocumentFragment();
+                    while (box[0].firstChild) {
+                        frag.appendChild(box[0].firstChild);
+                    }
+
+                    this._debug('contentSelector', $(opts.contentSelector)[0]);
+                    $(opts.contentSelector)[0].appendChild(frag);
+                    // previously, we would pass in the new DOM element as context for the callback
+                    // however we're now using a documentfragment, which doesn't have parents or children,
+                    // so the context is the contentContainer guy, and we pass in an array
+                    // of the elements collected as the first argument.
+
+                    data = children.get();
+                    break;
+            }
+
+            // loadingEnd function
+            opts.loading.finished.call($(opts.contentSelector)[0],opts);
+
+            // smooth scroll to ease in the new content
+            if (opts.animate) {
+                var scrollTo = $(window).scrollTop() + $(opts.loading.msg).height() + opts.extraScrollPx + 'px';
+                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
+            }
+
+            if (!opts.animate) {
+                // once the call is done, we can allow it again.
+                opts.state.isDuringAjax = false;
+            }
+
+            callback(this, data, url);
+
+            if (opts.prefill) {
+                this._prefill();
+            }
+        },
+
+        _nearbottom: function infscr_nearbottom() {
+
+            var opts = this.options,
+            pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
+                return this['_nearbottom_'+opts.behavior].call(this);
+            }
+
+            this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+
+            // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
+            return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
+
+        },
+
+        // Pause / temporarily disable plugin from firing
+        _pausing: function infscr_pausing(pause) {
+
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_pausing_'+opts.behavior] !== undefined) {
+                this['_pausing_'+opts.behavior].call(this,pause);
+                return;
+            }
+
+            // If pause is not 'pause' or 'resume', toggle it's value
+            if (pause !== 'pause' && pause !== 'resume' && pause !== null) {
+                this._debug('Invalid argument. Toggling pause value instead');
+            }
+
+            pause = (pause && (pause === 'pause' || pause === 'resume')) ? pause : 'toggle';
+
+            switch (pause) {
+                case 'pause':
+                    opts.state.isPaused = true;
+                break;
+
+                case 'resume':
+                    opts.state.isPaused = false;
+                break;
+
+                case 'toggle':
+                    opts.state.isPaused = !opts.state.isPaused;
+                break;
+            }
+
+            this._debug('Paused', opts.state.isPaused);
+            return false;
+
+        },
+
+        // Behavior is determined
+        // If the behavior option is undefined, it will set to default and bind to scroll
+        _setup: function infscr_setup() {
+
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
+                this['_setup_'+opts.behavior].call(this);
+                return;
+            }
+
+            this._binding('bind');
+
+            return false;
+
+        },
+
+        // Show done message
+        _showdonemsg: function infscr_showdonemsg() {
+
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_showdonemsg_'+opts.behavior] !== undefined) {
+                this['_showdonemsg_'+opts.behavior].call(this);
+                return;
+            }
+
+            opts.loading.msg
+            .find('img')
+            .hide()
+            .parent()
+            .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
+                $(this).parent().fadeOut(opts.loading.speed);
+            });
+
+            // user provided callback when done
+            opts.errorCallback.call($(opts.contentSelector)[0],'done');
+        },
+
+        // grab each selector option and see if any fail
+        _validate: function infscr_validate(opts) {
+            for (var key in opts) {
+                if (key.indexOf && key.indexOf('Selector') > -1 && $(opts[key]).length === 0) {
+                    this._debug('Your ' + key + ' found no elements.');
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
+        /*
+            ----------------------------
+            Public methods
+            ----------------------------
+            */
+
+        // Bind to scroll
+        bind: function infscr_bind() {
+            this._binding('bind');
+        },
+
+        // Destroy current instance of plugin
+        destroy: function infscr_destroy() {
+            this.options.state.isDestroyed = true;
+            this.options.loading.finished();
+            return this._error('destroy');
+        },
+
+        // Set pause value to false
+        pause: function infscr_pause() {
+            this._pausing('pause');
+        },
+
+        // Set pause value to false
+        resume: function infscr_resume() {
+            this._pausing('resume');
+        },
+
+        beginAjax: function infscr_ajax(opts) {
+            var instance = this,
+                path = opts.path,
+                box, desturl, method, condition;
+
+            // increment the URL bit. e.g. /page/3/
+            opts.state.currPage++;
+
+            // Manually control maximum page
+            if ( opts.maxPage !== undefined && opts.state.currPage > opts.maxPage ){
+                opts.state.isBeyondMaxPage = true;
+                this.destroy();
+                return;
+            }
+
+            // if we're dealing with a table we can't use DIVs
+            box = $(opts.contentSelector).is('table, tbody') ? $('<tbody/>') : $('<div/>');
+
+            desturl = (typeof path === 'function') ? path(opts.state.currPage) : path.join(opts.state.currPage);
+            instance._debug('heading into ajax', desturl);
+
+            method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
+            if (opts.appendCallback && opts.dataType === 'html') {
+                method += '+callback';
+            }
+
+            switch (method) {
+                case 'html+callback':
+                    instance._debug('Using HTML via .load() method');
+                    box.load(desturl + ' ' + opts.itemSelector, undefined, function infscr_ajax_callback(responseText) {
+                        instance._loadcallback(box, responseText, desturl);
+                    });
+
+                    break;
+
+                case 'html':
+                    instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+                    $.ajax({
+                        // params
+                        url: desturl,
+                        dataType: opts.dataType,
+                        complete: function infscr_ajax_callback(jqXHR, textStatus) {
+                            condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === 'success' || textStatus === 'notmodified');
+                            if (condition) {
+                                instance._loadcallback(box, jqXHR.responseText, desturl);
+                            } else {
+                                instance._error('end');
+                            }
+                        }
+                    });
+
+                    break;
+                case 'json':
+                    instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'GET',
+                        url: desturl,
+                        success: function (data, textStatus, jqXHR) {
+                            condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === 'success' || textStatus === 'notmodified');
+                            if (opts.appendCallback) {
+                                // if appendCallback is true, you must defined template in options.
+                                // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+                                if (opts.template !== undefined) {
+                                    var theData = opts.template(data);
+                                    box.append(theData);
+                                    if (condition) {
+                                        instance._loadcallback(box, theData);
+                                    } else {
+                                        instance._error('end');
+                                    }
+                                } else {
+                                    instance._debug('template must be defined.');
+                                    instance._error('end');
+                                }
+                            } else {
+                                // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+                                if (condition) {
+                                    instance._loadcallback(box, data, desturl);
+                                } else {
+                                    instance._error('end');
+                                }
+                            }
+                        },
+                        error: function() {
+                            instance._debug('JSON ajax request failed.');
+                            instance._error('end');
+                        }
+                    });
+
+                    break;
+            }
+        },
+
+        // Retrieve next set of content items
+        retrieve: function infscr_retrieve(pageNum) {
+            pageNum = pageNum || null;
+
+            var instance = this,
+            opts = instance.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
+                this['retrieve_'+opts.behavior].call(this,pageNum);
+                return;
+            }
+
+            // for manual triggers, if destroyed, get out of here
+            if (opts.state.isDestroyed) {
+                this._debug('Instance is destroyed');
+                return false;
+            }
+
+            // we dont want to fire the ajax multiple times
+            opts.state.isDuringAjax = true;
+
+            opts.loading.start.call($(opts.contentSelector)[0],opts);
+        },
+
+        // Check to see next page is needed
+        scroll: function infscr_scroll() {
+
+            var opts = this.options,
+            state = opts.state;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['scroll_'+opts.behavior] !== undefined) {
+                this['scroll_'+opts.behavior].call(this);
+                return;
+            }
+
+            if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) {
+                return;
+            }
+
+            if (!this._nearbottom()) {
+                return;
+            }
+
+            this.retrieve();
+
+        },
+
+        // Toggle pause value
+        toggle: function infscr_toggle() {
+            this._pausing();
+        },
+
+        // Unbind from scroll
+        unbind: function infscr_unbind() {
+            this._binding('unbind');
+        },
+
+        // update options
+        update: function infscr_options(key) {
+            if ($.isPlainObject(key)) {
+                this.options = $.extend(true,this.options,key);
+            }
+        }
+    };
+
+
+    /*
+        ----------------------------
+        Infinite Scroll function
+        ----------------------------
+
+        Borrowed logic from the following...
+
+        jQuery UI
+        - https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.widget.js
+
+        jCarousel
+        - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
+
+        Masonry
+        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js
+
+*/
+
+    $.fn.infinitescroll = function infscr_init(options, callback) {
+
+
+        var thisCall = typeof options;
+
+        switch (thisCall) {
+
+            // method
+            case 'string':
+                var args = Array.prototype.slice.call(arguments, 1);
+
+                this.each(function () {
+                    var instance = $.data(this, 'infinitescroll');
+
+                    if (!instance) {
+                        // not setup yet
+                        // return $.error('Method ' + options + ' cannot be called until Infinite Scroll is setup');
+                        return false;
+                    }
+
+                    if (!$.isFunction(instance[options]) || options.charAt(0) === '_') {
+                        // return $.error('No such method ' + options + ' for Infinite Scroll');
+                        return false;
+                    }
+
+                    // no errors!
+                    instance[options].apply(instance, args);
+                });
+
+            break;
+
+            // creation
+            case 'object':
+
+                this.each(function () {
+
+                var instance = $.data(this, 'infinitescroll');
+
+                if (instance) {
+
+                    // update options of current instance
+                    instance.update(options);
+
+                } else {
+
+                    // initialize new instance
+                    instance = new $.infinitescroll(options, callback, this);
+
+                    // don't attach if instantiation failed
+                    if (!instance.failed) {
+                        $.data(this, 'infinitescroll', instance);
+                    }
+
+                }
+
+            });
+
+            break;
+
+        }
+
+        return this;
+    };
+
+
+
+    /*
+     * smartscroll: debounced scroll event for jQuery *
+     * https://github.com/lukeshumard/smartscroll
+     * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *
+     * Copyright 2011 Louis-Remi & Luke Shumard * Licensed under the MIT license. *
+     */
+
+    var event = $.event,
+    scrollTimeout;
+
+    event.special.smartscroll = {
+        setup: function () {
+            $(this).bind('scroll', event.special.smartscroll.handler);
+        },
+        teardown: function () {
+            $(this).unbind('scroll', event.special.smartscroll.handler);
+        },
+        handler: function (event, execAsap) {
+            // Save the context
+            var context = this,
+            args = arguments;
+
+            // set correct event type
+            event.type = 'smartscroll';
+
+            if (scrollTimeout) { clearTimeout(scrollTimeout); }
+            scrollTimeout = setTimeout(function () {
+                $(context).trigger('smartscroll', args);
+            }, execAsap === 'execAsap' ? 0 : 100);
+        }
+    };
+
+    $.fn.smartscroll = function (fn) {
+        return fn ? this.bind('smartscroll', fn) : this.trigger('smartscroll', ['execAsap']);
+    };
+
+}));
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js":[function(require,module,exports){
+//
+// leaflet.dataoptions
+//
+// A Leaflet plugin that makes it easy to configure a Leaflet map using data
+// attributes on the map's DOM element.
+//
+
+(function () {
+    
+    function defineDataOptions(L) {
+
+        L.Map = L.Map.extend({
+
+            // Override the default constructor to get options from data 
+            // attributes
+            initialize: function (id, options) {
+                // Get the data prefix for attribute names
+                var prefix = 'data-l-';
+                if (options !== undefined && options.dataOptionsPrefix !== undefined) {
+                    prefix = options.dataOptionsPrefix;
+                }
+
+                // Find options given by data attribute, add to existing options
+                var dataAttributeOptions = this.loadDataAttributeOptions(id, prefix);
+                options = L.extend(dataAttributeOptions, options);
+
+                // Carry on as usual
+                L.Map.__super__.initialize.call(this, id, options);
+            },
+
+            loadDataAttributeOptions: function (id, prefix) {
+                var element = L.DomUtil.get(id),
+                    attributes = element.attributes,
+                    length = attributes.length,
+                    newOptions = {};
+                for (var i = 0; i < length; i++) {
+                    var attribute = attributes[i];
+                    if (attribute.name.search(prefix) === 0) {
+                        var name = attribute.name.slice(prefix.length),
+                            camelCaseName = this.camelCaseDataAttributeName(name),
+                            value = this.parseDataAttributeValue(attribute.value);
+                        newOptions[camelCaseName] = newOptions[name] = value;
+                    }
+                }
+                return newOptions;
+            },
+
+            camelCaseDataAttributeName: function (name) {
+                var nameParts = name.split('-'),
+                    camelCaseName = nameParts[0];
+                for (var i = 1; i < nameParts.length; i++) {
+                    camelCaseName += nameParts[i][0].toUpperCase();
+                    camelCaseName += nameParts[i].slice(1);
+                }
+                return camelCaseName;
+            },
+
+            parseDataAttributeValue: function (value) {
+                try {
+                    return JSON.parse(value);
+                }
+                catch (e) {
+                    // If parsing as JSON fails, return original string
+                    return value;
+                }
+            }
+
+        });
+
+    }
+
+    if (typeof define === 'function' && define.amd) {
+        // Try to add dataoptions to Leaflet using AMD
+        define(['leaflet'], function (L) {
+            defineDataOptions(L);
+        });
+    }
+    else {
+        // Else use the global L
+        defineDataOptions(L);
+    }
+
+})();
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js":[function(require,module,exports){
+(function(window) {
+	var HAS_HASHCHANGE = (function() {
+		var doc_mode = window.documentMode;
+		return ('onhashchange' in window) &&
+			(doc_mode === undefined || doc_mode > 7);
+	})();
+
+	L.Hash = function(map) {
+		this.onHashChange = L.Util.bind(this.onHashChange, this);
+
+		if (map) {
+			this.init(map);
+		}
+	};
+
+	L.Hash.parseHash = function(hash) {
+		if(hash.indexOf('#') === 0) {
+			hash = hash.substr(1);
+		}
+		var args = hash.split("/");
+		if (args.length == 3) {
+			var zoom = parseInt(args[0], 10),
+			lat = parseFloat(args[1]),
+			lon = parseFloat(args[2]);
+			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
+				return false;
+			} else {
+				return {
+					center: new L.LatLng(lat, lon),
+					zoom: zoom
+				};
+			}
+		} else {
+			return false;
+		}
+	};
+
+	L.Hash.formatHash = function(map) {
+		var center = map.getCenter(),
+		    zoom = map.getZoom(),
+		    precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
+
+		return "#" + [zoom,
+			center.lat.toFixed(precision),
+			center.lng.toFixed(precision)
+		].join("/");
+	},
+
+	L.Hash.prototype = {
+		map: null,
+		lastHash: null,
+
+		parseHash: L.Hash.parseHash,
+		formatHash: L.Hash.formatHash,
+
+		init: function(map) {
+			this.map = map;
+
+			// reset the hash
+			this.lastHash = null;
+			this.onHashChange();
+
+			if (!this.isListening) {
+				this.startListening();
+			}
+		},
+
+		removeFrom: function(map) {
+			if (this.changeTimeout) {
+				clearTimeout(this.changeTimeout);
+			}
+
+			if (this.isListening) {
+				this.stopListening();
+			}
+
+			this.map = null;
+		},
+
+		onMapMove: function() {
+			// bail if we're moving the map (updating from a hash),
+			// or if the map is not yet loaded
+
+			if (this.movingMap || !this.map._loaded) {
+				return false;
+			}
+
+			var hash = this.formatHash(this.map);
+			if (this.lastHash != hash) {
+				location.replace(hash);
+				this.lastHash = hash;
+			}
+		},
+
+		movingMap: false,
+		update: function() {
+			var hash = location.hash;
+			if (hash === this.lastHash) {
+				return;
+			}
+			var parsed = this.parseHash(hash);
+			if (parsed) {
+				this.movingMap = true;
+
+				this.map.setView(parsed.center, parsed.zoom);
+
+				this.movingMap = false;
+			} else {
+				this.onMapMove(this.map);
+			}
+		},
+
+		// defer hash change updates every 100ms
+		changeDefer: 100,
+		changeTimeout: null,
+		onHashChange: function() {
+			// throttle calls to update() so that they only happen every
+			// `changeDefer` ms
+			if (!this.changeTimeout) {
+				var that = this;
+				this.changeTimeout = setTimeout(function() {
+					that.update();
+					that.changeTimeout = null;
+				}, this.changeDefer);
+			}
+		},
+
+		isListening: false,
+		hashChangeInterval: null,
+		startListening: function() {
+			this.map.on("moveend", this.onMapMove, this);
+
+			if (HAS_HASHCHANGE) {
+				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
+			} else {
+				clearInterval(this.hashChangeInterval);
+				this.hashChangeInterval = setInterval(this.onHashChange, 50);
+			}
+			this.isListening = true;
+		},
+
+		stopListening: function() {
+			this.map.off("moveend", this.onMapMove, this);
+
+			if (HAS_HASHCHANGE) {
+				L.DomEvent.removeListener(window, "hashchange", this.onHashChange);
+			} else {
+				clearInterval(this.hashChangeInterval);
+			}
+			this.isListening = false;
+		}
+	};
+	L.hash = function(map) {
+		return new L.Hash(map);
+	};
+	L.Map.prototype.addHash = function() {
+		this._hash = L.hash(this);
+	};
+	L.Map.prototype.removeHash = function() {
+		this._hash.removeFrom();
+	};
+})(window);
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js":[function(require,module,exports){
+/*
+ * L.Control.Loading is a control that shows a loading indicator when tiles are
+ * loading or when map-related AJAX requests are taking place.
+ */
+
+(function () {
+
+    function defineLeafletLoading(L) {
+        L.Control.Loading = L.Control.extend({
+            options: {
+                position: 'topleft',
+                separate: false,
+                zoomControl: null,
+                spinjs: false,
+                spin: { 
+                  lines: 7, 
+                  length: 3, 
+                  width: 3, 
+                  radius: 5, 
+                  rotate: 13, 
+                  top: "83%"
+                }
+            },
+
+            initialize: function(options) {
+                L.setOptions(this, options);
+                this._dataLoaders = {};
+
+                // Try to set the zoom control this control is attached to from the 
+                // options
+                if (this.options.zoomControl !== null) {
+                    this.zoomControl = this.options.zoomControl;
+                }
+            },
+
+            onAdd: function(map) {
+                if (this.options.spinjs && (typeof Spinner !== 'function')) {
+                    return console.error("Leaflet.loading cannot load because you didn't load spin.js (http://fgnass.github.io/spin.js/), even though you set it in options.");
+                }
+                this._addLayerListeners(map);
+                this._addMapListeners(map);
+
+                // Try to set the zoom control this control is attached to from the map
+                // the control is being added to
+                if (!this.options.separate && !this.zoomControl) {
+                    if (map.zoomControl) {
+                        this.zoomControl = map.zoomControl;
+                    } else if (map.zoomsliderControl) {
+                        this.zoomControl = map.zoomsliderControl;
+                    }
+                }
+
+                // Create the loading indicator
+                var classes = 'leaflet-control-loading';
+                var container;
+                if (this.zoomControl && !this.options.separate) {
+                    // If there is a zoom control, hook into the bottom of it
+                    container = this.zoomControl._container;
+                    // These classes are no longer used as of Leaflet 0.6
+                    classes += ' leaflet-bar-part-bottom leaflet-bar-part last';
+
+                    // Loading control will be added to the zoom control. So the visible last element is not the
+                    // last dom element anymore. So add the part-bottom class.
+                    L.DomUtil.addClass(this._getLastControlButton(), 'leaflet-bar-part-bottom');
+                }
+                else {
+                    // Otherwise, create a container for the indicator
+                    container = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-bar');
+                }
+                this._indicator = L.DomUtil.create('a', classes, container);
+                if (this.options.spinjs) {
+                  this._spinner = new Spinner(this.options.spin).spin();
+                  this._indicator.appendChild(this._spinner.el);
+                }
+                return container;
+            },
+
+            onRemove: function(map) {
+                this._removeLayerListeners(map);
+                this._removeMapListeners(map);
+            },
+
+            removeFrom: function (map) {
+                if (this.zoomControl && !this.options.separate) {
+                    // Override Control.removeFrom() to avoid clobbering the entire
+                    // _container, which is the same as zoomControl's
+                    this._container.removeChild(this._indicator);
+                    this._map = null;
+                    this.onRemove(map);
+                    return this;
+                }
+                else {
+                    // If this control is separate from the zoomControl, call the
+                    // parent method so we don't leave behind an empty container
+                    return L.Control.prototype.removeFrom.call(this, map);
+                }
+            },
+
+            addLoader: function(id) {
+                this._dataLoaders[id] = true;
+                this.updateIndicator();
+            },
+
+            removeLoader: function(id) {
+                delete this._dataLoaders[id];
+                this.updateIndicator();
+            },
+
+            updateIndicator: function() {
+                if (this.isLoading()) {
+                    this._showIndicator();
+                }
+                else {
+                    this._hideIndicator();
+                }
+            },
+
+            isLoading: function() {
+                return this._countLoaders() > 0;
+            },
+
+            _countLoaders: function() {
+                var size = 0, key;
+                for (key in this._dataLoaders) {
+                    if (this._dataLoaders.hasOwnProperty(key)) size++;
+                }
+                return size;
+            },
+
+            _showIndicator: function() {
+                // Show loading indicator
+                L.DomUtil.addClass(this._indicator, 'is-loading');
+
+                // If zoomControl exists, make the zoom-out button not last
+                if (!this.options.separate) {
+                    if (this.zoomControl instanceof L.Control.Zoom) {
+                        L.DomUtil.removeClass(this._getLastControlButton(), 'leaflet-bar-part-bottom');
+                    }
+                    else if (typeof L.Control.Zoomslider === 'function' && this.zoomControl instanceof L.Control.Zoomslider) {
+                        L.DomUtil.removeClass(this.zoomControl._ui.zoomOut, 'leaflet-bar-part-bottom');
+                    }
+                }
+            },
+
+            _hideIndicator: function() {
+                // Hide loading indicator
+                L.DomUtil.removeClass(this._indicator, 'is-loading');
+
+                // If zoomControl exists, make the zoom-out button last
+                if (!this.options.separate) {
+                    if (this.zoomControl instanceof L.Control.Zoom) {
+                        L.DomUtil.addClass(this._getLastControlButton(), 'leaflet-bar-part-bottom');
+                    }
+                    else if (typeof L.Control.Zoomslider === 'function' && this.zoomControl instanceof L.Control.Zoomslider) {
+                        L.DomUtil.addClass(this.zoomControl._ui.zoomOut, 'leaflet-bar-part-bottom');
+                    }
+                }
+            },
+
+            _getLastControlButton: function() {
+                var container = this.zoomControl._container,
+                    index = container.children.length - 1;
+
+                // Find the last visible control button that is not our loading
+                // indicator
+                while (index > 0) {
+                    var button = container.children[index];
+                    if (!(this._indicator === button || button.offsetWidth === 0 || button.offsetHeight === 0)) {
+                        break;
+                    }
+                    index--;
+                }
+
+                return container.children[index];
+            },
+
+            _handleLoading: function(e) {
+                this.addLoader(this.getEventId(e));
+            },
+
+            _handleLoad: function(e) {
+                this.removeLoader(this.getEventId(e));
+            },
+
+            getEventId: function(e) {
+                if (e.id) {
+                    return e.id;
+                }
+                else if (e.layer) {
+                    return e.layer._leaflet_id;
+                }
+                return e.target._leaflet_id;
+            },
+
+            _layerAdd: function(e) {
+                if (!e.layer || !e.layer.on) return
+                try {
+                    e.layer.on({
+                        loading: this._handleLoading,
+                        load: this._handleLoad
+                    }, this);
+                }
+                catch (exception) {
+                    console.warn('L.Control.Loading: Tried and failed to add ' +
+                                 ' event handlers to layer', e.layer);
+                    console.warn('L.Control.Loading: Full details', exception);
+                }
+            },
+
+            _addLayerListeners: function(map) {
+                // Add listeners for begin and end of load to any layers already on the 
+                // map
+                map.eachLayer(function(layer) {
+                    if (!layer.on) return;
+                    layer.on({
+                        loading: this._handleLoading,
+                        load: this._handleLoad
+                    }, this);
+                }, this);
+
+                // When a layer is added to the map, add listeners for begin and end
+                // of load
+                map.on('layeradd', this._layerAdd, this);
+            },
+
+            _removeLayerListeners: function(map) {
+                // Remove listeners for begin and end of load from all layers
+                map.eachLayer(function(layer) {
+                    if (!layer.off) return;
+                    layer.off({
+                        loading: this._handleLoading,
+                        load: this._handleLoad
+                    }, this);
+                }, this);
+
+                // Remove layeradd listener from map
+                map.off('layeradd', this._layerAdd, this);
+            },
+
+            _addMapListeners: function(map) {
+                // Add listeners to the map for (custom) dataloading and dataload
+                // events, eg, for AJAX calls that affect the map but will not be
+                // reflected in the above layer events.
+                map.on({
+                    dataloading: this._handleLoading,
+                    dataload: this._handleLoad,
+                    layerremove: this._handleLoad
+                }, this);
+            },
+
+            _removeMapListeners: function(map) {
+                map.off({
+                    dataloading: this._handleLoading,
+                    dataload: this._handleLoad,
+                    layerremove: this._handleLoad
+                }, this);
+            }
+        });
+
+        L.Map.addInitHook(function () {
+            if (this.options.loadingControl) {
+                this.loadingControl = new L.Control.Loading();
+                this.addControl(this.loadingControl);
+            }
+        });
+
+        L.Control.loading = function(options) {
+            return new L.Control.Loading(options);
+        };
+    }
+
+    if (typeof define === 'function' && define.amd) {
+        // Try to add leaflet.loading to Leaflet using AMD
+        define(['leaflet'], function (L) {
+            defineLeafletLoading(L);
+        });
+    }
+    else {
+        // Else use the global L
+        defineLeafletLoading(L);
+    }
+
+})();
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-pip/index.js":[function(require,module,exports){
 var gju = require('geojson-utils');
 
 var leafletPip = {
@@ -10061,7 +9137,7 @@ var leafletPip = {
 
 module.exports = leafletPip;
 
-},{"geojson-utils":59}],59:[function(require,module,exports){
+},{"geojson-utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-pip/node_modules/geojson-utils/geojson-utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-pip/node_modules/geojson-utils/geojson-utils.js":[function(require,module,exports){
 (function () {
   var gju = this.gju = {};
 
@@ -10471,7 +9547,1194 @@ module.exports = leafletPip;
 
 })();
 
-},{}],60:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-plugins/layer/tile/Bing.js":[function(require,module,exports){
+(function (global){
+
+; L = global.L = require("leaflet");
+;__browserify_shim_require__=require;(function browserifyShim(module, define, require) {
+/* global console: true */
+L.BingLayer = L.TileLayer.extend({
+	options: {
+		subdomains: [0, 1, 2, 3],
+		type: 'Aerial',
+		attribution: 'Bing',
+		culture: ''
+	},
+
+	initialize: function(key, options) {
+		L.Util.setOptions(this, options);
+
+		this._key = key;
+		this._url = null;
+		this.meta = {};
+		this.loadMetadata();
+	},
+
+	tile2quad: function(x, y, z) {
+		var quad = '';
+		for (var i = z; i > 0; i--) {
+			var digit = 0;
+			var mask = 1 << (i - 1);
+			if ((x & mask) !== 0) digit += 1;
+			if ((y & mask) !== 0) digit += 2;
+			quad = quad + digit;
+		}
+		return quad;
+	},
+
+	getTileUrl: function(p, z) {
+		var zoom = this._getZoomForUrl();
+		var subdomains = this.options.subdomains,
+			s = this.options.subdomains[Math.abs((p.x + p.y) % subdomains.length)];
+		return this._url.replace('{subdomain}', s)
+				.replace('{quadkey}', this.tile2quad(p.x, p.y, zoom))
+				.replace('{culture}', this.options.culture);
+	},
+
+	loadMetadata: function() {
+		var _this = this;
+		var cbid = '_bing_metadata_' + L.Util.stamp(this);
+		window[cbid] = function (meta) {
+			_this.meta = meta;
+			window[cbid] = undefined;
+			var e = document.getElementById(cbid);
+			e.parentNode.removeChild(e);
+			if (meta.errorDetails) {
+				if (window.console) console.log('Leaflet Bing Plugin Error - Got metadata: ' + meta.errorDetails);
+				return;
+			}
+			_this.initMetadata();
+		};
+		var url = document.location.protocol + '//dev.virtualearth.net/REST/v1/Imagery/Metadata/' + this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
+		          '&key=' + this._key + '&UriScheme=' + document.location.protocol.slice(0, -1);
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = url;
+		script.id = cbid;
+		document.getElementsByTagName('head')[0].appendChild(script);
+	},
+
+	initMetadata: function() {
+		var r = this.meta.resourceSets[0].resources[0];
+		this.options.subdomains = r.imageUrlSubdomains;
+		this._url = r.imageUrl;
+		this._providers = [];
+		if (r.imageryProviders) {
+			for (var i = 0; i < r.imageryProviders.length; i++) {
+				var p = r.imageryProviders[i];
+				for (var j = 0; j < p.coverageAreas.length; j++) {
+					var c = p.coverageAreas[j];
+					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
+					var bounds = new L.LatLngBounds(
+							new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
+							new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
+					);
+					coverage.bounds = bounds;
+					coverage.attrib = p.attribution;
+					this._providers.push(coverage);
+				}
+			}
+		}
+		this._update();
+	},
+
+	_update: function() {
+		if (this._url === null || !this._map) return;
+		this._update_attribution();
+		L.TileLayer.prototype._update.apply(this, []);
+	},
+
+	_update_attribution: function() {
+		var bounds = this._map.getBounds();
+		var zoom = this._map.getZoom();
+		for (var i = 0; i < this._providers.length; i++) {
+			var p = this._providers[i];
+			if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
+					bounds.intersects(p.bounds)) {
+				if (!p.active && this._map.attributionControl)
+					this._map.attributionControl.addAttribution(p.attrib);
+				p.active = true;
+			} else {
+				if (p.active && this._map.attributionControl)
+					this._map.attributionControl.removeAttribution(p.attrib);
+				p.active = false;
+			}
+		}
+	},
+
+	onRemove: function(map) {
+		for (var i = 0; i < this._providers.length; i++) {
+			var p = this._providers[i];
+			if (p.active && this._map.attributionControl) {
+				this._map.attributionControl.removeAttribution(p.attrib);
+				p.active = false;
+			}
+		}
+        	L.TileLayer.prototype.onRemove.apply(this, [map]);
+	}
+});
+
+L.bingLayer = function (key, options) {
+    return new L.BingLayer(key, options);
+};
+
+}).call(global, module, undefined, undefined);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/lib/communist.min.js":[function(require,module,exports){
+/*! communist 2013-05-30*/
+/*!(c)2013 Calvin Metcalf @license MIT https://github.com/calvinmetcalf/communist */
+/*!Includes Promiscuous (c)2013 Ruben Verborgh @license MIT https://github.com/RubenVerborgh/promiscuous*/
+/*!Includes Material from setImmediate Copyright (c) 2012 Barnesandnoble.com, llc, Donavon West, and Domenic Denicola @license MIT https://github.com/NobleJS/setImmediate */
+"undefined"==typeof document?(self._noTransferable=!0,self.onmessage=function(e){eval(e.data)}):function(){"use strict";function moveImports(e){var n,t=e.match(/(importScripts\(.*\);)/);return n=t?t[0].replace(/importScripts\((.*\.js\')\);?/,function(e,n){return n?"importScripts("+n.split(",").map(function(e){return"'"+c.makeUrl(e.slice(1,-1))+"'"})+");\n":""})+e.replace(/(importScripts\(.*\.js\'\);?)/,"\n"):e}function getPath(){if("undefined"!=typeof SHIM_WORKER_PATH)return SHIM_WORKER_PATH;for(var e=document.getElementsByTagName("script"),n=e.length,t=0;n>t;){if(/communist(\.min)?\.js/.test(e[t].src))return e[t].src;t++}}function makeWorker(e){var n,t=moveImports(e.join(""));c.URL=c.URL||window.URL||window.webkitURL;try{n=new Worker(c.URL.createObjectURL(new Blob([t],{type:"text/javascript"})))}catch(r){c._noTransferable=!0,n=new Worker(getPath()),n.postMessage(t)}finally{return n}}function single(e,n){var t=c.deferred(),r=makeWorker(["var _self={};\n_self.fun = ",e,";\n	_self.cb=function(data,transfer){\n			!self._noTransferable?self.postMessage(data,transfer):self.postMessage(data);\n			self.close();\n		};\n		_self.result = _self.fun(",JSON.stringify(n),',_self.cb);\n		if(typeof _self.result !== "undefined"){\n			_self.cb(_self.result);\n		}']);return r.onmessage=function(e){t.resolve(e.data)},r.onerror=function(e){e.preventDefault(),t.reject(e.message)},t.promise}function mapWorker(e,n,t){var r=new Communist,a=makeWorker(["\n	var _db={};\n	_db.__close__=function(){\n		self.close();\n	};\n	var _self={};\n	_db.__fun__ = ",e,';\n	_self.cb=function(data,transfer){\n		!self._noTransferable?self.postMessage(data,transfer):self.postMessage(data);\n	};\n	self.onmessage=function(e){\n		_self.result = _db.__fun__(e.data,_self.cb);\n			if(typeof _self.result !== "undefined"){\n				_self.cb(_self.result);\n		}\n	}']);return a.onmessage=function(e){n(e.data)},a.onerror=t?t:function(){n()},r.data=function(e,n){return c._noTransferable?a.postMessage(e):a.postMessage(e,n),r},r.close=function(){return a.terminate()},r}function multiUse(e){return object({data:e})}function object(e){var n=new Communist,t=0,r=[],a=function(e){"string"!=typeof e&&e.preventDefault&&(e.preventDefault(),e=e.message),r.forEach(function(n){n&&n.reject(e)})};"initialize"in e||(e.initialize=function(){});var o="{",s=function(e){var n=function(n,t){var a=r.length;return r[a]=c.deferred(),c._noTransferable?i.postMessage([a,e,n]):i.postMessage([a,e,n],t),r[a].promise};return n};for(var u in e)0!==t?o+=",":t++,o=o+u+":"+(""+e[u]),n[u]=s(u);o+="}";var i=makeWorker(["\n	var _db="+o+';\n	self.onmessage=function(e){\n	var cb=function(data,transfer){\n		!self._noTransferable?self.postMessage([e.data[0],data],transfer):self.postMessage([e.data[0],data]);\n	};\n		var result = _db[e.data[1]](e.data[2],cb);\n			if(typeof result !== "undefined"){\n				cb(result);\n			}\n	}\n	_db.initialize()']);return i.onmessage=function(e){r[e.data[0]].resolve(e.data[1]),r[e.data[0]]=0},i.onerror=a,n._close=function(){return i.terminate(),a("closed"),c.resolve()},"close"in n||(n.close=n._close),n}function queue(e,n,t){function r(e){return function(n,t){return f(e,n,t)}}function a(e){return function(n){return c.all(n.map(function(n){return f(e,n)}))}}function o(e){return function(n){var t=this;return c.all(n.map(function(n){return f(e,n).then(t.__cb__)}))}}function s(e){return function(n){return c.all(n.map(function(n){return f(e,n[0],n[1])}))}}function u(e){return function(n){var t=this;return c.all(n.map(function(n){return f(e,n[0],n[1]).then(t.__cb__)}))}}function i(e){var n;v?(n=p.shift(),v--,d[e][n[0]](n[1],n[2]).then(function(t){i(e),n[3].resolve(t)},function(t){i(e),n[3].reject(t)})):(m++,_.push(e))}function f(e,r,a){if(t)return d[~~(Math.random()*n)][e](r,a);var o,s=c.deferred();return!v&&m?(o=_.pop(),m--,d[o][e](r,a).then(function(e){i(o),s.resolve(e)},function(e){i(o),s.reject(e)})):(v||!m)&&(v=p.push([e,r,a,s])),s.promise}var l=new Communist;l.__batchcb__=new Communist,l.__batchtcb__=new Communist,l.batch=function(e){return l.__batchcb__.__cb__=e,l.__batchcb__},l.batchTransfer=function(e){return l.__batchtcb__.__cb__=e,l.__batchtcb__};for(var d=Array(n),m=0,_=[],p=[],v=0;n>m;)d[m]=object(e),_.push(m),m++;e._close=function(){};for(var b in e)l[b]=r(b),l.batch[b]=a(b),l.__batchcb__[b]=o(b),l.batchTransfer[b]=s(b),l.__batchtcb__[b]=u(b);return"close"in l||(l.close=l._close),l}function rWorker(e,n){var t=new Communist,r="function(dat,cb){ var fun = "+e+';\n		switch(dat[0]){\n			case "data":\n				if(!this._r){\n					this._r = dat[1];\n				}else{\n					this._r = fun(this._r,dat[1]);\n				}\n				break;\n			case "get":\n				return cb(this._r);\n			case "close":\n				cb(this._r);\n				this.__close__();\n				break;\n		}\n	};',a=function(e){n(e)},o=mapWorker(r,a);return t.data=function(e,n){return c._noTransferable?o.data(["data",e]):o.data(["data",e],n),t},t.fetch=function(){return o.data(["get"]),t},t.close=function(e){e&&(n=function(){}),o.data(["close"])},t}function incrementalMapReduce(e){function n(){for(var e=0,n=u.length;n>e&&s>0&&f>0;)s--,u[e].data(i.pop()),e++,f--;return o}function t(){a.close(),u.forEach(function(e){e.close()})}var r,a,o=new Communist,s=0,u=[],i=[],f=e,l=!1,d=!1,m={map:!1,reduce:!1,data:!1},_=function(){return m.map&&m.reduce&&m.data?n():o};return o.map=function(n,r){function c(){var o,c=mapWorker(n,function(n){void 0!==typeof n&&a.data(n),s>0?(s--,o=i.pop(),r?c.data(o,[o]):c.data(o)):(f++,f===e&&(m.data=!1,d?t():l&&(l=!1,a.fetch())))});u.push(c)}if(m.map)return o;for(var p=0;e>p;)c(),p++;return m.map=!0,_()},o.reduce=function(e){return m.reduce?o:(a=rWorker(e,function(e){r&&(r.resolve(e),r=!1)}),m.reduce=!0,_())},o.data=function(e){return d?void 0:(s+=e.length,i=i.concat(e),m.data=!0,_())},o.fetch=function(n){return r||(r=c.deferred()),e>f&&!n?l=!0:a.fetch(),r.promise},o.close=function(){return r||(r=c.deferred()),e>f?d=!0:t(),r.promise},o}function nonIncrementalMapReduce(e){function n(){return a.data&&a.map&&a.reduce?r.close():t}var t=new Communist,r=incrementalMapReduce(e),a={data:!1,map:!1,reduce:!1};return t.map=function(e,t){return a.map=!0,r.map(e,t),n()},t.reduce=function(e){return a.reduce=!0,r.reduce(e),n()},t.data=function(e){return a.data=!0,r.data(e),n()},t}function c(e,n,t){return"number"!=typeof e&&"function"==typeof n?mapWorker(e,n,t):"object"!=typeof e||Array.isArray(e)?"number"!=typeof e?n?single(e,n):multiUse(e):"number"==typeof e?n?nonIncrementalMapReduce(e):incrementalMapReduce(e):void 0:"number"==typeof n?queue(e,n,t):object(e)}(function(attachTo,global){function isStringAndStartsWith(e,n){return"string"==typeof e&&e.substring(0,n.length)===n}function onGlobalMessage(e){if(e.source===global&&isStringAndStartsWith(e.data,MESSAGE_PREFIX)){var n=e.data.substring(MESSAGE_PREFIX.length);tasks.runIfPresent(n)}}var tasks=function(){function Task(e,n){this.handler=e,this.args=n}Task.prototype.run=function(){if("function"==typeof this.handler)this.handler.apply(void 0,this.args);else{var scriptSource=""+this.handler;eval(scriptSource)}};var nextHandle=1,tasksByHandle={},currentlyRunningATask=!1;return{addFromSetImmediateArguments:function(e){var n=e[0],t=Array.prototype.slice.call(e,1),r=new Task(n,t),a=nextHandle++;return tasksByHandle[a]=r,a},runIfPresent:function(e){if(currentlyRunningATask)global.setTimeout(function(){tasks.runIfPresent(e)},0);else{var n=tasksByHandle[e];if(n){currentlyRunningATask=!0;try{n.run()}finally{delete tasksByHandle[e],currentlyRunningATask=!1}}}},remove:function(e){delete tasksByHandle[e]}}}(),MESSAGE_PREFIX="com.communistjs.setImmediate"+Math.random();global.addEventListener?global.addEventListener("message",onGlobalMessage,!1):global.attachEvent("onmessage",onGlobalMessage),attachTo.setImmediate=function(){var e=tasks.addFromSetImmediateArguments(arguments);return global.postMessage(MESSAGE_PREFIX+e,"*"),e}})(c,window),function(e){function n(){var e=function(c,s,u){var i;if(c!==e)return i=n(),e.c.push({d:i,resolve:c,reject:s}),i.promise;for(var f,l,d,m=s?"resolve":"reject",_=0,p=e.c.length;p>_;_++)f=e.c[_],l=f.d,d=f[m],typeof d!==a?l[m](u):r(d,u,l);e=t(o,u,s)},o={then:function(n,t){return e(n,t)}};return e.c=[],{promise:o,resolve:function(n){e.c&&e(e,!0,n)},reject:function(n){e.c&&e(e,!1,n)}}}function t(e,t,o){return function(c,s){var u,i=o?c:s;return typeof i!==a?e:(r(i,t,u=n()),u.promise)}}function r(n,t,r){e.setImmediate(function(){var e;try{e=n(t),e&&typeof e.then===a?e.then(r.resolve,r.reject):r.resolve(e)}catch(o){r.reject(o)}})}var a="function";e.resolve=function(e){var n={};return n.then=t(n,e,!0),n},e.reject=function(e){var n={};return n.then=t(n,e,!1),n},e.deferred=n}(c),c.all=function(e){var n=c.deferred(),t=e.length,r=0,a=Array(t),o=function(e){return function(o){a[e]=o,r++,r===t&&n.resolve(a)}};return e.forEach(function(e,t){e.then(o(t),function(e){n.reject(e)})}),n.promise};var Communist=function(){};c.reducer=rWorker,c.worker=makeWorker,c.makeUrl=function(e){var n=document.createElement("link");return n.href=e,n.href},c.ajax=function(e,n,t){var r=t?"request.responseText":"JSON.parse(request.responseText)",a=n?"("+(""+n)+")("+r+",_cb)":r,o='function (url, _cb) {\n		var request = new XMLHttpRequest();\n		request.open("GET", url);\n			request.onreadystatechange = function() {\n				var _resp;\n				if (request.readyState === 4 && request.status === 200) {\n_resp = '+a+';\n					if(typeof _resp!=="undefined"){_cb(_resp);}\n					}\n			};\n			request.onerror=function(e){throw(e);}\n		request.send();\n	}';return c(o,c.makeUrl(e))},"undefined"==typeof module?window.communist=c:module.exports=c}();
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/AbstractWorker.js":[function(require,module,exports){
+var L = require('leaflet');
+
+L.AbstractWorker = L.Class.extend({
+    initialize: function () {
+    },
+
+    onAdd: function (map) {
+    },
+
+    onRemove: function (map) {
+    },
+
+    process: function(tile, callback) {
+        callback(tile);
+    },
+    
+    abort: function(tile) {
+    },
+    
+    clear: function() {
+    }
+});
+
+// dummy worker (= no worker) when used directly
+L.noWorker = function () {
+    return new L.AbstractWorker();
+};
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/CommunistWorker.js":[function(require,module,exports){
+var communist = require('../lib/communist.min');
+var L = require('leaflet');
+
+L.CommunistWorker = L.AbstractWorker.extend({
+
+    statics: {
+        // number of web workers, not using web workers when falsy
+        NUM_WORKERS: 2
+    },
+
+    initialize: function (workerFunc) {
+        this.workerFunc = workerFunc;
+    },
+
+    onAdd: function (map) {
+        this._workers = L.CommunistWorker.createWorkers(this.workerFunc);
+    },
+
+    onRemove: function (map) {
+        if (this._workers) {
+            // TODO do not close when other layers are still using the static instance
+            //this._workers.close();
+        }
+    },
+
+    process: function(tile, callback) {
+        if (this._workers){ 
+            tile._worker = this._workers.data(tile.datum).then(function(parsed) {
+                if (tile._worker) {
+                    tile._worker = null;
+                    tile.parsed = parsed;
+                    tile.datum = null;
+                    callback(tile);
+                } else {
+                    // tile has been unloaded, don't continue with adding
+                    //console.log('worker aborted ' + tile.key);
+                }
+            });
+        } else {
+            callback(tile);
+        }
+    },
+    
+    abort: function(tile) {
+        if (tile._worker) {
+            // TODO abort worker, would need to recreate after close
+            //tile._worker.close();
+            tile._worker = null;
+        }
+    }
+});
+
+L.communistWorker = function (workerFunc) {
+    return new L.CommunistWorker(workerFunc);
+};
+
+L.extend(L.CommunistWorker, {
+    createWorkers: function(workerFunc) {
+        if ( L.CommunistWorker.NUM_WORKERS && typeof Worker === "function" && typeof communist === "function"
+                && !("workers" in L.CommunistWorker)) {
+            L.CommunistWorker.workers = communist({
+                //data : L.TileLayer.Vector.parseData
+                data : workerFunc
+            }, L.CommunistWorker.NUM_WORKERS);
+        }
+        return L.CommunistWorker.workers;
+    }
+});
+
+},{"../lib/communist.min":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/lib/communist.min.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/Leaflet.label-patch.js":[function(require,module,exports){
+
+// patch Leaflet.label plugin to avoid null error on viewreset when label has
+// already been removed (v0.5.1), also see comment in L.TileLayer.Vector.onAdd
+if (L.Label) {
+    var orig = L.Label.prototype._updatePosition;
+    L.Label.prototype._updatePosition = function() {
+        if (this._map) {
+            orig.apply(this, arguments);
+        }
+    };
+}
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileCache.js":[function(require,module,exports){
+/**
+ * Simple tile cache to keep tiles while zooming with overzoom
+ */
+var L = require('leaflet');
+
+L.TileCache = function() {
+};
+
+L.TileCache.prototype = {
+    // cache key: tile (String: Object)
+    _cache: {},
+
+    // flag to determine switch between tile unloading (put) and loading (get) phase
+    _unloading: false,
+
+    // flag to only cache tiles when zooming, not when moving
+    _zooming: false,
+
+    onAdd: function(map) {
+        this._map = map;
+        
+        map.on('zoomstart', this._onZoomStart, this);
+        map.on('zoomend', this._onZoomEnd, this);
+    },
+
+    onRemove: function(map) {
+        this._map = null;
+
+        map.off('zoomstart', this._onZoomStart, this);
+        map.off('zoomend', this._onZoomEnd, this);
+    },
+
+    _onZoomStart: function(evt) {
+        this._zooming = true;
+    },
+
+    _onZoomEnd: function(evt) {
+        this._zooming = false;
+    },
+
+    get: function(key, urlZoom) {
+        var ckey = this._getCacheKey(key, urlZoom);
+        var tile = this._cache[ckey];
+        this._unloading = false;
+        //console.log('cache ' + (tile ? 'hit ' : 'miss') + ': ' + ckey);
+        return tile;
+    },
+    
+    put: function(tile) {
+        if (!this._zooming) return;
+
+        if (!this._unloading) {
+            // clear old entries before adding newly removed tiles after zoom or move
+            this.clear();
+            this._unloading = true;
+        }
+
+        var ckey = this._getCacheKeyFromTile(tile);
+        if (!(ckey in this._cache)) {
+            // vector layer is recreated because of feature filter
+            delete tile.layer;
+            this._cache[ckey] = tile;
+            //console.log('cache put : ' + ckey + ' (' + Object.keys(this._cache).length + ')');
+        }
+    },
+    
+    clear: function() {
+        //console.log('cache clear');
+        this._cache = {};
+    },
+
+    _getCacheKeyFromTile: function(tile) {
+        return this._getCacheKey(tile.key, tile.urlZoom);
+    },
+
+    _getCacheKey: function(key, urlZoom) {
+        return urlZoom + ':' + key
+    }
+};
+
+L.tileCache = function() {
+    return new L.TileCache();
+};
+
+// dummy impl. to turn caching off
+L.tileCacheNone = function() {
+    return {
+        onAdd: function(map) {},
+        onRemove: function(map) {},
+        get: function(key, urlZoom) {},
+        put: function(tile) {},
+        clear: function() {}
+    };
+};
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.BBox.js":[function(require,module,exports){
+var L = require('leaflet');
+
+L.TileLayer.Vector.include({
+
+    getTileUrl: function (coords) {
+        var x = coords.x,
+            y = coords.y,
+            z = this._getZoomForUrl(),
+            bounds = this.getTileBBox(x, y, z),
+            url = this._url;
+        if (url.indexOf('?') < 0) {
+            url += '?';
+        }
+        if (this.options.getTileQueryString) {
+            url += this.options.getTileQueryString.apply(this);
+        }
+        return url + '&bbox=' + bounds.toBBoxString();
+    },
+
+    getTileBBox: function (x, y, z) {
+        var west = this.getTileLng(x, z),
+            north = this.getTileLat(y, z),
+            east = this.getTileLng(x + 1, z),
+            south = this.getTileLat(y + 1, z),
+            bounds = L.latLngBounds([[south, west], [north, east]]);
+        return bounds;
+    },
+
+    getTileLng: function (x, z) {
+        return (x / Math.pow(2, z) * 360 - 180);
+    },
+
+    getTileLat: function (y, z) {
+        var n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
+        return (180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))));
+    }
+
+});
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Div.js":[function(require,module,exports){
+var L = require('leaflet');
+
+L.TileLayer.Div = L.TileLayer.extend({
+
+    initialize: function (options) {
+        L.TileLayer.prototype.initialize.call(this, null, options);
+    },
+
+    _createTile: function () {
+        var tile = L.DomUtil.create('div', 'leaflet-tile leaflet-tile-loaded');
+        var tileSize = this._getTileSize();
+        tile.style.width = tileSize + 'px';
+        tile.style.height = tileSize + 'px';
+        tile.onselectstart = tile.onmousemove = L.Util.falseFn;
+        return tile;        
+    },
+
+    _loadTile: function (tile, tilePoint) {
+        tile._layer = this;
+        tile._tilePoint = tilePoint;
+        this._adjustTilePoint(tilePoint);
+        
+        this.drawTile(tile, tilePoint);
+        
+        this._tileLoaded();
+    },
+    
+    drawTile: function (tile, tilePoint) {
+        // override with rendering code
+    }
+});
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js":[function(require,module,exports){
+// Load data tiles using the JQuery ajax function
+var L = require('leaflet');
+
+L.TileLayer.Ajax = L.TileLayer.extend({
+    options: {
+        // use L.tileCacheNone to turn caching off
+        tileCacheFactory: L.tileCache
+    },
+
+    _tileCache: null,
+
+    initialize: function (url, options) {
+        L.TileLayer.prototype.initialize.call(this, url, options);
+        
+        this._tileCache = this.options.tileCacheFactory();
+    },
+
+    onAdd: function (map) {
+        L.TileLayer.prototype.onAdd.call(this, map);
+        this.on('tileunload', this._unloadTile);
+    },
+
+    onRemove: function (map) {
+        L.TileLayer.prototype.onRemove.call(this, map);
+        this.off('tileunload', this._unloadTile);
+    },
+
+    _addTile: function(tilePoint, container) {
+        var cached = null;
+        var key = tilePoint.x + ':' + tilePoint.y;
+        var urlZoom = this._getZoomForUrl();
+        var tile = cached = this._tileCache.get(key, urlZoom);
+        if (!tile) {
+            tile = { key: key, urlZoom: urlZoom, datum: null, loading: true };
+        } else {
+            tile.loading = true;
+        }
+
+        this._tiles[key] = tile;
+        this.fire('tileloadstart', {tile: tile});
+
+        if (cached) {
+            this._addTileData(tile);
+        } else {
+            this._loadTile(tile, tilePoint);
+        }
+    },
+
+    _addTileData: function(tile) {
+        // override in subclass
+    },
+
+    // XMLHttpRequest handler; closure over the XHR object, the layer, and the tile
+    _xhrHandler: function (req, layer, tile) {
+        return function() {
+            if (req.readyState != 4) {
+                return;
+            }
+            var s = req.status;
+
+            // Fire dataload for Leaflet.loading
+            layer._map.fire('dataload');
+
+            if ((s >= 200 && s < 300) || s == 304) {
+                // check if request is about to be aborted, avoid rare error when aborted while parsing
+                if (tile._request) {
+                    tile._request = null;
+                    layer.fire('tileresponse', {tile: tile, request: req});
+                    tile.datum = req.responseText;
+                    layer._addTileData(tile);
+                }
+            } else {
+                tile.loading = false;
+                tile._request = null;
+                layer.fire('tileerror', {tile: tile, request: req});
+                layer._tileLoaded();
+            }
+        }
+    },
+
+    // Load the requested tile via AJAX
+    _loadTile: function (tile, tilePoint) {
+        this._adjustTilePoint(tilePoint);
+        var layer = this;
+
+        // File dataloading for Leaflet.loading
+        layer._map.fire('dataloading');
+
+        var req = new XMLHttpRequest();
+        tile._request = req;
+        req.onreadystatechange = this._xhrHandler(req, layer, tile);
+        this.fire('tilerequest', {tile: tile, request: req});
+        req.open('GET', this.getTileUrl(tilePoint), true);
+        req.send();
+    },
+
+    _unloadTile: function(evt) {
+        var tile = evt.tile,
+            req = tile._request;
+        if (req) {
+            tile._request = null;
+            req.abort();
+            this.fire('tilerequestabort', {tile: tile, request: req});
+        }
+    }
+});
+
+
+L.TileLayer.Vector = L.TileLayer.Ajax.extend({
+    options: {
+        // factory function to create the vector tile layers (defaults to L.GeoJSON)
+        layerFactory: L.geoJson,
+        // factory function to create a web worker for parsing/preparing tile data
+        workerFactory: L.communistWorker
+        //workerFactory: L.noWorker
+    },
+
+    initialize: function (url, options, vectorOptions) {
+        L.TileLayer.Ajax.prototype.initialize.call(this, url, options);
+        this.vectorOptions = vectorOptions || {};
+        this._worker = this.options.workerFactory(L.TileLayer.Vector.parseData);
+        this._addQueue = new L.TileQueue(L.bind(this._addTileDataInternal, this));
+    },
+
+    onAdd: function (map) {
+        this._map = map;
+        
+        L.TileLayer.Ajax.prototype.onAdd.call(this, map);
+
+        // root vector layer, contains tile vector layers as children 
+        this.vectorLayer = this._createVectorLayer(); 
+        map.addLayer(this.vectorLayer);
+
+        this._worker.onAdd(map);
+        this._tileCache.onAdd(map);
+    },
+
+    onRemove: function (map) {
+        // unload tiles (L.TileLayer only calls _reset in onAdd)
+        this._reset();
+        map.removeLayer(this.vectorLayer);
+
+        L.TileLayer.Ajax.prototype.onRemove.call(this, map);
+
+        this._worker.onRemove(map);
+        this._tileCache.onRemove(map);
+
+        this.vectorLayer = null;
+        this._map = null;
+    },
+
+    _createVectorLayer: function() {
+        return this.options.layerFactory(null, this.vectorOptions);
+    },
+
+    _createTileLayer: function() {
+        return this._createVectorLayer();
+    },
+
+    _addTileData: function(tile) {
+        if (!tile.parsed) {
+            this._worker.process(tile, L.bind(function(tile) {
+                this._addQueue.add(tile);
+            },this));
+        } else {
+            // from cache
+            this._addQueue.add(tile);
+        }
+    },
+
+    _addTileDataInternal: function(tile) {
+        var tileLayer = this._createTileLayer();
+        if (!tile.parsed) {
+            // when no worker for parsing
+            tile.parsed = L.TileLayer.Vector.parseData(tile.datum);
+            tile.datum = null;
+        }
+        tileLayer.addData(tile.parsed);
+        tile.layer = tileLayer;
+        this.vectorLayer.addLayer(tileLayer);
+
+        tile.loading = false;
+        this.fire('tileload', {tile: tile});
+        this._tileLoaded();
+    },
+
+    _unloadTile: function(evt) {
+        L.TileLayer.Ajax.prototype._unloadTile.apply(this, arguments);
+
+        var tile = evt.tile,
+            tileLayer = tile.layer;
+        if (tile.loading) {
+            this._addQueue.remove(tile);
+            // not from cache or not loaded and parsed yet
+            if (!tile.parsed) {
+                this._worker.abort(tile);
+            }
+            this.fire('tileabort', {tile: tile});
+            this._tileLoaded();
+        }
+        if (tileLayer && this.vectorLayer.hasLayer(tileLayer)) {
+            if (this._shouldRemoveLayersAtZoom(this._map.getZoom())) {
+                this.vectorLayer.removeLayer(tileLayer);
+            }
+        }
+
+        if (tile.parsed) {
+            this._tileCache.put(tile);
+        }
+    },
+
+    _shouldRemoveLayersAtZoom: function(zoom) {
+        return true;
+    },
+
+    _retainTiles: function() {
+        return {};
+    },
+
+    _reset: function(e) {
+        var tilesToRetain = this._retainTiles();
+
+        L.TileLayer.Ajax.prototype._reset.apply(this, arguments);
+
+        // Restore useful tiles
+        L.extend(this._tiles, tilesToRetain);
+
+        this._addQueue.clear();
+        this._worker.clear();
+    }
+});
+
+
+L.extend(L.TileLayer.Vector, {
+    parseData: function(data) {
+        return JSON.parse(data);
+    }
+});
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js":[function(require,module,exports){
+var L = require('leaflet');
+
+L.TileLayer.Overzoom = {
+    
+    overzoomOptions: {
+        // List of available server zoom levels in ascending order. Empty means all  
+        // client zooms are available (default). Allows to only request tiles at certain
+        // zooms and resizes tiles on the other zooms.
+        serverZooms: [],
+        // workaround: wrapping loads tiles multiple times when zoom < serverZooms[0]
+        noWrap: true
+    },
+
+    // override _getTileSize to add serverZooms (when maxNativeZoom is not defined)
+    _getTileSize: function() {
+        var map = this._map,
+            options = this.options,
+            zoom = map.getZoom() + options.zoomOffset,
+            zoomN = options.maxNativeZoom || this._getServerZoom(zoom);
+
+        // increase tile size when overscaling
+        //return zoomN && zoom > zoomN ?
+        var tileSize = zoomN && zoom !== zoomN ?
+            Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN) * options.tileSize) :
+            options.tileSize;
+
+        //console.log('tileSize = ' + tileSize + ', zoomOffset = ' + this.options.zoomOffset + ', serverZoom = ' + zoomN + ', zoom = ' + zoom);
+        return tileSize;
+    },
+
+    _getZoomForUrl: function () {
+        var zoom = L.TileLayer.prototype._getZoomForUrl.call(this);
+        var result = this._getServerZoom(zoom);
+        //console.log('zoomForUrl = ' + result);
+        return result;
+    },
+
+    // Returns the appropriate server zoom to request tiles for the current zoom level.
+    // Next lower or equal server zoom to current zoom, or minimum server zoom if no lower 
+    // (should be restricted by setting minZoom to avoid loading too many tiles).
+    _getServerZoom: function(zoom) {
+        var serverZooms = this.options.serverZooms || [],
+            result = zoom;
+        // expects serverZooms to be sorted ascending
+        for (var i = 0, len = serverZooms.length; i < len; i++) {
+            if (serverZooms[i] <= zoom) {
+                result = serverZooms[i];
+            } else {
+                if (i === 0) {
+                    // zoom < smallest serverZoom
+                    result = serverZooms[0];
+                }
+                break;
+            }
+        }
+        return result;
+    },
+
+    _shouldRemoveLayersAtZoom: function(zoom) {
+        if (this.options.serverZooms) {
+            if (this._map.getZoom() in this.options.serverZooms) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    // Only keep the tiles that are going to be useful on the map's current zoom
+    _retainTiles: function() {
+        var tiles = L.extend({}, this._tiles),
+            zoom = this._getServerZoom(this._map.getZoom());
+
+        for (var key in tiles) {
+            // Do not retain tiles that won't be used at this zoom
+            if (tiles[key].urlZoom !== zoom) {
+                delete tiles[key];
+            }
+
+            // Do not retain tiles that don't have a layer. They might
+            // have been interrupted from loading that layer because the
+            // user zoomed in or out very quickly, for example.
+            if (!tiles[key] || !tiles[key].layer) {
+                delete tiles[key];
+            }
+        }
+        return tiles;
+    }
+};
+
+if (typeof L.TileLayer.Vector !== 'undefined') {
+    L.TileLayer.Vector.include(L.TileLayer.Overzoom);
+    L.TileLayer.Vector.mergeOptions(L.TileLayer.Overzoom.overzoomOptions);
+}
+
+if (typeof L.TileLayer.Div !== 'undefined') {
+    L.TileLayer.Div.include(L.TileLayer.Overzoom);
+    L.TileLayer.Div.mergeOptions(L.TileLayer.Overzoom.overzoomOptions);
+}
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Progress.js":[function(require,module,exports){
+/*
+ * Loading progress info layer for L.TileLayer.Vector
+ */
+var L = require('leaflet');
+
+L.TileLayer.Progress = L.TileLayer.Div.extend({
+    _adding: false,
+
+    /* key hash of vector tiles currently loading {String: true} */
+    _loadingTiles: {},
+    
+    initialize: function (vectorLayer) {
+        L.TileLayer.Div.prototype.initialize.call(this, vectorLayer.options);
+
+        this.vectorLayer = vectorLayer;
+    },
+
+    onAdd: function (map) {
+        this._adding = true;
+        map.on('layerremove', this._onVecRemove, this);
+        this.vectorLayer.on('tileloadstart', this._onTileLoading, this);
+        this.vectorLayer.on('tileload', this._onTileLoad, this);
+        this.vectorLayer.on('tileerror', this._onTileError, this);
+        this.vectorLayer.on('tileunload', this._onTileLoad, this);
+        L.TileLayer.Div.prototype.onAdd.apply(this, arguments);
+        this._adding = false;
+    },
+
+    onRemove: function (map) {
+        L.TileLayer.Div.prototype.onRemove.apply(this, arguments);
+        this._loadingTiles = {};
+        this.vectorLayer.off('tileloadstart', this._onTileLoading, this);
+        this.vectorLayer.off('tileload', this._onTileLoad, this);
+        this.vectorLayer.off('tileerror', this._onTileError, this);
+        this.vectorLayer.off('tileunload', this._onTileLoad, this);
+    },
+
+    drawTile: function (tile, tilePoint) {
+        var vecTile, 
+            loading, 
+            key = tilePoint.x + ':' + tilePoint.y;
+
+        tile.style.backgroundColor = 'rgba(128, 128, 128, 0.3)';
+        tile.style.border = '1px solid rgba(128, 128, 128, 0.8)';
+        tile.style.boxSizing = 'border-box';
+
+        if (!this._loadingTiles[key]) {
+            this._hide(tile);
+        }
+
+        // check for already loading tiles, because initial tileloadstart
+        // events might have been missed when layer is added
+        if (this._adding) {
+            vecTile = this.vectorLayer._tiles[key];
+            loading = vecTile && vecTile.loading;
+            if (loading) {
+                this._show(tile);
+            }
+        }
+    },
+
+    _onVecRemove: function(evt) {
+        if (evt.layer === this.vectorLayer) {
+            this._hideAll();
+        }
+    },
+
+    _hideAll: function() {
+        for (var key in this._tiles) {
+            var tile = this._tiles[key];
+            this._hide(tile);
+        }
+    },
+
+    _onTileLoading: function(evt) {
+        var key = evt.tile.key,
+            tile = this._tiles[key];
+        if (tile) {
+            this._show(tile);
+        } else {
+            this._loadingTiles[key] = true;
+        }
+    },
+
+    _onTileLoad: function(evt) {
+        var key = evt.tile.key,
+            tile = this._tiles[key];
+        this._hide(tile);
+        delete this._loadingTiles[key];
+    },
+
+    _onTileError: function(evt) {
+        var key = evt.tile.key,
+            tile = this._tiles[key];
+        if (tile) {
+            tile.style.backgroundColor = 'rgba(128, 128, 128, 0.7)';
+            tile.style.border = 'none';
+        }
+        delete this._loadingTiles[key];
+    },
+    
+    _show: function(tile) {
+        if (tile) {
+            tile.classList.add('leaflet-tile-loaded');
+        }
+    },
+    
+    _hide: function(tile) {
+        if (tile) {
+            tile.classList.remove('leaflet-tile-loaded');
+        }
+    }
+});
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Vector.Unclipped.js":[function(require,module,exports){
+/*
+ * Tile layer for unclipped vector tiles where features spanning multiple tiles are contained with
+ * their full geometry in each tile (as opposed to clipping geometries at tile boundary).
+ * 
+ * This layer loads such duplicated features only once by using a 'unique' function given in the options
+ * to identify identical features and to keep track of the tiles that are referencing the same feature.
+ * 
+ * Uses a filter to remove duplicates, so a vector layer set with options.layerFactory must support 
+ * feature filtering like in L.GeoJSON.
+ */
+var L = require('leaflet');
+
+L.TileLayer.Vector.Unclipped = L.TileLayer.Vector.extend({
+    // hash: unique featureKey -> number of tiles referencing the feature
+    featureRefCounts: {},
+    // hash: unique featureKey -> feature layer
+    commonFeatures: {},
+
+    initialize: function (url, options, vectorOptions) {
+        L.TileLayer.Vector.prototype.initialize.apply(this, arguments);
+
+        if (!options || !options.unique) {
+            console.warn('"unique" function missing in options, deduplicating disabled');
+        }
+    },
+
+    _createTileLayer: function() {
+        var tileLayer = L.TileLayer.Vector.prototype._createTileLayer.apply(this, arguments);
+        if (this.options.unique) {
+            if (tileLayer.options.filter) {
+                tileLayer.options.filter = this._andFilter(tileLayer.options.filter, L.bind(this._filterDuplicates, tileLayer));
+            } else {
+                tileLayer.options.filter = L.bind(this._filterDuplicates, tileLayer);
+            }
+            tileLayer._tilingLayer = this;
+            // common features this tile is referencing (array of unique feature keys)
+            tileLayer._featureRefs = [];
+        }
+        return tileLayer;
+    },
+
+    // filter out duplicate features that are contained in multiple tiles
+    // (true keeps, false discards feature)
+    _filterDuplicates: function(feature) {
+        var featureKey = this._tilingLayer.options.unique(feature);
+        var refs = this._tilingLayer.featureRefCounts[featureKey];
+
+        if (refs && refs > 0) {
+            refs++;
+            this._featureRefs.push(featureKey);
+        } else {
+            refs = 1;
+        }
+        this._tilingLayer.featureRefCounts[featureKey] = refs;
+
+        return refs <= 1;
+    },
+    
+    _andFilter: function(filterA, filterB) {
+        return function(feature) {
+            return filterA(feature) && filterB(feature);
+        };
+    },
+    
+    _unloadTile: function(evt) {
+        var tileLayer = evt.tile.layer;
+        if (tileLayer) {
+            if (this.options.unique) {
+                this._clearFeatureLayers(tileLayer);
+                this._clearCommonFeatureLayers(tileLayer);
+            }
+        }        
+        L.TileLayer.Vector.prototype._unloadTile.apply(this, arguments);
+    },
+    
+    // Remove feature layers from the given tile layer and
+    // decrease reference counter for all features of the tile. 
+    _clearFeatureLayers: function(tileLayer) {
+        tileLayer.eachLayer(function (layer) {
+            if (layer.feature) {
+                var featureKey = this.options.unique(layer.feature);
+                var refs = this._decreaseFeatureRefCount(featureKey);
+                if (refs > 0) {
+                    // referenced by other tiles, keep feature (move to root vector layer)
+                    this.vectorLayer.addLayer(layer);
+                    this.commonFeatures[featureKey] = layer;
+
+                    // from removeLayer: remove layer from tileLayer but not from map (not sure if necessary)
+                    var id = L.stamp(layer);
+                    delete tileLayer._layers[id];
+                } else {
+                    tileLayer.removeLayer(layer);
+                }
+            }
+        }, this);
+    },
+
+    // Remove common features that are only referenced by the given tile
+    _clearCommonFeatureLayers: function(tileLayer) {
+        var featureRefs = tileLayer._featureRefs;
+        for (i = 0, len = featureRefs.length; i < len; i++) {
+            var featureKey = featureRefs[i];
+            var refs = this._decreaseFeatureRefCount(featureKey);
+            if (refs <= 0) {
+                var layer = this.commonFeatures[featureKey];
+                if (layer) {
+                    this.vectorLayer.removeLayer(layer);
+                }
+            }
+        }
+    },
+
+    _decreaseFeatureRefCount: function(featureKey) {
+        var refs = --this.featureRefCounts[featureKey];
+        if (refs <= 0) {
+            delete this.featureRefCounts[featureKey];
+        }
+        return refs;
+    }
+});
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileQueue.js":[function(require,module,exports){
+var L = require('leaflet');
+
+L.TileQueue = function(callback) {
+    this.callback = callback;
+};
+
+L.TileQueue.prototype = {
+
+    _queue: [],
+    _queueTimeout: null,
+    
+    add: function(aTile) {
+        this._queue.push(aTile);
+        if (!this._queueTimeout) {
+            this._queueTimeout = setTimeout(L.bind(function(){
+                var time, timeout, start = +new Date, tile;
+
+                // handle empty elements, see remove
+                do { 
+                    tile = this._queue.shift();
+                }
+                while (!tile && this._queue.length > 0);
+
+                if (tile) {
+                    //console.log('adding ' + tile.key + ' ...');
+
+                    this.callback(tile);
+
+                    // pause a percentage of adding time to keep UI responsive
+                    time = +new Date - start;
+                    timeout = Math.floor(time * 0.3);
+                    //console.log('added  ' + tile.key + ' (' + time + 'ms > ' + timeout + 'ms)');
+                    this._queueTimeout = setTimeout(L.bind(arguments.callee, this), timeout);
+                } else {
+                    this._queueTimeout = null;
+                }
+            }, this), 0);
+        }
+    },
+
+    remove: function(tile) {
+        var key = tile.key, 
+            val;
+        for (var i = 0, len = this._queue.length; i < len; i++) {
+            val = this._queue[i];
+            if (val && val.key === key) {
+                //console.log('##### delete ' + key);
+                // set entry to undefined only for better performance (?) - 
+                // queue consumer needs to handle empty entries!
+                delete this._queue[i];
+            }
+        }
+    },
+
+    clear: function() {
+        if (this._queueTimeout) {
+            clearTimeout(this._queueTimeout);
+            this._queueTimeout = null;
+        }
+        this._queue = [];
+    }
+};
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js":[function(require,module,exports){
+// Index for npm/browserify
+//
+// No explicit exports, as classes add themselves to the global Leaflet package
+// structure.
+require('./AbstractWorker.js');
+require('./CommunistWorker.js');
+require('./TileCache.js');
+require('./TileQueue.js');
+require('./TileLayer.GeoJSON.js');
+require('./TileLayer.BBox.js');
+require('./TileLayer.Vector.Unclipped.js');
+require('./TileLayer.Div.js');
+require('./TileLayer.Progress.js');
+require('./TileLayer.Overzoom.js');
+require('./Leaflet.label-patch.js');
+
+},{"./AbstractWorker.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/AbstractWorker.js","./CommunistWorker.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/CommunistWorker.js","./Leaflet.label-patch.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/Leaflet.label-patch.js","./TileCache.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileCache.js","./TileLayer.BBox.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.BBox.js","./TileLayer.Div.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Div.js","./TileLayer.GeoJSON.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js","./TileLayer.Overzoom.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js","./TileLayer.Progress.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Progress.js","./TileLayer.Vector.Unclipped.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Vector.Unclipped.js","./TileQueue.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileQueue.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-usermarker/src/leaflet.usermarker.js":[function(require,module,exports){
+/**
+ * Leaflet.UserMarker v1.0
+ * 
+ * Author: Jonatan Heyman <http://heyman.info>
+ */
+
+(function(window) {
+    var icon = L.divIcon({
+        className: "leaflet-usermarker",
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -20],
+        labelAnchor: [11, -3],
+        html: ''
+    });
+    var iconPulsing = L.divIcon({
+        className: "leaflet-usermarker",
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -20],
+        labelAnchor: [11, -3],
+        html: '<i class="pulse"></i>'
+    });
+    
+    var iconSmall = L.divIcon({
+        className: "leaflet-usermarker-small",
+        iconSize: [17, 17],
+        iconAnchor: [9, 9],
+        popupAnchor: [0, -10],
+        labelAnchor: [3, -4],
+        html: ''
+    });
+    var iconPulsingSmall = L.divIcon({
+        className: "leaflet-usermarker-small",
+        iconSize: [17, 17],
+        iconAnchor: [9, 9],
+        popupAnchor: [0, -10],
+        labelAnchor: [3, -4],
+        html: '<i class="pulse"></i>'
+    });
+    var circleStyle = {
+        stroke: true,
+        color: "#03f",
+        weight: 3,
+        opacity: 0.5,
+        fillOpacity: 0.15,
+        fillColor: "#03f",
+        clickable: false
+    };
+
+    L.UserMarker = L.Marker.extend({
+        options: {
+            pulsing: false,
+            smallIcon: false,
+            accuracy: 0,
+            circleOpts: circleStyle
+        },
+
+        initialize: function(latlng, options) {
+            options = L.Util.setOptions(this, options);
+            
+            this.setPulsing(this.options.pulsing);
+            this._accMarker = L.circle(latlng, this.options.accuracy, this.options.circleOpts);
+        
+            // call super
+            L.Marker.prototype.initialize.call(this, latlng, this.options);
+        
+            this.on("move", function() {
+                this._accMarker.setLatLng(this.getLatLng());
+            }).on("remove", function() {
+                this._map.removeLayer(this._accMarker);
+            });
+        },
+    
+        setPulsing: function(pulsing) {
+            this._pulsing = pulsing;
+            
+            if (this.options.smallIcon) {
+                this.setIcon(!!this._pulsing ? iconPulsingSmall : iconSmall);
+            } else {
+                this.setIcon(!!this._pulsing ? iconPulsing : icon);
+            }
+        },
+    
+        setAccuracy: function(accuracy)	{
+            this._accuracy = accuracy;
+            if (!this._accMarker) {
+                this._accMarker = L.circle(this._latlng, accuracy, this.options.circleOpts).addTo(this._map);
+            } else {
+                this._accMarker.setRadius(accuracy);
+            }
+        },
+    
+        onAdd: function(map) {
+            // super
+            L.Marker.prototype.onAdd.call(this, map);
+            this._accMarker.addTo(map);
+        }
+    });
+
+    L.userMarker = function (latlng, options) {
+        return new L.UserMarker(latlng, options);
+    };
+})(window);
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js":[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -19652,41 +19915,41 @@ L.Map.include({
 
 
 }(window, document));
-},{}],61:[function(require,module,exports){
-module.exports=require(42)
-},{"./handlebars.runtime":62,"./handlebars/compiler/ast":64,"./handlebars/compiler/base":65,"./handlebars/compiler/compiler":66,"./handlebars/compiler/javascript-compiler":68}],62:[function(require,module,exports){
-module.exports=require(43)
-},{"./handlebars/base":63,"./handlebars/exception":72,"./handlebars/runtime":73,"./handlebars/safe-string":74,"./handlebars/utils":75}],63:[function(require,module,exports){
-module.exports=require(44)
-},{"./exception":72,"./utils":75}],64:[function(require,module,exports){
-module.exports=require(45)
-},{"../exception":72}],65:[function(require,module,exports){
-module.exports=require(46)
-},{"../utils":75,"./ast":64,"./helpers":67,"./parser":69}],66:[function(require,module,exports){
-module.exports=require(47)
-},{"../exception":72,"../utils":75}],67:[function(require,module,exports){
-module.exports=require(48)
-},{"../exception":72}],68:[function(require,module,exports){
-module.exports=require(49)
-},{"../base":63,"../exception":72}],69:[function(require,module,exports){
-module.exports=require(50)
-},{}],70:[function(require,module,exports){
-module.exports=require(51)
-},{"./visitor":71}],71:[function(require,module,exports){
-module.exports=require(52)
-},{}],72:[function(require,module,exports){
-module.exports=require(53)
-},{}],73:[function(require,module,exports){
-module.exports=require(54)
-},{"./base":63,"./exception":72,"./utils":75}],74:[function(require,module,exports){
-module.exports=require(55)
-},{}],75:[function(require,module,exports){
-module.exports=require(56)
-},{"./safe-string":74}],76:[function(require,module,exports){
-module.exports=require(57)
-},{"../dist/cjs/handlebars":61,"../dist/cjs/handlebars/compiler/printer":70,"../dist/cjs/handlebars/compiler/visitor":71,"fs":41}],77:[function(require,module,exports){
-module.exports=require(60)
-},{}],78:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.js"][0].apply(exports,arguments)
+},{"./handlebars.runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars.runtime.js","./handlebars/compiler/ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./handlebars/compiler/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js","./handlebars/compiler/compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js","./handlebars/compiler/javascript-compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.runtime.js"][0].apply(exports,arguments)
+},{"./handlebars/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/base.js","./handlebars/exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js","./handlebars/runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/runtime.js","./handlebars/safe-string":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/safe-string.js","./handlebars/utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/base.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/base.js"][0].apply(exports,arguments)
+},{"./exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js"][0].apply(exports,arguments)
+},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js"][0].apply(exports,arguments)
+},{"../utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/utils.js","./ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js","./parser":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js"][0].apply(exports,arguments)
+},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js","../utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js"][0].apply(exports,arguments)
+},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js"][0].apply(exports,arguments)
+},{"../base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/base.js","../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js"][0].apply(exports,arguments)
+},{"./visitor":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/runtime.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/runtime.js"][0].apply(exports,arguments)
+},{"./base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/base.js","./exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/safe-string.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/utils.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js"][0].apply(exports,arguments)
+},{"./safe-string":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/lib/index.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js"][0].apply(exports,arguments)
+},{"../dist/cjs/handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","../dist/cjs/handlebars/compiler/visitor":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js","fs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/browserify/lib/_empty.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/leaflet/dist/leaflet-src.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/spin.js/spin.js":[function(require,module,exports){
 /**
  * Copyright (c) 2011-2014 Felix Gnass
  * Licensed under the MIT license
@@ -19807,17 +20070,6 @@ module.exports=require(60)
   }
 
   /**
-   * Returns the absolute page-offset of the given element.
-   */
-  function pos(el) {
-    var o = { x:el.offsetLeft, y:el.offsetTop }
-    while((el = el.offsetParent))
-      o.x+=el.offsetLeft, o.y+=el.offsetTop
-
-    return o
-  }
-
-  /**
    * Returns the line color from the given string or array.
    */
   function getColor(color, idx) {
@@ -19867,7 +20119,6 @@ module.exports=require(60)
       var self = this
         , o = self.opts
         , el = self.el = css(createEl(0, {className: o.className}), {position: o.position, width: 0, zIndex: o.zIndex})
-        , mid = o.radius+o.length+o.width
 
       css(el, {
         left: o.left,
@@ -20037,7 +20288,7 @@ module.exports=require(60)
 
 }));
 
-},{}],79:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/underscore/underscore.js":[function(require,module,exports){
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -21454,7 +21705,7 @@ module.exports=require(60)
   }
 }.call(this));
 
-},{}],80:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.addlot.js":[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -21658,7 +21909,7 @@ L.Map.include({
 
 });
 
-},{"./templates":83,"handlebars":76,"leaflet":77,"spin.js":78,"underscore":79}],81:[function(require,module,exports){
+},{"./templates":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/templates.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/leaflet/dist/leaflet-src.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.boundaries.js":[function(require,module,exports){
 //
 // livinglots.boundaries.js
 //
@@ -21694,7 +21945,7 @@ L.Map.include({
 
 L.Map.addInitHook('_initBoundaries');
 
-},{}],82:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.mail.js":[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -21821,7 +22072,7 @@ L.Map.include({
     }
 });
 
-},{"./templates":83,"handlebars":76,"leaflet":77,"spin.js":78,"underscore":79}],83:[function(require,module,exports){
+},{"./templates":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/templates.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/leaflet/dist/leaflet-src.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/templates.js":[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -21902,7 +22153,7 @@ templates["mail.window.hbs"] = Handlebars.template({"1":function(depth0,helpers,
 return templates;
 
 };
-},{}],84:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Point.js":[function(require,module,exports){
 var mgrs = require('mgrs');
 
 function Point(x, y, z) {
@@ -21938,7 +22189,7 @@ Point.prototype.toMGRS = function(accuracy) {
   return mgrs.forward([this.x, this.y], accuracy);
 };
 module.exports = Point;
-},{"mgrs":150}],85:[function(require,module,exports){
+},{"mgrs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/node_modules/mgrs/mgrs.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Proj.js":[function(require,module,exports){
 var parseCode = require("./parseCode");
 var extend = require('./extend');
 var projections = require('./projections');
@@ -21973,7 +22224,7 @@ Projection.projections = projections;
 Projection.projections.start();
 module.exports = Projection;
 
-},{"./deriveConstants":115,"./extend":116,"./parseCode":120,"./projections":122}],86:[function(require,module,exports){
+},{"./deriveConstants":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/deriveConstants.js","./extend":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/extend.js","./parseCode":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/parseCode.js","./projections":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/adjust_axis.js":[function(require,module,exports){
 module.exports = function(crs, denorm, point) {
   var xin = point.x,
     yin = point.y,
@@ -22026,14 +22277,14 @@ module.exports = function(crs, denorm, point) {
   return point;
 };
 
-},{}],87:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lat.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 var sign = require('./sign');
 
 module.exports = function(x) {
   return (Math.abs(x) < HALF_PI) ? x : (x - (sign(x) * Math.PI));
 };
-},{"./sign":104}],88:[function(require,module,exports){
+},{"./sign":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/sign.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js":[function(require,module,exports){
 var TWO_PI = Math.PI * 2;
 // SPI is slightly greater than Math.PI, so values that exceed the -180..180
 // degree range by a tiny amount don't get wrapped. This prevents points that
@@ -22045,35 +22296,35 @@ var sign = require('./sign');
 module.exports = function(x) {
   return (Math.abs(x) <= SPI) ? x : (x - (sign(x) * TWO_PI));
 };
-},{"./sign":104}],89:[function(require,module,exports){
+},{"./sign":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/sign.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js":[function(require,module,exports){
 module.exports = function(x) {
   if (Math.abs(x) > 1) {
     x = (x > 1) ? 1 : -1;
   }
   return Math.asin(x);
 };
-},{}],90:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e0fn.js":[function(require,module,exports){
 module.exports = function(x) {
   return (1 - 0.25 * x * (1 + x / 16 * (3 + 1.25 * x)));
 };
-},{}],91:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e1fn.js":[function(require,module,exports){
 module.exports = function(x) {
   return (0.375 * x * (1 + 0.25 * x * (1 + 0.46875 * x)));
 };
-},{}],92:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e2fn.js":[function(require,module,exports){
 module.exports = function(x) {
   return (0.05859375 * x * x * (1 + 0.75 * x));
 };
-},{}],93:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e3fn.js":[function(require,module,exports){
 module.exports = function(x) {
   return (x * x * x * (35 / 3072));
 };
-},{}],94:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/gN.js":[function(require,module,exports){
 module.exports = function(a, e, sinphi) {
   var temp = e * sinphi;
   return a / Math.sqrt(1 - temp * temp);
 };
-},{}],95:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/imlfn.js":[function(require,module,exports){
 module.exports = function(ml, e0, e1, e2, e3) {
   var phi;
   var dphi;
@@ -22090,7 +22341,7 @@ module.exports = function(ml, e0, e1, e2, e3) {
   //..reportError("IMLFN-CONV:Latitude failed to converge after 15 iterations");
   return NaN;
 };
-},{}],96:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/iqsfnz.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 
 module.exports = function(eccent, q) {
@@ -22123,16 +22374,16 @@ module.exports = function(eccent, q) {
   //console.log("IQSFN-CONV:Latitude failed to converge after 30 iterations");
   return NaN;
 };
-},{}],97:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/mlfn.js":[function(require,module,exports){
 module.exports = function(e0, e1, e2, e3, phi) {
   return (e0 * phi - e1 * Math.sin(2 * phi) + e2 * Math.sin(4 * phi) - e3 * Math.sin(6 * phi));
 };
-},{}],98:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js":[function(require,module,exports){
 module.exports = function(eccent, sinphi, cosphi) {
   var con = eccent * sinphi;
   return cosphi / (Math.sqrt(1 - con * con));
 };
-},{}],99:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/phi2z.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 module.exports = function(eccent, ts) {
   var eccnth = 0.5 * eccent;
@@ -22149,7 +22400,7 @@ module.exports = function(eccent, ts) {
   //console.log("phi2z has NoConvergence");
   return -9999;
 };
-},{}],100:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_enfn.js":[function(require,module,exports){
 var C00 = 1;
 var C02 = 0.25;
 var C04 = 0.046875;
@@ -22174,7 +22425,7 @@ module.exports = function(es) {
   en[4] = t * es * C88;
   return en;
 };
-},{}],101:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_inv_mlfn.js":[function(require,module,exports){
 var pj_mlfn = require("./pj_mlfn");
 var EPSLN = 1.0e-10;
 var MAX_ITER = 20;
@@ -22195,13 +22446,13 @@ module.exports = function(arg, es, en) {
   //..reportError("cass:pj_inv_mlfn: Convergence error");
   return phi;
 };
-},{"./pj_mlfn":102}],102:[function(require,module,exports){
+},{"./pj_mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_mlfn.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_mlfn.js":[function(require,module,exports){
 module.exports = function(phi, sphi, cphi, en) {
   cphi *= sphi;
   sphi *= sphi;
   return (en[0] * phi - cphi * (en[1] + sphi * (en[2] + sphi * (en[3] + sphi * en[4]))));
 };
-},{}],103:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/qsfnz.js":[function(require,module,exports){
 module.exports = function(eccent, sinphi) {
   var con;
   if (eccent > 1.0e-7) {
@@ -22212,15 +22463,15 @@ module.exports = function(eccent, sinphi) {
     return (2 * sinphi);
   }
 };
-},{}],104:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/sign.js":[function(require,module,exports){
 module.exports = function(x) {
   return x<0 ? -1 : 1;
 };
-},{}],105:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/srat.js":[function(require,module,exports){
 module.exports = function(esinp, exp) {
   return (Math.pow((1 - esinp) / (1 + esinp), exp));
 };
-},{}],106:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/toPoint.js":[function(require,module,exports){
 module.exports = function (array){
   var out = {
     x: array[0],
@@ -22234,7 +22485,7 @@ module.exports = function (array){
   }
   return out;
 };
-},{}],107:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/tsfnz.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 
 module.exports = function(eccent, phi, sinphi) {
@@ -22243,7 +22494,7 @@ module.exports = function(eccent, phi, sinphi) {
   con = Math.pow(((1 - con) / (1 + con)), com);
   return (Math.tan(0.5 * (HALF_PI - phi)) / con);
 };
-},{}],108:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/constants/Datum.js":[function(require,module,exports){
 exports.wgs84 = {
   towgs84: "0,0,0",
   ellipse: "WGS84",
@@ -22324,7 +22575,7 @@ exports.rnb72 = {
   ellipse: "intl",
   datumName: "Reseau National Belge 1972"
 };
-},{}],109:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/constants/Ellipsoid.js":[function(require,module,exports){
 exports.MERIT = {
   a: 6378137.0,
   rf: 298.257,
@@ -22540,7 +22791,7 @@ exports.sphere = {
   b: 6370997.0,
   ellipseName: "Normal Sphere (r=6370997)"
 };
-},{}],110:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/constants/PrimeMeridian.js":[function(require,module,exports){
 exports.greenwich = 0.0; //"0dE",
 exports.lisbon = -9.131906111111; //"9d07'54.862\"W",
 exports.paris = 2.337229166667; //"2d20'14.025\"E",
@@ -22554,7 +22805,7 @@ exports.brussels = 4.367975; //"4d22'4.71\"E",
 exports.stockholm = 18.058277777778; //"18d3'29.8\"E",
 exports.athens = 23.7163375; //"23d42'58.815\"E",
 exports.oslo = 10.722916666667; //"10d43'22.5\"E"
-},{}],111:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/core.js":[function(require,module,exports){
 var proj = require('./Proj');
 var transform = require('./transform');
 var wgs84 = proj('WGS84');
@@ -22619,7 +22870,7 @@ function proj4(fromProj, toProj, coord) {
   }
 }
 module.exports = proj4;
-},{"./Proj":85,"./transform":148}],112:[function(require,module,exports){
+},{"./Proj":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Proj.js","./transform":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/transform.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/datum.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 var PJD_3PARAM = 1;
 var PJD_7PARAM = 2;
@@ -23025,7 +23276,7 @@ datum.prototype = {
 */
 module.exports = datum;
 
-},{}],113:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/datum_transform.js":[function(require,module,exports){
 var PJD_3PARAM = 1;
 var PJD_7PARAM = 2;
 var PJD_GRIDSHIFT = 3;
@@ -23126,7 +23377,7 @@ module.exports = function(source, dest, point) {
 };
 
 
-},{}],114:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/defs.js":[function(require,module,exports){
 var globals = require('./global');
 var parseProj = require('./projString');
 var wkt = require('./wkt');
@@ -23183,7 +23434,7 @@ function defs(name) {
 globals(defs);
 module.exports = defs;
 
-},{"./global":117,"./projString":121,"./wkt":149}],115:[function(require,module,exports){
+},{"./global":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/global.js","./projString":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projString.js","./wkt":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/wkt.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/deriveConstants.js":[function(require,module,exports){
 var Datum = require('./constants/Datum');
 var Ellipsoid = require('./constants/Ellipsoid');
 var extend = require('./extend');
@@ -23241,7 +23492,7 @@ module.exports = function(json) {
   return json;
 };
 
-},{"./constants/Datum":108,"./constants/Ellipsoid":109,"./datum":112,"./extend":116}],116:[function(require,module,exports){
+},{"./constants/Datum":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/constants/Datum.js","./constants/Ellipsoid":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/constants/Ellipsoid.js","./datum":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/datum.js","./extend":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/extend.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/extend.js":[function(require,module,exports){
 module.exports = function(destination, source) {
   destination = destination || {};
   var value, property;
@@ -23257,7 +23508,7 @@ module.exports = function(destination, source) {
   return destination;
 };
 
-},{}],117:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/global.js":[function(require,module,exports){
 module.exports = function(defs) {
   defs('EPSG:4326', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
   defs('EPSG:4269', "+title=NAD83 (long/lat) +proj=longlat +a=6378137.0 +b=6356752.31414036 +ellps=GRS80 +datum=NAD83 +units=degrees");
@@ -23270,7 +23521,7 @@ module.exports = function(defs) {
   defs['EPSG:102113'] = defs['EPSG:3857'];
 };
 
-},{}],118:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/includedProjections.js":[function(require,module,exports){
 var projs = [
   require('./projections/tmerc'),
   require('./projections/utm'),
@@ -23300,7 +23551,7 @@ module.exports = function(proj4){
     proj4.Proj.projections.add(proj);
   });
 };
-},{"./projections/aea":123,"./projections/aeqd":124,"./projections/cass":125,"./projections/cea":126,"./projections/eqc":127,"./projections/eqdc":128,"./projections/gnom":130,"./projections/krovak":131,"./projections/laea":132,"./projections/lcc":133,"./projections/mill":136,"./projections/moll":137,"./projections/nzmg":138,"./projections/omerc":139,"./projections/poly":140,"./projections/sinu":141,"./projections/somerc":142,"./projections/stere":143,"./projections/sterea":144,"./projections/tmerc":145,"./projections/utm":146,"./projections/vandg":147}],119:[function(require,module,exports){
+},{"./projections/aea":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/aea.js","./projections/aeqd":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/aeqd.js","./projections/cass":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/cass.js","./projections/cea":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/cea.js","./projections/eqc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/eqc.js","./projections/eqdc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/eqdc.js","./projections/gnom":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/gnom.js","./projections/krovak":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/krovak.js","./projections/laea":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/laea.js","./projections/lcc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/lcc.js","./projections/mill":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/mill.js","./projections/moll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/moll.js","./projections/nzmg":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/nzmg.js","./projections/omerc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/omerc.js","./projections/poly":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/poly.js","./projections/sinu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/sinu.js","./projections/somerc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/somerc.js","./projections/stere":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/stere.js","./projections/sterea":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/sterea.js","./projections/tmerc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/tmerc.js","./projections/utm":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/utm.js","./projections/vandg":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/vandg.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/index.js":[function(require,module,exports){
 var proj4 = require('./core');
 proj4.defaultDatum = 'WGS84'; //default datum
 proj4.Proj = require('./Proj');
@@ -23313,7 +23564,7 @@ proj4.mgrs = require('mgrs');
 proj4.version = require('../package.json').version;
 require('./includedProjections')(proj4);
 module.exports = proj4;
-},{"../package.json":151,"./Point":84,"./Proj":85,"./common/toPoint":106,"./core":111,"./defs":114,"./includedProjections":118,"./transform":148,"mgrs":150}],120:[function(require,module,exports){
+},{"../package.json":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json","./Point":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Point.js","./Proj":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Proj.js","./common/toPoint":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/toPoint.js","./core":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/core.js","./defs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/defs.js","./includedProjections":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/includedProjections.js","./transform":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/transform.js","mgrs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/node_modules/mgrs/mgrs.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/parseCode.js":[function(require,module,exports){
 var defs = require('./defs');
 var wkt = require('./wkt');
 var projStr = require('./projString');
@@ -23350,7 +23601,7 @@ function parse(code){
 }
 
 module.exports = parse;
-},{"./defs":114,"./projString":121,"./wkt":149}],121:[function(require,module,exports){
+},{"./defs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/defs.js","./projString":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projString.js","./wkt":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/wkt.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projString.js":[function(require,module,exports){
 var D2R = 0.01745329251994329577;
 var PrimeMeridian = require('./constants/PrimeMeridian');
 
@@ -23477,7 +23728,7 @@ module.exports = function(defData) {
   return self;
 };
 
-},{"./constants/PrimeMeridian":110}],122:[function(require,module,exports){
+},{"./constants/PrimeMeridian":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/constants/PrimeMeridian.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections.js":[function(require,module,exports){
 var projs = [
   require('./projections/merc'),
   require('./projections/longlat')
@@ -23513,7 +23764,7 @@ exports.start = function() {
   projs.forEach(add);
 };
 
-},{"./projections/longlat":134,"./projections/merc":135}],123:[function(require,module,exports){
+},{"./projections/longlat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/longlat.js","./projections/merc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/merc.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/aea.js":[function(require,module,exports){
 var EPSLN = 1.0e-10;
 var msfnz = require('../common/msfnz');
 var qsfnz = require('../common/qsfnz');
@@ -23636,7 +23887,7 @@ exports.phi1z = function(eccent, qs) {
 };
 exports.names = ["Albers_Conic_Equal_Area", "Albers", "aea"];
 
-},{"../common/adjust_lon":88,"../common/asinz":89,"../common/msfnz":98,"../common/qsfnz":103}],124:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/asinz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js","../common/msfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js","../common/qsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/qsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/aeqd.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var HALF_PI = Math.PI/2;
 var EPSLN = 1.0e-10;
@@ -23835,7 +24086,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Azimuthal_Equidistant", "aeqd"];
 
-},{"../common/adjust_lon":88,"../common/asinz":89,"../common/e0fn":90,"../common/e1fn":91,"../common/e2fn":92,"../common/e3fn":93,"../common/gN":94,"../common/imlfn":95,"../common/mlfn":97}],125:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/asinz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js","../common/e0fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e0fn.js","../common/e1fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e1fn.js","../common/e2fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e2fn.js","../common/e3fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e3fn.js","../common/gN":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/gN.js","../common/imlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/imlfn.js","../common/mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/mlfn.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/cass.js":[function(require,module,exports){
 var mlfn = require('../common/mlfn');
 var e0fn = require('../common/e0fn');
 var e1fn = require('../common/e1fn');
@@ -23939,7 +24190,7 @@ exports.inverse = function(p) {
 
 };
 exports.names = ["Cassini", "Cassini_Soldner", "cass"];
-},{"../common/adjust_lat":87,"../common/adjust_lon":88,"../common/e0fn":90,"../common/e1fn":91,"../common/e2fn":92,"../common/e3fn":93,"../common/gN":94,"../common/imlfn":95,"../common/mlfn":97}],126:[function(require,module,exports){
+},{"../common/adjust_lat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lat.js","../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/e0fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e0fn.js","../common/e1fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e1fn.js","../common/e2fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e2fn.js","../common/e3fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e3fn.js","../common/gN":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/gN.js","../common/imlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/imlfn.js","../common/mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/mlfn.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/cea.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var qsfnz = require('../common/qsfnz');
 var msfnz = require('../common/msfnz');
@@ -24004,7 +24255,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["cea"];
 
-},{"../common/adjust_lon":88,"../common/iqsfnz":96,"../common/msfnz":98,"../common/qsfnz":103}],127:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/iqsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/iqsfnz.js","../common/msfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js","../common/qsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/qsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/eqc.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var adjust_lat = require('../common/adjust_lat');
 exports.init = function() {
@@ -24047,7 +24298,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Equirectangular", "Equidistant_Cylindrical", "eqc"];
 
-},{"../common/adjust_lat":87,"../common/adjust_lon":88}],128:[function(require,module,exports){
+},{"../common/adjust_lat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lat.js","../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/eqdc.js":[function(require,module,exports){
 var e0fn = require('../common/e0fn');
 var e1fn = require('../common/e1fn');
 var e2fn = require('../common/e2fn');
@@ -24159,7 +24410,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Equidistant_Conic", "eqdc"];
 
-},{"../common/adjust_lat":87,"../common/adjust_lon":88,"../common/e0fn":90,"../common/e1fn":91,"../common/e2fn":92,"../common/e3fn":93,"../common/imlfn":95,"../common/mlfn":97,"../common/msfnz":98}],129:[function(require,module,exports){
+},{"../common/adjust_lat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lat.js","../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/e0fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e0fn.js","../common/e1fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e1fn.js","../common/e2fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e2fn.js","../common/e3fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e3fn.js","../common/imlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/imlfn.js","../common/mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/mlfn.js","../common/msfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/gauss.js":[function(require,module,exports){
 var FORTPI = Math.PI/4;
 var srat = require('../common/srat');
 var HALF_PI = Math.PI/2;
@@ -24206,7 +24457,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["gauss"];
 
-},{"../common/srat":105}],130:[function(require,module,exports){
+},{"../common/srat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/srat.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/gnom.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var EPSLN = 1.0e-10;
 var asinz = require('../common/asinz');
@@ -24307,7 +24558,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["gnom"];
 
-},{"../common/adjust_lon":88,"../common/asinz":89}],131:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/asinz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/krovak.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 exports.init = function() {
   this.a = 6377397.155;
@@ -24407,7 +24658,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Krovak", "krovak"];
 
-},{"../common/adjust_lon":88}],132:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/laea.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 var FORTPI = Math.PI/4;
 var EPSLN = 1.0e-10;
@@ -24697,7 +24948,7 @@ exports.authlat = function(beta, APA) {
 };
 exports.names = ["Lambert Azimuthal Equal Area", "Lambert_Azimuthal_Equal_Area", "laea"];
 
-},{"../common/adjust_lon":88,"../common/qsfnz":103}],133:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/qsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/qsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/lcc.js":[function(require,module,exports){
 var EPSLN = 1.0e-10;
 var msfnz = require('../common/msfnz');
 var tsfnz = require('../common/tsfnz');
@@ -24834,7 +25085,7 @@ exports.inverse = function(p) {
 
 exports.names = ["Lambert Tangential Conformal Conic Projection", "Lambert_Conformal_Conic", "Lambert_Conformal_Conic_2SP", "lcc"];
 
-},{"../common/adjust_lon":88,"../common/msfnz":98,"../common/phi2z":99,"../common/sign":104,"../common/tsfnz":107}],134:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/msfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js","../common/phi2z":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/phi2z.js","../common/sign":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/sign.js","../common/tsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/tsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/longlat.js":[function(require,module,exports){
 exports.init = function() {
   //no-op for longlat
 };
@@ -24846,7 +25097,7 @@ exports.forward = identity;
 exports.inverse = identity;
 exports.names = ["longlat", "identity"];
 
-},{}],135:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/merc.js":[function(require,module,exports){
 var msfnz = require('../common/msfnz');
 var HALF_PI = Math.PI/2;
 var EPSLN = 1.0e-10;
@@ -24945,7 +25196,7 @@ exports.inverse = function(p) {
 
 exports.names = ["Mercator", "Popular Visualisation Pseudo Mercator", "Mercator_1SP", "Mercator_Auxiliary_Sphere", "merc"];
 
-},{"../common/adjust_lon":88,"../common/msfnz":98,"../common/phi2z":99,"../common/tsfnz":107}],136:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/msfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js","../common/phi2z":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/phi2z.js","../common/tsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/tsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/mill.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 /*
   reference
@@ -24992,7 +25243,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Miller_Cylindrical", "mill"];
 
-},{"../common/adjust_lon":88}],137:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/moll.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var EPSLN = 1.0e-10;
 exports.init = function() {};
@@ -25071,7 +25322,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Mollweide", "moll"];
 
-},{"../common/adjust_lon":88}],138:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/nzmg.js":[function(require,module,exports){
 var SEC_TO_RAD = 4.84813681109535993589914102357e-6;
 /*
   reference
@@ -25291,7 +25542,7 @@ exports.inverse = function(p) {
   return p;
 };
 exports.names = ["New_Zealand_Map_Grid", "nzmg"];
-},{}],139:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/omerc.js":[function(require,module,exports){
 var tsfnz = require('../common/tsfnz');
 var adjust_lon = require('../common/adjust_lon');
 var phi2z = require('../common/phi2z');
@@ -25460,7 +25711,7 @@ exports.inverse = function(p) {
 };
 
 exports.names = ["Hotine_Oblique_Mercator", "Hotine Oblique Mercator", "Hotine_Oblique_Mercator_Azimuth_Natural_Origin", "Hotine_Oblique_Mercator_Azimuth_Center", "omerc"];
-},{"../common/adjust_lon":88,"../common/phi2z":99,"../common/tsfnz":107}],140:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/phi2z":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/phi2z.js","../common/tsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/tsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/poly.js":[function(require,module,exports){
 var e0fn = require('../common/e0fn');
 var e1fn = require('../common/e1fn');
 var e2fn = require('../common/e2fn');
@@ -25589,7 +25840,7 @@ exports.inverse = function(p) {
   return p;
 };
 exports.names = ["Polyconic", "poly"];
-},{"../common/adjust_lat":87,"../common/adjust_lon":88,"../common/e0fn":90,"../common/e1fn":91,"../common/e2fn":92,"../common/e3fn":93,"../common/gN":94,"../common/mlfn":97}],141:[function(require,module,exports){
+},{"../common/adjust_lat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lat.js","../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/e0fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e0fn.js","../common/e1fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e1fn.js","../common/e2fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e2fn.js","../common/e3fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e3fn.js","../common/gN":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/gN.js","../common/mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/mlfn.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/sinu.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var adjust_lat = require('../common/adjust_lat');
 var pj_enfn = require('../common/pj_enfn');
@@ -25696,7 +25947,7 @@ exports.inverse = function(p) {
   return p;
 };
 exports.names = ["Sinusoidal", "sinu"];
-},{"../common/adjust_lat":87,"../common/adjust_lon":88,"../common/asinz":89,"../common/pj_enfn":100,"../common/pj_inv_mlfn":101,"../common/pj_mlfn":102}],142:[function(require,module,exports){
+},{"../common/adjust_lat":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lat.js","../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/asinz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js","../common/pj_enfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_enfn.js","../common/pj_inv_mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_inv_mlfn.js","../common/pj_mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/pj_mlfn.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/somerc.js":[function(require,module,exports){
 /*
   references:
     Formules et constantes pour le Calcul pour la
@@ -25778,7 +26029,7 @@ exports.inverse = function(p) {
 
 exports.names = ["somerc"];
 
-},{}],143:[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/stere.js":[function(require,module,exports){
 var HALF_PI = Math.PI/2;
 var EPSLN = 1.0e-10;
 var sign = require('../common/sign');
@@ -25945,7 +26196,7 @@ exports.inverse = function(p) {
 
 };
 exports.names = ["stere"];
-},{"../common/adjust_lon":88,"../common/msfnz":98,"../common/phi2z":99,"../common/sign":104,"../common/tsfnz":107}],144:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/msfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/msfnz.js","../common/phi2z":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/phi2z.js","../common/sign":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/sign.js","../common/tsfnz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/tsfnz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/sterea.js":[function(require,module,exports){
 var gauss = require('./gauss');
 var adjust_lon = require('../common/adjust_lon');
 exports.init = function() {
@@ -26004,7 +26255,7 @@ exports.inverse = function(p) {
 
 exports.names = ["Stereographic_North_Pole", "Oblique_Stereographic", "Polar_Stereographic", "sterea","Oblique Stereographic Alternative"];
 
-},{"../common/adjust_lon":88,"./gauss":129}],145:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","./gauss":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/gauss.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/tmerc.js":[function(require,module,exports){
 var e0fn = require('../common/e0fn');
 var e1fn = require('../common/e1fn');
 var e2fn = require('../common/e2fn');
@@ -26141,7 +26392,7 @@ exports.inverse = function(p) {
 };
 exports.names = ["Transverse_Mercator", "Transverse Mercator", "tmerc"];
 
-},{"../common/adjust_lon":88,"../common/asinz":89,"../common/e0fn":90,"../common/e1fn":91,"../common/e2fn":92,"../common/e3fn":93,"../common/mlfn":97,"../common/sign":104}],146:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/asinz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js","../common/e0fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e0fn.js","../common/e1fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e1fn.js","../common/e2fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e2fn.js","../common/e3fn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/e3fn.js","../common/mlfn":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/mlfn.js","../common/sign":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/sign.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/utm.js":[function(require,module,exports){
 var D2R = 0.01745329251994329577;
 var tmerc = require('./tmerc');
 exports.dependsOn = 'tmerc';
@@ -26161,7 +26412,7 @@ exports.init = function() {
 };
 exports.names = ["Universal Transverse Mercator System", "utm"];
 
-},{"./tmerc":145}],147:[function(require,module,exports){
+},{"./tmerc":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/tmerc.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/projections/vandg.js":[function(require,module,exports){
 var adjust_lon = require('../common/adjust_lon');
 var HALF_PI = Math.PI/2;
 var EPSLN = 1.0e-10;
@@ -26282,7 +26533,7 @@ exports.inverse = function(p) {
   return p;
 };
 exports.names = ["Van_der_Grinten_I", "VanDerGrinten", "vandg"];
-},{"../common/adjust_lon":88,"../common/asinz":89}],148:[function(require,module,exports){
+},{"../common/adjust_lon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/adjust_lon.js","../common/asinz":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/asinz.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/transform.js":[function(require,module,exports){
 var D2R = 0.01745329251994329577;
 var R2D = 57.29577951308232088;
 var PJD_3PARAM = 1;
@@ -26355,7 +26606,7 @@ module.exports = function transform(source, dest, point) {
 
   return point;
 };
-},{"./Proj":85,"./adjust_axis":86,"./common/toPoint":106,"./datum_transform":113}],149:[function(require,module,exports){
+},{"./Proj":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Proj.js","./adjust_axis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/adjust_axis.js","./common/toPoint":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/common/toPoint.js","./datum_transform":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/datum_transform.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/wkt.js":[function(require,module,exports){
 var D2R = 0.01745329251994329577;
 var extend = require('./extend');
 
@@ -26570,7 +26821,7 @@ module.exports = function(wkt, self) {
   return extend(self, obj.output);
 };
 
-},{"./extend":116}],150:[function(require,module,exports){
+},{"./extend":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/extend.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/node_modules/mgrs/mgrs.js":[function(require,module,exports){
 
 
 
@@ -27307,8 +27558,8 @@ function getMinNorthing(zoneLetter) {
 
 }
 
-},{}],151:[function(require,module,exports){
-module.exports={
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
+module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
@@ -27389,7 +27640,7 @@ module.exports={
     "shasum": "496a768578af439e4677a085a639a1f198cbbdcd",
     "tarball": "http://registry.npmjs.org/proj4/-/proj4-2.3.3.tgz"
   },
-  "_from": "proj4@",
+  "_from": "proj4@>=2.3.3 <3.0.0",
   "_npmVersion": "1.4.3",
   "_npmUser": {
     "name": "cwmma",
@@ -27406,11 +27657,12 @@ module.exports={
     }
   ],
   "_shasum": "496a768578af439e4677a085a639a1f198cbbdcd",
-  "_resolved": "https://registry.npmjs.org/proj4/-/proj4-2.3.3.tgz"
+  "_resolved": "https://registry.npmjs.org/proj4/-/proj4-2.3.3.tgz",
+  "readme": "ERROR: No README data found!"
 }
 
-},{}],152:[function(require,module,exports){
-module.exports=require(78)
-},{}],153:[function(require,module,exports){
-module.exports=require(79)
-},{}]},{},[31]);
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/spin.js/spin.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/node_modules/underscore/underscore.js"][0].apply(exports,arguments)
+},{}]},{},["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/main.js"]);

@@ -257,7 +257,7 @@ MAILREADER_HOST_PASSWORD = get_env_variable('MAILREADER_HOST_PASSWORD')
 
 FEINCMS_RICHTEXT_INIT_TEMPLATE = 'admin/content/richtext/init_richtext.html'
 FEINCMS_RICHTEXT_INIT_CONTEXT = {
-    'TINYMCE_JS_URL': STATIC_URL + 'bower_components/tinymce/tinymce.min.js',
+    'TINYMCE_JS_URL': STATIC_URL + 'node_modules/tinymce/tinymce.min.js',
 }
 
 def elephantblog_entry_url_app(self):

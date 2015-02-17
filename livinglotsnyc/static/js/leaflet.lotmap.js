@@ -5,10 +5,10 @@ var L = require('leaflet');
 var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
 
-require('leaflet.bing');
-require('leaflet.dataoptions');
-require('leaflet.hash');
-require('leaflet.usermarker');
+require('leaflet-plugins-bing');
+require('leaflet-dataoptions');
+require('leaflet-hash');
+require('leaflet-usermarker');
 require('livinglots-map/src/livinglots.boundaries');
 
 require('./leaflet.lotlayer');
