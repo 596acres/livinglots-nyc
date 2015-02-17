@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet vector tile layer example</title>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+    <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.label/leaflet.label.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script src="http://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>
+    <script src="lib/communist.min.js"></script>
+
+    <script src="TileCache.js"></script>
+    <script src="TileQueue.js"></script>
+    <script src="AbstractWorker.js"></script>
+    <script src="CommunistWorker.js"></script>
+    <script src="TileLayer.GeoJSON.js"></script>
+    <script src="TileLayer.Vector.Unclipped.js"></script>
+    <script src="TileLayer.Vector.Debug.js"></script>
+    <script src="TileLayer.Div.js"></script>
+    <script src="TileLayer.Progress.js"></script>
+    <script src="TileLayer.Overzoom.js"></script>
+    <script src="Leaflet.label-patch.js"></script>
+
+    <style type="text/css">
+    html, body, #map {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script type="text/javascript">
+    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/1a1b06b230af4efdbb989ea99e9841af/997/256/{z}/{x}/{y}.png',
+        cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
+        + 'Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>';
+
+    var background = L.tileLayer(cloudmadeUrl, { attribution: cloudmadeAttribution });
+
+    // default style of feature
+    var style = {
+        "color": "#1B1",
+        "fillColor": "#1B1",
+        "weight": 0.7,
+        "opacity": 0.3,
+        "fillOpacity": 0.1
+    };
+    // style of feature when hovered
+    var highlightStyle = {
+        "color": "#000",
+        "weight": 1.5,
+        "fillOpacity": 0.4
+    };
+
+    function highlightFeature(e) {
+        var layer = e.target;
+        layer.setStyle(highlightStyle);
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+            layer.bringToFront();
+        }
+    }
+
+    function resetHighlight(e) {
+        var layer = e.target;
+        layer.setStyle(style);
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight
+        });
+        if (feature.properties) {
+            layer.bindLabel(feature.properties.name);
+            layer.bindPopup(feature.id + '<br>' + feature.properties.name);
+        }
+    }
+
+    // filters out invalid (empty) geometries in Polymaps county dataset
+    // to avoid exceptions in L.GeoJSON
+    function filterInvalidGeometry(feature) {
+        var geometry = feature.type === 'Feature' ? feature.geometry : feature;
+        return geometry.type !== undefined;
+    };
+
+    var vectorOptions = {
+        style: style,
+        onEachFeature: onEachFeature,
+        filter: filterInvalidGeometry
+    };
+
+    var url = 'http://polymaps.appspot.com/county/{z}/{x}/{y}.json';
+    var options = {
+        // remove tiles outside viewport
+        unloadInvisibleTiles: true,
+        // no tile loading while panning (slow with large vector tiles)
+        updateWhenIdle: true,
+        serverZooms: [3,4,5,6,7],
+        //serverZooms: [3,5,7],
+        //maxNativeZoom: 7,
+        minZoom: 2
+    };
+    var vector = new L.TileLayer.Vector(url, options, vectorOptions);
+
+    // unloadInvisibleTiles and updateWhenIdle with default values 
+    // (false for non-mobile) for comparison
+    var unclippedOptions = {
+        unique: function(feature) {
+            return feature.id;
+        }
+    };
+    var unclipped = new L.TileLayer.Vector.Unclipped(url, unclippedOptions, vectorOptions);
+
+    // debug layer (full layer, not an overlay yet)
+    var debug = new L.TileLayer.Vector.Debug(url, options, vectorOptions);
+    
+    var progress = new L.TileLayer.Progress(vector);
+
+    var map = L.map('map', {
+        center: new L.LatLng(38.617, -100.261),
+        zoom: 5,
+        layers: [background, vector, progress] 
+    });
+
+    var overlayMaps = {
+        'Vector': vector,
+        'Vector.Unclipped': unclipped,
+        'Vector.Debug': debug
+    };
+    // add as base to switch with radio instead of checkbox
+    L.control.layers(overlayMaps, {'Progress (Vector)': progress}, {
+        collapsed: false
+    }).addTo(map);
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<html>
+<head>
+	<title>OpenStreetMap // Leaflet</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+	<script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
+	<script src="../layer/tile/Google.js"></script>
+</head>
+<body>
+	<!-- define a DIV into which the map will appear. Make it take up the whole window -->
+	<div style="width:100%; height:100%" id="map"></div>
+<script type='text/javascript'>
+var map = new L.Map('map', {center: new L.LatLng(48.3324, -4.7659), zoom: 13});
+var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom: 21});
+var ggl = new L.Google();
+var ggl2 = new L.Google('TERRAIN');
+var ggl3 = new L.Google('ROADMAP');
+var ggl4 = new L.Google('HYBRID');
+map.addLayer(ggl);
+map.addControl(new L.Control.Layers( {'Google Satellite':ggl, 'Google Terrain':ggl2, 'Google Road':ggl3, 'Google Hybrid':ggl4}, {'OSM':osm}));
+L.marker([48.3324, -4.7659]).addTo(map);
+L.marker([48.4324, -4.8659]).addTo(map);
+L.marker([48.2324, -4.6659]).addTo(map);
+L.marker([-32.69, -62.10]).addTo(map).bindPopup('A pretty CSS3 popup. Easily customizable.').openPopup();
+map.on('zoomstart', function (e) {
+	console.log(e.target._zoom);
+});
+map.on('zoomend', function (e) {
+	console.log(e.target._zoom);
+});
+</script>
+ 
+</body>
+</html>
