@@ -7,4 +7,8 @@
 
 <script src="//maps.googleapis.com/maps/api/js?sensor=false"></script>
 
-<script src="{% static "js/bundle.js" %}"></script>
+{% if debug %}
+    <script src="{% static "js/bundle.dev.js" %}"></script>
+{% else %}
+    <script src="{% static "js/bundle.min.js" %}"></script>
+{% endif %}
