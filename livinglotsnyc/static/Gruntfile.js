@@ -44,7 +44,8 @@ module.exports = function(grunt) {
             dev: {
                 options: {
                     paths: ["css"],
-                    sourceMap: true
+                    sourceMap: true,
+                    sourceMapFileInline: true
                 },
                 src: "css/style.less",
                 dest: "css/style.dev.css"
@@ -68,7 +69,7 @@ module.exports = function(grunt) {
 
         watch: {
             jshint: {
-                files: ["js/*.js", "!bundle.js"],
+                files: ["js/*.js"],
                 tasks: ["jshint"]
             },
 

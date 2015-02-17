@@ -1,6 +1,10 @@
 {% load js static %}
 
-<link rel="stylesheet" href="{% static "css/style.min.css" %}">
+{% if debug %}
+    <link rel="stylesheet" href="{% static "css/style.dev.css" %}">
+{% else %}
+    <link rel="stylesheet" href="{% static "css/style.min.css" %}">
+{% endif %}
 
 <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 {% django_js jquery=false i18n=false csrf=false %}
