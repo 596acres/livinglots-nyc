@@ -1,6 +1,6 @@
 <div class="image">
-    {% if content.external_url %}
-        <a href="{{ content.external_url }}">
+    {% if content.url %}
+        <a href="{{ content.url }}">
             <img src="{{ content.mediafile.file.url }}" alt="{{ content.mediafile.translation.caption }}" />
         </a>
     {% else %}

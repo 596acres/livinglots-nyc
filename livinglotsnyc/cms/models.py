@@ -42,24 +42,24 @@ class RecentActivitiesContent(models.Model):
         ], {}, context_instance=kwargs.get('context'))
 
 
-class ExternallyLinkedMediaFileContent(ContentWithMediaFile):
+class LinkedMediaFileContent(ContentWithMediaFile):
 
     class Meta:
         abstract = True
-        verbose_name = _('externally linked media file')
-        verbose_name_plural = _('externally linked media files')
+        verbose_name = _('linked media file')
+        verbose_name_plural = _('linked media files')
 
     @classmethod
     def initialize_type(cls):
-        cls.add_to_class('external_url', models.URLField(_('external url'),
+        cls.add_to_class('url', models.URLField(_('url'),
                                                          blank=True, null=True))
 
     def render(self, **kwargs):
         ctx = { 'content': self }
         ctx.update(kwargs)
         return render_to_string([
-            'content/externallylinkedmediafile/%s.html' % self.mediafile.type,
-            'content/externallylinkedmediafile/default.html',
+            'content/linkedmediafile/%s.html' % self.mediafile.type,
+            'content/linkedmediafile/default.html',
         ], ctx, context_instance=kwargs.get('context'))
 
 
@@ -140,7 +140,7 @@ Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
     ('default', _('default')),
 ))
 
-Page.create_content_type(ExternallyLinkedMediaFileContent)
+Page.create_content_type(LinkedMediaFileContent)
 Page.create_content_type(MailchimpSignup)
 
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
