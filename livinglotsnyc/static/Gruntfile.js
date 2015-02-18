@@ -35,7 +35,7 @@ module.exports = function(grunt) {
             all: {
                 files: {
                     src: [
-                        "js/*.js",
+                        'js/*.js',
                         '!<%= browserify.dev.dest %>',
                         '!<%= browserify.production.dest %>',
                         '!<%= uglify.production.dest %>'
@@ -50,8 +50,8 @@ module.exports = function(grunt) {
                     sourceMap: true,
                     sourceMapFileInline: true
                 },
-                src: "css/style.less",
-                dest: "css/style.dev.css"
+                src: 'css/style.less',
+                dest: 'css/style.dev.css'
             },
             production: {
                 src: '<%= less.dev.src %>',
@@ -68,13 +68,13 @@ module.exports = function(grunt) {
 
         watch: {
             jshint: {
-                files: ["js/*.js"],
-                tasks: ["jshint"]
+                files: ['js/*.js'],
+                tasks: ['jshint']
             },
 
             less: {
-                files: ["css/*.less", "css/*/*.less"],
-                tasks: ["less", "cssmin"]
+                files: ['css/*.less', 'css/*/*.less'],
+                tasks: ['less', 'cssmin']
             },
 
             uglify: {
@@ -91,5 +91,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask("dev", ["browserify", "watch"]);
+    grunt.registerTask('dev', ['browserify', 'watch']);
 };
