@@ -6,6 +6,14 @@
     {% else %}
         <img src="{{ content.mediafile.file.url }}" alt="{{ content.mediafile.translation.caption }}" />
     {% endif %}
-    <span class="caption">{{ content.mediafile.translation.caption }}</span>
+    <span class="caption">
+        {% if content.url %}
+            <a href="{{ content.url }}">
+                {{ content.mediafile.translation.caption }}
+            </a>
+        {% else %}
+            {{ content.mediafile.translation.caption }}
+        {% endif %}
+    </span>
     {% if content.mediafile.copyright %}<span class="copyright">{{ content.mediafile.copyright }}</span>{% endif %}
 </div>
