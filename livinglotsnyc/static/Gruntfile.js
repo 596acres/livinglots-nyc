@@ -21,6 +21,10 @@ module.exports = function(grunt) {
         },
 
         cssmin: {
+            options: {
+                // Don't rebase urls. This was breaking relative urls.
+                rebase: false
+            },
             minify: {
                 src: '<%= less.production.dest %>',
                 dest: 'css/style.min.css'
@@ -43,7 +47,6 @@ module.exports = function(grunt) {
         less: {
             dev: {
                 options: {
-                    paths: ["css"],
                     sourceMap: true,
                     sourceMapFileInline: true
                 },
@@ -51,10 +54,6 @@ module.exports = function(grunt) {
                 dest: "css/style.dev.css"
             },
             production: {
-                options: {
-                    paths: ['css'],
-                    yuicompress: true
-                },
                 src: '<%= less.dev.src %>',
                 dest: 'css/style.css'
             }

@@ -6401,7 +6401,7 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   margin-bottom: 3px;
 }
 .map-welcome {
-  background-image: url("../img/welcome_texture.png");
+  background-image: url('../img/welcome_texture.png');
   background-size: cover;
   color: white;
 }
