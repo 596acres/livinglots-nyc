@@ -5331,6 +5331,10 @@ fieldset[disabled] .usercontent-list-admin-actions .btn.active {
   border-bottom: 1px solid #bdcbc4;
   padding-top: 35px;
 }
+.caption {
+  display: block;
+  font-style: italic;
+}
 .faq {
   padding-bottom: 20px;
   padding-top: 20px;
