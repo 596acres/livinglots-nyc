@@ -30,10 +30,10 @@
                 {% feincms_nav feincms_page level=2 depth=1 as mainmenu %}
                 {% for page in mainmenu %}
                     <li class="mainmenu-item">
-                        <a href="{{ page.get_absolute_url }}">{{ page.title }}</a>
-
                         {% feincms_nav page level=3 depth=1 as submenu %}
                         {% if submenu %}
+                            {# Don't link to top-level items with subpages #}
+                            <a class="mainmenu-item-parent">{{ page.title }}</a>
                             <ul class="submenu">
                                 {% for submenupage in submenu %}
                                     <li>
@@ -41,6 +41,8 @@
                                     </li>
                                 {% endfor %}
                             </ul>
+                        {% else %}
+                            <a href="{{ page.get_absolute_url }}">{{ page.title }}</a>
                         {% endif %}
                     </li>
                 {% endfor %}

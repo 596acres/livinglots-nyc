@@ -5631,6 +5631,9 @@ footer .footer-middle-right {
 .page-header .mainmenu-item:hover .submenu {
   display: block;
 }
+.page-header .mainmenu-item-parent {
+  cursor: default;
+}
 .page-header .submenu {
   background-color: white;
   display: none;
