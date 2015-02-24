@@ -101,6 +101,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
 
     'feincms.context_processors.add_page_if_missing',
+
+    'livinglotsnyc.context_processors.add_domain',
 )
 
 ROOT_URLCONF = 'livinglotsnyc.urls'

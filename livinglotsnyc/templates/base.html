@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load feincms_tags feincms_page_tags i18n static %}
-<html>
+<html prefix="og: http://ogp.me/ns#">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -18,6 +18,15 @@
 
         {% include "_includes.html" %}
         {% block scripts %}{% endblock %}
+
+        {% block meta_tags %}
+            <meta property="og:site_name" content="Living Lots NYC" />
+            <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+            <meta property="fb:app_id" content="600902443257600" />
+            <meta name="twitter:card" content="summary" />
+            <meta name="twitter:site" content="@596acres" />
+            <meta name="twitter:url" content="{{ request.build_absolute_uri }}" />
+        {% endblock %}
 
     </head>
     <body class="{% block body_class %}{% endblock %}" {% block body_data %}{% endblock %}>

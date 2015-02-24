@@ -6,6 +6,13 @@
     {% trans "Living Lots NYC" %}
 {% endblock %}
 
+{% block meta_tags %}{{ block.super }}
+    <meta property="og:title" content="{{ lot.display_name|title|default:"unknown" }}" />
+    <meta property="og:description" content="{{ lot.display_name|title|default:"unknown" }} on Living Lots NYC, a public vacant lot viewer for New York City." />
+    <meta name="twitter:title" content="{{ lot.display_name|title|default:"unknown" }}" />
+    <meta name="twitter:description" content="{{ lot.display_name|title|default:"unknown" }} on Living Lots NYC, a public vacant lot viewer for New York City." />
+{% endblock %}
+
 {% block body_class %}lot-detail-page{% endblock %}
 
 {% block breadcrumbs_wrapper %}

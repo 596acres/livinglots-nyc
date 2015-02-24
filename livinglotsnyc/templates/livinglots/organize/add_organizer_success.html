@@ -23,5 +23,21 @@
         {{ participant.content_object.display_name|title|default:"unknown" }}
     </div>
     <h1>{% trans "Organize this lot!" %}</h1>
-    <p>{% trans "You're now growing community at" %} {{ participant.content_object.display_name|title|default:"unknown" }}.</p>
+    {% blocktrans with lotname=participant.content_object.display_name|title|default:"unknown" %}
+        <p>You're now growing community at {{ lotname }}.</p>
+        <p>You will now receive emails when that lot is updated--when new organizers sign up on the lot and notes, pictures or files are added to it. If this was an accident or if you change your mind in the future, you can stop organizing this lot at any time on this page. You should receive an email with this link soon.</p>
+    {% endblocktrans %}
+
+    {% if participant.post_publicly %}
+        <p><strong>{% trans "Be aware that your contact information is now posted publicly on the lot's page so others who are interested in the site can get in touch with you." %}</strong></p>
+    {% endif %}
+
+    <p>{% trans "Let your friends know you're organizing here! Share it on Twitter and Facebook:" %}</p>
+    <a class="twitter-share-button" href="https://twitter.com/share" data-related="596acres" data-count="none" data-url="{{ "http://"|urlencode:"" }}{{ domain }}{{ participant.content_object.get_absolute_url|urlencode:"" }}" data-text="I just started organizing a space for my community with the help of @596acres" data-dnt="true">
+        Tweet
+    </a>
+    <script>
+window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
+    </script>
+    <iframe src="//www.facebook.com/plugins/share_button.php?href={{ "http://"|urlencode:"" }}{{ domain }}{{ participant.content_object.get_absolute_url|urlencode:"" }}&amp;layout=button&amp;appId=600902443257600" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height: 20px;" allowTransparency="true"></iframe>
 {% endblock %}
