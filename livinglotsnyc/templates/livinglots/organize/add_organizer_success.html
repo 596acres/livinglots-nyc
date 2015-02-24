@@ -33,7 +33,7 @@
     {% endif %}
 
     <p>{% trans "Let your friends know you're organizing here! Share it on Twitter and Facebook:" %}</p>
-    <a class="twitter-share-button" href="https://twitter.com/share" data-related="596acres" data-count="none" data-url="{{ "http://"|urlencode:"" }}{{ domain }}{{ participant.content_object.get_absolute_url|urlencode:"" }}" data-text="I just started organizing a space for my community with the help of @596acres" data-dnt="true">
+    <a class="twitter-share-button" href="https://twitter.com/share?url={{ "http://"|urlencode:"" }}{{ domain }}{{ participant.content_object.get_absolute_url|urlencode:"" }}" data-related="596acres" data-count="none" data-text="I just started organizing a space for my community with the help of @596acres" data-dnt="true">
         Tweet
     </a>
     <script>
