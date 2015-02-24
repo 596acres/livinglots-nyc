@@ -19,9 +19,12 @@ FACILITATORS = {
 ALLOWED_HOSTS = get_env_variable('ALLOWED_HOSTS').split(',')
 
 #
-# cache-machine
+# django-cachalot
 #
 
+INSTALLED_APPS += (
+    'cachalot',
+)
 CACHES = {
     'default': {
         'BACKEND': 'caching.backends.memcached.MemcachedCache',
@@ -30,7 +33,6 @@ CACHES = {
         ],
     },
 }
-CACHE_COUNT_TIMEOUT = 60
 
 
 #
