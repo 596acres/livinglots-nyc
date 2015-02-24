@@ -51,10 +51,6 @@ LANGUAGES = (
 
 LANGUAGE_CODE = 'en-us'
 
-LOCALE_PATHS = (
-    'locale',
-)
-
 SITE_ID = 1
 
 USE_I18N = True
@@ -67,6 +63,10 @@ TIME_ZONE = 'America/New_York'
 PROJECT_ROOT = os.path.join(abspath(dirname(__file__)), '..', '..')
 
 DATA_ROOT = os.path.join(PROJECT_ROOT, 'data')
+
+LOCALE_PATHS = (
+    os.path.join(PROJECT_ROOT, '..', 'locale'),
+)
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 MEDIA_URL = '/media/'
