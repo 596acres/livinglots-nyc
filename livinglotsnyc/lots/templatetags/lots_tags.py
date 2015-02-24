@@ -22,7 +22,7 @@ class GetVacantReasons(AsTag):
     def get_value(self, context, lot):
         reasons = []
 
-        for l in lot.lots:
+        for l in tuple(lot.lots) + (lot,):
             if l.parcel and l.parcel.bldgclass_vacant():
                 reasons.append("In <a href=\"%s\" target=\"_blank\">MapPLUTO</a> "
                                "the city lists this lot's building class as "
@@ -31,6 +31,11 @@ class GetVacantReasons(AsTag):
                 reasons.append("In <a href=\"%s\" target=\"_blank\">MapPLUTO</a> "
                                "the city lists this lot's landuse as "
                                "vacant." % PLUTO_URL)
+
+            # Lot had help from 596
+            if l.lotlayer_set.filter(name='in_use_started_here').exists():
+                reasons.append('Neighbors got access to it with the help of '
+                               '<a href="http://596acres.org" target="_blank">596 Acres</a>.')
 
         return list(set(reasons))
 

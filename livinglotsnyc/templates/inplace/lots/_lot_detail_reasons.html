@@ -9,19 +9,20 @@
                 care of it.
             {% endblocktrans %}
         </p>
-    {% elif not lot.known_use %}
+    {% else %}
         {% get_vacant_reasons for lot as reasons %}
-        {% if reasons %}
+        {% if reasons or lot.known_use %}
             <p>{% trans "We think this lot is vacant because:" %}</p>
             <ul class="lot-detail-reasons">
+                {% if lot.known_use %}
+                    {% blocktrans with use=lot.known_use %}
+                        <li>The lot is being used as a {{ use }}.</li>
+                    {% endblocktrans %}
+                {% endif %}
                 {% for reason in reasons %}
                     <li>{{ reason|safe }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
-    {% else %}
-        {% blocktrans with use=lot.known_use %}
-            The lot is being used as a {{ use }}.
-        {% endblocktrans %}
     {% endif %}
 </section>
