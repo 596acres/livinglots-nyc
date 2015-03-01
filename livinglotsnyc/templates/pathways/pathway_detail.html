@@ -9,8 +9,8 @@
             <a href="/">{% trans "Home" %}</a>
         </li>
         <li>
-            <a href="{{ feincms_page.parent.get_absolute_url }}">
-                {{ feincms_page.parent.title }}
+            <a href="{{ feincms_page.get_absolute_url }}">
+                {{ feincms_page.title }}
             </a>
         </li>
         <li>{{ pathway.name }}</li>
