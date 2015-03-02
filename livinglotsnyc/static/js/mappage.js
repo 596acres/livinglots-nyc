@@ -182,16 +182,10 @@ function setFiltersUIFromQueryParams(params) {
 
     // Set owners filters
     if (params.public_owners) {
-        var publicOwners = params.public_owners.split(',');
-        _.each(publicOwners, function (pk) {
-            $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
-        });
+        $('.filter-owner-public').val(params.public_owners);
     }
-    if (params.privateOwners) {
-        var privateOwners = params.private_owners.split(',');
-        _.each(privateOwners, function (pk) {
-            $('.filter-owner-private[data-owner-pk=' + pk +']').prop('checked', true);
-        });
+    if (params.private_owners) {
+        $('.filter-owner-private').val(params.private_owners);
     }
 
     // Set boundaries filters

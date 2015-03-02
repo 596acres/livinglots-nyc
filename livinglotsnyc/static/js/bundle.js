@@ -1317,16 +1317,10 @@ function setFiltersUIFromQueryParams(params) {
 
     // Set owners filters
     if (params.public_owners) {
-        var publicOwners = params.public_owners.split(',');
-        _.each(publicOwners, function (pk) {
-            $('.filter-owner-public[data-owner-pk=' + pk +']').prop('checked', true);
-        });
+        $('.filter-owner-public').val(params.public_owners);
     }
-    if (params.privateOwners) {
-        var privateOwners = params.private_owners.split(',');
-        _.each(privateOwners, function (pk) {
-            $('.filter-owner-private[data-owner-pk=' + pk +']').prop('checked', true);
-        });
+    if (params.private_owners) {
+        $('.filter-owner-private').val(params.private_owners);
     }
 
     // Set boundaries filters
@@ -27708,7 +27702,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
