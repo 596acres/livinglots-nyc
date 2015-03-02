@@ -27,7 +27,8 @@ module.exports = {
 
         // Look at current boundary, hide anything not in it
         if (boundariesLayer.getLayers().length > 0) {
-            var inLayers = leafletPip.pointInLayer(lot.getLatLng(), boundariesLayer, true);
+            var centroid = lot.getBounds().getCenter();
+                inLayers = leafletPip.pointInLayer(centroid, boundariesLayer, true);
             if (inLayers.length === 0) {
                 return false;
             }
@@ -27706,7 +27707,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

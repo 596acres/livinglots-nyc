@@ -26,7 +26,8 @@ module.exports = {
 
         // Look at current boundary, hide anything not in it
         if (boundariesLayer.getLayers().length > 0) {
-            var inLayers = leafletPip.pointInLayer(lot.getLatLng(), boundariesLayer, true);
+            var centroid = lot.getBounds().getCenter();
+                inLayers = leafletPip.pointInLayer(centroid, boundariesLayer, true);
             if (inLayers.length === 0) {
                 return false;
             }
