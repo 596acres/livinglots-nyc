@@ -313,6 +313,7 @@ $(document).ready(function () {
             },
             'lotlayertransition': function (e) {
                 map.addLotsLayer(buildLotFilterParams(map));
+                map.updateDisplayedLots();
             }
         });
 
