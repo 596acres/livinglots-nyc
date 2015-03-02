@@ -17,20 +17,31 @@
                     {% endif %}
                 </div>
 
-                <div class="lot-detail-stewardproject-organizer-contact">
-                    {% if organizer.email %}
-                        {{ organizer.email }}{% if organizer.phone %},{% endif %}
-                    {% endif %}
-                    {% if organizer.phone %}
-                        {{ organizer.phone }}
-                    {% endif %}
-                </div>
+                <div class="lot-detail-stewardproject-row">
+                    <div class="lot-detail-stewardproject-left">
+                        <div class="lot-detail-stewardproject-organizer-contact">
+                            {% if organizer.email %}
+                                {{ organizer.email }}{% if organizer.phone %},{% endif %}
+                            {% endif %}
+                            {% if organizer.phone %}
+                                {{ organizer.phone }}
+                            {% endif %}
+                        </div>
 
-                {% if organizer.notes %}
-                    <div class="lot-detail-stewardproject-organizer-notes">
-                        {{ organizer.notes|urlize|linebreaks }}
+                        {% if organizer.notes %}
+                            <div class="lot-detail-stewardproject-organizer-notes">
+                                {{ organizer.notes|urlize|linebreaks }}
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+
+                    <div class="lot-detail-stewardproject-right">
+                        {% if organizer.facebook_page %}
+                            <iframe scrolling="no" frameborder="0" allowtransparency="true" class="lot-detail-stewardproject-facebook-feed" src="http://www.facebook.com/plugins/likebox.php?href={{ "http://facebook.com/"|add:organizer.facebook_page|urlencode:"" }}&amp;colorscheme=light&amp;show_faces=true&amp;stream=true&amp;header=false"></iframe>
+                        {% endif %}
+                    </div>
+
+                </div>
             {% endwith %}
 
             {% if steward.support_organization %}
