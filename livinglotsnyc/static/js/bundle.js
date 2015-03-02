@@ -1275,6 +1275,15 @@ function initializeBoundaries(map) {
 
         addBoundary(map, $(this).data('layer'), $(this).val());
     });
+
+    // If boundaries were set via query string trigger change here. Can't do 
+    // until the map exists, but we actually do want to set most the other 
+    // filters before the map exists.
+    $('.filter-boundaries').each(function () {
+        if ($(this).val()) {
+            $(this).trigger('change');
+        }
+    });
 }
 
 function addBoundary(map, layer, pk) {
@@ -1397,11 +1406,6 @@ $(document).ready(function () {
         });
 
         initializeBoundaries(map);
-
-        // Just in case boundaries were set via query string, trigger change 
-        // here. Can't do until the map exists, but we actually do want to set
-        // most the other filters before the map exists.
-        $('.filter-boundaries').trigger('change');
 
         map.addLotsLayer();
 
@@ -27702,7 +27706,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

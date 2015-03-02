@@ -140,6 +140,15 @@ function initializeBoundaries(map) {
 
         addBoundary(map, $(this).data('layer'), $(this).val());
     });
+
+    // If boundaries were set via query string trigger change here. Can't do 
+    // until the map exists, but we actually do want to set most the other 
+    // filters before the map exists.
+    $('.filter-boundaries').each(function () {
+        if ($(this).val()) {
+            $(this).trigger('change');
+        }
+    });
 }
 
 function addBoundary(map, layer, pk) {
@@ -262,11 +271,6 @@ $(document).ready(function () {
         });
 
         initializeBoundaries(map);
-
-        // Just in case boundaries were set via query string, trigger change 
-        // here. Can't do until the map exists, but we actually do want to set
-        // most the other filters before the map exists.
-        $('.filter-boundaries').trigger('change');
 
         map.addLotsLayer();
 
