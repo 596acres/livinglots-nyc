@@ -5,11 +5,25 @@ var leafletPip = require('leaflet-pip');
 
 module.exports = {
     lotShouldAppear: function (lot, filters, boundariesLayer) {
+        // Should a lot show up on the map?
+        //
+        // The filters UI is split into three categories:
+        //  * boundaries
+        //  * ownership
+        //  * layers / categories
+        //
+        // We follow these three categories to find a reason to exclude a lot.
+        // If a lot fails for any of the three categories, it fails for all and
+        // is not shown.
         var ownershipLayers = ['public', 'private_opt_in'],
             peopleInvolvedLayers = ['in_use', 'in_use_started_here', 'organizing'],
             lotLayers = lot.feature.properties.layers.split(','),
             lotLayersOwnership = _.intersection(lotLayers, ownershipLayers),
             lotLayersNotOwnership = _.difference(lotLayers, ownershipLayers);
+
+        /*
+         * Boundaries
+         */
 
         // Look at current boundary, hide anything not in it
         if (boundariesLayer.getLayers().length > 0) {
@@ -19,12 +33,11 @@ module.exports = {
             }
         }
 
-        // Gutterspace, no matter owner
-        if (_.contains(_.intersection(lotLayersNotOwnership, filters.layers), 'gutterspace')) {
-            return true;
-        }
+        /*
+         * Ownership
+         */
 
-        // Ownership layers
+        // Ownership types
         if (_.isEmpty(_.intersection(lotLayersOwnership, filters.owner_types))) {
             return false;
         }
@@ -34,14 +47,18 @@ module.exports = {
                 !_.contains(filters.public_owners, lot.feature.properties.owner)) {
             return false;
         }
-        if (filters.private_owners && 
-                _.contains(lotLayersOwnership, 'private_opt_in') &&
+        if (filters.private_owners && _.contains(lotLayersOwnership, 'private_opt_in') &&
                 !_.contains(filters.private_owners, lot.feature.properties.owner)) {
             return false;
         }
 
+        /*
+         * Layers
+         */
+
         // No people involved (just vacant): no_people selected, lot has no
-        // people-involving layers associated with it
+        // people-involving layers associated with it. This is considered
+        // separate to gutterspace, so we check for gutterspace, too.
         if (_.contains(filters.layers, 'no_people') &&
             _.isEmpty(_.intersection(peopleInvolvedLayers, lotLayersNotOwnership)) &&
             !_.contains(lotLayers, 'gutterspace')) {
@@ -27689,7 +27706,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
