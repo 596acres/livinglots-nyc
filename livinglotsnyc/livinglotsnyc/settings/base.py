@@ -307,14 +307,13 @@ LIVING_LOTS = {
     },
 }
 
-# TODO replace with project reasons and email addresses
 CONTACT_FORM_REASONS = OrderedDict([
-    ('The lot I want permission to use is not here.', ['info@example.com',]),
-    ('I want to share my land access story.', ['info@example.com',]),
-    ('I want to loan or lease my land for a temporary project.', ['info@example.com',]),
-    ('I want to invite admins to an event.', ['info@example.com',]),
+    ('The lot I want permission to use is not here.', ['facilitators@livinglotsnyc.org',]),
+    ('I want to share my land access story.', ['facilitators@livinglotsnyc.org',]),
+    ('I want to loan or lease my land for a temporary project.', ['facilitators@livinglotsnyc.org',]),
+    ('I want to invite admins to an event.', ['facilitators@livinglotsnyc.org',]),
     ('I want to reach 596 Acres, the team that made this site.', ['paula@596acres.org',]),
-    ('I have a press inquiry.', ['info@example.com',]),
+    ('I have a press inquiry.', ['facilitators@livinglotsnyc.org',]),
 ])
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
