@@ -1,5 +1,5 @@
 footer {
-    background: @black;
+    background: @footer-color;
     color: white;
     padding: 50px;
 
@@ -28,18 +28,32 @@ footer {
     .footer-middle {
         .make-row();
         margin-bottom: 25px;
-        margin-top: 25px;
 
         &-left {
-            .make-sm-column(2);
-            .make-sm-column-offset(2);
-            .make-lg-column(1);
-            .make-lg-column-offset(3);
-            white-space: nowrap;
+            .make-sm-column(4);
         }
 
         &-right {
-            .make-sm-column(4);
+            .make-sm-column(8);
+
+            // Style list of links
+            ul {
+                margin: 0;
+                padding: 0;
+            }
+
+            li {
+                float: left;
+                list-style: none;
+                margin-right: 25px;
+            }
+
+            p:first-of-type {
+                margin-top: 0;
+                @media (max-width: @screen-xs-max) {
+                    margin-top: 20px;
+                }
+            }
         }
     }
 }
