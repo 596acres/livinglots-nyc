@@ -5169,6 +5169,11 @@ body {
   font-family: "Cooper Hewitt", sans-serif;
   overflow-x: hidden;
 }
+@media (max-width: 767px) {
+  body {
+    margin-top: 60px;
+  }
+}
 .referral-message {
   background: #1f9e48;
   display: none;
@@ -5615,7 +5620,12 @@ footer .footer-middle-right {
 }
 @media (max-width: 767px) {
   .page-header .navbar {
+    background-color: white;
     margin-bottom: 0;
+    padding-top: 10px;
+    position: fixed;
+    top: 0;
+    z-index: 5001;
   }
   .page-header .navbar-header {
     margin-left: 0;
@@ -5636,6 +5646,7 @@ footer .footer-middle-right {
     min-height: 1px;
     padding-left: 15px;
     padding-right: 15px;
+    float: right;
   }
   .page-header .navbar-header .navbar-toggle-wrapper .navbar-toggle {
     margin-top: 0;
@@ -6492,6 +6503,16 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   margin-left: -25px;
   text-decoration: none;
 }
+@media (max-width: 767px) {
+  .map-welcome-close-button,
+  .map-welcome-close-button:active,
+  .map-welcome-close-button:hover,
+  .map-welcome-open-button,
+  .map-welcome-open-button:active,
+  .map-welcome-open-button:hover {
+    display: none;
+  }
+}
 .map-welcome.closed .map-welcome-close-button {
   display: none;
 }
@@ -6500,6 +6521,11 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
 }
 .map-welcome.closed .map-welcome-open-button {
   display: inline-block;
+}
+@media (max-width: 767px) {
+  .map-welcome.closed .map-welcome-open-button {
+    display: none;
+  }
 }
 .map-welcome-body {
   font-size: 16px;

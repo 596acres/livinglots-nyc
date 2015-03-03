@@ -1,6 +1,11 @@
 body {
     font-family: @body-font-family;
     overflow-x: hidden;
+
+    // Make room for fixed navbar on smartphones
+    @media (max-width: @screen-xs-max) {
+        margin-top: 60px;
+    }
 }
 
 .referral-message {

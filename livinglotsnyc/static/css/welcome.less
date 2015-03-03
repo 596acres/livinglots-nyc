@@ -35,6 +35,11 @@
         font-style: normal;
         margin-left: -25px;
         text-decoration: none;
+
+        // Don't bother showing on small screens
+        @media (max-width: @screen-xs-max) {
+            display: none;
+        }
     }
 
     &.closed .map-welcome-close-button {
@@ -47,6 +52,10 @@
 
     &.closed .map-welcome-open-button {
         display: inline-block;
+
+        @media (max-width: @screen-xs-max) {
+            display: none;
+        }
     }
 
     &-body {
