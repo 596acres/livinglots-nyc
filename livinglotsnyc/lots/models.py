@@ -156,7 +156,9 @@ class LotMixin(models.Model):
         contacts = [self.owner_contact,]
         contacts += [l.owner_contact for l in self.lots]
         contacts += [l.owner.default_contact for l in self.lots if l.owner]
-        return [c for c in set(contacts) if c]
+
+        # Dedupe while keeping correct order
+        return sorted(list(set(contacts)), key=contacts.index)
 
     owner_contacts = property(_owner_contacts)
 
