@@ -5693,6 +5693,11 @@ footer .footer-middle-right {
   position: absolute;
   z-index: 5000;
 }
+@media (max-width: 767px) {
+  .legend {
+    left: 0;
+  }
+}
 .legend-marker {
   background: black;
   border-radius: 10px;
@@ -6574,6 +6579,12 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
   background: rgba(255, 255, 255, 0.95);
   font-size: 12px;
   padding: 4px;
+}
+@media (max-width: 767px) {
+  .leaflet-container .leaflet-control-attribution {
+    font-size: 8px;
+    padding: 0;
+  }
 }
 .leaflet-control-zoom a {
   color: #160805;

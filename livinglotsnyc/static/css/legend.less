@@ -7,6 +7,11 @@
     position: absolute;
     z-index: 5000;
 
+    // Flush left on smaller screens
+    @media (max-width: @screen-xs-max) {
+        left: 0;
+    }
+
     &-marker {
         background: black;
         border-radius: 10px;
