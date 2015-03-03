@@ -118,4 +118,12 @@ $(document).ready(function () {
 
     initFacebookLink($('.share-facebook'));
     initTwitterLink($('.share-twitter'));
+
+    if ($('.referral-message').data('referrer').match(/http:\/\/596acres.org\/.+\/(?:\d+)/)) {
+        $('.referral-message').slideDown();
+    }
+    $('.referral-message-close').click(function () {
+        $('.referral-message').slideUp();
+        return false;
+    });
 });

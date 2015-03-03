@@ -5169,6 +5169,16 @@ body {
   font-family: "Cooper Hewitt", sans-serif;
   overflow-x: hidden;
 }
+.referral-message {
+  background: #1f9e48;
+  display: none;
+  font-size: 22px;
+  padding: 25px;
+}
+.referral-message .map-link {
+  color: black;
+  text-decoration: underline;
+}
 .page-wrapper {
   position: relative;
   min-height: 1px;
