@@ -1,4 +1,33 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/addorganizer.js":[function(require,module,exports){
+//
+// addorganizer.js
+//
+// Scripts that only run when adding an organizer.
+//
+
+function showOrHideFacebookPage() {
+    // Only show facebook page input if organizer is a cbo
+    var type = $(':input[name=type] option:selected').text(),
+        $facebookPage = $(':input[name=facebook_page]').parents('.form-group');
+
+    if (type === 'community based organization') {
+        $facebookPage.show();
+    }
+    else {
+        $facebookPage.hide();
+    }
+}
+
+$(document).ready(function () {
+    if ($('.add-organizer-page').length > 0) {
+        showOrHideFacebookPage();
+
+        // When the type changes, show or hide facebook_page accordingly
+        $(':input[name=type]').change(showOrHideFacebookPage);
+    }
+});
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js":[function(require,module,exports){
 var _ = require('underscore');
 var leafletPip = require('leaflet-pip');
 
@@ -1028,10 +1057,11 @@ $(document).ready(function () {
 /*
  * Page-specific modules
  */
+require('./addorganizer.js');
 require('./mappage.js');
 require('./lotdetailpage.js');
 
-},{"./lotdetailpage.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/lotdetailpage.js","./mappage.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/mappage.js","bootstrap_collapse":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/collapse.js","bootstrap_dropdown":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/dropdown.js","bootstrap_transition":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/transition.js","fancybox":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/fancybox/dist/js/jquery.fancybox.cjs.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js":[function(require,module,exports){
+},{"./addorganizer.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/addorganizer.js","./lotdetailpage.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/lotdetailpage.js","./mappage.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/mappage.js","bootstrap_collapse":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/collapse.js","bootstrap_dropdown":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/dropdown.js","bootstrap_transition":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/transition.js","fancybox":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/fancybox/dist/js/jquery.fancybox.cjs.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js":[function(require,module,exports){
 var L = require('leaflet');
 
 var geocode = require('./geocode').geocode;
@@ -27712,7 +27742,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
