@@ -38,7 +38,7 @@ L.LotPathMixin = {
         if (this._actionPath) {
             var point = this._map.latLngToLayerPoint(this.getBounds().getCenter()),
                 zoom = this._map.getZoom(),
-                scale = 0.5;
+                scale = 0.25;
 
             // Translate and scale around the layer's point
             if (zoom >= 18) {
@@ -46,6 +46,12 @@ L.LotPathMixin = {
             }
             else if (zoom >= 15) {
                 scale = 0.75;
+            }
+            else if (zoom >= 14) {
+                scale = 0.5;
+            }
+            else if (zoom >= 13) {
+                scale = 0.4;
             }
             this._actionPath.setAttribute('transform', 'translate(' + point.x + ',' + point.y + ') scale(' + scale + ')');
         }
