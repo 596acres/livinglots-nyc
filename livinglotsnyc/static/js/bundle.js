@@ -926,6 +926,12 @@ $(document).ready(function () {
             $('.lot-detail-header-image'),
             $('.lot-detail-header-streetview-error')
         );
+
+        $('.referral-message').slideDown();
+        $('.referral-message-close').click(function () {
+            $('.referral-message').slideUp();
+            return false;
+        });
     }
 
     $('.overlay-nearby-button').overlaymenu({
@@ -945,12 +951,6 @@ $(document).ready(function () {
 
     initFacebookLink($('.share-facebook'));
     initTwitterLink($('.share-twitter'));
-
-    $('.referral-message').slideDown();
-    $('.referral-message-close').click(function () {
-        $('.referral-message').slideUp();
-        return false;
-    });
 });
 
 },{"./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./streetview":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/streetview.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/main.js":[function(require,module,exports){
@@ -27712,7 +27712,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
