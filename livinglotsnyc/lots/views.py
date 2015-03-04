@@ -173,8 +173,11 @@ class LotDetailViewJSON(JSONResponseMixin, BaseLotDetailView):
             # Attempt to round to smallest number of digits we can
             decimal_places = 1
             rounded = 0
+            area_acres = lot.area_acres
+            if not area_acres:
+                return None
             while not rounded:
-                rounded = round(lot.area_acres, decimal_places)
+                rounded = round(area_acres, decimal_places)
                 decimal_places += 1
             return rounded
         except TypeError:
