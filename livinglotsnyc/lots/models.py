@@ -18,13 +18,10 @@ ureg = UnitRegistry()
 class LotManager(BaseLotManager):
 
     def get_visible(self):
+        # Lots are either public or private with an opt-in
         return super(LotManager, self).get_visible().filter(
-            Q(
-                # Lots are either public or private with an opt-in
-                Q(lotlayer__name='public') |
-                Q(lotlayer__name='private_opt_in')
-            )
-        )
+            lotlayer__name__in=('public', 'private_opt_in', 'in_use')
+        ).distinct()
 
     def find_nearby(self, lot, **kwargs):
         qs = super(LotManager, self).find_nearby(lot, **kwargs)
