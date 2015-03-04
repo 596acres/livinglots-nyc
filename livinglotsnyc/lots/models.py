@@ -17,6 +17,21 @@ ureg = UnitRegistry()
 
 class LotManager(BaseLotManager):
 
+    def get_visible(self):
+        return super(LotManager, self).get_visible().filter(
+            Q(
+                # Lots are either public or private with an opt-in
+                Q(lotlayer__name='public') |
+                Q(lotlayer__name='private_opt_in')
+            )
+        )
+
+    def find_nearby(self, lot, **kwargs):
+        qs = super(LotManager, self).find_nearby(lot, **kwargs)
+
+        # Including gutterspaces in nearby lots is annoying, remove them
+        return qs.exclude(lotlayer__name='gutterspace')
+
     def get_lot_kwargs(self, parcel, **defaults):
         kwargs = {
             'parcel': parcel,
@@ -250,6 +265,10 @@ class Lot(LotMixin, LotGroupLotMixin, BaseLot):
             else:
                 return ('lots:lot_detail', (), { 'pk': self.pk, })
 
+    def _is_visible(self):
+        # Use visible manager to avoid inconsistencies in how we define visible
+        return Lot.visible.filter(pk=self.pk).exists()
+    is_visible = property(_is_visible)
 
     class Meta:
         permissions = (
