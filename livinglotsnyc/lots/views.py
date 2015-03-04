@@ -398,6 +398,14 @@ class AddToGroupView(CsrfExemptMixin, LoginRequiredMixin,
     model = Lot
     permission_required = 'lots.add_lot'
 
+    def get_success_message(self, to_add):
+        msg = 'Successfully added %s to this group. ' % str(to_add)
+        msg += ("You're <strong>not done yet</strong>: we've merged notes, "
+                "photos, organizers, and other content, but you should check "
+                "on the group's owner and known use information by clicking "
+                "<strong>Edit this lot</strong>.")
+        return msg
+
     def post(self, request, *args, **kwargs):
         lot = self.get_object()
         to_add = Lot.objects.get(pk=request.POST.get('lot_to_add'))
@@ -406,5 +414,5 @@ class AddToGroupView(CsrfExemptMixin, LoginRequiredMixin,
             'lot_to_add': to_add.pk,
             'group': lot.group_with(to_add).pk,
         }
-        messages.success(request, 'Successfully added %s to this group' % str(to_add))
+        messages.success(request, self.get_success_message(to_add))
         return self.render_json_response(context)
