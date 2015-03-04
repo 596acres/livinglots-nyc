@@ -193,6 +193,11 @@ class LotMixin(models.Model):
         kwargs = super(LotMixin, self).get_new_lotgroup_kwargs()
         kwargs.update({
             'borough': self.borough,
+            'known_use': self.known_use,
+            'known_use_certainty': self.known_use_certainty,
+            'known_use_locked': self.known_use_locked,
+            'steward_inclusion_opt_in': self.steward_inclusion_opt_in,
+            'owner': self.owner,
         })
         return kwargs
 
