@@ -88,7 +88,7 @@ $(document).ready(function () {
             map.fitBounds([
                 [bbox[1], bbox[0]],   
                 [bbox[3], bbox[2]]   
-            ], { padding: [20, 20] });
+            ], { padding: [20, 20], maxZoom: 18 });
         }
 
         addBaseLayer(map);
