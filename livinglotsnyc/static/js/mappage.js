@@ -12,14 +12,13 @@ var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
 
+require('./leaflet.lotmap');
 require('bootstrap_button');
 require('bootstrap_tooltip');
 require('jquery-infinite-scroll');
 require('leaflet-loading');
-require('livinglots-map/src/livinglots.addlot');
 require('livinglots-map/src/livinglots.mail');
 require('./handlebars.helpers');
-require('./leaflet.lotmap');
 require('./map.search.js');
 require('./overlaymenu');
 

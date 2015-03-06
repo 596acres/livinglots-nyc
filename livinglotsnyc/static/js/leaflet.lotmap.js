@@ -5,6 +5,7 @@ var L = require('leaflet');
 var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
 
+require('livinglots.addlot');
 require('leaflet-plugins-bing');
 require('leaflet-dataoptions');
 require('leaflet-hash');

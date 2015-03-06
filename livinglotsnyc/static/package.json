@@ -22,6 +22,7 @@
     "leaflet-plugins": "^1.2.0",
     "leaflet-tilelayer-vector": "git://github.com/ebrelsford/leaflet-tilelayer-vector",
     "leaflet-usermarker": "^1.0.0",
+    "livinglots.addlot": "git://github.com/596acres/livinglots.addlot#v0.1.2",
     "livinglots-map": "git://github.com/596acres/livinglots-map",
     "proj4": "^2.3.3",
     "select2": "^3.5.2-browserify",
