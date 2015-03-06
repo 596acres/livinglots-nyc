@@ -12,7 +12,11 @@
     {% else %}
         {% get_vacant_reasons for lot as reasons %}
         {% if reasons or lot.known_use %}
-            <p>{% trans "We think this lot is vacant because:" %}</p>
+            {% if lot.known_use %}
+                <p>{% trans "We posted this lot because:" %}</p>
+            {% elif reasons %}
+                <p>{% trans "We think this lot is vacant because:" %}</p>
+            {% endif %}
             <ul class="lot-detail-reasons">
                 {% if lot.known_use %}
                     {% blocktrans with use=lot.known_use %}
