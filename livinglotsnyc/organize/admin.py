@@ -1,12 +1,12 @@
 from django.contrib import admin
 
+from livinglots_organize.admin import BaseOrganizerAdmin
+
 from .models import Organizer
 
 
-class OrganizerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'type',)
-    list_filter = ('type',)
-    search_fields = ('name', 'email',)
+class OrganizerAdmin(BaseOrganizerAdmin):
+    pass
 
 
 admin.site.register(Organizer, OrganizerAdmin)
