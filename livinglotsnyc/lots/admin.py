@@ -15,6 +15,9 @@ class LotAdmin(BaseLotAdmin):
             ('Ownership', {
                 'fields': (('owner', 'owner_contact',), 'owner_opt_in',),
             }),
+            ('Gutterspace', {
+                'fields': ('gutterspace',),
+            }),
         )
     list_display = ('bbl', 'address_line1', 'borough', 'known_use')
     search_fields = ('bbl', 'address_line1', 'name',)
