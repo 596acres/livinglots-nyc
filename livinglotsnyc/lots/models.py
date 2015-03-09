@@ -8,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from livinglots import get_owner_model, get_stewardproject_model
 from livinglots_lots.models import (BaseLot, BaseLotGroup, BaseLotLayer,
                                     BaseLotManager)
+from nycdata.boroughs import find_borough, get_borough_number
+from nycdata.bbls import build_bbl
 
 from organize.models import Organizer
 
@@ -56,6 +58,56 @@ class LotManager(BaseLotManager):
 
         return kwargs
 
+    def fake_bbl(self, borough):
+        """
+        Fake a BBL for a borough.
+
+        Return the BBL, block, and lot numbers as each is fabricated.
+
+        XXX This is a bit silly. Every parcel in NYC has a BBL. Sometimes we
+        want to map pieces of land that are not tax lots. Usually this is a
+        demapped road. We want BBLs for each lot in the database as we want each
+        to have a unique BBL. So we fake BBLs with a non-borough borough number
+        (6), add the borough number as the block (1-5), and increment the lot
+        number.
+        """
+        block = get_borough_number(borough)
+        lot_number = 1
+        try:
+            fakes = self.filter(borough=borough, block=block, bbl__startswith='6')
+            lot_number = fakes.order_by('-lot_number')[0].lot_number + 1
+        except IndexError:
+            pass
+        return build_bbl(6, block, lot_number), block, lot_number
+
+    def get_lot_kwargs_by_geom(self, geom, **defaults):
+        kwargs = super(LotManager, self).get_lot_kwargs_by_geom(geom, **defaults)
+        borough = find_borough(kwargs['centroid']).label
+        if not borough:
+            raise ValueError('Could not find a borough for this lot. Either '
+                             'the lot is outside of NYC or the boroughs have '
+                             'not been uploaded as boundaries.')
+        bbl, block, lot = self.fake_bbl(borough)
+
+        kwargs.update({
+            'borough': borough,
+            'bbl': bbl,
+            'block': block,
+            'lot_number': lot,
+            'state_province': 'NY',
+        })
+        kwargs.update(**defaults)
+        return kwargs
+
+    def get_lotgroup_kwargs(self, lots, **defaults):
+        kwargs = super(LotManager, self).get_lotgroup_kwargs(lots, **defaults)
+        kwargs.update({
+            'borough': lots[0].borough,
+            'state_province': 'NY',
+        })
+        kwargs.update(**defaults)
+        return kwargs
+
 
 class LotGroupLotMixin(models.Model):
 
@@ -80,7 +132,7 @@ class LotMixin(models.Model):
     )
 
     accessible = models.BooleanField(default=True)
-    bbl = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    bbl = models.CharField(max_length=10, blank=True, null=True)
     block = models.IntegerField(blank=True, null=True)
     borough = models.CharField(max_length=25, choices=BOROUGH_CHOICES)
     gutterspace = models.BooleanField(default=False)
@@ -220,7 +272,9 @@ class LotMixin(models.Model):
             obj.save()
 
     def __unicode__(self):
-        return self.display_name
+        if self.display_name:
+            return self.display_name
+        return u'%d' % self.pk
 
     class Meta:
         abstract = True
