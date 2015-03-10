@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<ul class="pathway-list">
+    {% for pathway in pathways %}
+        <li class="pathway">
+            <a href="{{ pathway.get_absolute_url }}" target="_blank">
+                {{ pathway.name }}
+            </a>
+        </li>
+    {% empty %}
+        <li class="pathway">
+            {% blocktrans %}
+                We don't have any for this lot yet, but you should get in touch 
+                if you're interested.
+            {% endblocktrans %}
+        </li>
+    {% endfor %}
+</ul>
