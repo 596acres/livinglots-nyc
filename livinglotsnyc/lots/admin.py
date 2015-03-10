@@ -19,7 +19,7 @@ class LotAdmin(BaseLotAdmin):
                 'fields': ('gutterspace',),
             }),
         )
-    list_display = ('bbl', 'address_line1', 'borough', 'known_use')
+    list_display = ('pk', 'bbl', 'address_line1', 'borough', 'known_use')
     search_fields = ('bbl', 'address_line1', 'name',)
 
 
