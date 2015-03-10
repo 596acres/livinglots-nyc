@@ -14,8 +14,10 @@
                         <div>
                             {{ child.display_name }}
                             ({{ child.address_line1 }}).
-                            {% trans "More details at" %}
-                            <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">OASIS</a>.
+                            {% if not child.bbl_is_fake %}
+                                {% trans "More details at" %}
+                                <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">OASIS</a>.
+                            {% endif %}
                         </div>
                         {% ifnotequal lot.owners|length 1 %}
                             <div>
@@ -44,7 +46,7 @@
             ({{ lot.area|floatformat:"0"|default:"unknown" }} {% trans "square feet" %})
         </div>
 
-        {% if lot.bbl %}
+        {% if lot.bbl and not lot.bbl_is_fake %}
             <div>
                 {% trans "More information about this lot at" %}
                 <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
