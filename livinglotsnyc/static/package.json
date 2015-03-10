@@ -16,6 +16,7 @@
     "jquery-infinite-scroll": "git://github.com/paulirish/infinite-scroll",
     "leaflet": "~0.7.3",
     "leaflet-dataoptions": "^1.0.0",
+    "leaflet-draw": "^0.2.3",
     "leaflet-hash": "^0.2.1",
     "leaflet-loading": "^0.1.15",
     "leaflet-pip": "^0.1.1",
