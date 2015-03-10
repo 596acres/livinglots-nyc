@@ -352,7 +352,7 @@ class EmailOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
         text = request.GET.get('text')
         emails = set(organizers.values_list('email', flat=True))
         if not (subject and text and emails):
-            raise HttpResponseBadRequest
+            return HttpResponseBadRequest('All parameters are required')
         context = {
             'emails': len(emails),
             'organizers': len(organizers),
