@@ -349,7 +349,7 @@ class EmailOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
     permission_required = 'organize.email_organizer'
 
     def get(self, request, *args, **kwargs):
-        organizers = self.get_organizers()
+        organizers = self.get_organizers().exclude(email=None).exclude(email='')
         subject = request.GET.get('subject')
         text = request.GET.get('text')
         emails = set(organizers.values_list('email', flat=True))
