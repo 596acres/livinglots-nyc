@@ -11,6 +11,7 @@ var Spinner = require('spin.js');
 var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
+var filters = require('./filters');
 
 require('./leaflet.lotmap');
 require('bootstrap_button');
@@ -23,42 +24,9 @@ require('./map.search.js');
 require('./overlaymenu');
 
 
-function buildLotFilterParams(map, options) {
-    var layers = _.map($('.filter-layer:checked'), function (layer) {
-        return $(layer).attr('name'); 
-    });
-    var ownerTypes = _.map($('.filter-owner-type:checked'), function (ownerType) {
-        return $(ownerType).attr('name'); 
-    });
-    var publicOwnerPks = [$('.filter-owner-public').val()];
-    var privateOwnerPks = [$('.filter-owner-private').val()];
-
-    var params = {
-        layers: layers.join(','),
-        owner_types: ownerTypes.join(','),
-        parents_only: true,
-        private_owners: privateOwnerPks.join(','),
-        public_owners: publicOwnerPks.join(',')
-    };
-
-    // Add boundary, if any
-    $.each($('.filter-boundaries'), function () {
-        if ($(this).val() !== '') {
-            params.boundary = $(this).data('layer') + '::' + $(this).val(); 
-        }
-    });
-
-    // Add BBOX if requested
-    if (options && options.bbox) {
-        params.bbox = map.getBounds().toBBoxString();
-    }
-
-    return params;
-}
-
 function updateLotCount(map) {
     var url = Django.url('lots:lot_count') + '?' +
-        $.param(buildLotFilterParams(map, { bbox: true }));
+        $.param(map.buildLotFilterParams({ bbox: true }));
     singleminded.remember({
         name: 'updateLotCount',
         jqxhr: $.getJSON(url, function (data) {
@@ -71,7 +39,7 @@ function updateLotCount(map) {
 
 function updateOwnershipOverview(map) {
     var url = Django.url('lots:lot_ownership_overview'),
-        params = buildLotFilterParams(map, { bbox: true });
+        params = map.buildLotFilterParams({ bbox: true });
     $.getJSON(url + '?' + $.param(params), function (data) {
         var template = Handlebars.compile($('#details-template').html());
         var content = template({
@@ -113,7 +81,7 @@ function updateOwnershipOverview(map) {
 }
 
 function updateDetailsLink(map) {
-    var params = buildLotFilterParams(map);
+    var params = map.buildLotFilterParams();
     delete params.parents_only;
 
     var l = window.location,
@@ -264,7 +232,7 @@ $(document).ready(function () {
         }
 
         var map = L.lotMap('map', {
-            filterParams: buildLotFilterParams(null),
+            filterParams: filters.filtersToParams(null, {}),
             onMouseOverFeature: function (feature) {},
             onMouseOutFeature: function (feature) {}
         });
@@ -295,7 +263,7 @@ $(document).ready(function () {
             });
 
         $('.filter').change(function () {
-            var params = buildLotFilterParams(map);
+            var params = map.buildLotFilterParams();
             map.updateFilters(params);
             updateLotCount(map);
         });
@@ -316,14 +284,14 @@ $(document).ready(function () {
                 updateLotCount(map);
             },
             'lotlayertransition': function (e) {
-                map.addLotsLayer(buildLotFilterParams(map));
+                map.addLotsLayer(map.buildLotFilterParams());
                 map.updateDisplayedLots();
             }
         });
 
         $('.export').click(function (e) {
             var url = $(this).data('baseurl') + 
-                $.param(buildLotFilterParams(map, { bbox: true }));
+                $.param(map.buildLotFilterParams({ bbox: true }));
             window.location.href = url;
             e.preventDefault();
         });

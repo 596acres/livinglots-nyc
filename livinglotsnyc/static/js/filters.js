@@ -88,5 +88,40 @@ module.exports = {
             });
         }
         return filters;
+    },
+
+    // Take the current state of the map and filters to create params suitable
+    // for requests (eg counts)
+    filtersToParams: function (map, options) {
+        var layers = _.map($('.filter-layer:checked'), function (layer) {
+            return $(layer).attr('name'); 
+        });
+        var ownerTypes = _.map($('.filter-owner-type:checked'), function (ownerType) {
+            return $(ownerType).attr('name'); 
+        });
+        var publicOwnerPks = [$('.filter-owner-public').val()];
+        var privateOwnerPks = [$('.filter-owner-private').val()];
+
+        var params = {
+            layers: layers.join(','),
+            owner_types: ownerTypes.join(','),
+            parents_only: true,
+            private_owners: privateOwnerPks.join(','),
+            public_owners: publicOwnerPks.join(',')
+        };
+
+        // Add boundary, if any
+        $.each($('.filter-boundaries'), function () {
+            if ($(this).val() !== '') {
+                params.boundary = $(this).data('layer') + '::' + $(this).val(); 
+            }
+        });
+
+        // Add BBOX if requested
+        if (options && options.bbox) {
+            params.bbox = map.getBounds().toBBoxString();
+        }
+
+        return params;
     }
 };

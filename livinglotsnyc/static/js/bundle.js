@@ -118,6 +118,41 @@ module.exports = {
             });
         }
         return filters;
+    },
+
+    // Take the current state of the map and filters to create params suitable
+    // for requests (eg counts)
+    filtersToParams: function (map, options) {
+        var layers = _.map($('.filter-layer:checked'), function (layer) {
+            return $(layer).attr('name'); 
+        });
+        var ownerTypes = _.map($('.filter-owner-type:checked'), function (ownerType) {
+            return $(ownerType).attr('name'); 
+        });
+        var publicOwnerPks = [$('.filter-owner-public').val()];
+        var privateOwnerPks = [$('.filter-owner-private').val()];
+
+        var params = {
+            layers: layers.join(','),
+            owner_types: ownerTypes.join(','),
+            parents_only: true,
+            private_owners: privateOwnerPks.join(','),
+            public_owners: publicOwnerPks.join(',')
+        };
+
+        // Add boundary, if any
+        $.each($('.filter-boundaries'), function () {
+            if ($(this).val() !== '') {
+                params.boundary = $(this).data('layer') + '::' + $(this).val(); 
+            }
+        });
+
+        // Add BBOX if requested
+        if (options && options.bbox) {
+            params.bbox = map.getBounds().toBBoxString();
+        }
+
+        return params;
     }
 };
 
@@ -521,6 +556,10 @@ L.LotMap = L.Map.extend({
         this.on('boundarieschange', function () {
             this.updateDisplayedLots();
         });
+    },
+
+    buildLotFilterParams: function (options) {
+        return filters.filtersToParams(this, options);
     },
 
     addBaseLayer: function () {
@@ -1196,6 +1235,7 @@ var Spinner = require('spin.js');
 var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
+var filters = require('./filters');
 
 require('./leaflet.lotmap');
 require('bootstrap_button');
@@ -1208,42 +1248,9 @@ require('./map.search.js');
 require('./overlaymenu');
 
 
-function buildLotFilterParams(map, options) {
-    var layers = _.map($('.filter-layer:checked'), function (layer) {
-        return $(layer).attr('name'); 
-    });
-    var ownerTypes = _.map($('.filter-owner-type:checked'), function (ownerType) {
-        return $(ownerType).attr('name'); 
-    });
-    var publicOwnerPks = [$('.filter-owner-public').val()];
-    var privateOwnerPks = [$('.filter-owner-private').val()];
-
-    var params = {
-        layers: layers.join(','),
-        owner_types: ownerTypes.join(','),
-        parents_only: true,
-        private_owners: privateOwnerPks.join(','),
-        public_owners: publicOwnerPks.join(',')
-    };
-
-    // Add boundary, if any
-    $.each($('.filter-boundaries'), function () {
-        if ($(this).val() !== '') {
-            params.boundary = $(this).data('layer') + '::' + $(this).val(); 
-        }
-    });
-
-    // Add BBOX if requested
-    if (options && options.bbox) {
-        params.bbox = map.getBounds().toBBoxString();
-    }
-
-    return params;
-}
-
 function updateLotCount(map) {
     var url = Django.url('lots:lot_count') + '?' +
-        $.param(buildLotFilterParams(map, { bbox: true }));
+        $.param(map.buildLotFilterParams({ bbox: true }));
     singleminded.remember({
         name: 'updateLotCount',
         jqxhr: $.getJSON(url, function (data) {
@@ -1256,7 +1263,7 @@ function updateLotCount(map) {
 
 function updateOwnershipOverview(map) {
     var url = Django.url('lots:lot_ownership_overview'),
-        params = buildLotFilterParams(map, { bbox: true });
+        params = map.buildLotFilterParams({ bbox: true });
     $.getJSON(url + '?' + $.param(params), function (data) {
         var template = Handlebars.compile($('#details-template').html());
         var content = template({
@@ -1298,7 +1305,7 @@ function updateOwnershipOverview(map) {
 }
 
 function updateDetailsLink(map) {
-    var params = buildLotFilterParams(map);
+    var params = map.buildLotFilterParams();
     delete params.parents_only;
 
     var l = window.location,
@@ -1449,7 +1456,7 @@ $(document).ready(function () {
         }
 
         var map = L.lotMap('map', {
-            filterParams: buildLotFilterParams(null),
+            filterParams: filters.filtersToParams(null, {}),
             onMouseOverFeature: function (feature) {},
             onMouseOutFeature: function (feature) {}
         });
@@ -1480,7 +1487,7 @@ $(document).ready(function () {
             });
 
         $('.filter').change(function () {
-            var params = buildLotFilterParams(map);
+            var params = map.buildLotFilterParams();
             map.updateFilters(params);
             updateLotCount(map);
         });
@@ -1501,14 +1508,14 @@ $(document).ready(function () {
                 updateLotCount(map);
             },
             'lotlayertransition': function (e) {
-                map.addLotsLayer(buildLotFilterParams(map));
+                map.addLotsLayer(map.buildLotFilterParams());
                 map.updateDisplayedLots();
             }
         });
 
         $('.export').click(function (e) {
             var url = $(this).data('baseurl') + 
-                $.param(buildLotFilterParams(map, { bbox: true }));
+                $.param(map.buildLotFilterParams({ bbox: true }));
             window.location.href = url;
             e.preventDefault();
         });
@@ -1525,7 +1532,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","livinglots-map/src/livinglots.mail":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.mail.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
+},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","livinglots-map/src/livinglots.mail":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.mail.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
 var _ = require('underscore');
 var proj4 = require('proj4');
 require('./proj4.defs');
@@ -20177,11 +20184,11 @@ L.Map.include({
             params = {},
             url = Django.url('lots:lot_email_organizers');
 
-        _.extend(params, this.currentFilters, {
+        _.extend(params, this.buildLotFilterParams({
             bbox: this.getBounds().toBBoxString(),
             subject: $(formSelector).find(':input[name=subject]').val(),
             text: $(formSelector).find(':input[name=text]').val()
-        });
+        }));
 
         var spinner = new Spinner()
             .spin($(this.options.mailParent)[0]);
@@ -20207,9 +20214,7 @@ L.Map.include({
             params = {},
             url = Django.url('lots:lot_count_organizers');
 
-        _.extend(params, this.currentFilters, {
-            bbox: this.getBounds().toBBoxString()
-        });
+        _.extend(params, this.buildLotFilterParams({ bbox: this.getBounds().toBBoxString() }));
 
         var subject = $(formSelector).find(':input[name=subject]').val(),
             text = $(formSelector).find(':input[name=text]').val();
@@ -26225,7 +26230,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
