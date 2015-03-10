@@ -1,19 +1,23 @@
+{% load i18n %}
+
 <ul class="organizer-list">
     {% for organizer in organizers %}
         {% if organizer.post_publicly %}
-            <li class="organizer-list-item">
-                <div class="organizer-name">
-                    {{ organizer.name }}
-                </div>
-                <div class="organizer-contact">
-                    {% if organizer.email %}
-                        {{ organizer.email }}{% if organizer.phone %},{% endif %}
-                    {% endif %}
-                    {% if organizer.phone %}
-                        {{ organizer.phone }}
-                    {% endif %}
-                </div>
-            </li>
+            {% include "livinglots/organize/organizer_list_organizer.html" %}
         {% endif %}
     {% endfor %}
 </ul>
+
+{% if "lots.view_all_details" in perms %}
+    <a class="btn btn-small btn-warning btn-show-private-organizers" href="#">
+        {% trans "Show/hide private organizers" %}
+    </a>
+
+    <ul class="organizer-list organizer-list-private">
+        {% for organizer in organizers %}
+            {% if not organizer.post_publicly %}
+                {% include "livinglots/organize/organizer_list_organizer.html" %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endif %}

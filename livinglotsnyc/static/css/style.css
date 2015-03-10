@@ -6186,6 +6186,9 @@ footer .footer-middle-right p:first-of-type {
 .lot-detail-organizers .block-lot-detail-organizer-intro {
   font-size: 14px;
 }
+.lot-detail-organizers .organizer-list-private {
+  display: none;
+}
 .lot-detail-stewardproject-organizer-name {
   font-family: "Cooper Hewitt", sans-serif;
   font-weight: bold;

@@ -122,6 +122,11 @@ $(document).ready(function () {
         return false;
     });
 
+    $('.btn-show-private-organizers').click(function () {
+        $('.organizer-list-private').slideToggle();
+        return false;
+    });
+
     initFacebookLink($('.share-facebook'));
     initTwitterLink($('.share-twitter'));
 });
