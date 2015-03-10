@@ -103,5 +103,6 @@ def create_steward_project_and_organizer(sender, instance, **kwargs):
     lot.known_use = steward_project.use
     lot.known_use_certainty = 10
     lot.known_use_locked = True
+    lot.name = steward_project.project_name
     lot.steward_inclusion_opt_in = steward_project.include_on_map
     lot.save()
