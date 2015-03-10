@@ -1,0 +1,24 @@
+.fancybox-overlay {
+    background-image: data-uri("../node_modules/fancybox/dist/img/fancybox_overlay.png");
+}
+
+.fancybox-nav {
+    background-image: data-uri("../node_modules/fancybox/dist/img/blank.gif");
+}
+
+#fancybox-loading, .fancybox-close, .fancybox-prev span, .fancybox-next span {
+    background-image: data-uri("../node_modules/fancybox/dist/img/fancybox_sprite.png");
+}
+
+#fancybox-loading div {
+    background-image: data-uri("../node_modules/fancybox/dist/img/fancybox_loading.gif");
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
+    #fancybox-loading, .fancybox-close, .fancybox-prev span, .fancybox-next span {
+        background-image: data-uri("../node_modules/fancybox/dist/img/fancybox_sprite@2x.png");
+    }
+    #fancybox-loading div {
+        background-image: data-uri("../node_modules/fancybox/dist/img/fancybox_loading@2x.gif");
+    }
+}
