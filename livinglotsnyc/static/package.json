@@ -25,6 +25,7 @@
     "leaflet-usermarker": "^1.0.0",
     "livinglots-map": "git://github.com/596acres/livinglots-map",
     "livinglots.addlot": "git://github.com/596acres/livinglots.addlot#v0.1.2",
+    "livinglots.emailparticipants": "git://github.com/596acres/livinglots.emailparticipants#v0.2.0",
     "proj4": "^2.3.3",
     "select2": "^3.5.2-browserify",
     "spin.js": "^2.0.2",
