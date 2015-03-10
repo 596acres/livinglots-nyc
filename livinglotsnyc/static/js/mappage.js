@@ -18,15 +18,13 @@ require('bootstrap_button');
 require('bootstrap_tooltip');
 require('jquery-infinite-scroll');
 require('leaflet-loading');
-require('livinglots-map/src/livinglots.mail');
 require('./handlebars.helpers');
 require('./map.search.js');
 require('./overlaymenu');
 
 
 function updateLotCount(map) {
-    var url = Django.url('lots:lot_count') + '?' +
-        $.param(map.buildLotFilterParams({ bbox: true }));
+    var url = Django.url('lots:lot_count') + '?' + map.getParamsQueryString({ bbox: true });
     singleminded.remember({
         name: 'updateLotCount',
         jqxhr: $.getJSON(url, function (data) {
@@ -38,9 +36,8 @@ function updateLotCount(map) {
 }
 
 function updateOwnershipOverview(map) {
-    var url = Django.url('lots:lot_ownership_overview'),
-        params = map.buildLotFilterParams({ bbox: true });
-    $.getJSON(url + '?' + $.param(params), function (data) {
+    var url = Django.url('lots:lot_ownership_overview');
+    $.getJSON(url + '?' + map.getParamsQueryString({ bbox: true }), function (data) {
         var template = Handlebars.compile($('#details-template').html());
         var content = template({
             lottypes: data.owners
@@ -290,8 +287,7 @@ $(document).ready(function () {
         });
 
         $('.export').click(function (e) {
-            var url = $(this).data('baseurl') + 
-                $.param(map.buildLotFilterParams({ bbox: true }));
+            var url = $(this).data('baseurl') + map.getParamsQueryString({ bbox: true });
             window.location.href = url;
             e.preventDefault();
         });

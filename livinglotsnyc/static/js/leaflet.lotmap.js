@@ -6,6 +6,7 @@ var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
 
 require('livinglots.addlot');
+require('livinglots.emailparticipants');
 require('leaflet-plugins-bing');
 require('leaflet-dataoptions');
 require('leaflet-hash');
@@ -153,6 +154,11 @@ L.LotMap = L.Map.extend({
 
     buildLotFilterParams: function (options) {
         return filters.filtersToParams(this, options);
+    },
+
+    getParamsQueryString: function (options, overrides) {
+        var params = this.buildLotFilterParams(options);
+        return $.param(_.extend(params, overrides));
     },
 
     addBaseLayer: function () {
