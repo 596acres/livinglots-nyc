@@ -14,14 +14,15 @@ class OrganizerAdmin(BaseOrganizerAdmin):
         queryset, use_distinct = super(OrganizerAdmin, self) \
                 .get_search_results(request, queryset, search_term)
 
-        # Try to match by organized lot's name and BBL
-        matching_lots = Lot.objects.filter(Q(bbl__contains=search_term) |
-                                           Q(name__icontains=search_term))
-        if matching_lots:
-            queryset |= self.model.objects.filter(
-                content_type=ContentType.objects.get_for_model(Lot),
-                object_id__in=matching_lots.values_list('pk', flat=True),
-            )
+        if search_term:
+            # Try to match by organized lot's name and BBL
+            matching_lots = Lot.objects.filter(Q(bbl__contains=search_term) |
+                                               Q(name__icontains=search_term))
+            if matching_lots:
+                queryset |= self.model.objects.filter(
+                    content_type=ContentType.objects.get_for_model(Lot),
+                    object_id__in=matching_lots.values_list('pk', flat=True),
+                )
         return queryset, use_distinct
 
 
