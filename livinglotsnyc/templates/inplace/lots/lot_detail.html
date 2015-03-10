@@ -109,6 +109,16 @@
             {% endifequal %}
         </div>
 
+        {% get_steward_project_list for lot as stewards %}
+        {% if stewards %}
+            {% include "inplace/lots/_lot_detail_stewardproject.html" with steward=stewards.0 %}
+        {% elif lot.lotgroup %}
+            {% get_steward_project_list for lot.lotgroup as stewards %}
+            {% if stewards %}
+                {% include "inplace/lots/_lot_detail_stewardproject.html" with steward=stewards.0 %}
+            {% endif %}
+        {% endif %}
+
         <div id="pathways" class="pathways lot-detail-section lot-detail-main-section">
             <h2>
                 {% trans "Pathways" %}
@@ -120,16 +130,6 @@
                 {% render_pathway_summary_list for lot %}
             </div>
         </div>
-
-        {% get_steward_project_list for lot as stewards %}
-        {% if stewards %}
-            {% include "inplace/lots/_lot_detail_stewardproject.html" with steward=stewards.0 %}
-        {% elif lot.lotgroup %}
-            {% get_steward_project_list for lot.lotgroup as stewards %}
-            {% if stewards %}
-                {% include "inplace/lots/_lot_detail_stewardproject.html" with steward=stewards.0 %}
-            {% endif %}
-        {% endif %}
 
         {% if "lots.view_all_details" in perms %}
             <div class="lot-detail-details lot-detail-section lot-detail-main-section">
