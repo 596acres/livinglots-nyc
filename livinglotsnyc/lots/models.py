@@ -155,27 +155,30 @@ class LotMixin(models.Model):
     def _get_display_name(self):
         if self.name:
             return self.name
-        else:
+        if self.bbl_is_fake:
+            if self.address_line1:
+                return self.address_line1
+            return '%s, unmapped lot #%d' % (self.borough, self.lot_number)
+        try:
+            return '%s block %d, lot %d' % (self.borough, self.block,
+                                            self.lot_number)
+        except TypeError:
             try:
-                return '%s block %d, lot %d' % (self.borough, self.block,
-                                                self.lot_number)
+                blocks = list(set([l.block for l in self.lots]))
+                block_strs = []
+                for block in sorted(blocks):
+                    block_lots = [l for l in self.lots if l.block == block]
+                    block_strs.append('block %d, %s' % (
+                        block,
+                        '%s %s' % (
+                            'lot' if len(block_lots) == 1 else 'lots',
+                            ', '.join(sorted([str(l.lot_number) for l in
+                                              block_lots])),
+                        )
+                    ))
+                return '%s %s' % (self.borough, '; '.join(block_strs))
             except TypeError:
-                try:
-                    blocks = list(set([l.block for l in self.lots]))
-                    block_strs = []
-                    for block in sorted(blocks):
-                        block_lots = [l for l in self.lots if l.block == block]
-                        block_strs.append('block %d, %s' % (
-                            block,
-                            '%s %s' % (
-                                'lot' if len(block_lots) == 1 else 'lots',
-                                ', '.join(sorted([str(l.lot_number) for l in
-                                                  block_lots])),
-                            )
-                        ))
-                    return '%s %s' % (self.borough, '; '.join(block_strs))
-                except TypeError:
-                    return self.address_line1
+                return self.address_line1
     display_name = property(_get_display_name)
 
     @classmethod
@@ -209,6 +212,11 @@ class LotMixin(models.Model):
             return None
 
     area_acres = property(_area_acres)
+
+    def _bbl_is_fake(self):
+        return self.bbl and self.bbl.startswith('6')
+
+    bbl_is_fake = property(_bbl_is_fake)
 
     def _owners(self):
         owners = [self.owner,] + [l.owner for l in self.lots]
