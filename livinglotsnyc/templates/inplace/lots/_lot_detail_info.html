@@ -37,7 +37,8 @@
 
         <div>
             {% trans "Address" %}:
-            {{ lot.address_line1|default:"unknown" }}, {{ lot.borough }}, {{ lot.postal_code }}
+            {{ lot.address_line1|default:"(street address unknown)" }},
+            {{ lot.borough }}{% if lot.postal_code %}, {{ lot.postal_code }}{% endif %}
         </div>
 
         <div>
