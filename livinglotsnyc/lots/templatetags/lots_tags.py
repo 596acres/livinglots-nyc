@@ -32,6 +32,9 @@ class GetVacantReasons(AsTag):
                                "the city lists this lot's landuse as "
                                "vacant." % PLUTO_URL)
 
+            if l.added_reason == 'Drawn using add-lot mode':
+                reasons.append('The lot was added manually by site admins.')
+
             # Lot had help from 596
             if l.lotlayer_set.filter(name='in_use_started_here').exists():
                 reasons.append('Neighbors got access to it with the help of '
