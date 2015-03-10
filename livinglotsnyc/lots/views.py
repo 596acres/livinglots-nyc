@@ -319,19 +319,18 @@ class LotsCountViewWithAcres(LotsCountView):
         return context
 
 
-class LotOrganizersMixin(object):
+class LotOrganizersMixin(FilteredLotsMixin):
 
     def get_organizers(self):
         lots = self.get_lots().qs.values_list('pk', flat=True)
         return Organizer.objects.filter(
-            content_type_id=ContentType.objects.get_for_model(Lot).pk,
+            content_type=ContentType.objects.get_for_model(Lot),
             object_id__in=lots,
         )
 
 
 class CountOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
-                          JSONResponseMixin, FilteredLotsMixin,
-                          LotOrganizersMixin, View):
+                          JSONResponseMixin, LotOrganizersMixin, View):
     permission_required = 'lots.add_lot'
 
     def get(self, request, *args, **kwargs):
@@ -344,8 +343,7 @@ class CountOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
 
 
 class EmailOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
-                          JSONResponseMixin, FilteredLotsMixin,
-                          LotOrganizersMixin, View):
+                          JSONResponseMixin, LotOrganizersMixin, View):
     permission_required = 'organize.email_organizer'
 
     def get(self, request, *args, **kwargs):
