@@ -47,7 +47,15 @@ $(document).ready(function () {
                 description = $link.data('description');
 
             this.inner.find('img').attr('alt', alt);
-            this.title = alt + ' by ' + addedBy + '<p>' + description + '</p>';
+            if (alt && addedBy) {
+                this.title = alt + ' by ' + addedBy + '<p>' + description + '</p>';
+            }
+            else if (alt) {
+                this.title = alt;
+            }
+            else {
+                this.title = null;
+            }
         }
     });
 

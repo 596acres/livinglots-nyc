@@ -6,8 +6,12 @@
 {% endblock %}
 
 {% block details %}
-    <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-image" data-added-by="{{ photo.added_by_name }}" data-description="{{ photo.description }}">
-        {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
+    <a rel="gallery" href="{{ photo.original_image.url }}" class="fancybox photo-image" {% if photo.added_by_name %}data-added-by="{{ photo.added_by_name }}"{% endif %} data-description="{{ photo.description }}">
+        {% if photo.name %}
+            {% thumbnail '400x300' photo.original_image -- alt=photo.name %}
+        {% else %}
+            {% thumbnail '400x300' photo.original_image %}
+        {% endif %}
     </a>
     <div>
         {% if photo.name %}
