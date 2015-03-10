@@ -1,11 +1,11 @@
 from django.conf.urls import patterns, url
 
 from livinglots import get_organizer_model
-from livinglots_organize.forms import OrganizerForm
 from livinglots_organize.views import AddParticipantView
 import livinglots_organize.urls as llurls
 
 from lots.models import Lot
+from .forms import OrganizerForm
 
 
 urlpatterns = llurls.urlpatterns + patterns('',
