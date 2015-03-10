@@ -300,6 +300,13 @@ $(document).ready(function () {
             updateLotCount(map);
         });
 
+        // When the select for an owner is changed, check that owner type
+        $('.filter-owner select').change(function () {
+            $(this).parents('.filter-owner').find('.filter-owner-type')
+                .prop('checked', true)
+                .trigger('change');
+        });
+
         updateLotCount(map);
         map.on({
             'moveend': function () {
