@@ -35,6 +35,10 @@ class GetVacantReasons(AsTag):
             if l.added_reason == 'Drawn using add-lot mode':
                 reasons.append('The lot was added manually by site admins.')
 
+            if l.added_reason == 'Imported from GrowNYC database':
+                reasons.append("The lot was imported from GrowNYC's community "
+                               "gardens database")
+
             # Lot had help from 596
             if l.lotlayer_set.filter(name='in_use_started_here').exists():
                 reasons.append('Neighbors got access to it with the help of '
