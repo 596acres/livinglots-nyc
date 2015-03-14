@@ -265,7 +265,7 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
             sqft = sqft * (ureg.feet ** 2)
             acres = sqft.to(ureg.acre).magnitude
             return int(round(acres))
-        except ValueError:
+        except (TypeError, ValueError):
             return 0
 
     def get_layer_counts(self, layers):
