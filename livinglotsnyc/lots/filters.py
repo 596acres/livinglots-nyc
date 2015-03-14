@@ -103,6 +103,7 @@ class LotFilter(django_filters.FilterSet):
     lot_center = LotCenterFilter()
     owner_types = OwnerTypesFilter()
     parents_only = LotGroupParentFilter()
+    private_owners = OwnerFilter(owner_type='private')
     public_owners = OwnerFilter(owner_type='public')
 
     def __init__(self, *args, **kwargs):
@@ -125,5 +126,6 @@ class LotFilter(django_filters.FilterSet):
             'lot_center',
             'owner_types',
             'parents_only',
+            'private_owners',
             'public_owners',
         ]
