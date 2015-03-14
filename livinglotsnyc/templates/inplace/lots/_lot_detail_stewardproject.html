@@ -43,15 +43,15 @@
 
                 </div>
             {% endwith %}
+        </table>
 
+        {% if "steward.change_stewardproject" in perms %}
             {% if steward.support_organization %}
                 <div class="lot-detail-stewardproject-support">
                     {% trans "supported by" %} {{ steward.support_organization }}
                 </div>
             {% endif %}
-        </table>
 
-        {% if "steward.change_stewardproject" in perms %}
             <div class="lot-detail-admin admin-only">
                 <a class="btn btn-small btn-warning" href="{% url "admin:organize_organizer_change" steward.organizer.pk %}">
                     {% trans "Edit this steward's contact information" %}
