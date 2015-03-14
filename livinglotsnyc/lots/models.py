@@ -258,6 +258,7 @@ class LotMixin(models.Model):
             'known_use_locked': self.known_use_locked,
             'steward_inclusion_opt_in': self.steward_inclusion_opt_in,
             'owner': self.owner,
+            'owner_opt_in': self.owner_opt_in,
         })
         return kwargs
 
