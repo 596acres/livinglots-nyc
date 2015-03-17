@@ -1,4 +1,4 @@
-{% load boundaries_tags i18n %}
+{% load boundaries_tags citycouncildistricts_tags i18n %}
 
 <section>
     <h2 style="margin-top: 0;">{% trans "Information about this lot" %}</h2>
@@ -58,11 +58,26 @@
 
         <section>
             <h3>Political Boundaries</h3>
-            <div>
-                {% trans "City Council District" %}
-                {% get_boundary "city council districts" lot.centroid.y lot.centroid.x as boundary %}
-                {{ boundary.label }}
-            </div>
+
+            {% get_boundary "city council districts" lot.centroid.y lot.centroid.x as district %}
+            {% if district %}
+                <div>
+                    {% trans "City Council District" %}
+                    {{ district.label }}
+                    {% city_council_member district as member %}
+                    {% if member %}
+                        {% trans "represented by" %}
+                        {% if member.url %}
+                            <a href="{{ member.url }}" target="_blank">{{ member }}</a>
+                        {% else %}
+                            {{ member }}
+                        {% endif %}
+                        {% if member.email %}
+                            (<a href="mailto:{{ member.email }}">{{ member.email }}</a>)
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %}
 
             <div>
                 {% trans "Community District" %}
