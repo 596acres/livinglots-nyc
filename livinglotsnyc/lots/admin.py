@@ -7,10 +7,14 @@ from livinglots_forms.widgets import AddAnotherWidgetWrapper
 from livinglots_lots.admin import BaseLotAdmin
 
 from owners.models import Owner
-from .models import Lot
+from .models import Lot, LotGroup
 
 
 class LotAdminForm(forms.ModelForm):
+    group = forms.ModelChoiceField(
+        queryset=LotGroup.objects.all().order_by('name'),
+        widget=ChoiceWidget('LotGroupAutocomplete')
+    )
     owner = forms.ModelChoiceField(
         queryset=Owner.objects.all().order_by('name'),
         widget=AddAnotherWidgetWrapper(ChoiceWidget('OwnerAutocomplete'), Owner)
