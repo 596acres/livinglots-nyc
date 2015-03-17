@@ -1,6 +1,7 @@
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
+from lots.models import Lot
 from newsletter.subscribe import subscribe_obj
 from .models import Organizer
 
@@ -27,4 +28,5 @@ def post_delete_update_lot(sender, instance=None, **kwargs):
     Force a save on the organizer's target, which will remove the lot from
     layers accordingly.
     """
-    instance.content_object.save()
+    if instance.content_object and Lot.objects.filter(pk=instance.content_object.pk).exists():
+        instance.content_object.save()
