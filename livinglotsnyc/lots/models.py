@@ -344,6 +344,9 @@ class Lot(LotMixin, LotGroupLotMixin, BaseLot):
 class LotGroup(BaseLotGroup, Lot):
     objects = models.Manager()
 
+    class Meta:
+        ordering = ['name',]
+
 
 class LotLayer(BaseLotLayer):
 
