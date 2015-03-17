@@ -1,24 +1,13 @@
-from django import forms
 from django.contrib import admin
 
-from autocomplete_light import ChoiceWidget
+from autocomplete_light import ModelForm
 
-from livinglots_forms.widgets import AddAnotherWidgetWrapper
 from livinglots_lots.admin import BaseLotAdmin
 
-from owners.models import Owner
-from .models import Lot, LotGroup
+from .models import Lot
 
 
-class LotAdminForm(forms.ModelForm):
-    group = forms.ModelChoiceField(
-        queryset=LotGroup.objects.all().order_by('name'),
-        widget=ChoiceWidget('LotGroupAutocomplete')
-    )
-    owner = forms.ModelChoiceField(
-        queryset=Owner.objects.all().order_by('name'),
-        widget=AddAnotherWidgetWrapper(ChoiceWidget('OwnerAutocomplete'), Owner)
-    )
+class LotAdminForm(ModelForm):
 
     class Meta:
         model = Lot
