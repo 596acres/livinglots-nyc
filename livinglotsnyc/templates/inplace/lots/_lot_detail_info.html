@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load boundaries_tags i18n %}
 
 <section>
     <h2 style="margin-top: 0;">{% trans "Information about this lot" %}</h2>
@@ -56,12 +56,27 @@
             </div>
         {% endif %}
 
-        <div>
-            {% trans "Find elected officials for this lot at" %}
-            <a href="http://www.mygovnyc.org/?levelofgovt=city&latlng={{ lot.centroid.y }}%2C{{ lot.centroid.x }}" target="_blank">
-                {% trans "Who Represents Me? NYC" %}
-            </a>
-        </div>
+        <section>
+            <h3>Political Boundaries</h3>
+            <div>
+                {% trans "City Council District" %}
+                {% get_boundary "city council districts" lot.centroid.y lot.centroid.x as boundary %}
+                {{ boundary.label }}
+            </div>
+
+            <div>
+                {% trans "Community District" %}
+                {% get_boundary "community districts" lot.centroid.y lot.centroid.x as boundary %}
+                {{ boundary.label }}
+            </div>
+
+            <div>
+                {% trans "Find all elected officials for this lot at" %}
+                <a href="http://www.mygovnyc.org/?levelofgovt=city&latlng={{ lot.centroid.y }}%2C{{ lot.centroid.x }}" target="_blank">
+                    {% trans "Who Represents Me? NYC" %}
+                </a>
+            </div>
+        </section>
 
     </div>
 </section>
