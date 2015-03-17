@@ -8,4 +8,6 @@ class Owner(BaseOwner):
 
 
 class OwnerContact(BaseOwnerContact):
-    pass
+
+    class Meta:
+        ordering = ['name',]
