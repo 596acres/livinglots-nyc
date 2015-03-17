@@ -20,7 +20,7 @@ git+git://github.com/feincms/feincms/@next
 django-activity-stream==0.5.1
 django-admin-enhancer==1.0.0
 django-admin-tools==0.5.2
-django-autocomplete-light==2.0.3
+django-autocomplete-light==2.0.9
 django-braces==1.4.0
 git+git://github.com/ebrelsford/django-cache-machine/@master
 git+git://github.com/ebrelsford/django-chosen/@master
