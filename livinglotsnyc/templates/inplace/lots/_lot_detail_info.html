@@ -1,4 +1,4 @@
-{% load boundaries_tags citycouncildistricts_tags i18n %}
+{% load boundaries_tags citycouncildistricts_tags communitydistricts_tags communitydistrictsdetails_tags i18n %}
 
 <section>
     <h2 style="margin-top: 0;">{% trans "Information about this lot" %}</h2>
@@ -79,11 +79,34 @@
                 </div>
             {% endif %}
 
-            <div>
-                {% trans "Community District" %}
-                {% get_boundary "community districts" lot.centroid.y lot.centroid.x as boundary %}
-                {{ boundary.label }}
-            </div>
+            {% get_boundary "community districts" lot.centroid.y lot.centroid.x as district %}
+            {% if district %}
+                {% get_community_district_details district as district_details %}
+                <div>
+                    {% trans "Community District" %}
+                    {% if district_details.url %}
+                        <a href="{{ district_details.url }}" target="_blank">
+                            {{ district.label|community_district_label }}
+                        </a>
+                    {% else %}
+                        {{ district.label|community_district_label }}
+                    {% endif %}
+
+                    {% if district_details.email or district_details.phone %}(
+                        {% if district_details.email %}
+                            <a href="mailto:{{ district_details.email }}">{{ district_details.email }}</a>
+                        {% endif %}
+                        {% if district_details.email and district_details.phone %} / {% endif %}
+                        {% if district_details.phone %}
+                            {{ district_details.phone }}
+                        {% endif %}
+                    ),{% endif %}
+
+                    {% if district_details.district_manager %}
+                        {% trans "district manager" %}: {{ district_details.district_manager }}
+                    {% endif %}
+                </div>
+            {% endif %}
 
             <div>
                 {% trans "Find all elected officials for this lot at" %}
