@@ -1,6 +1,5 @@
 var L = require('leaflet');
 var _ = require('underscore');
-var ie = require('./ie');
 
 require('leaflet-tilelayer-vector');
 
@@ -16,7 +15,6 @@ L.LotGeoJson = L.GeoJSON.extend({
     },
 
     addData: function (geojson) {
-        ie.log('In L.LotGeoJson.addData');
         var features = L.Util.isArray(geojson) ? geojson : geojson.features,
             i, len, feature;
 
@@ -45,7 +43,6 @@ L.LotGeoJson = L.GeoJSON.extend({
             options.onEachFeature(geojson, layer);
         }
 
-        ie.log('In L.LotGeoJson.addData, calling addLayer');
         return this.addLayer(layer);
     },
 

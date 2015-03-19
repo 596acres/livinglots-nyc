@@ -1,5 +1,4 @@
 var L = require('leaflet');
-var ie = require('./ie');
 
 
 L.LotPathMixin = {
@@ -21,7 +20,6 @@ L.LotPathMixin = {
     },
 
     initActionPath: function() {
-        ie.log('In initActionPath');
         if (this.options.hasOrganizers) {
             this._actionPath = this._createElement('path');
             this._actionPath.setAttribute('style', 'fill:#CFB933; fill-opacity:1;');
