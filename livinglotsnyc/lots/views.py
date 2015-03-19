@@ -213,6 +213,7 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
         'private': 'private land opportunities',
         'project': 'people have access',
     }
+    results = {}
 
     def get_organizing(self, qs):
         qs = qs.filter(Q(
@@ -289,9 +290,11 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
     def get_context_data(self, **kwargs):
         lots = self.get_lots().qs
         layers = self.get_layers(lots)
-        return {
-            'owners': self.get_layer_counts(layers)
-        }
+        if not self.results:
+            self.results = {
+                'owners': self.get_layer_counts(layers)
+            }
+        return self.results
 
 
 class LotsCountViewWithAcres(LotsCountView):
