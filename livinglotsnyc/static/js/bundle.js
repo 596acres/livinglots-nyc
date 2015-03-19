@@ -565,6 +565,9 @@ L.LotMap = L.Map.extend({
             ie.log('In L.LotMap.on layeradd');
             // Dig through the layers of layers
             if (!event.layer.on) { ie.log('No event.layer.on'); return; }
+            if (ie.detect()) {
+                console.log(event.layer);
+            }
             event.layer.on('layeradd', function (event) {
                 if (!event.layer.eachLayer) { ie.log('No event.layer.eachLayer'); return; }
                 event.layer.eachLayer(function (lot) {
@@ -28142,7 +28145,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

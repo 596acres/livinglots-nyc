@@ -109,6 +109,9 @@ L.LotMap = L.Map.extend({
             ie.log('In L.LotMap.on layeradd');
             // Dig through the layers of layers
             if (!event.layer.on) { ie.log('No event.layer.on'); return; }
+            if (ie.detect()) {
+                console.log(event.layer);
+            }
             event.layer.on('layeradd', function (event) {
                 if (!event.layer.eachLayer) { ie.log('No event.layer.eachLayer'); return; }
                 event.layer.eachLayer(function (lot) {
