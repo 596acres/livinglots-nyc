@@ -94,7 +94,6 @@ L.LotMap = L.Map.extend({
     },
 
     initialize: function (id, options) {
-        ie.log('In L.LotMap.initialize');
         L.Map.prototype.initialize.call(this, id, options);
         this.addBaseLayer();
         var hash = new L.Hash(this);
@@ -106,25 +105,20 @@ L.LotMap = L.Map.extend({
         // When new lots are added ensure they should be displayed
         var map = this;
         this.on('layeradd', function (event) {
-            ie.log('In L.LotMap.on layeradd');
             // Dig through the layers of layers
-            if (!event.layer.on) { ie.log('No event.layer.on'); return; }
+            if (!event.layer.on) { return; }
             if (ie.detect()) {
                 console.log(event.layer);
             }
             event.layer.on('layeradd', function (event) {
-                if (!event.layer.eachLayer) { ie.log('No event.layer.eachLayer'); return; }
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) {
-                        ie.log('No lot feature or lot layers');
                         return;
                     }
                     if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
-                        ie.log('Showing');
                         lot.show();
                     }
                     else {
-                        ie.log('Hiding');
                         lot.hide();
                     }
                 });
