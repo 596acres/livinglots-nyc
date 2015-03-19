@@ -78,12 +78,7 @@ class OwnerFilter(django_filters.Filter):
     def filter(self, qs, value):
         if not value:
             return qs
-        owner_pks = value.split(',')
-        owner_query = Q(
-            Q(known_use=None) | Q(known_use__visible=True),
-            owner__owner_type=self.owner_type,
-            owner__pk__in=owner_pks,
-        )
+        owner_query = Q(owner__pk__in=value.split(','))
         other_owners_query = ~Q(owner__owner_type=self.owner_type)
         return qs.filter(owner_query | other_owners_query)
 
