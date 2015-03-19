@@ -85,7 +85,7 @@ class OwnerFilter(django_filters.Filter):
 
 class OwnerTypesFilter(django_filters.Filter):
 
-    all_owner_types = ('private', 'public',)
+    all_owner_types = ('private_opt_in', 'public',)
 
     def filter(self, qs, value):
         # Exclude owners not selected, this is important for groups which might
