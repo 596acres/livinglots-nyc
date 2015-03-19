@@ -85,9 +85,17 @@ class OwnerFilter(django_filters.Filter):
 
 class OwnerTypesFilter(django_filters.Filter):
 
+    all_owner_types = ('private', 'public',)
+
     def filter(self, qs, value):
+        # Exclude owners not selected, this is important for groups which might
+        # live in both public and private layers
+        owners = value.split(',')
+        disallowed_owners = [o for o in self.all_owner_types if o not in owners]
+
         # Lots should also be in these layers, use layers for convenience
-        return qs.filter(lotlayer__name__in=value.split(','))
+        return qs.filter(~Q(lotlayer__name__in=disallowed_owners),
+                         lotlayer__name__in=owners)
 
 
 class LotFilter(django_filters.FilterSet):
