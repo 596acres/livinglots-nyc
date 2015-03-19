@@ -54,17 +54,20 @@ function searchByAddress(form) {
 
 $.fn.mapsearch = function (options) {
 
+    function search(form) {
+        searchByAddress(form);
+        return false;
+    }
+
     this.keypress(function (e) {
         if (e.keyCode === '13') {
             e.preventDefault();
-            searchByAddress(this);
-            return false;
+            return search(this);
         }
     });
     this.submit(function (e) {
         e.preventDefault();
-        searchByAddress(this);
-        return false;
+        return search(this);
     });
 
     return this;

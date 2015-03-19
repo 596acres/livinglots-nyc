@@ -1185,17 +1185,20 @@ function searchByAddress(form) {
 
 $.fn.mapsearch = function (options) {
 
+    function search(form) {
+        searchByAddress(form);
+        return false;
+    }
+
     this.keypress(function (e) {
         if (e.keyCode === '13') {
             e.preventDefault();
-            searchByAddress(this);
-            return false;
+            return search(this);
         }
     });
     this.submit(function (e) {
         e.preventDefault();
-        searchByAddress(this);
-        return false;
+        return search(this);
     });
 
     return this;
@@ -28050,7 +28053,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
