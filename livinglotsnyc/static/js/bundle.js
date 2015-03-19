@@ -10278,11 +10278,13 @@ L.TileLayer.Ajax = L.TileLayer.extend({
 
     // XMLHttpRequest handler; closure over the XHR object, the layer, and the tile
     _xhrHandler: function (req, layer, tile) {
+        console.log('In _xhrHandler');
         return function() {
             if (req.readyState != 4) {
                 return;
             }
             var s = req.status;
+            console.log('Status:', s);
 
             // Fire dataload for Leaflet.loading
             layer._map.fire('dataload');
@@ -10290,6 +10292,7 @@ L.TileLayer.Ajax = L.TileLayer.extend({
             if ((s >= 200 && s < 300) || s == 304) {
                 // check if request is about to be aborted, avoid rare error when aborted while parsing
                 if (tile._request) {
+                    console.log('tile._request:', tile._request);
                     tile._request = null;
                     layer.fire('tileresponse', {tile: tile, request: req});
                     tile.datum = req.responseText;
@@ -10317,6 +10320,7 @@ L.TileLayer.Ajax = L.TileLayer.extend({
         tile._request = req;
         req.onreadystatechange = this._xhrHandler(req, layer, tile);
         this.fire('tilerequest', {tile: tile, request: req});
+        console.log('\trequest prepared');
         req.open('GET', this.getTileUrl(tilePoint), true);
         req.send();
     },
@@ -28089,7 +28093,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
