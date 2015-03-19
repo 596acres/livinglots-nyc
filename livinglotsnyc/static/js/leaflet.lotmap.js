@@ -117,10 +117,11 @@ L.LotMap = L.Map.extend({
                         return;
                     }
                     if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
-                        ie.log('Showing ' + lot);
+                        ie.log('Showing');
                         lot.show();
                     }
                     else {
+                        ie.log('Hiding');
                         lot.hide();
                     }
                 });
