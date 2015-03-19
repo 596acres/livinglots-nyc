@@ -457,7 +457,6 @@ var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
-var ie = require('./ie');
 
 require('livinglots.addlot');
 require('livinglots.emailparticipants');
@@ -547,7 +546,6 @@ L.LotMap = L.Map.extend({
     },
 
     initialize: function (id, options) {
-        ie.log('In L.LotMap.initialize', options);
         L.Map.prototype.initialize.call(this, id, options);
         this.addBaseLayer();
         var hash = new L.Hash(this);
@@ -617,7 +615,6 @@ L.LotMap = L.Map.extend({
     },
 
     addBaseLayer: function () {
-        ie.log('In addBaseLayer');
         var streets = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com/">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
         }).addTo(this);
@@ -727,7 +724,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./ie":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/ie.js","./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js","leaflet-hash":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js","leaflet-plugins-bing":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-plugins/layer/tile/Bing.js","leaflet-usermarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-usermarker/src/leaflet.usermarker.js","livinglots-map/src/livinglots.boundaries":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.boundaries.js","livinglots.addlot":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/index.js","livinglots.emailparticipants":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/index.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js":[function(require,module,exports){
+},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js","leaflet-hash":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js","leaflet-plugins-bing":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-plugins/layer/tile/Bing.js","leaflet-usermarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-usermarker/src/leaflet.usermarker.js","livinglots-map/src/livinglots.boundaries":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.boundaries.js","livinglots.addlot":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/index.js","livinglots.emailparticipants":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/index.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -853,6 +850,7 @@ L.LotMultiPolygon = L.FeatureGroup.extend({
 
 },{"./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpath.js":[function(require,module,exports){
 var L = require('leaflet');
+var ie = require('./ie');
 
 
 L.LotPathMixin = {
@@ -913,7 +911,7 @@ L.LotPathMixin = {
 
 };
 
-},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js":[function(require,module,exports){
+},{"./ie":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/ie.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -1332,7 +1330,6 @@ var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
 var filters = require('./filters');
-var ie = require('./ie');
 
 require('./leaflet.lotmap');
 require('bootstrap_button');
@@ -1549,13 +1546,11 @@ $(document).ready(function () {
             setFiltersUIFromQueryParams(deparam());
         }
 
-        ie.log('Creating map');
         var map = L.lotMap('map', {
             filterParams: filters.filtersToParams(null, {}),
             onMouseOverFeature: function (feature) {},
             onMouseOutFeature: function (feature) {}
         });
-        ie.log('Done creating map');
 
         initializeBoundaries(map);
 
@@ -1627,7 +1622,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./ie":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/ie.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
+},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
 var _ = require('underscore');
 var proj4 = require('proj4');
 require('./proj4.defs');
@@ -28135,7 +28130,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

@@ -4,7 +4,6 @@ var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
-var ie = require('./ie');
 
 require('livinglots.addlot');
 require('livinglots.emailparticipants');
@@ -94,7 +93,6 @@ L.LotMap = L.Map.extend({
     },
 
     initialize: function (id, options) {
-        ie.log('In L.LotMap.initialize', options);
         L.Map.prototype.initialize.call(this, id, options);
         this.addBaseLayer();
         var hash = new L.Hash(this);
@@ -164,7 +162,6 @@ L.LotMap = L.Map.extend({
     },
 
     addBaseLayer: function () {
-        ie.log('In addBaseLayer');
         var streets = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com/">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
         }).addTo(this);
