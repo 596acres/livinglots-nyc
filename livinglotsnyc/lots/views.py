@@ -4,6 +4,7 @@ import json
 from operator import itemgetter
 from pint import UnitRegistry
 from random import shuffle
+import re
 
 from django.db.models import Count, Sum, Q
 from django.contrib.contenttypes.models import ContentType
@@ -28,6 +29,7 @@ from livinglots_organize.mail import mass_mail_organizers
 from sizecompare.compare import find_comparable
 
 from organize.models import Organizer
+from nycdata.bbls import build_bbl
 from nycdata.parcels.models import Parcel
 from .models import Lot
 
@@ -414,3 +416,53 @@ class AddToGroupView(CsrfExemptMixin, LoginRequiredMixin,
         }
         messages.success(request, self.get_success_message(to_add))
         return self.render_json_response(context)
+
+
+class SearchView(JSONResponseMixin, View):
+    # BBL is ten digits
+    bbl_pattern = re.compile(r'.*(\d{10}).*')
+
+    # Look for something of the form <borough> <block> <lot>, no matter what is
+    # separating each
+    borough_block_lot_pattern = re.compile(r'.*?(\w+)\D+(\d+)\D+(\d+).*?')
+
+    def get_search_results(self, q, max=5):
+        return (self.get_lot_results(q, max=max) +
+                self.get_parcel_results(q, max=max))[:max]
+
+    def get_lot_results(self, q, max=5):
+        def _lot_result_dict(lot):
+            return {
+                'longitude': lot.centroid.x,
+                'latitude': lot.centroid.y,
+                'name': lot.name,
+            }
+        return [_lot_result_dict(l) for l in Lot.objects.filter(name__icontains=q)[:max]]
+
+    def get_parcel_results(self, q, max=5):
+        def _parcel_result_dict(parcel):
+            return {
+                'longitude': parcel.geom.centroid.x,
+                'latitude': parcel.geom.centroid.y,
+                'name': parcel.bbl,
+            }
+
+        # Try to get a bbl we can search by
+        try:
+            bbl = self.bbl_pattern.match(q).group(1)
+        except Exception:
+            try:
+                # Try to find borough, block, and lot, convert to bbl
+                bbl = build_bbl(*self.borough_block_lot_pattern.match(q).groups())
+                print bbl
+            except Exception:
+                bbl = None
+
+        if bbl:
+            return [_parcel_result_dict(p) for p in Parcel.objects.filter(bbl=bbl)[:max]]
+        return []
+
+    def get(self, request, *args, **kwargs):
+        return self.render_json_response({
+            'results': self.get_search_results(request.GET.get('q', None)),
+        })
