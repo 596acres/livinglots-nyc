@@ -47,7 +47,7 @@ function searchByAddress(form) {
             longitude: found_location.lng(),
             latitude: found_location.lat(),
             query_address: query,
-            found_address: result.formatted_address,
+            found_address: result.formatted_address
         }]);
     });
 }

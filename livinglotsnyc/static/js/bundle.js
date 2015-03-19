@@ -1178,7 +1178,7 @@ function searchByAddress(form) {
             longitude: found_location.lng(),
             latitude: found_location.lat(),
             query_address: query,
-            found_address: result.formatted_address,
+            found_address: result.formatted_address
         }]);
     });
 }
@@ -28050,7 +28050,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
