@@ -115,6 +115,7 @@ L.LotMap = L.Map.extend({
                         return;
                     }
                     if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
+                        ie.log('Showing', lot);
                         lot.show();
                     }
                     else {
