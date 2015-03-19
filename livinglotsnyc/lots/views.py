@@ -216,10 +216,9 @@ class LotsTypesOverview(FilteredLotsMixin, JSONResponseView):
     results = {}
 
     def get_organizing(self, qs):
-        qs = qs.filter(Q(
-            Q(lotlayer__name='organizing') |
-            Q(lotlayer__name='in_use_started_here')
-        )).distinct()
+        qs = qs.filter(
+            lotlayer__name__in=('organizing', 'in_use_started_here')
+        ).distinct()
         sqft = qs.aggregate(area=Sum('polygon_area'))['area']
         if not sqft:
             sqft = 0
@@ -457,7 +456,6 @@ class SearchView(JSONResponseMixin, View):
             try:
                 # Try to find borough, block, and lot, convert to bbl
                 bbl = build_bbl(*self.borough_block_lot_pattern.match(q).groups())
-                print bbl
             except Exception:
                 bbl = None
 
