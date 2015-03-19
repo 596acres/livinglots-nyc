@@ -4,6 +4,7 @@ var Handlebars = require('handlebars');
 var L = require('leaflet');
 var mapstyles = require('./map.styles');
 var Spinner = require('spin.js');
+var ie = require('./ie');
 
 require('livinglots.addlot');
 require('livinglots.emailparticipants');
@@ -105,11 +106,14 @@ L.LotMap = L.Map.extend({
         var map = this;
         this.on('layeradd', function (event) {
             // Dig through the layers of layers
-            if (!event.layer.on) { return; }
+            if (!event.layer.on) { ie.log('No event.layer.on'); return; }
             event.layer.on('layeradd', function (event) {
-                if (!event.layer.eachLayer) { return; }
+                if (!event.layer.eachLayer) { ie.log('No event.layer.eachLayer'); return; }
                 event.layer.eachLayer(function (lot) {
-                    if (!lot.feature || !lot.feature.properties.layers) return;
+                    if (!lot.feature || !lot.feature.properties.layers) {
+                        ie.log('No lot feature or lot layers');
+                        return;
+                    }
                     if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
                         lot.show();
                     }
