@@ -12,6 +12,7 @@ var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
 var filters = require('./filters');
+var ie = require('./ie');
 
 require('./leaflet.lotmap');
 require('bootstrap_button');
@@ -228,11 +229,13 @@ $(document).ready(function () {
             setFiltersUIFromQueryParams(deparam());
         }
 
+        ie.log('Creating map');
         var map = L.lotMap('map', {
             filterParams: filters.filtersToParams(null, {}),
             onMouseOverFeature: function (feature) {},
             onMouseOutFeature: function (feature) {}
         });
+        ie.log('Done creating map');
 
         initializeBoundaries(map);
 
