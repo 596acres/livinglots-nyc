@@ -1144,37 +1144,23 @@ function addCityAndState(query, city, state) {
     return query;
 }
 
-function searchByAddress(form) {
-    form = $(form);
-    form.trigger('searchstart');
-    var warningSelector = form.data('warningSelector'),
-        bounds = form.data('bounds'),
-        city = form.data('city'),
-        state = form.data('state'),
-        query = form.find('input[type="text"]').val();
-
-    form.find(warningSelector).hide();
-    form.find(':input[type=submit]')
-        .attr('disabled', 'disabled');
+function searchByAddress($form) {
+    var bounds = $form.data('bounds'),
+        city = $form.data('city'),
+        state = $form.data('state'),
+        query = $form.find('input[type="text"]').val();
 
     query = addCityAndState(query, city, state);
-
     geocode(query, bounds, state, function (result, status) {
-        // Done searching
-        form.find(':input[type=submit]')
-            .removeAttr('disabled');
-
         // Is result valid?
         if (result === null) {
-            form.find(warningSelector)
-                .text(form.data('errorMessage'))
-                .show();
+            $form.trigger('searchresulterror', $form.data('errorMessage'));
             return;
         }
 
         // Let the world know!
         var found_location = result.geometry.location;
-        form.trigger('searchresultfound', [{
+        $form.trigger('searchresultfound', [{
             longitude: found_location.lng(),
             latitude: found_location.lat(),
             query_address: query,
@@ -1183,22 +1169,66 @@ function searchByAddress(form) {
     });
 }
 
+function searchLotsAndParcels($form, opts) {
+    var query = $form.find('input[type="text"]').val(),
+        url = $form.data('lot-search-url') + '?' + $.param({ q: query });
+    $.getJSON(url, function (data) {
+        if (data.results.length > 0) {
+            var result = data.results[0];
+            $form.trigger('searchresultfound', [{
+                longitude: result.longitude,
+                latitude: result.latitude
+            }]);
+        }
+        else {
+            opts.failure();
+        }
+    });
+}
+
 $.fn.mapsearch = function (options) {
+    var $form = this;
+    var warningSelector = this.data('warningSelector');
 
     function search(form) {
-        searchByAddress(form);
+        form.trigger('searchstart');
+        form.find(warningSelector).hide();
+        form.find(':input[type=submit]')
+            .attr('disabled', 'disabled');
+
+        // Search by bbl, lot name, if that turns up nothing then
+        // searchByAddress
+        searchLotsAndParcels(form, {
+            failure: function () {
+                searchByAddress($form);
+            }
+        });
         return false;
     }
 
     this.keypress(function (e) {
         if (e.keyCode === '13') {
             e.preventDefault();
-            return search(this);
+            return search($form);
         }
     });
     this.submit(function (e) {
         e.preventDefault();
-        return search(this);
+        return search($form);
+    });
+
+    this.on('searchresulterror', function (e, message) {
+        $form.find(warningSelector).text(mesage).show();
+
+        // Done searching
+        $form.find(':input[type=submit]')
+            .removeAttr('disabled');
+    });
+
+    this.on('searchresultfound', function (e, message) {
+        // Done searching
+        $form.find(':input[type=submit]')
+            .removeAttr('disabled');
     });
 
     return this;
@@ -28053,7 +28083,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
