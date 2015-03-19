@@ -322,6 +322,7 @@ L.TileLayer.Vector.include({
 },{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js":[function(require,module,exports){
 var L = require('leaflet');
 var _ = require('underscore');
+var ie = require('./ie');
 
 require('leaflet-tilelayer-vector');
 
@@ -337,6 +338,7 @@ L.LotGeoJson = L.GeoJSON.extend({
     },
 
     addData: function (geojson) {
+        ie.log('In L.LotGeoJson.addData');
         var features = L.Util.isArray(geojson) ? geojson : geojson.features,
             i, len, feature;
 
@@ -365,6 +367,7 @@ L.LotGeoJson = L.GeoJSON.extend({
             options.onEachFeature(geojson, layer);
         }
 
+        ie.log('In L.LotGeoJson.addData, calling addLayer');
         return this.addLayer(layer);
     },
 
@@ -450,7 +453,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js","./leaflet.lotmultipolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmultipolygon.js","./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js":[function(require,module,exports){
+},{"./ie":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/ie.js","./leaflet.geojson.tile":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js","./leaflet.lotmultipolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmultipolygon.js","./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js":[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -547,6 +550,7 @@ L.LotMap = L.Map.extend({
     },
 
     initialize: function (id, options) {
+        ie.log('In L.LotMap.initialize');
         L.Map.prototype.initialize.call(this, id, options);
         this.addBaseLayer();
         var hash = new L.Hash(this);
@@ -558,6 +562,7 @@ L.LotMap = L.Map.extend({
         // When new lots are added ensure they should be displayed
         var map = this;
         this.on('layeradd', function (event) {
+            ie.log('In L.LotMap.on layeradd');
             // Dig through the layers of layers
             if (!event.layer.on) { ie.log('No event.layer.on'); return; }
             event.layer.on('layeradd', function (event) {
@@ -568,7 +573,7 @@ L.LotMap = L.Map.extend({
                         return;
                     }
                     if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
-                        ie.log('Showing', lot);
+                        ie.log('Showing ' + lot);
                         lot.show();
                     }
                     else {
@@ -28136,7 +28141,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

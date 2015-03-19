@@ -94,6 +94,7 @@ L.LotMap = L.Map.extend({
     },
 
     initialize: function (id, options) {
+        ie.log('In L.LotMap.initialize');
         L.Map.prototype.initialize.call(this, id, options);
         this.addBaseLayer();
         var hash = new L.Hash(this);
@@ -105,6 +106,7 @@ L.LotMap = L.Map.extend({
         // When new lots are added ensure they should be displayed
         var map = this;
         this.on('layeradd', function (event) {
+            ie.log('In L.LotMap.on layeradd');
             // Dig through the layers of layers
             if (!event.layer.on) { ie.log('No event.layer.on'); return; }
             event.layer.on('layeradd', function (event) {
@@ -115,7 +117,7 @@ L.LotMap = L.Map.extend({
                         return;
                     }
                     if (filters.lotShouldAppear(lot, map.currentFilters, map.boundariesLayer)) {
-                        ie.log('Showing', lot);
+                        ie.log('Showing ' + lot);
                         lot.show();
                     }
                     else {
