@@ -10253,6 +10253,7 @@ L.TileLayer.Ajax = L.TileLayer.extend({
     _addTile: function(tilePoint, container) {
         var cached = null;
         var key = tilePoint.x + ':' + tilePoint.y;
+        console.log('_addTile', key);
         var urlZoom = this._getZoomForUrl();
         var tile = cached = this._tileCache.get(key, urlZoom);
         if (!tile) {
@@ -10305,6 +10306,7 @@ L.TileLayer.Ajax = L.TileLayer.extend({
 
     // Load the requested tile via AJAX
     _loadTile: function (tile, tilePoint) {
+        console.log('In L.TileLayer.AJAX._loadTile');
         this._adjustTilePoint(tilePoint);
         var layer = this;
 
@@ -10816,6 +10818,7 @@ L.TileQueue.prototype = {
     
     add: function(aTile) {
         // XXX IE never gets here
+        console.log('L.TileQueue.add');
         this._queue.push(aTile);
         if (!this._queueTimeout) {
             this._queueTimeout = setTimeout(L.bind(function(){
@@ -28086,7 +28089,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
