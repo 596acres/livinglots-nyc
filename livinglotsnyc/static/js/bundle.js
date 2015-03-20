@@ -11000,8 +11000,6 @@ L.CatilineWorker = L.AbstractWorker.extend({
     process: function(tile, callback) {
         if (this._workers){ 
             tile._worker = this._workers.data(tile.datum).then(function(parsed) {
-                // XXX IE never gets here, never calls callback, data never gets
-                // added
                 if (tile._worker) {
                     tile._worker = null;
                     tile.parsed = parsed;
@@ -11387,7 +11385,6 @@ L.TileLayer.Vector = L.TileLayer.Ajax.extend({
     _addTileData: function(tile) {
         if (!tile.parsed) {
             this._worker.process(tile, L.bind(function(tile) {
-                // XXX IE never gets here
                 this._addQueue.add(tile);
             },this));
         } else {
@@ -11818,7 +11815,6 @@ L.TileQueue.prototype = {
     _queueTimeout: null,
     
     add: function(aTile) {
-        // XXX IE never gets here
         this._queue.push(aTile);
         if (!this._queueTimeout) {
             this._queueTimeout = setTimeout(L.bind(function(){
@@ -29089,7 +29085,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
