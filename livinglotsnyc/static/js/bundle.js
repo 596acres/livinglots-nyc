@@ -256,7 +256,53 @@ Handlebars.registerHelper('pick-area', function (acres, sqft) {
     return sqft + ' sq ft';
 });
 
-},{"handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js":[function(require,module,exports){
+},{"handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/ie.js":[function(require,module,exports){
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ *
+ * Taken from this SO answer:
+ *  http://stackoverflow.com/questions/19999388/jquery-check-if-user-is-using-ie/21712356#21712356
+ */
+function detectIE() {
+    var ua = window.navigator.userAgent;
+
+    var msie = ua.indexOf('MSIE ');
+    if (msie > 0) {
+        // IE 10 or older => return version number
+        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+    }
+
+    var trident = ua.indexOf('Trident/');
+    if (trident > 0) {
+        // IE 11 => return version number
+        var rv = ua.indexOf('rv:');
+        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+    }
+
+    var edge = ua.indexOf('Edge/');
+    if (edge > 0) {
+       // IE 12 => return version number
+       return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+    }
+
+    // other browser
+    return false;
+}
+
+module.exports = {
+
+    detect: detectIE,
+
+    log: function (msg) {
+        if (detectIE()) {
+            console.log(msg);
+        }
+    }
+
+};
+
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('leaflet-tilelayer-vector');
@@ -279,6 +325,7 @@ var _ = require('underscore');
 
 require('leaflet-tilelayer-vector');
 
+var ie = require('./ie');
 require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');
 require('./leaflet.lotpolygon');
@@ -394,6 +441,11 @@ L.LotLayer = L.TileLayer.Vector.extend({
     initialize: function (url, options, geojsonOptions) {
         options.tileCacheFactory = L.tileCache;
         options.layerFactory = L.lotGeoJson;
+
+        // Don't use web workers for IE
+        if (ie.detect()) {
+            options.workerFactory = L.noWorker;
+        }
         L.TileLayer.Vector.prototype.initialize.call(this, url, options,
                                                       geojsonOptions);
     },
@@ -404,7 +456,7 @@ L.lotLayer = function (url, options, geojsonOptions) {
     return new L.LotLayer(url, options, geojsonOptions);
 };
 
-},{"./leaflet.geojson.tile":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js","./leaflet.lotmultipolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmultipolygon.js","./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js":[function(require,module,exports){
+},{"./ie":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/ie.js","./leaflet.geojson.tile":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.geojson.tile.js","./leaflet.lotmultipolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmultipolygon.js","./leaflet.lotpolygon":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotpolygon.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js":[function(require,module,exports){
 var _ = require('underscore');
 var filters = require('./filters');
 var Handlebars = require('handlebars');
@@ -11293,6 +11345,7 @@ L.TileLayer.Vector = L.TileLayer.Ajax.extend({
     initialize: function (url, options, vectorOptions) {
         L.TileLayer.Ajax.prototype.initialize.call(this, url, options);
         this.vectorOptions = vectorOptions || {};
+        console.log(this.options);
         this._worker = this.options.workerFactory(L.TileLayer.Vector.parseData);
         this._addQueue = new L.TileQueue(L.bind(this._addTileDataInternal, this));
     },
@@ -29037,7 +29090,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

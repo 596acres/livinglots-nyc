@@ -3,6 +3,7 @@ var _ = require('underscore');
 
 require('leaflet-tilelayer-vector');
 
+var ie = require('./ie');
 require('./leaflet.geojson.tile');
 require('./leaflet.lotmultipolygon');
 require('./leaflet.lotpolygon');
@@ -118,6 +119,11 @@ L.LotLayer = L.TileLayer.Vector.extend({
     initialize: function (url, options, geojsonOptions) {
         options.tileCacheFactory = L.tileCache;
         options.layerFactory = L.lotGeoJson;
+
+        // Don't use web workers for IE
+        if (ie.detect()) {
+            options.workerFactory = L.noWorker;
+        }
         L.TileLayer.Vector.prototype.initialize.call(this, url, options,
                                                       geojsonOptions);
     },
