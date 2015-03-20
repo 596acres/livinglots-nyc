@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <script>
+        var cw = "cw";
+        var fakeLegacy = true;
+    </script>
+    <script src="lib/shim.bundle.js"></script>
+    <script src="../dist/catiline.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="test.js"></script>
+  
+    <script>
+    runTests(chai,cw,window);
+      window.onload = function() {
+          if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+      };
+    </script>
+    </head>
+  <body>
+    <div id="mocha"></div>
+  </body>
+</html>

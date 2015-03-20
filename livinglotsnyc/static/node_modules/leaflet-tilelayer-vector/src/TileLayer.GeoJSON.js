@@ -111,7 +111,7 @@ L.TileLayer.Vector = L.TileLayer.Ajax.extend({
         // factory function to create the vector tile layers (defaults to L.GeoJSON)
         layerFactory: L.geoJson,
         // factory function to create a web worker for parsing/preparing tile data
-        workerFactory: L.communistWorker
+        workerFactory: L.catilineWorker
         //workerFactory: L.noWorker
     },
 

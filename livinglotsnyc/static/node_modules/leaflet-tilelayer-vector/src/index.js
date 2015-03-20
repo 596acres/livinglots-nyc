@@ -3,7 +3,7 @@
 // No explicit exports, as classes add themselves to the global Leaflet package
 // structure.
 require('./AbstractWorker.js');
-require('./CommunistWorker.js');
+require('./CatilineWorker.js');
 require('./TileCache.js');
 require('./TileQueue.js');
 require('./TileLayer.GeoJSON.js');
