@@ -152,6 +152,8 @@ class LotMixin(models.Model):
 
     owner_opt_in = models.BooleanField(default=False)
 
+    archive_path = models.CharField(max_length=100, blank=True, null=True)
+
     def _get_display_name(self):
         if self.name:
             return self.name

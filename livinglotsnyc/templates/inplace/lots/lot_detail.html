@@ -135,6 +135,12 @@
                 <h2>{% trans "Admin Details" %}</h2>
                 <div class="help-text">{% trans "(This section is only visible to admins.)" %}</div>
 
+                {% if lot.archive_path %}
+                    <div>
+                        <a class="btn btn-warning" href="http://archive.livinglotsnyc.org/{{ lot.archive_path }}" target="_blank">View lot as it appeared on 596acres.org</a>
+                    </div>
+                {% endif %}
+
                 {% if stewards %}
                     {% trans "steward's land tenure" %}:
                     {{ stewards.0.land_tenure_status }}
