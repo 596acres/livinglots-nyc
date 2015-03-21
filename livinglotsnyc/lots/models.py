@@ -302,7 +302,11 @@ class VisibleLotManager(BaseLotManager):
         return super(VisibleLotManager, self).get_queryset().filter(
             Q(
                 Q(known_use__isnull=True) |
-                Q(known_use__visible=True, steward_inclusion_opt_in=True)
+                Q(known_use__visible=True)
+            ),
+            Q(
+                Q(steward_projects=None) |
+                Q(steward_inclusion_opt_in=True)
             ),
             Q(
                 ~Q(owner__owner_type='private') |
