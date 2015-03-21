@@ -18,6 +18,11 @@
                                 {% trans "More details at" %}
                                 <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">OASIS</a>.
                             {% endif %}
+                            {% if "lots.change_lot" in perms %}
+                                <a class="btn btn-xs btn-warning" href="{% url "admin:lots_lot_change" lot.pk %}">
+                                    {% trans "Edit this lot" %}
+                                </a>
+                            {% endif %}
                         </div>
                         {% ifnotequal lot.owners|length 1 %}
                             <div>
