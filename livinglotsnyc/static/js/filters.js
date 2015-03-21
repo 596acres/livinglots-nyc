@@ -1,5 +1,7 @@
 var _ = require('underscore');
-var leafletPip = require('leaflet-pip');
+var turf = {};
+turf.inside = require('turf-inside');
+turf.point = require('turf-point');
 
 
 module.exports = {
@@ -26,9 +28,10 @@ module.exports = {
 
         // Look at current boundary, hide anything not in it
         if (boundariesLayer.getLayers().length > 0) {
-            var centroid = lot.getBounds().getCenter();
-                inLayers = leafletPip.pointInLayer(centroid, boundariesLayer, true);
-            if (inLayers.length === 0) {
+            var centroid = lot.getBounds().getCenter(),
+                point = turf.point([centroid.lng, centroid.lat]),
+                polygon = boundariesLayer.getLayers()[0].toGeoJSON();
+            if (!turf.inside(point, polygon)) {
                 return false;
             }
         }
