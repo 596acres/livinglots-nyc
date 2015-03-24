@@ -11,7 +11,7 @@ class PathwayAdmin(BasePathwayAdmin):
     fieldsets = [
         [None, {
             'fields': [
-                ('is_active', 'author',),
+                ('is_active', 'order', 'author',),
                 ('name', 'slug',),
             ],
         }],
