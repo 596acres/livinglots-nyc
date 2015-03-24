@@ -1,0 +1,25 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}{{ block.super }}
+    <script>
+        // Added this code to invalidate size and change fit bounds on the map
+        // when it's in a collapsible admin section, as it is by default for
+        // lots. If you don't invalidateSize, most of the map will be gray.
+        $(document).ready(function () {
+            // Wait for django-leaflet to load map
+            window.addEventListener('map:init', function (e) {
+                var map = e.detail.map;
+
+                // When a field is loaded, hold onto that field and wait for
+                // the toggle to be clicked
+                map.on('map:loadfield', function (e) {
+                    var geometryField = e.field;
+                    $('.collapse-toggle').click(function () {
+                        map.invalidateSize();
+                        map.fitBounds(geometryField.drawnItems.getBounds());
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'inplace.boundaries',
     'inplace_activity_stream',
     'jsonfield',
+    'leaflet',
     'mailchimp',
     'mptt',
     'reversion',
@@ -325,3 +326,18 @@ MAILCHIMP_PARTCICIPATION_GROUP = {
     'groups':'Watchers and Organizers'
 }
 MAILCHIMP_WEBHOOK_KEY = '** Unused setting, set to avoid warnings **'
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (40.709272, -73.978500),
+    'DEFAULT_ZOOM': 12,
+    'MIN_ZOOM': 10,
+    'SCALE': 'imperial',
+    'TILES': [
+        ('Streets', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            'attribution': 'OSM Contributors',
+        }),
+        ('Satellite', 'http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', {
+            'attribution': 'Mapquest Open',
+        }),
+    ],
+}
