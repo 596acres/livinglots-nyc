@@ -228,11 +228,22 @@ $(document).ready(function () {
             setFiltersUIFromQueryParams(deparam());
         }
 
-        var map = L.lotMap('map', {
+        var mapOptions = {
             filterParams: filters.filtersToParams(null, {}),
             onMouseOverFeature: function (feature) {},
             onMouseOutFeature: function (feature) {}
-        });
+        };
+
+        // Get the current center/zoom first rather than wait for map to load
+        // and L.hash to set them. This is slightly smoother
+        var hash = window.location.hash;
+        if (hash && hash !== '') {
+            hash = hash.slice(1).split('/');
+            mapOptions.center = hash.slice(1);
+            mapOptions.zoom = hash[0];
+        }
+
+        var map = L.lotMap('map', mapOptions);
 
         initializeBoundaries(map);
 

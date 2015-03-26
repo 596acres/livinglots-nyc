@@ -1628,11 +1628,22 @@ $(document).ready(function () {
             setFiltersUIFromQueryParams(deparam());
         }
 
-        var map = L.lotMap('map', {
+        var mapOptions = {
             filterParams: filters.filtersToParams(null, {}),
             onMouseOverFeature: function (feature) {},
             onMouseOutFeature: function (feature) {}
-        });
+        };
+
+        // Get the current center/zoom first rather than wait for map to load
+        // and L.hash to set them. This is slightly smoother
+        var hash = window.location.hash;
+        if (hash && hash !== '') {
+            hash = hash.slice(1).split('/');
+            mapOptions.center = hash.slice(1);
+            mapOptions.zoom = hash[0];
+        }
+
+        var map = L.lotMap('map', mapOptions);
 
         initializeBoundaries(map);
 
@@ -28721,7 +28732,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
