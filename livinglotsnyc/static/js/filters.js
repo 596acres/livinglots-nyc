@@ -4,6 +4,51 @@ turf.inside = require('turf-inside');
 turf.point = require('turf-point');
 
 
+var defaultFilters = {
+    layers: ['organizing', 'in_use', 'no_people', 'in_use_started_here'],
+    ownerTypes: ['private_opt_in', 'public'],
+    parents_only: true
+};
+
+
+var renamedFilters = {
+    ownerTypes: 'owner_types',
+    privateOwnerPks: 'private_owners',
+    publicOwnerPks: 'public_owners'
+};
+
+
+function normalizeFilters(filters) {
+    // Normalize filters that are arrays
+    _.each(['layers', 'ownerTypes', 'privateOwnerPks', 'publicOwnerPks'], function (key) {
+        if (filters[key]) {
+            filters[key] = filters[key].join(',');
+        }
+    });
+
+    // Rename filters for url
+    _.each(renamedFilters, function (newName, oldName) {
+        if (filters[oldName] !== undefined) {
+            filters[newName] = filters[oldName];
+            delete filters[oldName];
+        }
+    });
+
+    // Handle boundary
+    if (filters.boundaryLayer && filters.boundaryPk) {
+        filters.boundary = filters.boundaryLayer + '::' + filters.boundaryPk;
+        delete filters.boundaryPk;
+        delete filters.boundaryLayer;
+    }
+    return filters;
+}
+
+
+function toParams(filters) {
+    return normalizeFilters(_.extend({}, defaultFilters, filters));
+}
+
+
 module.exports = {
     lotShouldAppear: function (lot, filters, boundariesLayer) {
         // Should a lot show up on the map?
@@ -96,29 +141,26 @@ module.exports = {
     // Take the current state of the map and filters to create params suitable
     // for requests (eg counts)
     filtersToParams: function (map, options) {
-        var layers = _.map($('.filter-layer:checked'), function (layer) {
+        var filters = {
+            publicOwnerPks: [$('.filter-owner-public').val()],
+            privateOwnerPks: [$('.filter-owner-private').val()]
+        };
+        filters.layers = _.map($('.filter-layer:checked'), function (layer) {
             return $(layer).attr('name'); 
         });
-        var ownerTypes = _.map($('.filter-owner-type:checked'), function (ownerType) {
+        filters.ownerTypes = _.map($('.filter-owner-type:checked'), function (ownerType) {
             return $(ownerType).attr('name'); 
         });
-        var publicOwnerPks = [$('.filter-owner-public').val()];
-        var privateOwnerPks = [$('.filter-owner-private').val()];
-
-        var params = {
-            layers: layers.join(','),
-            owner_types: ownerTypes.join(','),
-            parents_only: true,
-            private_owners: privateOwnerPks.join(','),
-            public_owners: publicOwnerPks.join(',')
-        };
 
         // Add boundary, if any
         $.each($('.filter-boundaries'), function () {
             if ($(this).val() !== '') {
-                params.boundary = $(this).data('layer') + '::' + $(this).val(); 
+                filters.boundaryLayer = $(this).data('layer');
+                filters.boundaryPk = $(this).val();
             }
         });
+
+        var params = toParams(filters);
 
         // Add BBOX if requested
         if (options && options.bbox) {
@@ -126,5 +168,7 @@ module.exports = {
         }
 
         return params;
-    }
+    },
+
+    toParams: toParams
 };

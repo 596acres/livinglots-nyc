@@ -1,5 +1,5 @@
 {% extends feincms_page.template.path|default:"base.html" %}
-{% load feincms_tags i18n %}
+{% load feincms_tags llnyc_pathways_tags i18n %}
 
 {% block page_title %}{{ pathway.name }}{% endblock %}
 
@@ -31,6 +31,11 @@
 
         <div class="pathway-content">
             {% feincms_render_region object "main" request %}
+        </div>
+
+        {% get_pathway_lots_link for pathway text "View all lots this pathway applies to" as lots_link %}
+        <div class="pathway-actions">
+            {{ lots_link }}
         </div>
     </article>
 {% endblock %}
