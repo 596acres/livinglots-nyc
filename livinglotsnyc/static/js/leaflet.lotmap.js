@@ -106,7 +106,6 @@ L.LotMap = L.Map.extend({
         this.on('layeradd', function (event) {
             // Dig through the layers of layers
             if (!event.layer.on) { return; }
-            // XXX IE never gets here
             event.layer.on('layeradd', function (event) {
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) {
