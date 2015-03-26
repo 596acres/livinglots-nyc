@@ -266,7 +266,7 @@ $(document).ready(function () {
             .on('searchresultfound', function (e, result) {
                 var oasisUrl = oasis.vacantLotsUrl(result.latitude, result.longitude);
                 map.addUserLayer([result.latitude, result.longitude], {
-                    popupContent: '<p>This is the point we found when we searched.</p><p>Not seeing a vacant lot here that you expected? Check <a href="' + oasisUrl + '" target="_blank">OASIS in this area</a>.</p>'
+                    popupContent: '<p>This is the point we found when we searched.</p><p>Not seeing a vacant lot here that you expected? Check <a href="' + oasisUrl + '" target="_blank">OASIS in this area</a>. Learn more about using OASIS in our <a href="/faq/#why-isnt-vacant-lot-near-me-map" target="_blank">FAQs</a>.</p>'
                 });
             });
 
