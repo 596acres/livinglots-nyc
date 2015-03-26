@@ -1,20 +1,14 @@
 from django.contrib import admin
 
-from autocomplete_light import ModelForm
+import autocomplete_light
 
 from livinglots_lots.admin import BaseLotAdmin
 
 from .models import Lot
 
 
-class LotAdminForm(ModelForm):
-
-    class Meta:
-        model = Lot
-
-
 class LotAdmin(BaseLotAdmin):
-    form = LotAdminForm
+    form = autocomplete_light.modelform_factory(Lot)
     fieldsets = (
             ('NYC specific', {
                 'fields': ('bbl',
