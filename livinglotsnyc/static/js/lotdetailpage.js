@@ -112,7 +112,7 @@ $(document).ready(function () {
     });
 
     $('.btn-add-to-group').click(function () {
-        if (!confirm("Group these two lots? This can't be undone.")) {
+        if (!confirm("Group these two lots? This will move notes, organizers, and other content to the group and is very difficult to undo.")) {
             return false;
         }
         var url = Django.url('lots:add_to_group', { pk: $(this).data('lot') });
