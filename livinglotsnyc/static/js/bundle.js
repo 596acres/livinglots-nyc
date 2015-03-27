@@ -513,11 +513,11 @@ var Spinner = require('spin.js');
 
 require('livinglots.addlot');
 require('livinglots.emailparticipants');
+require('livinglots.boundaries');
 require('leaflet-plugins-bing');
 require('leaflet-dataoptions');
 require('leaflet-hash');
 require('leaflet-usermarker');
-require('livinglots-map/src/livinglots.boundaries');
 
 require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
@@ -778,7 +778,7 @@ L.lotMap = function (id, options) {
     return new L.LotMap(id, options);
 };
 
-},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js","leaflet-hash":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js","leaflet-plugins-bing":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-plugins/layer/tile/Bing.js","leaflet-usermarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-usermarker/src/leaflet.usermarker.js","livinglots-map/src/livinglots.boundaries":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.boundaries.js","livinglots.addlot":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/index.js","livinglots.emailparticipants":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/index.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js":[function(require,module,exports){
+},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./leaflet.lotlayer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotlayer.js","./leaflet.lotmarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-dataoptions":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-dataoptions/src/leaflet.dataoptions.js","leaflet-hash":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js","leaflet-plugins-bing":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-plugins/layer/tile/Bing.js","leaflet-usermarker":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-usermarker/src/leaflet.usermarker.js","livinglots.addlot":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/index.js","livinglots.boundaries":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.boundaries/src/index.js","livinglots.emailparticipants":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/index.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmarker.js":[function(require,module,exports){
 var L = require('leaflet');
 
 require('./leaflet.lotpath');
@@ -20817,42 +20817,6 @@ L.Map.include({
 
 
 }(window, document));
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots-map/src/livinglots.boundaries.js":[function(require,module,exports){
-//
-// livinglots.boundaries.js
-//
-// Add boundary-handling to a Leaflet map
-//
-
-L.Map.include({
-    boundariesLayer: null,
-
-    _initBoundaries: function () {
-        this.boundariesLayer = L.geoJson(null, {
-            color: '#FFA813',
-            fill: false,
-            opacity: 1
-        }).addTo(this);
-    },
-
-    removeBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-        this.fire('boundarieschange');
-    },
-
-    updateBoundaries: function (data, options) {
-        this.boundariesLayer.clearLayers();
-        this.boundariesLayer.addData(data);
-        this.fire('boundarieschange');
-        if (options.zoomToBounds) {
-            this.fitBounds(this.boundariesLayer.getBounds());
-        }
-    }
-
-});
-
-L.Map.addInitHook('_initBoundaries');
-
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-draw/dist/leaflet.draw.js":[function(require,module,exports){
 /*
 	Leaflet.draw, a plugin that adds drawing and editing tools to Leaflet powered maps.
@@ -21186,6 +21150,43 @@ templates["window.hbs"] = Handlebars.template({"1":function(depth0,helpers,parti
 return templates;
 
 };
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.boundaries/src/index.js":[function(require,module,exports){
+//
+// Add boundary-handling to a Leaflet map
+//
+// The boundary layer allows exactly one boundary at a time and fires events
+// (boundarieschange) when this layer changes.
+//
+
+L.Map.include({
+    boundariesLayer: null,
+
+    _initBoundaries: function () {
+        this.boundariesLayer = L.geoJson(null, {
+            color: '#FFA813',
+            fill: false,
+            opacity: 1
+        }).addTo(this);
+    },
+
+    removeBoundaries: function (data, options) {
+        this.boundariesLayer.clearLayers();
+        this.fire('boundarieschange');
+    },
+
+    updateBoundaries: function (data, options) {
+        this.boundariesLayer.clearLayers();
+        this.boundariesLayer.addData(data);
+        this.fire('boundarieschange');
+        if (options.zoomToBounds) {
+            this.fitBounds(this.boundariesLayer.getBounds());
+        }
+    }
+
+});
+
+L.Map.addInitHook('_initBoundaries');
+
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.js":[function(require,module,exports){
 arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.js"][0].apply(exports,arguments)
 },{"./handlebars.runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.runtime.js","./handlebars/compiler/ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./handlebars/compiler/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js","./handlebars/compiler/compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js","./handlebars/compiler/javascript-compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){
@@ -28732,7 +28733,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

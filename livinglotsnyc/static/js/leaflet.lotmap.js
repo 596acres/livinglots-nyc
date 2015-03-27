@@ -7,11 +7,11 @@ var Spinner = require('spin.js');
 
 require('livinglots.addlot');
 require('livinglots.emailparticipants');
+require('livinglots.boundaries');
 require('leaflet-plugins-bing');
 require('leaflet-dataoptions');
 require('leaflet-hash');
 require('leaflet-usermarker');
-require('livinglots-map/src/livinglots.boundaries');
 
 require('./leaflet.lotlayer');
 require('./leaflet.lotmarker');
