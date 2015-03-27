@@ -6,14 +6,13 @@ from pint import UnitRegistry
 from random import shuffle
 import re
 
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Sum
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.http import HttpResponseBadRequest
 from django.views.generic import View
-from django.views.generic.detail import SingleObjectMixin
 
-from braces.views import (CsrfExemptMixin, JSONResponseMixin, LoginRequiredMixin,
+from braces.views import (JSONResponseMixin, LoginRequiredMixin,
                           PermissionRequiredMixin)
 from caching.base import cached
 
@@ -392,32 +391,6 @@ class CreateLotView(BaseCreateLotView):
 
     def get_parcels(self, pks):
         return Parcel.objects.filter(pk__in=pks)
-
-
-class AddToGroupView(CsrfExemptMixin, LoginRequiredMixin, 
-                     PermissionRequiredMixin, JSONResponseMixin,
-                     SingleObjectMixin, View):
-    model = Lot
-    permission_required = 'lots.add_lot'
-
-    def get_success_message(self, to_add):
-        msg = 'Successfully added %s to this group. ' % str(to_add)
-        msg += ("You're <strong>not done yet</strong>: we've merged notes, "
-                "photos, organizers, and other content, but you should check "
-                "on the group's owner and known use information by clicking "
-                "<strong>Edit this lot</strong>.")
-        return msg
-
-    def post(self, request, *args, **kwargs):
-        lot = self.get_object()
-        to_add = Lot.objects.get(pk=request.POST.get('lot_to_add'))
-        context = {
-            'lot': lot.pk,
-            'lot_to_add': to_add.pk,
-            'group': lot.group_with(to_add).pk,
-        }
-        messages.success(request, self.get_success_message(to_add))
-        return self.render_json_response(context)
 
 
 class SearchView(JSONResponseMixin, View):
