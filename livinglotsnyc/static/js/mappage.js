@@ -23,6 +23,12 @@ require('./map.search.js');
 require('./overlaymenu');
 
 
+// Watch out for IE 8
+var console = window.console || {
+    warn: function () {}
+};
+
+
 function updateLotCount(map) {
     var url = Django.url('lots:lot_count') + '?' + map.getParamsQueryString({ bbox: true });
     singleminded.remember({
