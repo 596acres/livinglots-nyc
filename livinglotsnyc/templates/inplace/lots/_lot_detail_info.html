@@ -23,6 +23,11 @@
                                     {% trans "Edit this lot" %}
                                 </a>
                             {% endif %}
+                            {% if "lots.add_lot" in perms %}
+                            <a class="btn btn-xs btn-warning btn-remove-from-group" data-lot="{{ child.pk }}" href="#">
+                                    {% trans "Remove from group" %}
+                                </a>
+                            {% endif %}
                         </div>
                         {% ifnotequal lot.owners|length 1 %}
                             <div>
