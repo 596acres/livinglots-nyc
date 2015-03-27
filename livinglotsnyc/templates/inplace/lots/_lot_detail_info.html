@@ -54,6 +54,10 @@
 
         {% if lot.bbl and not lot.bbl_is_fake %}
             <div>
+                {% trans "Block and Lot" %}:
+                {{ lot.borough }}, block {{ lot.block }}, lot {{ lot.lot_number }}
+            </div>
+            <div>
                 {% trans "More information about this lot at" %}
                 <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
                     OASIS
