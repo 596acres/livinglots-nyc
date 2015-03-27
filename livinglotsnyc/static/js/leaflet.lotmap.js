@@ -107,6 +107,8 @@ L.LotMap = L.Map.extend({
             // Dig through the layers of layers
             if (!event.layer.on) { return; }
             event.layer.on('layeradd', function (event) {
+                // Some layers (eg, drawn lots) don't have eachLayer. Skip.
+                if (!event.layer.eachLayer) { return; }
                 event.layer.eachLayer(function (lot) {
                     if (!lot.feature || !lot.feature.properties.layers) {
                         return;
