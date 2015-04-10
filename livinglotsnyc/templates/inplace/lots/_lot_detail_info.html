@@ -30,9 +30,11 @@
                             {% endif %}
                         </div>
                         {% ifnotequal lot.owners|length 1 %}
-                            <div>
-                                {{ child.owner }}
-                            </div>
+                            {% if child.owner %}
+                                <div>
+                                    {{ child.owner }}
+                                </div>
+                            {% endif %}
                         {% endifnotequal %}
                     </li>
                 {% endfor %}
