@@ -187,9 +187,11 @@
                     {% endif %}
                 </section>
                 {% render_organizer_list for lot %}
-                <a class="btn btn-small btn-warning" href="{% url "admin:organize_organizer_changelist" %}?object_id={{ lot.pk }}">
-                    {% trans "View all in admin" %}
-                </a>
+                {% if "lots.change_lot" in perms %}
+                    <a class="btn btn-small btn-warning" href="{% url "admin:organize_organizer_changelist" %}?object_id={{ lot.pk }}">
+                        {% trans "View all in admin" %}
+                    </a>
+                {% endif %}
             </div>
         </section>
     </aside>
