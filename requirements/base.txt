@@ -16,7 +16,7 @@ geojson==1.0.9
 
 
 # Django-specific requirements
-Django==1.7.7
+Django==1.8
 FeinCMS==1.11.0
 git+git://github.com/feincms/feincms/@next
 django-activity-stream==0.5.1

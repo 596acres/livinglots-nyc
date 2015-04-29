@@ -4,6 +4,6 @@ ipdb==0.7
 Werkzeug>=0.9.6
 
 # Django requirements
-django-debug-toolbar>=1.2.1
+django-debug-toolbar==1.3.0
 django-pdb==0.3.2
 django-template-i18n-lint==1.2.0
