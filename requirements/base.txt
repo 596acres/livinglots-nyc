@@ -7,6 +7,7 @@ TileStache==1.49.11
 ipython>=2.0.0
 lxml==3.1.0
 pilkit==1.1.6
+pip==6.1.1
 psycopg2==2.4.6
 python-dateutil==2.4.0
 six==1.9.0
@@ -16,11 +17,12 @@ geojson==1.0.9
 
 # Django-specific requirements
 Django==1.7.7
+FeinCMS==1.11.0
 git+git://github.com/feincms/feincms/@next
 django-activity-stream==0.5.1
 django-admin-enhancer==1.0.0
 django-admin-tools==0.5.2
-django-autocomplete-light==2.0.9
+django-autocomplete-light==2.1.1
 django-braces==1.4.0
 git+git://github.com/ebrelsford/django-cache-machine/@master
 git+git://github.com/ebrelsford/django-chosen/@master
