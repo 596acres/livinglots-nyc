@@ -18,6 +18,10 @@ class StewardProjectAdminForm(ModelForm):
     class Meta:
         model = StewardProject
 
+        # NB: setting fields = '__all__', less concerned about security since
+        # we are in the admin site
+        fields = '__all__'
+
 
 class StewardProjectAdmin(StewardProjectAdminMixin, admin.ModelAdmin):
     form = StewardProjectAdminForm

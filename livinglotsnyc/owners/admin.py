@@ -8,7 +8,9 @@ from .models import Owner, OwnerContact
 
 
 class OwnerAdmin(BaseOwnerAdmin):
-    form = autocomplete_light.modelform_factory(Owner)
+    # NB: setting fields = '__all__', less concerned about security since we 
+    # are in the admin site
+    form = autocomplete_light.modelform_factory(Owner, fields='__all__')
 
 
 class OwnerContactAdmin(BaseOwnerContactAdmin):

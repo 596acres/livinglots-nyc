@@ -8,7 +8,9 @@ from .models import Lot
 
 
 class LotAdmin(BaseLotAdmin):
-    form = autocomplete_light.modelform_factory(Lot)
+    # NB: setting fields = '__all__', less concerned about security since
+    # we are in the admin site
+    form = autocomplete_light.modelform_factory(Lot, fields='__all__')
     fieldsets = (
             ('NYC specific', {
                 'fields': ('bbl',
