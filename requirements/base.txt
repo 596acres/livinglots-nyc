@@ -16,6 +16,9 @@ geojson==1.0.9
 
 
 # Django-specific requirements
+
+# XXX don't upgrade until hack on these lines is fixed:
+# https://github.com/django/django/blob/1.8/django/contrib/gis/db/backends/postgis/base.py#L36-L39
 Django==1.8
 FeinCMS==1.11.0
 git+git://github.com/feincms/feincms/@next
