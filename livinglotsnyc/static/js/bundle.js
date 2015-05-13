@@ -1741,8 +1741,10 @@ require('./proj4.defs');
 
 var baseUrl = 'http://www.oasisnyc.net/map.aspx',
     vacantLotsParams = {
+        categories: 'TRANSREF,PARKS_OPENSPACE,PROPERTY_INFO,BOUNDARIES',
         etabs: 1,
-        mainlayers: 'LU_VACANT,LOTS',
+        mainlayers: 'LU_VACANT,NYCT_bus,LOTS,Cache_Transit',
+        labellayers: 'PARKS',
         zoom: 8
     };
 
@@ -28757,7 +28759,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

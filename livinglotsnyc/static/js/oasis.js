@@ -4,8 +4,10 @@ require('./proj4.defs');
 
 var baseUrl = 'http://www.oasisnyc.net/map.aspx',
     vacantLotsParams = {
+        categories: 'TRANSREF,PARKS_OPENSPACE,PROPERTY_INFO,BOUNDARIES',
         etabs: 1,
-        mainlayers: 'LU_VACANT,LOTS',
+        mainlayers: 'LU_VACANT,NYCT_bus,LOTS,Cache_Transit',
+        labellayers: 'PARKS',
         zoom: 8
     };
 
