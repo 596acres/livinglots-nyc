@@ -33,7 +33,7 @@ DATABASES = {
         #  # create extension postgis_topology;
         #  # create user livinglotsnyc with password 'password';
         #  # grant all privileges on database livinglotsnyc to livinglotsnyc;
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'db.backends.postgis',
         'NAME': get_env_variable('DB_NAME'),
         'USER': get_env_variable('DB_USER'),
         'PASSWORD': get_env_variable('DB_PASSWORD'),
@@ -202,6 +202,7 @@ INSTALLED_APPS = (
     'blog',
     'cms',
     'contact',
+    'db',
     'faq',
     'groundtruth',
     'lots',
