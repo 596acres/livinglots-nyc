@@ -104,11 +104,11 @@ function initializeBoundaries(map) {
         console.warn('No community districts! Add some here: ' + url);
     }
 
-    $('.filter-boundaries').change(function () {
+    $('.filter-boundaries').change(function (e, options) {
         // Clear other boundary filters
         $('.filter-boundaries').not('#' + $(this).attr('id')).val('');
 
-        addBoundary(map, $(this).data('layer'), $(this).val());
+        addBoundary(map, $(this).data('layer'), $(this).val(), options);
     });
 
     // If boundaries were set via query string trigger change here. Can't do 
@@ -116,18 +116,23 @@ function initializeBoundaries(map) {
     // filters before the map exists.
     $('.filter-boundaries').each(function () {
         if ($(this).val()) {
-            $(this).trigger('change');
+            $(this).trigger('change', { zoomToBounds: false });
         }
     });
 }
 
-function addBoundary(map, layer, pk) {
+function addBoundary(map, layer, pk, options) {
     if (!pk || pk === '') {
         map.removeBoundaries();
     }
+
+    options = options || {};
+    if (options.zoomToBounds === undefined) {
+        options.zoomToBounds = true;
+    }
     var url = Django.url('inplace:boundary_detail', { pk: pk });
     $.getJSON(url, function (data) {
-        map.updateBoundaries(data, { zoomToBounds: true });
+        map.updateBoundaries(data, options);
     });
 }
 
