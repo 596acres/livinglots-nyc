@@ -27,6 +27,7 @@ django-braces==1.8.0
 git+git://github.com/ebrelsford/django-cache-machine/@master
 git+git://github.com/ebrelsford/django-chosen/@master
 django-contact-form-gv==0.4.3
+django-easy-select2==1.2.12
 django-extensions==1.5.5
 django-filter==0.10.0
 git+git://github.com/funkybob/django-flatblocks/@5c921d9ab4b2b08ad6d1b5995bdf190b65dc9f79

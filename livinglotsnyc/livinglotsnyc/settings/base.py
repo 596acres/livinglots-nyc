@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     'contact_form',
     'django_monitor',
     'djangojs',
+    'easy_select2',
     'elephantblog',
     'feincms',
     'feincms.module.medialibrary',
