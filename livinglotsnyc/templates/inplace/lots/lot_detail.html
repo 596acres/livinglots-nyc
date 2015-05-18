@@ -80,18 +80,18 @@
             <a class="btn btn-default lot-page-tooltip" href="{% url "groundtruth:add_groundtruthrecord" pk=lot.pk %}" data-toggle="tooltip" title="{% trans "Let us know that this lot's actual use is not correctly identified." %}">
                 {% trans "Have we made a mistake?" %}
             </a>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle lot-page-share" href="#" title="{% trans "Share" %}" data-toggle="dropdown" aria-expanded="false">
-                    {% trans "Share" %}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a class="share-facebook" href="#" target="_blank">{% trans "Facebook" %}</a></li>
-                    <li><a class="share-twitter" href="#" target="_blank" data-tweet="{% trans "Here is an opportunity to start organizing a space for community with the help of @596acres" %}: ">{% trans "Twitter" %}</a></li>
-                </ul>
-            </div>
         {% endif %}
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle lot-page-share" href="#" title="{% trans "Share" %}" data-toggle="dropdown" aria-expanded="false">
+                {% trans "Share" %}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a class="share-facebook" href="#" target="_blank">{% trans "Facebook" %}</a></li>
+                <li><a class="share-twitter" href="#" target="_blank" data-tweet="{% trans "Here is an opportunity to start organizing a space for community with the help of @596acres" %}: ">{% trans "Twitter" %}</a></li>
+            </ul>
+        </div>
     </div>
 
     <div class="lot-detail-main">
