@@ -6393,7 +6393,7 @@ footer .footer-middle-right p:first-of-type {
 }
 .overlay-filter-button.visible-xs {
   position: absolute;
-  right: 50px;
+  right: 60px;
   top: 10px;
   z-index: 5000;
 }
