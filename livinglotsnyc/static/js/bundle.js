@@ -1819,10 +1819,10 @@ $.fn.overlaymenu = function (options) {
             if (_.contains(button, target[0])) {
                 // If button clicked, show or hide the menu appropriately
                 if (isVisible(menu)) {
-                    hide(button, menu);
+                    hide(target, menu);
                 }
                 else {
-                    show(button, menu);
+                    show(target, menu);
                 }
                 return false;
             }
@@ -28759,7 +28759,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

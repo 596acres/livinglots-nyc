@@ -60,10 +60,10 @@ $.fn.overlaymenu = function (options) {
             if (_.contains(button, target[0])) {
                 // If button clicked, show or hide the menu appropriately
                 if (isVisible(menu)) {
-                    hide(button, menu);
+                    hide(target, menu);
                 }
                 else {
-                    show(button, menu);
+                    show(target, menu);
                 }
                 return false;
             }
