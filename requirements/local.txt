@@ -1,7 +1,7 @@
 # General requirements
-docutils==0.10
-ipdb==0.7
-Werkzeug>=0.9.6
+docutils==0.12
+ipdb==0.8
+Werkzeug>=0.10.4
 
 # Django requirements
 django-debug-toolbar==1.3.0

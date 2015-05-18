@@ -23,7 +23,7 @@ django-activity-stream==0.5.1
 django-admin-enhancer==1.0.0
 django-admin-tools==0.5.2
 django-autocomplete-light==2.1.1
-django-braces==1.4.0
+django-braces==1.8.0
 git+git://github.com/ebrelsford/django-cache-machine/@master
 git+git://github.com/ebrelsford/django-chosen/@master
 django-contact-form-gv==0.4.3
@@ -37,7 +37,7 @@ git+git://github.com/ebrelsford/django-inplace-activity-stream/@master
 
 # Required for custom data in django-activity-stream
 django-jsonfield==0.9.13
-django-leaflet==0.15.2
+django-leaflet==0.16.0
 git+git://github.com/ebrelsford/django-mailchimp/@8318ba4
 git+git://github.com/ebrelsford/Django-monitor/@master
 django-reversion==1.8.5
