@@ -39,8 +39,14 @@
 	background-image: data-uri('../node_modules/leaflet-draw/dist/images/spritesheet.png');
 }
 
-.leaflet-retina .leaflet-draw-toolbar a {
-	background-image: data-uri('../node_modules/leaflet-draw/dist/images/spritesheet-2x.png');
+.leaflet-retina {
+    .leaflet-control-layers-toggle {
+        background-image: data-uri("../node_modules/leaflet/dist/images/layers-2x.png");
+    }
+
+    .leaflet-draw-toolbar a {
+        background-image: data-uri('../node_modules/leaflet-draw/dist/images/spritesheet-2x.png');
+    }
 }
 
 .leaflet-draw-actions a {
