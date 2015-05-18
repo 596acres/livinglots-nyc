@@ -6704,6 +6704,14 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
     margin-left: 8.33333333%;
   }
 }
+@media (max-width: 767px) {
+  .overlaymenu {
+    width: 80%;
+  }
+  .overlaymenu .overlaymenu-tip-container {
+    display: none;
+  }
+}
 .overlaymenu-news {
   padding-right: 0;
 }
