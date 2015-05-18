@@ -40,7 +40,7 @@ django-jsonfield==0.9.13
 django-leaflet==0.16.0
 git+git://github.com/ebrelsford/django-mailchimp/@8318ba4
 git+git://github.com/ebrelsford/Django-monitor/@master
-django-reversion==1.8.5
+django-reversion==1.8.6
 django-reversion-compare==0.4.0
 django-rosetta==0.7.6
 git+git://github.com/596acres/django-sizecompare/@master
