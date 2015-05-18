@@ -6391,6 +6391,12 @@ footer .footer-middle-right p:first-of-type {
 .overlay-admin-button {
   margin-top: 5px;
 }
+.overlay-filter-button.visible-xs {
+  position: absolute;
+  right: 50px;
+  top: 10px;
+  z-index: 5000;
+}
 .overlay-news-button {
   color: black;
   background-color: transparent;
