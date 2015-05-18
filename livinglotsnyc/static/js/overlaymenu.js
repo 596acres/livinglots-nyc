@@ -57,7 +57,7 @@ $.fn.overlaymenu = function (options) {
 
         // If user not clicking in menu, consider hiding or showing it
         if (!isInMenu(target, menu)) {
-            if (target[0] === button[0]) {
+            if (_.contains(button, target[0])) {
                 // If button clicked, show or hide the menu appropriately
                 if (isVisible(menu)) {
                     hide(button, menu);

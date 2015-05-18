@@ -1816,7 +1816,7 @@ $.fn.overlaymenu = function (options) {
 
         // If user not clicking in menu, consider hiding or showing it
         if (!isInMenu(target, menu)) {
-            if (target[0] === button[0]) {
+            if (_.contains(button, target[0])) {
                 // If button clicked, show or hide the menu appropriately
                 if (isVisible(menu)) {
                     hide(button, menu);
@@ -28759,7 +28759,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
