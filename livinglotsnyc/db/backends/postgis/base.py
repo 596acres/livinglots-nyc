@@ -12,5 +12,4 @@ class DatabaseWrapper(PostGISDatabaseWrapper):
         This was causing issues on PostGIS < 2.0 with no template set (on
         Webfaction).
         """
-        if self.template_postgis:
-            super(DatabaseWrapper, self).prepare_database()
+        pass
