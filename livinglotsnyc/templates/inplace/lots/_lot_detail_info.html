@@ -1,4 +1,4 @@
-{% load boundaries_tags citycouncildistricts_tags communitydistricts_tags communitydistrictsdetails_tags i18n %}
+{% load boundaries_tags citycouncildistricts_tags communitydistricts_tags communitydistrictsdetails_tags i18n lots_tags %}
 
 <section>
     <h2 style="margin-top: 0;">{% trans "Information about this lot" %}</h2>
@@ -14,9 +14,10 @@
                         <div>
                             {{ child.display_name }}
                             ({{ child.address_line1 }}).
-                            {% if not child.bbl_is_fake %}
+                            {% get_oasis_url for child as oasis_url %}
+                            {% if oasis_url %}
                                 {% trans "More details at" %}
-                                <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ child.bbl }}" target="_blank">OASIS</a>.
+                                <a href="{{ oasis_url }}" target="_blank">OASIS</a>.
                             {% endif %}
                             {% if "lots.change_lot" in perms %}
                                 <a class="btn btn-xs btn-warning" href="{% url "admin:lots_lot_change" child.pk %}">
@@ -64,11 +65,13 @@
                 {% trans "Block and Lot" %}:
                 {{ lot.borough }}, block {{ lot.block }}, lot {{ lot.lot_number }}
             </div>
+        {% endif %}
+
+        {% get_oasis_url for lot as oasis_url %}
+        {% if oasis_url %}
             <div>
                 {% trans "More information about this lot at" %}
-                <a href="http://oasisnyc.net/map.aspx?etabs=1&zoomto=lot:{{ lot.bbl }}" target="_blank">
-                    OASIS
-                </a>
+                <a href="{{ oasis_url }}" target="_blank">OASIS</a>
             </div>
         {% endif %}
 
