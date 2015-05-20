@@ -11,6 +11,24 @@ register = template.Library()
 PLUTO_URL = 'http://www.nyc.gov/html/dcp/html/bytes/applbyte.shtml#pluto'
 
 
+class AnyUrbanRenewalRecords(AsTag):
+    options = Options(
+        'for',
+        Argument('lot', resolve=True, required=True),
+        'as',
+        Argument('varname', resolve=False, required=False),
+    )
+
+    def get_value(self, context, lot):
+        for l in lot.lots:
+            try:
+                if l.parcel and l.parcel.urbanrenewalrecord:
+                    return True
+            except Exception:
+                continue
+        return False
+
+
 class GetOasisUrl(AsTag):
     options = Options(
         'for',
@@ -69,5 +87,45 @@ class GetVacantReasons(AsTag):
         return list(set(reasons))
 
 
+class UrbanRenewalDispositions(AsTag):
+    options = Options(
+        'for',
+        Argument('lot', resolve=True, required=True),
+        'as',
+        Argument('varname', resolve=False, required=False),
+    )
+
+    def get_disposition(self, lot):
+        try:
+            return lot.parcel.urbanrenewalrecord.disposition_short
+        except Exception:
+            return None
+
+    def get_value(self, context, lot):
+        return list(set([self.get_disposition(l) for l in lot.lots \
+                         if l.parcel.urbanrenewalrecord]))
+
+
+class UrbanRenewalPlans(AsTag):
+    options = Options(
+        'for',
+        Argument('lot', resolve=True, required=True),
+        'as',
+        Argument('varname', resolve=False, required=False),
+    )
+
+    def get_plan(self, lot):
+        try:
+            return lot.parcel.urbanrenewalrecord.plan_name
+        except Exception:
+            return None
+
+    def get_value(self, context, lot):
+        return list(set([self.get_plan(l) for l in lot.lots if l.parcel.urbanrenewalrecord]))
+
+
+register.tag(AnyUrbanRenewalRecords)
 register.tag(GetOasisUrl)
 register.tag(GetVacantReasons)
+register.tag(UrbanRenewalDispositions)
+register.tag(UrbanRenewalPlans)

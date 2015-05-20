@@ -106,6 +106,8 @@
             {% ifequal lot.owners|length 1 %}
                 {% include "inplace/lots/_lot_detail_owner.html" with owner=lot.owners.0 owner_contact=lot.owner_contacts.0 %}
             {% endifequal %}
+
+            {% include "inplace/lots/_lot_detail_urban_renewal.html" with lot=lot %}
         </div>
 
         {% get_steward_project_list for lot as stewards %}

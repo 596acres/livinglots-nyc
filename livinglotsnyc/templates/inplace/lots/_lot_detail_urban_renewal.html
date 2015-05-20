@@ -1,0 +1,67 @@
+{% load i18n lots_tags %}
+
+{% any_urban_renewal_records for lot as urban_renewal_records_exist %}
+{% if urban_renewal_records_exist %}
+    <section>
+        <h2>{% trans "Urban Renewal" %}</h2>
+
+        {% if not lot.lotgroup %}
+            {% with record=lot.parcel.urbanrenewalrecord %}
+                {% if record %}
+                    {# If there is one lot and it has a plan, show that #}
+                    <p>
+                        {% blocktrans with plan_name=record.plan_name %}
+                            This lot is part of the <a href="http://www.urbanreviewer.org/#plan={{ plan_name }}" target="_blank">{{ plan_name }}</a> urban renewal plan.
+                        {% endblocktrans %}
+
+                        {% if record.disposition_short == "open space" %}
+                            {% trans "It was planned as open space." %}
+                        {% endif %}
+                    </p>
+                {% endif %}
+            {% endwith %}
+        {% else %}
+            {% urban_renewal_plans for lot as urban_renewal_plans %}
+            {% if urban_renewal_plans|length == 1 %}
+
+                {# If all of the lots are in the same plan, shorten output #}
+                {% blocktrans with plan_name=lot.lots.0.parcel.urbanrenewalrecord.plan_name %}
+                    These lots are part of the <a href="http://www.urbanreviewer.org/#plan={{ plan_name }}" target="_blank">{{ plan_name }}</a> urban renewal plan.
+                {% endblocktrans %}
+
+                {% urban_renewal_dispositions for lot as dispositions %}
+                {% if dispositions|length == 1 and dispositions.0 == "open space" %}
+                    {% trans "All of the lots were planned as open space." %}
+                {% else %}
+                    {% for lot in lot.lots %}
+                        {% with record=lot.parcel.urbanrenewalrecord %}
+                            {% if record and record.disposition_short == "open space" %}
+                                {% blocktrans %}
+                                    <p>{{ lot }} was planned as open space.</p>
+                                {% endblocktrans %}
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+
+                {# If some lots are not in the plan or are in other plans, show each #}
+                {% for lot in lot.lots %}
+                    {% with record=lot.parcel.urbanrenewalrecord %}
+                        {% if record %}
+                            <p>
+                                {% blocktrans with plan_name=record.plan_name %}
+                                    {{ lot }} is part of the <a href="http://www.urbanreviewer.org/#plan={{ plan_name }}" target="_blank">{{ plan_name }}</a> urban renewal plan.
+                                {% endblocktrans %}
+
+                                {% if record.disposition_short == "open space" %}
+                                    {% trans "It was planned as open space." %}
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </section>
+{% endif %}
