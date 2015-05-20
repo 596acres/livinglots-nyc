@@ -12,16 +12,13 @@
                     {% trans "public land" %}
                 </label>
 
-                <select class="filter filter-owner-public form-control">
-                    <option value="">{% trans "all agencies" %}</option>
-
-                    {% get_owners type "public" True as owners %}
-                    {% for owner in owners %}
-                        <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
-                            {{ owner.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+                {% get_owners type "public" True True as owners %}
+                {% if owners %}
+                    <select class="filter filter-owner-public form-control">
+                        <option value="">{% trans "all owners" %}</option>
+                        {% include "livinglots/lots/_filters_owner_options.html" with owners=owners %}
+                    </select>
+                {% endif %}
             </li>
             <li class="filter-owner">
                 <input id="owner-type-private" type="checkbox" class="filter filter-owner-type" name="private_opt_in" checked />
@@ -29,16 +26,11 @@
                     {% trans "private land" %}
                 </label>
 
-                {% get_owners type "private" True as owners %}
+                {% get_owners type "private" True True as owners %}
                 {% if owners %}
                     <select class="filter filter-owner-private form-control">
                         <option value="">{% trans "all owners" %}</option>
-
-                        {% for owner in owners %}
-                            <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
-                                {{ owner.name }}
-                            </option>
-                        {% endfor %}
+                        {% include "livinglots/lots/_filters_owner_options.html" with owners=owners %}
                     </select>
                 {% endif %}
             </li>

@@ -142,8 +142,8 @@ module.exports = {
     // for requests (eg counts)
     filtersToParams: function (map, options) {
         var filters = {
-            publicOwnerPks: [$('.filter-owner-public').val()],
-            privateOwnerPks: [$('.filter-owner-private').val()]
+            publicOwnerPks: $('.filter-owner-public').val().split(','),
+            privateOwnerPks: $('.filter-owner-private').val().split(',')
         };
         filters.layers = _.map($('.filter-layer:checked'), function (layer) {
             return $(layer).attr('name'); 

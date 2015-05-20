@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% for owner in owners %}
+    {% if not owner.owners %}
+        <option value="{{ owner.pk }}" data-name="{{ owner.name }}">
+            {{ owner.name }}
+        </option>
+    {% else %}
+        <option value="{% for o in owner.owners.all %}{{ o.pk }}{% if not forloop.last %},{% endif %}{% endfor %}" data-name="{{ owner.name }}">
+            {{ owner.name }}
+        </option>
+    {% endif %}
+{% endfor %}
