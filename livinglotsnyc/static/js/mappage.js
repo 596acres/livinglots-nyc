@@ -121,6 +121,40 @@ function initializeBoundaries(map) {
     });
 }
 
+function initializeNYCHA(map) {
+    $('.filter-nycha').change(function () {
+        // Only add layer if admin
+        if (!Django.user.has_perm('lots.change_lot')) {
+            return;
+        }
+
+        // Create layer if we need to
+        if (!map.nychaLayer) {
+            map.nychaLayer = L.geoJson(null, {
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup(feature.properties.name);
+                },
+                style: {
+                    color: '#FFA813'
+                }
+            });
+        }
+        if ($(this).is(':checked')) {
+            // If selected, show NYCHA layer
+            if (map.nychaLayer.getLayers().length === 0) {
+                $.getJSON(Django.url('nycha_list'), function (data) {
+                    map.nychaLayer.addData(data);
+                });
+            }
+            map.addLayer(map.nychaLayer);
+        }
+        else {
+            // If not select, hide and unfilter lots
+            map.removeLayer(map.nychaLayer);
+        }
+    });
+}
+
 function addBoundary(map, layer, pk, options) {
     if (!pk || pk === '') {
         map.removeBoundaries();
@@ -257,6 +291,7 @@ $(document).ready(function () {
         var map = L.lotMap('map', mapOptions);
 
         initializeBoundaries(map);
+        initializeNYCHA(map);
 
         map.addLotsLayer();
 

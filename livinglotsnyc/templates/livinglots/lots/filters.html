@@ -117,4 +117,13 @@
             </div>
         {% endif %}
     </section>
+
+    {% if "lots.change_lot" in perms %}
+        <section class="filter-section filter-admin">
+            <input id="nycha" type="checkbox" class="filter filter-nycha" name="nycha" />
+            <label class="filter-nycha-label" for="nycha">
+                {% trans "NYCHA developments" %}
+            </label>
+        </section>
+    {% endif %}
 </div>

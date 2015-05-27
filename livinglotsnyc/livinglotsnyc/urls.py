@@ -35,6 +35,9 @@ urlpatterns += patterns('',
     # Inplace
     url(r'^inplace/', include('inplace.urls', 'inplace')),
 
+    # nycdata
+    url(r'^nycdata/', include('nycdata.urls')),
+
     # Size Compare
     url('^compare/', include('sizecompare.urls')),
 
