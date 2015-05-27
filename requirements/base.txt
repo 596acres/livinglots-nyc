@@ -7,7 +7,7 @@ TileStache==1.49.11
 ipython>=2.0.0
 lxml==3.1.0
 pilkit==1.1.6
-pip==6.1.1
+pip==7.0.1
 psycopg2==2.4.6
 python-dateutil==2.4.0
 six==1.9.0
@@ -16,7 +16,7 @@ geojson==1.0.9
 
 
 # Django-specific requirements
-Django==1.8.1
+Django==1.8.2
 FeinCMS==1.11.0
 git+git://github.com/feincms/feincms/@next
 django-activity-stream==0.5.1
