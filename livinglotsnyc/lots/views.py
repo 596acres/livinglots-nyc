@@ -10,10 +10,10 @@ from django.db.models import Count, Sum
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.http import HttpResponseBadRequest
-from django.views.generic import View
+from django.views.generic import DetailView, View
 
 from braces.views import (JSONResponseMixin, LoginRequiredMixin,
-                          PermissionRequiredMixin)
+                          PermissionRequiredMixin, StaffuserRequiredMixin)
 from caching.base import cached
 
 from inplace.views import GeoJSONListView
@@ -342,6 +342,42 @@ class CountOrganizersView(LoginRequiredMixin, PermissionRequiredMixin,
             'emails': len(set(organizers.values_list('email', flat=True))),
             'organizers': organizers.count(),
         }
+        return self.render_json_response(context)
+
+
+class LotIsVisible(LoginRequiredMixin, StaffuserRequiredMixin,
+                   JSONResponseMixin, DetailView):
+    model = Lot
+
+    def get_context_data(self, **kwargs):
+        validations = self.find_validations(self.object)
+        return {
+            'is_public': len(validations) == 0,
+            'validations': validations,
+        }
+
+    def find_validations(self, lot):
+        validations = []
+        if not lot.centroid:
+            validations.append('Under Geography, centroid is not set.')
+        if not lot.polygon:
+            validations.append('Under Geography, Polygon is not set.')
+        if lot.known_use and not lot.known_use.visible:
+            validations.append('Known use is not publicly visible. Choose '
+                               'another known use or edit the one this lot is '
+                               'using.')
+        if lot.known_use_certainty <= 3:
+            validations.append('Known use certainty must be over 3.')
+        if lot.steward_projects.exists() and not lot.steward_inclusion_opt_in:
+            validations.append('Under stewards, steward inclusion opt in must '
+                               'be checked.')
+        if not lot.owner:
+            validations.append('Under ownership, owner must be set.')
+        if lot.owner and lot.owner.owner_type == 'private' and not lot.owner_opt_in:
+            validations.append('Under ownership, owner opt in must be checked.')
+        return validations
+
+    def render_to_response(self, context, **kwargs):
         return self.render_json_response(context)
 
 

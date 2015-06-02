@@ -20,6 +20,43 @@
                     });
                 });
             });
+
+            var url = Django.url('lots:lot_is_visible', { pk: {{ original.pk }} });
+            $.getJSON(url, function (data) {
+                if (!data.is_public) {
+                    $.each(data.validations, function (i, validation) {
+                        $('.visibility-validations ul').append($('<li></li>').text(validation));
+                    });
+                    $('.visibility-validations').show();
+                }
+            });
         });
     </script>
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+
+    <style>
+        .visibility-validations {
+            border: 1px solid red;
+            display: none;
+            font-size: 16px;
+            margin-bottom: 30px;
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        .visibility-validations li {
+            font-size: 14px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="visibility-validations">
+        This lot will not appear publicly. Fix the following to make it appear publicly:
+        <ul></ul>
+    </div>
+    {{ block.super }}
 {% endblock %}
