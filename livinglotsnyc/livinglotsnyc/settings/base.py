@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import os
 from os.path import abspath, dirname
-import re
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -160,7 +159,6 @@ INSTALLED_APPS = (
     'jsonfield',
     'leaflet',
     'mailchimp',
-    'markdown_deux',
     'mptt',
     'reversion',
     'reversion_compare',
@@ -347,16 +345,4 @@ LEAFLET_CONFIG = {
             'attribution': 'Mapquest Open',
         }),
     ],
-}
-
-MARKDOWN_DEUX_STYLES = {
-    "note": {
-        "extras": {
-            "code-friendly": None,
-            "cuddled-lists": None,
-            "demote-headers": 3,
-            "nofollow": None,
-        },
-        "safe_mode": "escape",
-    }
 }
