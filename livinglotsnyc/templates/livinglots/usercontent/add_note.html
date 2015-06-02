@@ -8,4 +8,6 @@
 {% block content %}
     <h1>{% trans "Add a note" %}</h1>
     {% include "_form.html" with form=form %}
+
+    <p>You can use some <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> in notes. For example, **bold** will be <strong>bold</strong> and *italic* will be <em>italic</em>.
 {% endblock %}

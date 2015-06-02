@@ -4,6 +4,7 @@ IMAPClient>=0.10.2
 Pillow==2.8.1
 Pint==0.6
 TileStache==1.49.11
+bleach==1.4.1
 ipython>=2.0.0
 lxml==3.1.0
 pilkit==1.1.6
@@ -40,6 +41,7 @@ git+git://github.com/ebrelsford/django-inplace-activity-stream/@master
 django-jsonfield==0.9.13
 django-leaflet==0.16.0
 git+git://github.com/ebrelsford/django-mailchimp/@8318ba4
+django-markdown-deux==1.0.5
 git+git://github.com/ebrelsford/Django-monitor/@master
 django-reversion==1.8.6
 django-reversion-compare==0.4.0

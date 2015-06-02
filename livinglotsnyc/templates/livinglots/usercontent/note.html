@@ -1,10 +1,10 @@
 {% extends "livinglots/usercontent/detail_base.html" %}
-{% load i18n %}
+{% load i18n llnyc_usercontent_tags markdown_deux_tags %}
 
 {% block verb %}
     {% trans "said" %}
 {% endblock %}
 
 {% block details %}
-    {{ note.text|urlize|linebreaks }}
+    {{ note.text|markdown:"note"|linkify }}
 {% endblock %}
