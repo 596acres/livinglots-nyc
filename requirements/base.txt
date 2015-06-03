@@ -7,7 +7,7 @@ TileStache==1.49.11
 git+git://github.com/jsocol/bleach
 ipython>=2.0.0
 lxml==3.1.0
-markdown2==1.0.5
+markdown2==2.3.0
 pilkit==1.1.6
 pip==7.0.1
 psycopg2==2.4.6
