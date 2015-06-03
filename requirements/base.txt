@@ -59,22 +59,22 @@ feincms-pagepermissions==0.3.1
 
 
 # Living Lots
-git+git://github.com/596acres/django-livinglots/@master
-git+git://github.com/596acres/django-livinglots-activities/@master
-git+git://github.com/596acres/django-livinglots-forms/@master
-git+git://github.com/596acres/django-livinglots-generictags/@master
-git+git://github.com/596acres/django-livinglots-genericviews/@master
-git+git://github.com/596acres/django-livinglots-groundtruth/@master
-git+git://github.com/596acres/django-livinglots-lots/@master
-git+git://github.com/596acres/django-livinglots-mailings/@master
-git+git://github.com/596acres/django-livinglots-mailreader/@master
-git+git://github.com/596acres/django-livinglots-mailsender/@master
-git+git://github.com/596acres/django-livinglots-notify/@master
-git+git://github.com/596acres/django-livinglots-organize/@master
-git+git://github.com/596acres/django-livinglots-owners/@master
-git+git://github.com/596acres/django-livinglots-pathways/@master
-git+git://github.com/596acres/django-livinglots-steward/@master
-git+git://github.com/596acres/django-livinglots-usercontent/@master
+git+git://github.com/596acres/django-livinglots/@v0.3.0
+git+git://github.com/596acres/django-livinglots-activities/@v0.2.0
+git+git://github.com/596acres/django-livinglots-forms/@v1.0.2
+git+git://github.com/596acres/django-livinglots-generictags/@v1.0.1
+git+git://github.com/596acres/django-livinglots-genericviews/@v1.3.4
+git+git://github.com/596acres/django-livinglots-groundtruth/@v0.2.0
+git+git://github.com/596acres/django-livinglots-lots/@v0.14.0
+git+git://github.com/596acres/django-livinglots-mailings/@v0.4.3
+git+git://github.com/596acres/django-livinglots-mailreader/@v0.1.2
+git+git://github.com/596acres/django-livinglots-mailsender/@v0.1.1
+git+git://github.com/596acres/django-livinglots-notify/@v0.2.5
+git+git://github.com/596acres/django-livinglots-organize/@v0.5.3
+git+git://github.com/596acres/django-livinglots-owners/@v0.7.0
+git+git://github.com/596acres/django-livinglots-pathways/@v0.3.1
+git+git://github.com/596acres/django-livinglots-steward/@v0.3.2
+git+git://github.com/596acres/django-livinglots-usercontent/@v0.6.1
 
 # Living Lots NYC
-git+git://github.com/596acres/nycdata/@master
+git+git://github.com/596acres/nycdata/@v0.10.1
