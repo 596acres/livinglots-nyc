@@ -6,5 +6,5 @@
 {% endblock %}
 
 {% block details %}
-    {{ note.text|urlize|linebreaks }}
+    {{ note.text|safe }}
 {% endblock %}

@@ -4,9 +4,10 @@ IMAPClient>=0.10.2
 Pillow==2.8.1
 Pint==0.6
 TileStache==1.49.11
-bleach==1.4.1
+git+git://github.com/jsocol/bleach
 ipython>=2.0.0
 lxml==3.1.0
+markdown2==1.0.5
 pilkit==1.1.6
 pip==7.0.1
 psycopg2==2.4.6
@@ -41,19 +42,20 @@ git+git://github.com/ebrelsford/django-inplace-activity-stream/@master
 django-jsonfield==0.9.13
 django-leaflet==0.16.0
 git+git://github.com/ebrelsford/django-mailchimp/@8318ba4
-django-markdown-deux==1.0.5
 git+git://github.com/ebrelsford/Django-monitor/@master
 django-reversion==1.8.6
 django-reversion-compare==0.4.0
 django-rosetta==0.7.6
 git+git://github.com/596acres/django-sizecompare/@master
 django-taggit==0.14.0
+django-tinymce==1.5.3
+django-widget-tweaks==1.3
+django-wysiwyg==0.7.0
 django.js==0.8.1
 feincms-articles==1.1.2
 feincms-cleanse==5
 feincms-elephantblog==1.0.1
 feincms-pagepermissions==0.3.1
-django-widget-tweaks==1.3
 
 
 # Living Lots

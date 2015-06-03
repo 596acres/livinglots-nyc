@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     'articles',
     'contact_form',
     'django_monitor',
+    'django_wysiwyg',
     'djangojs',
     'easy_select2',
     'elephantblog',
@@ -164,6 +165,7 @@ INSTALLED_APPS = (
     'reversion_compare',
     'rosetta',
     'taggit',
+    'tinymce',
     'widget_tweaks',
 
     #
@@ -346,3 +348,5 @@ LEAFLET_CONFIG = {
         }),
     ],
 }
+
+DJANGO_WYSIWYG_FLAVOR = "tinymce"
