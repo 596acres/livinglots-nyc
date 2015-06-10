@@ -1425,6 +1425,7 @@ var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
 var filters = require('./filters');
+var styles = require('./map.styles');
 
 require('./leaflet.lotmap');
 require('bootstrap_button');
@@ -1547,8 +1548,14 @@ function initializeNYCHA(map) {
                 onEachFeature: function (feature, layer) {
                     layer.bindPopup(feature.properties.name);
                 },
-                style: {
-                    color: '#FFA813'
+                style: function (feature) {
+                    var color = '#FFA813';
+                    if (feature.properties.projects_within > 0) {
+                        color = styles.fillColors.in_use;
+                    }
+                    return {
+                        color: color
+                    };
                 }
             });
         }
@@ -1774,7 +1781,7 @@ $(document).ready(function () {
     }
 });
 
-},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
+},{"./filters":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/filters.js","./handlebars.helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/handlebars.helpers.js","./leaflet.lotmap":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/leaflet.lotmap.js","./map.search.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.search.js","./map.styles":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/map.styles.js","./oasis":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js","./overlaymenu":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/overlaymenu.js","./singleminded":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/singleminded.js","./welcome":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/welcome.js","bootstrap_button":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/button.js","bootstrap_tooltip":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/bootstrap/js/tooltip.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","jquery-infinite-scroll":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/jquery-infinite-scroll/jquery.infinitescroll.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-loading":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-loading/src/Control.Loading.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/oasis.js":[function(require,module,exports){
 var _ = require('underscore');
 var proj4 = require('proj4');
 require('./proj4.defs');
@@ -28799,7 +28806,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",

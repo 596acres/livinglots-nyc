@@ -12,6 +12,7 @@ var singleminded = require('./singleminded');
 var initWelcome = require('./welcome').init;
 var oasis = require('./oasis');
 var filters = require('./filters');
+var styles = require('./map.styles');
 
 require('./leaflet.lotmap');
 require('bootstrap_button');
@@ -134,8 +135,14 @@ function initializeNYCHA(map) {
                 onEachFeature: function (feature, layer) {
                     layer.bindPopup(feature.properties.name);
                 },
-                style: {
-                    color: '#FFA813'
+                style: function (feature) {
+                    var color = '#FFA813';
+                    if (feature.properties.projects_within > 0) {
+                        color = styles.fillColors.in_use;
+                    }
+                    return {
+                        color: color
+                    };
                 }
             });
         }
