@@ -2,6 +2,10 @@
     #map {
         width: 100%;
         height: 70vh;
+
+        @media print {
+            height: 10cm;
+        }
     }
 
     .map-header {
@@ -212,5 +216,24 @@
         .overlaymenu-tip-container {
             display: none;
         }
+    }
+}
+
+.map-printable-details {
+    .details-actions,
+    .details-owner-list {
+        display: none;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    a {
+        color: black;
+    }
+
+    .details-organizing {
+        margin-left: 25px;
     }
 }

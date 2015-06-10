@@ -6107,6 +6107,11 @@ footer .footer-middle-right p:first-of-type {
 .legend-label-organized {
   vertical-align: top;
 }
+@media print {
+  .legend {
+    display: none;
+  }
+}
 #lot-detail-map {
   border: 2px solid #58595b;
   cursor: pointer;
@@ -6243,6 +6248,11 @@ footer .footer-middle-right p:first-of-type {
 .map-page #map {
   width: 100%;
   height: 70vh;
+}
+@media print {
+  .map-page #map {
+    height: 10cm;
+  }
 }
 .map-page .map-header {
   background-color: #f6f8f7;
@@ -6712,6 +6722,19 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
     display: none;
   }
 }
+.map-printable-details .details-actions,
+.map-printable-details .details-owner-list {
+  display: none;
+}
+.map-printable-details ul {
+  list-style: none;
+}
+.map-printable-details a {
+  color: black;
+}
+.map-printable-details .details-organizing {
+  margin-left: 25px;
+}
 .overlaymenu-news {
   padding-right: 0;
 }
@@ -6861,6 +6884,26 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
 }
 #popup .popup-lot-details .size {
   margin-bottom: 3px;
+}
+@media print {
+  @page {
+    margin: 2cm;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    height: 100%;
+    width: 100%;
+  }
+  .logo {
+    height: auto;
+    width: 8cm;
+  }
+  .page-header {
+    margin: 0;
+  }
 }
 .map-welcome {
   background-image: url('../img/welcome_texture.png');
@@ -7024,4 +7067,9 @@ fieldset[disabled] .overlaymenu-details .details-show-organizing.active {
 }
 .leaflet-draw-actions a {
   background-color: white;
+}
+@media print {
+  .leaflet-control-container {
+    display: none;
+  }
 }

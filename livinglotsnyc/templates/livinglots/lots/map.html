@@ -119,11 +119,11 @@
     <div class="map-add-lot-parent"></div>
     <div class="map-mail-parent"></div>
 
-    <a class="visible-xs btn btn-default overlay-filter-button" href="#">
+    <a class="visible-xs btn btn-default overlay-filter-button hidden-print" href="#">
         {% trans "filter" %}
     </a>
 
-    <div class="legend hidden-print">
+    <div class="legend">
         <div>
             <span class="legend-marker legend-marker-public"></span>
             <label class="legend-label">
@@ -151,7 +151,7 @@
     </div>
 </div>
 
-<div class="overlaymenu overlaymenu-details">
+<div class="overlaymenu overlaymenu-details hidden-print">
     {% include "livinglots/lots/details.html" %}
 </div>
 
@@ -214,3 +214,5 @@
         </div>
     </div>
 </div>
+
+<div class="map-printable-details visible-print"></div>

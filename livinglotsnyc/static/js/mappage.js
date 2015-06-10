@@ -50,6 +50,7 @@ function updateOwnershipOverview(map) {
             lottypes: data.owners
         });
         $('.details-overview').html(content);
+        $('.map-printable-details').html(content);
         $('.details-area-compare-tooltip').tooltip();
         $('.details-show-owners :input').change(function () {
             var $list = $('.details-owner-list-' + $(this).data('type')),
@@ -305,11 +306,8 @@ $(document).ready(function () {
         prepareOverlayMenus(map);
 
         $('.details-print').click(function () {
-            // TODO This is not a good solution since the map size changes
-            // on print. Look into taking screenshots like:
-            //   https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
-            //   http://html2canvas.hertzen.com
             window.print();
+            return false;
         });
 
         $('form.map-search-form').mapsearch()
