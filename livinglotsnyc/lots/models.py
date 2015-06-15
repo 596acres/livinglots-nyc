@@ -377,14 +377,16 @@ class LotLayer(BaseLotLayer):
                 Q(
                     Q(owner__owner_type='public') |
                     Q(group=None, lotgroup__lot__owner__owner_type='public')
-                )
+                ),
+                known_use_certainty__gt=3,
             ),
             'private': Q(
                 Q(known_use=None) | Q(known_use__visible=True),
                 Q(
                     Q(owner__owner_type='private') |
                     Q(group=None, lotgroup__lot__owner__owner_type='private')
-                )
+                ),
+                known_use_certainty__gt=3,
             ),
             'private_opt_in': Q(
                 Q(owner__owner_type='private'),
