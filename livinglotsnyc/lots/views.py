@@ -9,15 +9,17 @@ import re
 from django.db.models import Count, Sum
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-from django.http import HttpResponseBadRequest
+from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, View
 
 from braces.views import (JSONResponseMixin, LoginRequiredMixin,
                           PermissionRequiredMixin, StaffuserRequiredMixin)
 from caching.base import cached
 
-from inplace.views import GeoJSONListView
+from inplace.views import GeoJSONListView, PlacesDetailView
 from livinglots_genericviews.views import JSONResponseView
+from livinglots_lots.signals import lot_details_loaded
 from livinglots_lots.views import BaseCreateLotView
 from livinglots_lots.views import FilteredLotsMixin, LotsCountView
 from livinglots_lots.views import LotDetailView as BaseLotDetailView
@@ -140,7 +142,8 @@ class LotsGeoJSONPolygon(LotGeoJSONMixin, FilteredLotsMixin, GeoJSONListView):
         return cached(_get_value, key, 60 * 15)
 
 
-class LotDetailView(BaseLotDetailView):
+class LotDetailView(PlacesDetailView):
+    model = Lot
     slug_field = 'bbl'
     slug_url_kwarg = 'bbl'
 
@@ -158,10 +161,26 @@ class LotDetailView(BaseLotDetailView):
                                        "(polygon). You should edit the lot "
                                        "and add one."))
 
+    def get_object(self):
+        lot = super(LotDetailView, self).get_object()
+        if not (lot.is_visible or self.request.user.has_perm('lots.view_all_lots')):
+            # Make an exception for lots with low known_use_certainty values,
+            # which are being used in stealth mode right now
+            if lot.known_use_certainty > 3:
+                raise Http404
+        return lot
+
     def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
         if request.user.is_superuser:
-            lot = self.get_object()
-            self.check_lot_sanity(request, lot)
+            self.check_lot_sanity(request, self.object)
+
+        # Redirect to the lot's group, if it has one
+        lot_details_loaded.send(sender=self, instance=self.object)
+        if self.object.group:
+            messages.info(request, _("The lot you requested is part of a "
+                                     "group. Here is the group's page."))
+            return HttpResponseRedirect(self.object.group.get_absolute_url())
         return super(LotDetailView, self).get(request, *args, **kwargs)
 
 
