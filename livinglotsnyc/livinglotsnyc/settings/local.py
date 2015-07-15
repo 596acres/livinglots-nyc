@@ -44,6 +44,23 @@ LOGGING = {
 
 
 #
+# django-cachalot
+#
+
+INSTALLED_APPS += (
+    'cachalot',
+)
+CACHES = {
+    'default': {
+        'BACKEND': 'caching.backends.memcached.MemcachedCache',
+        'LOCATION': [
+            get_env_variable('MEMCACHE_LOCATION'),
+        ],
+    },
+}
+
+
+#
 # Django extensions
 #
 
