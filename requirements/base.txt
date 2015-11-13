@@ -13,6 +13,7 @@ pip==7.0.3
 psycopg2==2.4.6
 python-dateutil==2.4.0
 six==1.9.0
+unicodecsv==0.14.1
 wsgiref==0.1.2
 geojson==1.0.9
 
