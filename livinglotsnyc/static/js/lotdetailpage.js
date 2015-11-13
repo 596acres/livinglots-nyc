@@ -99,12 +99,6 @@ $(document).ready(function () {
             $('.lot-detail-header-image'),
             $('.lot-detail-header-streetview-error')
         );
-
-        $('.referral-message').slideDown();
-        $('.referral-message-close').click(function () {
-            $('.referral-message').slideUp();
-            return false;
-        });
     }
 
     $('.overlay-nearby-button').overlaymenu({

@@ -5526,16 +5526,6 @@ body {
     margin-top: 60px;
   }
 }
-.referral-message {
-  background: #1f9e48;
-  display: none;
-  font-size: 22px;
-  padding: 25px;
-}
-.referral-message .map-link {
-  color: black;
-  text-decoration: underline;
-}
 .page-wrapper {
   position: relative;
   min-height: 1px;
