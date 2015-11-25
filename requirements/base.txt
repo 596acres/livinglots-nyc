@@ -75,7 +75,7 @@ git+git://github.com/596acres/django-livinglots-organize/@v0.5.3
 git+git://github.com/596acres/django-livinglots-owners/@v0.7.0
 git+git://github.com/596acres/django-livinglots-pathways/@v0.3.1
 git+git://github.com/596acres/django-livinglots-steward/@v0.3.2
-git+git://github.com/596acres/django-livinglots-usercontent/@v0.6.1
+git+git://github.com/596acres/django-livinglots-usercontent/@v0.6.2
 
 # Living Lots NYC
 git+git://github.com/596acres/nycdata/@v0.10.5
