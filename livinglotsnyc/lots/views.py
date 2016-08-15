@@ -113,6 +113,70 @@ class LotsGeoJSONCentroid(LotGeoJSONMixin, FilteredLotsMixin, GeoJSONListView):
         return cached(_get_value, key, 60 * 15)
 
 
+class VisibleLotsGeoJSON(GeoJSONListView):
+    """
+    Get visible lots as GeoJSON.
+
+    This is used for external sites that are mirroring lots for whatever reason.
+    Currently this includes only NYCommons.
+    """
+
+    def get_properties(self, lot):
+        properties = {
+            'pk': lot.pk,
+            'bbl': lot.bbl,
+            'block': lot.block,
+            'borough': lot.borough,
+            'lot': lot.lot_number,
+        }
+        if lot.organizers__count > 0:
+            properties['organizing'] = True
+        try:
+            properties['known_use'] = lot.known_use.name
+            properties['known_use_certainty'] = lot.known_use.certainty
+        except Exception:
+            pass
+        try:
+            properties['owner_name'] = lot.owner.name
+            properties['owner_type'] = lot.owner.owner_type
+        except Exception:
+            pass
+        if lot.address_line1:
+            properties['address_line1'] = lot.address_line1
+        if lot.address_line2:
+            properties['address_line2'] = lot.address_line2
+        if lot.city:
+            properties['city'] = lot.city
+        if lot.name:
+            properties['name'] = lot.name
+        if lot.postal_code:
+            properties['postal_code'] = lot.postal_code
+        return properties
+
+    def get_feature(self, lot):
+        return geojson.Feature(
+            lot.pk,
+            geometry=json.loads(lot.geojson),
+            properties=self.get_properties(lot),
+        )
+
+    def get_queryset(self):
+        return Lot.visible.filter(
+            polygon__isnull=False,
+            gutterspace=False,
+        ).geojson(
+            field_name='polygon',
+            precision=6,
+        ).select_related(
+            'known_use',
+            'lotgroup',
+            'owner',
+        ).annotate(organizers__count=Count('organizers'))
+
+    def get_features(self):
+        return [self.get_feature(l) for l in self.get_queryset()]
+
+
 class LotsGeoJSONPolygon(LotGeoJSONMixin, FilteredLotsMixin, GeoJSONListView):
 
     def get_properties(self, lot):
