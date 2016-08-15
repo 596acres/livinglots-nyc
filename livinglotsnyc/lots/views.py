@@ -133,7 +133,6 @@ class VisibleLotsGeoJSON(GeoJSONListView):
             properties['organizing'] = True
         try:
             properties['known_use'] = lot.known_use.name
-            properties['known_use_certainty'] = lot.known_use.certainty
         except Exception:
             pass
         try:
@@ -147,6 +146,8 @@ class VisibleLotsGeoJSON(GeoJSONListView):
             properties['address_line2'] = lot.address_line2
         if lot.city:
             properties['city'] = lot.city
+        if lot.known_use_certainty:
+            properties['known_use_certainty'] = lot.known_use_certainty
         if lot.name:
             properties['name'] = lot.name
         if lot.postal_code:
