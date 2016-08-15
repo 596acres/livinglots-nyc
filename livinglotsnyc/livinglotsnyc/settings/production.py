@@ -103,3 +103,8 @@ LOGGING = {
 LOT_CENTROIDS_URL = get_env_variable('TILES_BASE') + '/lots-centroids/'
 LOT_POLYGONS_URL = get_env_variable('TILES_BASE') + '/lots-polygons/'
 PARCELS_URL = get_env_variable('TILES_BASE') + '/parcels/'
+
+#
+# CORS
+#
+CORS_ORIGIN_REGEX_WHITELIST = ('^(https?://)?(\w+\.)?nycommons\.org$',)

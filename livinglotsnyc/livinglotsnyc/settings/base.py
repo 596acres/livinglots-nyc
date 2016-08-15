@@ -81,6 +81,7 @@ STATICFILES_DIRS = (
 SECRET_KEY = get_env_variable('SECRET_KEY')
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -350,3 +351,4 @@ LEAFLET_CONFIG = {
 }
 
 DJANGO_WYSIWYG_FLAVOR = "tinymce"
+CORS_ORIGIN_ALLOW_ALL = True

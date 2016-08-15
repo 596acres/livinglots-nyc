@@ -30,6 +30,7 @@ django-braces==1.8.0
 git+git://github.com/ebrelsford/django-cache-machine/@master
 git+git://github.com/ebrelsford/django-chosen/@master
 django-contact-form-gv==0.4.3
+django-cors-headers==1.1.0
 django-easy-select2==1.2.12
 django-extensions==1.5.5
 django-filter==0.10.0

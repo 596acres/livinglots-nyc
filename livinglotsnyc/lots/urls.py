@@ -3,10 +3,10 @@ from django.conf.urls import patterns, url
 import livinglots_lots.urls as llurls
 
 from .views import (CountOrganizersView, CreateLotView, EmailOrganizersView,
-                    LotsCountViewWithAcres, LotDetailView, LotDetailViewJSON,
-                    LotsGeoJSONCentroid, LotsGeoJSONPolygon, LotsTypesOverview,
-                    LotsCSV, LotsKML, LotsGeoJSON, LotIsVisible, SearchView,
-                    VisibleLotsGeoJSON)
+                    LotContentJSON, LotsCountViewWithAcres, LotDetailView,
+                    LotDetailViewJSON, LotsGeoJSONCentroid, LotsGeoJSONPolygon,
+                    LotsTypesOverview, LotsCSV, LotsKML, LotsGeoJSON,
+                    LotIsVisible, SearchView, VisibleLotsGeoJSON)
 
 
 urlpatterns = patterns('',
@@ -14,6 +14,8 @@ urlpatterns = patterns('',
     url(r'^(?P<bbl>\d{10})/$', LotDetailView.as_view(), name='lot_detail'),
     url(r'^(?P<pk>\d+)/json/$', LotDetailViewJSON.as_view(),
         name='lot_detail_json'),
+    url(r'^(?P<pk>\d+)/content/json/$', LotContentJSON.as_view(),
+        name='lot_content_json'),
     url(r'^(?P<pk>\d+)/visible/$', LotIsVisible.as_view(),
         name='lot_is_visible'),
     url(r'^geojson-centroid/', LotsGeoJSONCentroid.as_view(),
