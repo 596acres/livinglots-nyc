@@ -164,6 +164,7 @@ class VisibleLotsGeoJSON(GeoJSONListView):
     def get_queryset(self):
         return Lot.visible.filter(
             lotgroup__isnull=True,
+            centroid__isnull=False,
             polygon__isnull=False,
             gutterspace=False,
             owner__owner_type='public',
