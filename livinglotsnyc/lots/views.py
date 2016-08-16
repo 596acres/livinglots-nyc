@@ -166,6 +166,9 @@ class VisibleLotsGeoJSON(GeoJSONListView):
             lotgroup__isnull=True,
             polygon__isnull=False,
             gutterspace=False,
+            owner__owner_type='public',
+        ).exclude(
+            owner__name='New York City Department of Parks & Recreation - building',
         ).geojson(
             field_name='polygon',
             precision=6,
