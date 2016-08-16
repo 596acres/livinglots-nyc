@@ -38,7 +38,7 @@ git+git://github.com/funkybob/django-flatblocks/@5c921d9ab4b2b08ad6d1b5995bdf190
 django-honeypot==0.4.0
 django-imagekit==3.2.6
 git+git://github.com/ebrelsford/django-inplace/@v1.0.0
-git+git://github.com/ebrelsford/django-inplace-activity-stream/@0.2.2
+git+git://github.com/ebrelsford/django-inplace-activity-stream/@3370e595f5
 
 # Required for custom data in django-activity-stream
 django-jsonfield==0.9.13
