@@ -6,6 +6,7 @@ import livinglots_organize.urls as llurls
 
 from lots.models import Lot
 from .forms import OrganizerForm
+from .views import OrganizersJSON
 
 
 urlpatterns = llurls.urlpatterns + patterns('',
@@ -20,4 +21,8 @@ urlpatterns = llurls.urlpatterns + patterns('',
         ),
         name='add_organizer'),
 
+)
+
+standalone_urlpatterns = patterns('',
+    url(r'^export/json/', OrganizersJSON.as_view(), name='export_organizers'),
 )

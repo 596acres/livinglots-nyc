@@ -352,3 +352,5 @@ LEAFLET_CONFIG = {
 
 DJANGO_WYSIWYG_FLAVOR = "tinymce"
 CORS_ORIGIN_ALLOW_ALL = True
+
+LLNYC_API_KEYS = get_env_variable('LLNYC_API_KEYS').split(',')
