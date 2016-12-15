@@ -45,7 +45,7 @@ class OrganizersJSON(JSONResponseMixin, ListView):
         Get pks for visible lots--the lots that we export in VisibleLotsGeoJSON.
         """
         return Lot.visible.filter(
-            lotgroup__isnull=True,
+            group__isnull=True,
             centroid__isnull=False,
             polygon__isnull=False,
             gutterspace=False,
