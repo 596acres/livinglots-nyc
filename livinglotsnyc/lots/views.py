@@ -163,7 +163,7 @@ class VisibleLotsGeoJSON(GeoJSONListView):
 
     def get_queryset(self):
         return Lot.visible.filter(
-            lotgroup__isnull=True,
+            group__isnull=True,
             centroid__isnull=False,
             polygon__isnull=False,
             gutterspace=False,
@@ -175,7 +175,7 @@ class VisibleLotsGeoJSON(GeoJSONListView):
             precision=6,
         ).select_related(
             'known_use',
-            'lotgroup',
+            'group',
             'owner',
         ).annotate(organizers__count=Count('organizers'))
 
