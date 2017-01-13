@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.views.generic import ListView
 
 from braces.views import JSONResponseMixin
 
+from livinglots_usercontent.files.models import File
 from livinglots_usercontent.notes.models import Note
 from livinglots_usercontent.views import AddContentView
 
@@ -14,6 +16,10 @@ from .forms import FileForm, NoteForm, PhotoForm
 
 
 class ContentExportView(JSONResponseMixin, ListView):
+
+    def __init__(self, *args, **kwargs):
+        super(ContentExportView, self).__init__(*args, **kwargs)
+        self.base_url = 'http://%s' % Site.objects.get_current().domain
 
     def check_request_allowed(self, request):
         key = request.GET.get('key', None)
@@ -52,6 +58,18 @@ class ContentExportView(JSONResponseMixin, ListView):
 class AddFileView(LotBBLAddGeneric, AddContentView):
     content_type_model = Lot
     form_class = FileForm
+
+
+class FilesJSON(ContentExportView):
+    model = File
+    model_label = 'files'
+
+    def get_properties(self, o):
+        object_dict = super(FilesJSON, self).get_properties(o)
+        object_dict['description'] = o.description
+        object_dict['document'] = self.base_url + o.document.url
+        object_dict['title'] = o.title
+        return object_dict
 
 
 class AddNoteView(LotBBLAddGeneric, AddContentView):

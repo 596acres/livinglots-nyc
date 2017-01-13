@@ -21,6 +21,10 @@ urlpatterns = patterns('',
 
 standalone_urlpatterns = patterns('',
 
+    url(r'^files/export/json/',
+        FilesJSON.as_view(),
+        name='export_files'),
+
     url(r'^notes/export/json/',
         NotesJSON.as_view(),
         name='export_notes'),
