@@ -29,4 +29,8 @@ standalone_urlpatterns = patterns('',
         NotesJSON.as_view(),
         name='export_notes'),
 
+    url(r'^photos/export/json/',
+        PhotosJSON.as_view(),
+        name='export_photos'),
+
 )

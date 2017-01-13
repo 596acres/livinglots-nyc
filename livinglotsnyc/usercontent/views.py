@@ -8,6 +8,7 @@ from braces.views import JSONResponseMixin
 
 from livinglots_usercontent.files.models import File
 from livinglots_usercontent.notes.models import Note
+from livinglots_usercontent.photos.models import Photo
 from livinglots_usercontent.views import AddContentView
 
 from lots.models import Lot
@@ -90,3 +91,15 @@ class NotesJSON(ContentExportView):
 class AddPhotoView(LotBBLAddGeneric, AddContentView):
     content_type_model = Lot
     form_class = PhotoForm
+
+
+class PhotosJSON(ContentExportView):
+    model = Photo
+    model_label = 'photos'
+
+    def get_properties(self, o):
+        object_dict = super(PhotosJSON, self).get_properties(o)
+        object_dict['description'] = o.description
+        object_dict['name'] = o.name
+        object_dict['original_image'] = self.base_url + o.original_image.url
+        return object_dict
