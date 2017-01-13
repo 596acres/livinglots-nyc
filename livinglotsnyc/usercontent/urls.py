@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from .views import AddFileView, AddNoteView, AddPhotoView
+from .views import *
 
 
 urlpatterns = patterns('',
@@ -16,5 +16,13 @@ urlpatterns = patterns('',
     url(r'^files/add/$',
         AddFileView.as_view(),
         name='add_file'),
+
+)
+
+standalone_urlpatterns = patterns('',
+
+    url(r'^notes/export/json/',
+        NotesJSON.as_view(),
+        name='export_notes'),
 
 )

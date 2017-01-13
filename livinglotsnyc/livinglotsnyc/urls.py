@@ -8,6 +8,7 @@ import autocomplete_light
 
 from registration.forms import AuthenticationForm
 from organize.urls import standalone_urlpatterns as organize_urlpatterns
+from usercontent.urls import standalone_urlpatterns as usercontent_urlpatterns
 
 autocomplete_light.autodiscover()
 admin.autodiscover()
@@ -30,6 +31,7 @@ urlpatterns += patterns('',
     url(r'^lot/(?P<pk>\d+)/', include(lotpatterns)),
     url(r'^lot/', include('lots.urls', 'lots')),
     url(r'^organize/', include(organize_urlpatterns)),
+    url(r'^content/', include(usercontent_urlpatterns)),
 
     # Activity stream
     url('^activity/', include('activities.urls')),
