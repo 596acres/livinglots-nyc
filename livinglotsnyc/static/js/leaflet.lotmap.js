@@ -127,7 +127,7 @@ L.LotMap = L.Map.extend({
             var currentZoom = this.getZoom();
             if (this.previousZoom) {
                 // Switch to centroids
-                if (currentZoom <= this.lotLayerTransitionPoint && 
+                if (currentZoom <= this.lotLayerTransitionPoint &&
                     this.previousZoom > this.lotLayerTransitionPoint) {
                     this.fire('lotlayertransition', { details: false });
                 }
@@ -233,7 +233,7 @@ L.LotMap = L.Map.extend({
         var map = this;
         function updateDisplayedLotsForLayer(layer) {
             if (layer && layer.vectorLayer) {
-                // Lots are nested in tiles so we need to do two layers of 
+                // Lots are nested in tiles so we need to do two layers of
                 // eachLayer to get to them all
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
