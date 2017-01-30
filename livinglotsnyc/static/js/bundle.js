@@ -633,7 +633,7 @@ L.LotMap = L.Map.extend({
             var currentZoom = this.getZoom();
             if (this.previousZoom) {
                 // Switch to centroids
-                if (currentZoom <= this.lotLayerTransitionPoint && 
+                if (currentZoom <= this.lotLayerTransitionPoint &&
                     this.previousZoom > this.lotLayerTransitionPoint) {
                     this.fire('lotlayertransition', { details: false });
                 }
@@ -671,7 +671,7 @@ L.LotMap = L.Map.extend({
     },
 
     addBaseLayer: function () {
-        var streets = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+        var streets = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com/">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
         }).addTo(this);
         var bing = new L.BingLayer('Ajio1n0EgmAAvT3zLndCpHrYR_LHJDgfDU6B0tV_1RClr7OFLzy4RnkLXlSdkJ_x');
@@ -739,7 +739,7 @@ L.LotMap = L.Map.extend({
         var map = this;
         function updateDisplayedLotsForLayer(layer) {
             if (layer && layer.vectorLayer) {
-                // Lots are nested in tiles so we need to do two layers of 
+                // Lots are nested in tiles so we need to do two layers of
                 // eachLayer to get to them all
                 layer.vectorLayer.eachLayer(function (tileLayer) {
                     tileLayer.eachLayer(function (lot) {
@@ -3010,6 +3010,960 @@ module.exports = {
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/browserify/lib/_empty.js":[function(require,module,exports){
 
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/catiline/dist/catiline.js":[function(require,module,exports){
+/*! catiline 2.9.3 2013-10-25*/
+/*!©2013 Calvin Metcalf @license MIT https://github.com/calvinmetcalf/catiline */
+if (typeof document === 'undefined') {
+	self._noTransferable=true;
+	self.onmessage=function(e){
+		/*jslint evil: true */
+		eval(e.data);
+	};
+} else {
+(function(global){
+	'use strict';
+//overall structure based on when
+//https://github.com/cujojs/when/blob/master/when.js#L805-L852
+var nextTick;
+var MutationObserver = global.MutationObserver || global.WebKitMutationObserver;
+/*if (typeof setImmediate === 'function') {
+	nextTick = setImmediate.bind(global,drainQueue);
+}else */if(MutationObserver){
+	//based on RSVP
+	//https://github.com/tildeio/rsvp.js/blob/master/lib/rsvp/async.js
+	var observer = new MutationObserver(drainQueue);
+	var element = document.createElement('div');
+	observer.observe(element, { attributes: true });
+
+	// Chrome Memory Leak: https://bugs.webkit.org/show_bug.cgi?id=93661
+	addEventListener('unload', function () {
+		observer.disconnect();
+		observer = null;
+	}, false);
+	nextTick =   function () {
+		element.setAttribute('drainQueue', 'drainQueue');
+	};
+}else{
+	var codeWord = 'com.catiline.setImmediate' + Math.random();
+	addEventListener('message', function (event) {
+		// This will catch all incoming messages (even from other windows!), so we need to try reasonably hard to
+		// avoid letting anyone else trick us into firing off. We test the origin is still this window, and that a
+		// (randomly generated) unpredictable identifying prefix is present.
+		if (event.source === window && event.data === codeWord) {
+			drainQueue();
+		}
+	}, false);
+	nextTick =  function() {
+		postMessage(codeWord, '*');
+	};
+}
+var mainQueue = [];
+
+/**
+ * Enqueue a task. If the queue is not currently scheduled to be
+ * drained, schedule it.
+ * @param {function} task
+ */
+catiline.nextTick = function(task) {
+	if (mainQueue.push(task) === 1) {
+		nextTick();
+	}
+};
+
+/**
+ * Drain the handler queue entirely, being careful to allow the
+ * queue to be extended while it is being processed, and to continue
+ * processing until it is truly empty.
+ */
+function drainQueue() {
+	var i = 0;
+	var task;
+	var innerQueue = mainQueue;
+	mainQueue = [];
+	/*jslint boss: true */
+	while (task = innerQueue[i++]) {
+		task();
+	}
+
+}
+
+var func = 'function';
+// Creates a deferred: an object with a promise and corresponding resolve/reject methods
+function Deferred() {
+	// The `handler` variable points to the function that will
+	// 1) handle a .then(onFulfilled, onRejected) call
+	// 2) handle a .resolve or .reject call (if not fulfilled)
+	// Before 2), `handler` holds a queue of callbacks.
+	// After 2), `handler` is a simple .then handler.
+	// We use only one function to save memory and complexity.
+	var handler = function(onFulfilled, onRejected, value) {
+		// Case 1) handle a .then(onFulfilled, onRejected) call
+		if (onFulfilled !== handler) {
+			var createdDeffered = createDeferred();
+			handler.queue.push({
+				deferred: createdDeffered,
+				resolve: onFulfilled,
+				reject: onRejected
+			});
+			return createdDeffered.promise;
+		}
+
+		// Case 2) handle a .resolve or .reject call
+		// (`onFulfilled` acts as a sentinel)
+		// The actual function signature is
+		// .re[ject|solve](sentinel, success, value)
+		var action = onRejected ? 'resolve' : 'reject';
+		for (var i = 0, l = handler.queue.length; i < l; i++) {
+			var queue = handler.queue[i];
+			var deferred = queue.deferred;
+			var callback = queue[action];
+			if (typeof callback !== func) {
+				deferred[action](value);
+			}
+			else {
+				execute(callback, value, deferred);
+			}
+		}
+		// Replace this handler with a simple resolved or rejected handler
+		handler = createHandler(promise, value, onRejected);
+	};
+
+	function Promise() {
+		this.then = function(onFulfilled, onRejected) {
+			return handler(onFulfilled, onRejected);
+		};
+	}
+	var promise = new Promise();
+	this.promise = promise;
+	// The queue of deferreds
+	handler.queue = [];
+
+	this.resolve = function(value) {
+		if (handler.queue) {
+			handler(handler, true, value);
+		}
+	};
+
+	this.fulfill = this.resolve;
+
+	this.reject = function(reason) {
+		if (handler.queue) {
+			handler(handler, false, reason);
+		}
+	};
+}
+
+function createDeferred() {
+	return new Deferred();
+}
+
+// Creates a fulfilled or rejected .then function
+function createHandler(promise, value, success) {
+	return function(onFulfilled, onRejected) {
+		var callback = success ? onFulfilled : onRejected;
+		if (typeof callback !== func) {
+			return promise;
+		}
+		var result = createDeferred();
+		execute(callback, value, result);
+		return result.promise;
+	};
+}
+
+// Executes the callback with the specified value,
+// resolving or rejecting the deferred
+function execute(callback, value, deferred) {
+	catiline.nextTick(function() {
+		try {
+			var result = callback(value);
+			if (result && typeof result.then === func) {
+				result.then(deferred.resolve, deferred.reject);
+			}
+			else {
+				deferred.resolve(result);
+			}
+		}
+		catch (error) {
+			deferred.reject(error);
+		}
+	});
+}
+catiline.deferred = createDeferred;
+// Returns a resolved promise
+catiline.resolve = function(value) {
+	var promise = {};
+	promise.then = createHandler(promise, value, true);
+	return promise;
+};
+// Returns a rejected promise
+catiline.reject = function(reason) {
+	var promise = {};
+	promise.then = createHandler(promise, reason, false);
+	return promise;
+};
+// Returns a deferred
+
+catiline.all = function(array) {
+	var promise = createDeferred();
+	var len = array.length;
+	var resolved = 0;
+	var out = [];
+	var onSuccess = function(n) {
+		return function(v) {
+			out[n] = v;
+			resolved++;
+			if (resolved === len) {
+				promise.resolve(out);
+			}
+		};
+	};
+	array.forEach(function(v, i) {
+		v.then(onSuccess(i), function(a) {
+			promise.reject(a);
+		});
+	});
+	return promise.promise;
+};
+catiline._hasWorker = typeof Worker !== 'undefined'&&typeof fakeLegacy === 'undefined';
+catiline.URL = window.URL || window.webkitURL;
+catiline._noTransferable=!catiline.URL;
+//regex out the importScript call and move it up to the top out of the function.
+function regexImports(string){
+	var rest=string;
+	var match = true;
+	var matches = {};
+	var loopFunc = function(a,b){
+		if(b){
+			'importScripts('+b.split(',').forEach(function(cc){
+				matches[catiline.makeUrl(cc.match(/\s*[\'\"](\S*)[\'\"]\s*/)[1])]=true; // trim whitespace, add to matches
+			})+');\n';
+		}
+	};
+	while(match){
+		match = rest.match(/(importScripts\(.*?\);?)/);
+		rest = rest.replace(/(importScripts\(\s*(?:[\'\"].*?[\'\"])?\s*\);?)/,'\n');
+		if(match){
+			match[0].replace(/importScripts\(\s*([\'\"].*?[\'\"])?\s*\);?/g,loopFunc);
+		}
+	}
+	matches = Object.keys(matches);
+	return [matches,rest];
+}
+
+function moveImports(string,after){
+	var str = regexImports(string);
+	var matches = str[0];
+	var rest = str[1];
+	if(matches.length>0){
+		return 'importScripts(\''+matches.join('\',\'')+after+rest;
+	}else{
+		return rest;
+	}
+}
+function getPath(){
+	if(typeof SHIM_WORKER_PATH !== 'undefined'){
+		return SHIM_WORKER_PATH;
+	}else if('SHIM_WORKER_PATH' in catiline){
+		return catiline.SHIM_WORKER_PATH;
+	}
+	var scripts = document.getElementsByTagName('script');
+	var len = scripts.length;
+	var i = 0;
+	while(i<len){
+		if(/catiline(\.min)?\.js/.test(scripts[i].src)){
+			return scripts[i].src;
+		}
+		i++;
+	}
+}
+function appendScript(iDoc,text){
+	var iScript = iDoc.createElement('script');
+	if (typeof iScript.text !== 'undefined') {
+		iScript.text = text;
+	} else {
+		iScript.innerHTML = text;
+	}
+	if(iDoc.readyState==='complete'){
+		iDoc.documentElement.appendChild(iScript);
+	}else{
+		iDoc.onreadystatechange=function(){
+			if(iDoc.readyState==='complete'){
+				iDoc.documentElement.appendChild(iScript);
+			}
+		};
+	}
+}
+//much of the iframe stuff inspired by https://github.com/padolsey/operative
+//most things besides the names have since been changed
+function actualMakeI(script,codeword){
+	var iFrame = document.createElement('iframe');
+	iFrame.style.display = 'none';
+	document.body.appendChild(iFrame);
+	var iDoc = iFrame.contentWindow.document;
+	var text=['try{ ',
+	'var __scripts__=\'\';function importScripts(scripts){',
+	'	if(Array.isArray(scripts)&&scripts.length>0){',
+	'		scripts.forEach(function(url){',
+	'			var ajax = new XMLHttpRequest();',
+	'			ajax.open(\'GET\',url,false);',
+	'			ajax.send();__scripts__+=ajax.responseText;',
+	'			__scripts__+=\'\\n;\';',
+	'		});',
+	'	}',
+	'};',
+	script,
+	'}catch(e){',
+	'	window.parent.postMessage([\''+codeword+'\',\'error\'],\'*\')',
+	'}'].join('\n');
+	appendScript(iDoc,text);
+	return iFrame;
+}
+function makeIframe(script,codeword){
+	var promise = catiline.deferred();
+	if(document.readyState==='complete'){
+		promise.resolve(actualMakeI(script,codeword));
+	}else{
+		window.addEventListener('load',function(){
+			promise.resolve(actualMakeI(script,codeword));
+		},false);
+	}
+	return promise.promise;
+}
+catiline.makeIWorker = function (strings,codeword){
+	var script =moveImports(strings.join(''),'\');eval(__scripts__);\n');
+	var worker = {onmessage:function(){}};
+	var ipromise = makeIframe(script,codeword);
+	window.addEventListener('message',function(e){
+		if(e.data.slice && e.data.slice(0,codeword.length) === codeword){
+			worker.onmessage({data:JSON.parse(e.data.slice(codeword.length))});
+		}
+	});
+	worker.postMessage=function(data){
+		ipromise.then(function(iFrame){
+			iFrame.contentWindow.postMessage(JSON.stringify(data),'*');
+		});
+	};
+	worker.terminate=function(){
+		ipromise.then(function(iFrame){
+			document.body.removeChild(iFrame);
+		});
+	};
+	return worker;
+	
+};
+
+function makeFallbackWorker(script){
+	catiline._noTransferable=true;
+	var worker = new Worker(getPath());
+	worker.postMessage(script);
+	return worker;
+}
+//accepts an array of strings, joins them, and turns them into a worker.
+catiline.makeWorker = function (strings, codeword){
+	if(!catiline._hasWorker){
+		return catiline.makeIWorker(strings,codeword);
+	}
+	var worker;
+	var script = moveImports(strings.join('\n'),'\');\n');
+	if(catiline._noTransferable){
+		return makeFallbackWorker(script);
+	}
+	try{
+		worker= new Worker(catiline.URL.createObjectURL(new Blob([script],{type: 'text/javascript'})));
+	}catch(e){
+		try{
+			worker=makeFallbackWorker(script);
+		}catch(ee){
+			worker = catiline.makeIWorker(strings,codeword);
+		}
+	}finally{
+		return worker;
+	}
+};
+
+catiline.makeUrl = function (fileName) {
+	var link = document.createElement('link');
+	link.href = fileName;
+	return link.href;
+};
+
+function stringifyObject(obj){
+	var out = '{';
+	var first = true;
+	for(var key in obj){
+		if(first){
+			first = false;
+		}else{
+			out+=',';
+		}
+		out += key;
+		out += ':';
+		out += catiline.stringify(obj[key]);
+	}
+	out += '}';
+	return out;
+}
+function stringifyArray(array){
+	if(array.length){
+		var out = '[';
+		out += catiline.stringify(array[0]);
+		var i = 0;
+		var len = array.length;
+		while(++i<len){
+			out += ',';
+			out += catiline.stringify(array[i]);
+		}
+		out += ']';
+		return out;
+	}else{
+		return '[]';
+	}
+}
+catiline.stringify = function(thing){
+	if(Array.isArray(thing)){
+		return stringifyArray(thing);
+	}else if(typeof thing === 'function'||typeof thing === 'number'||typeof thing === 'boolean'){
+		return thing.toString();
+	}else if(typeof thing === 'string'){
+		return '"' + thing + '"';
+	}else if(thing.toString() === '[object Object]'){
+		return stringifyObject(thing);
+	}
+};
+
+var workerSetup = function(context) {
+	self.__iFrame__ = typeof document !== 'undefined';
+	self.__self__ = {
+		onmessage: function(e) {
+			context.trigger('messege', e.data[1]);
+			if (e.data[0][0] === context.__codeWord__) {
+				return regMsg(e);
+			}
+			else {
+				context.trigger(e.data[0][0], e.data[1]);
+			}
+		}
+	};
+	if (__iFrame__) {
+		window.onmessage = function(e) {
+			if (typeof e.data === 'string') {
+				e = {
+					data: JSON.parse(e.data)
+				};
+			}
+			__self__.onmessage(e);
+		};
+	}
+	else {
+		self.onmessage = __self__.onmessage;
+	}
+	__self__.postMessage = function(rawData, transfer) {
+		if (!self._noTransferable && !__iFrame__) {
+			self.postMessage(rawData, transfer);
+		}
+		else if (__iFrame__) {
+			var data = context.__codeWord__ + JSON.stringify(rawData);
+			window.parent.postMessage(data, '*');
+		}
+		else if (self._noTransferable) {
+			self.postMessage(rawData);
+		}
+	};
+	self.console = {};
+	var regMsg = function(e) {
+		var cb = function(data, transfer) {
+			__self__.postMessage([e.data[0], data], transfer);
+		};
+		var result;
+		if (__iFrame__) {
+			try {
+				result = context[e.data[1]](e.data[2], cb, context);
+			}
+			catch (ee) {
+				context.fire('error', JSON.stringify(ee));
+			}
+		}
+		else {
+			result = context[e.data[1]](e.data[2], cb, context);
+		}
+		if (typeof result !== 'undefined') {
+			cb(result);
+		}
+	};
+};
+function addEvents(context, msg) {
+	var listeners = {};
+	var sendMessage;
+	if(typeof __self__ !== 'undefined'){
+		sendMessage = __self__.postMessage;
+	}else if (msg) {
+		sendMessage = msg;
+	}
+	context.on = function(eventName, func, scope) {
+		scope = scope || context;
+		if (eventName.indexOf(' ') > 0) {
+			eventName.split(' ').map(function(v) {
+				return context.on(v, func, scope);
+			}, this);
+			return context;
+		}
+		if (!(eventName in listeners)) {
+			listeners[eventName] = [];
+		}
+		var newFunc = function(a) {
+			func.call(scope, a, scope);
+		};
+		newFunc.orig = func;
+		listeners[eventName].push(newFunc);
+		return context;
+	};
+	context.one = function(eventName, func, scope) {
+		scope = scope || context;
+
+		function ourFunc(a) {
+			context.off(eventName, ourFunc);
+			func.call(scope, a, scope);
+		}
+		return context.on(eventName, ourFunc);
+	};
+
+	context.trigger = function(eventName, data) {
+		if (eventName.indexOf(' ') > 0) {
+			eventName.split(' ').forEach(function(v) {
+				context.trigger(v, data);
+			});
+			return context;
+		}
+		if (!(eventName in listeners)) {
+			return context;
+		}
+		listeners[eventName].forEach(function(v) {
+			v(data);
+		});
+		return context;
+	};
+	context.fire = function(eventName, data, transfer) {
+		sendMessage([[eventName],data],transfer);
+		return context;
+	};
+	context.off = function(eventName, func) {
+		if (eventName.indexOf(' ') > 0) {
+			eventName.split(' ').map(function(v) {
+				return context.off(v, func);
+			});
+			return context;
+		}
+		if (!(eventName in listeners)) {
+			return context;
+		}
+		else {
+			if (func) {
+				listeners[eventName] = listeners[eventName].map(function(a) {
+					if (a.orig === func) {
+						return false;
+					}
+					else {
+						return a;
+					}
+				}).filter(function(a) {
+					return a;
+				});
+			}
+			else {
+				delete listeners[eventName];
+			}
+		}
+		return context;
+	};
+}
+function makeConsole(msg) {
+	if (typeof console !== 'undefined') {
+		var method = console[msg[0]] ? msg[0] : 'log';
+		if (typeof console[method].apply === 'undefined') {
+			console[method](msg[1].join(' '));
+		}
+		else {
+			console[method].apply(console, msg[1]);
+		}
+	}
+}
+function makeWorkerConsole(context){
+	function makeConsole(method) {
+		return function() {
+			var len = arguments.length;
+			var out = [];
+			var i = 0;
+			while (i < len) {
+				out.push(arguments[i]);
+				i++;
+			}
+			context.fire('console', [method, out]);
+		};
+	}
+	['log', 'debug', 'error', 'info', 'warn', 'time', 'timeEnd'].forEach(function(v) {
+		console[v] = makeConsole(v);
+	});
+}
+function Catiline(obj) {
+	if (typeof obj === 'function') {
+		obj = {
+			data: obj
+		};
+	}
+	var codeWord = 'com.catilinejs.' + (Catiline._hasWorker ? 'iframe' : 'worker') + Math.random();
+	var self = this;
+	var promises = [];
+	addEvents(self, function(data, transfer) {
+		if (catiline._noTransferable) {
+			worker.postMessage(data);
+		}
+		else {
+			worker.postMessage(data, transfer);
+		}
+	});
+	var rejectPromises = function(msg) {
+		if (typeof msg !== 'string' && 'preventDefault' in msg) {
+			msg.preventDefault();
+			msg = msg.message;
+		}
+		promises.forEach(function(p) {
+			if (p) {
+				p.reject(msg);
+			}
+		});
+	};
+	obj.__codeWord__ = codeWord;
+	obj.__initialize__ = [workerSetup, addEvents, makeWorkerConsole];
+	if (!('initialize' in obj)) {
+		if ('init' in obj) {
+			obj.__initialize__.push(obj.init);
+		}
+	}
+	else {
+		obj.__initialize__.push(obj.initialize);
+	}
+
+	if (!('events' in obj)) {
+		obj.events = {};
+	}
+	if ('listners' in obj && typeof obj.listners !== 'function') {
+		for (var key in obj.listners) {
+			self.on(key, obj.listners[key]);
+		}
+	}
+	var fObj = 'var _db = {\n\t';
+	var keyFunc = function(key) {
+		var out = function(data, transfer) {
+			var i = promises.length;
+			promises[i] = catiline.deferred();
+			if (catiline._noTransferable) {
+				worker.postMessage([
+					[codeWord, i], key, data]);
+			}
+			else {
+				worker.postMessage([
+					[codeWord, i], key, data], transfer);
+			}
+			return promises[i].promise;
+		};
+		return out;
+	};
+	var i = false;
+	for (var key$0 in obj) {
+		if(['listners','initialize','init'].indexOf(key$0)>-1){
+			continue;
+		}
+		if (i) {
+			fObj += ',\n\t';
+		}
+		else {
+			i = true;
+		}
+		if (typeof obj[key$0] === 'function') {
+			fObj = fObj + key$0 + ':' + obj[key$0].toString();
+			self[key$0] = keyFunc(key$0);
+		}
+		else {
+			var outThing = catiline.stringify(obj[key$0]);
+			if (typeof outThing !== 'undefined') {
+				fObj = fObj + key$0 + ':' + outThing;
+			}
+		}
+	}
+	fObj = fObj + '};';
+	var worker = catiline.makeWorker(['\'use strict\';', '',
+	fObj, '_db.__initialize__.forEach(function(f){', '	f.call(_db,_db);', '});', 'for(var key in _db.events){', '	_db.on(key,_db.events[key]);', '}'], codeWord);
+	worker.onmessage = function(e) {
+		self.trigger('message', e.data[1]);
+		if (e.data[0][0] === codeWord) {
+			promises[e.data[0][1]].resolve(e.data[1]);
+			promises[e.data[0][1]] = 0;
+		}
+		else {
+			self.trigger(e.data[0][0], e.data[1]);
+		}
+	};
+	self.on('error', rejectPromises);
+	worker.onerror = function(e) {
+		self.trigger('error', e);
+	};
+	self.on('console', makeConsole);
+	self._close = function() {
+		worker.terminate();
+		rejectPromises('closed');
+		return catiline.resolve();
+	};
+	if (!('close' in self)) {
+		self.close = self._close;
+	}
+}
+catiline.Worker = Catiline;
+
+catiline.worker = function(obj){
+    return new Catiline(obj);
+};
+function makeActualKeyFuncs(resolvePromises, self) {
+	return {
+		keyFunc: function(k) {
+			return function(data, transfer) {
+				return resolvePromises(k, data, transfer);
+			};
+		},
+		keyFuncBatch: function(k) {
+			return function(array) {
+				return catiline.all(array.map(function(data) {
+					return resolvePromises(k, data);
+				}));
+			};
+		},
+		keyFuncBatchCB: function(k) {
+			return function(array) {
+				return catiline.all(array.map(function(data) {
+					return resolvePromises(k, data).then(self.__cb__);
+				}));
+			};
+		},
+		keyFuncBatchTransfer: function(k) {
+			return function(array) {
+				return catiline.all(array.map(function(data) {
+					return resolvePromises(k, data[0], data[1]);
+				}));
+			};
+		},
+		keyFuncBatchTransferCB: function(k) {
+			return function(array) {
+				return catiline.all(array.map(function(data) {
+					return resolvePromises(k, data[0], data[1]).then(self.__cb__);
+				}));
+			};
+		}
+	};
+}
+function makeKeyFuncs(resolvePromises, self, obj){
+	var funcs = makeActualKeyFuncs(resolvePromises, self);
+	for (var key in obj) {
+		self[key] = funcs.keyFunc(key);
+		self.batch[key] = funcs.keyFuncBatch(key);
+		self.__batchcb__[key] = funcs.keyFuncBatchCB(key);
+		self.batchTransfer[key] = funcs.keyFuncBatchTransfer(key);
+		self.__batchtcb__[key] = funcs.keyFuncBatchTransferCB(key);
+	}
+}
+function addBatchEvents(self, workers, n){
+	self.on = function (eventName, func, context) {
+		workers.forEach(function (worker) {
+			worker.on(eventName, func, context);
+		});
+		return self;
+	};
+	self.off = function (eventName, func, context) {
+		workers.forEach(function (worker) {
+			worker.off(eventName, func, context);
+		});
+		return self;
+	};
+	self.fire = function (eventName, data) {
+		workers[~~ (Math.random() * n)].fire(eventName, data);
+		return self;
+	};
+}
+function makeUnmanaged(workers, n){
+	return function(key, data, transfer, promise){
+		promise.promise.cancel = function(reason){
+			return promise.reject(reason);
+		};
+		workers[~~ (Math.random() * n)][key](data, transfer).then(function(v){
+			return promise.resolve(v);
+		},function(v){
+			return promise.reject(v);
+		});
+		return promise.promise;
+	};
+}
+function makeQueueWorkers(n,idle,obj){
+	var workers = [];
+	var numIdle = -1;
+	while (++numIdle < n) {
+		workers[numIdle] = new catiline.Worker(obj);
+		idle.push(numIdle);
+	}
+	return workers;
+}
+function CatilineQueue(obj, n, dumb) {
+	var self = this;
+	var numIdle = n;
+	var idle = [];
+	var que = [];
+	var queueLen = 0;
+	var workers = makeQueueWorkers(n,idle,obj);
+	addBatchEvents(self, workers, n);
+	var batchFire = function (eventName, data) {
+		workers.forEach(function (worker) {
+			worker.fire(eventName, data);
+		});
+		return self;
+	};
+	
+	self.batch.fire = batchFire;
+	self.batchTransfer.fire = batchFire;
+
+	function clearQueue(mgs) {
+		mgs = mgs || 'canceled';
+		queueLen = 0;
+		var oQ = que;
+		que = [];
+		oQ.forEach(function (p) {
+			p[3].reject(mgs);
+		});
+		return self;
+	}
+	self.clearQueue = clearQueue;
+	makeKeyFuncs(resolvePromises, self, obj);
+	
+
+	function done(num) {
+		if (queueLen) {
+			var data = que.shift();
+			queueLen--;
+			workers[num][data[0]](data[1], data[2]).then(function (d) {
+				done(num);
+				data[3].resolve(d);
+			}, function (d) {
+				done(num);
+				data[3].reject(d);
+			});
+		}
+		else {
+			numIdle++;
+			idle.push(num);
+		}
+	}
+	var resolveUnmanagedPromises;
+	if(dumb){
+		resolveUnmanagedPromises = makeUnmanaged(workers, n);
+	}
+	function resolvePromises(key, data, transfer) { //srsly better name!
+		var promise = catiline.deferred();
+		if (dumb) {
+			return resolveUnmanagedPromises(key, data, transfer,promise);
+		}
+		if (!queueLen && numIdle) {
+			var num = idle.pop();
+			numIdle--;
+			promise.promise.cancel = function(reason){
+				return promise.reject(reason);
+			};
+			workers[num][key](data, transfer).then(function (d) {
+				done(num);
+				promise.resolve(d);
+			}, function (d) {
+				done(num);
+				promise.reject(d);
+			});
+		} else if (queueLen || !numIdle) {
+			var queueItem = [key, data, transfer, promise];
+			promise.promise.cancel = function(reason){
+				var loc = que.indexOf(queueItem);
+				if(loc>-1){
+					que.splice(loc,1);
+					queueLen--;
+				}
+				return promise.reject(reason);
+			};
+			queueLen = que.push(queueItem);
+		}
+		return promise.promise;
+	}
+	self._close = function () {
+		return catiline.all(workers.map(function (w) {
+			return w._close();
+		}));
+	};
+	if (!('close' in self)) {
+		self.close = self._close;
+	}
+}
+CatilineQueue.prototype.__batchcb__ = {};
+CatilineQueue.prototype.__batchtcb__ = {};
+CatilineQueue.prototype.batch = function (cb) {
+	if (typeof cb === 'function') {
+		this.__cb__ = cb;
+		return this.__batchcb__;
+	}
+	else {
+		return this.clearQueue(cb);
+	}
+};
+CatilineQueue.prototype.batchTransfer = function (cb) {
+	if (typeof cb === 'function') {
+		this.__batchtcb__.__cb__ = cb;
+		return this.__batchtcb__;
+	}
+	else {
+		return this.clearQueue(cb);
+	}
+};
+catiline.Queue = CatilineQueue;
+catiline.queue = function (obj, n, dumb) {
+	return new catiline.Queue(obj, n, dumb);
+};
+
+function catiline(object,queueLength,unmanaged){
+	if(arguments.length === 1 || !queueLength || queueLength <= 1){
+		return new catiline.Worker(object);
+	}else{
+		return new catiline.Queue(object,queueLength,unmanaged);
+	}
+}
+//will be removed in v3
+catiline.setImmediate = catiline.nextTick;
+function initBrowser(catiline){
+	var origCW = global.cw;
+	catiline.noConflict=function(newName){
+		global.cw = origCW;
+		if(newName){
+			global[newName]=catiline;
+		}
+	};
+	global.catiline = catiline;
+	global.cw = catiline;
+	if(!('communist' in global)){
+		global.communist=catiline;
+	}
+
+}
+
+if(typeof define === 'function'){
+	define(function(require){
+		catiline.SHIM_WORKER_PATH=require.toUrl('./catiline.js');
+		return catiline;
+	});
+}else if(typeof module === 'undefined' || !('exports' in module)){
+	initBrowser(catiline);
+} else {
+	module.exports=catiline;
+}catiline.version = '2.9.3';
+})(this);}
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/fancybox/dist/js/jquery.fancybox.cjs.js":[function(require,module,exports){
 /*!
  * fancyBox - jQuery Plugin
@@ -9112,6 +10066,17 @@ if (typeof require !== 'undefined' && require.extensions) {
 
 })();
 
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-draw/dist/leaflet.draw.js":[function(require,module,exports){
+/*
+	Leaflet.draw, a plugin that adds drawing and editing tools to Leaflet powered maps.
+	(c) 2012-2013, Jacob Toye, Smartrak
+
+	https://github.com/Leaflet/Leaflet.draw
+	http://leafletjs.com
+	https://github.com/jacobtoye
+*/
+!function(t,e){L.drawVersion="0.2.4-dev",L.drawLocal={draw:{toolbar:{actions:{title:"Cancel drawing",text:"Cancel"},undo:{title:"Delete last point drawn",text:"Delete last point"},buttons:{polyline:"Draw a polyline",polygon:"Draw a polygon",rectangle:"Draw a rectangle",circle:"Draw a circle",marker:"Draw a marker"}},handlers:{circle:{tooltip:{start:"Click and drag to draw circle."}},marker:{tooltip:{start:"Click map to place marker."}},polygon:{tooltip:{start:"Click to start drawing shape.",cont:"Click to continue drawing shape.",end:"Click first point to close this shape."}},polyline:{error:"<strong>Error:</strong> shape edges cannot cross!",tooltip:{start:"Click to start drawing line.",cont:"Click to continue drawing line.",end:"Click last point to finish line."}},rectangle:{tooltip:{start:"Click and drag to draw rectangle."}},simpleshape:{tooltip:{end:"Release mouse to finish drawing."}}}},edit:{toolbar:{actions:{save:{title:"Save changes.",text:"Save"},cancel:{title:"Cancel editing, discards all changes.",text:"Cancel"}},buttons:{edit:"Edit layers.",editDisabled:"No layers to edit.",remove:"Delete layers.",removeDisabled:"No layers to delete."}},handlers:{edit:{tooltip:{text:"Drag handles, or marker to edit feature.",subtext:"Click cancel to undo changes."}},remove:{tooltip:{text:"Click on a feature to remove"}}}}},L.Draw={},L.Draw.Feature=L.Handler.extend({includes:L.Mixin.Events,initialize:function(t,e){this._map=t,this._container=t._container,this._overlayPane=t._panes.overlayPane,this._popupPane=t._panes.popupPane,e&&e.shapeOptions&&(e.shapeOptions=L.Util.extend({},this.options.shapeOptions,e.shapeOptions)),L.setOptions(this,e)},enable:function(){this._enabled||(this.fire("enabled",{handler:this.type}),this._map.fire("draw:drawstart",{layerType:this.type}),L.Handler.prototype.enable.call(this))},disable:function(){this._enabled&&(L.Handler.prototype.disable.call(this),this._map.fire("draw:drawstop",{layerType:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(L.DomUtil.disableTextSelection(),t.getContainer().focus(),this._tooltip=new L.Tooltip(this._map),L.DomEvent.on(this._container,"keyup",this._cancelDrawing,this))},removeHooks:function(){this._map&&(L.DomUtil.enableTextSelection(),this._tooltip.dispose(),this._tooltip=null,L.DomEvent.off(this._container,"keyup",this._cancelDrawing,this))},setOptions:function(t){L.setOptions(this,t)},_fireCreatedEvent:function(t){this._map.fire("draw:created",{layer:t,layerType:this.type})},_cancelDrawing:function(t){27===t.keyCode&&this.disable()}}),L.Draw.Polyline=L.Draw.Feature.extend({statics:{TYPE:"polyline"},Poly:L.Polyline,options:{allowIntersection:!0,repeatMode:!1,drawError:{color:"#b00b00",timeout:2500},icon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon"}),guidelineDistance:20,maxGuideLineLength:4e3,shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!1,clickable:!0},metric:!0,showLength:!0,zIndexOffset:2e3},initialize:function(t,e){this.options.drawError.message=L.drawLocal.draw.handlers.polyline.error,e&&e.drawError&&(e.drawError=L.Util.extend({},this.options.drawError,e.drawError)),this.type=L.Draw.Polyline.TYPE,L.Draw.Feature.prototype.initialize.call(this,t,e)},addHooks:function(){L.Draw.Feature.prototype.addHooks.call(this),this._map&&(this._markers=[],this._markerGroup=new L.LayerGroup,this._map.addLayer(this._markerGroup),this._poly=new L.Polyline([],this.options.shapeOptions),this._tooltip.updateContent(this._getTooltipText()),this._mouseMarker||(this._mouseMarker=L.marker(this._map.getCenter(),{icon:L.divIcon({className:"leaflet-mouse-marker",iconAnchor:[20,20],iconSize:[40,40]}),opacity:0,zIndexOffset:this.options.zIndexOffset})),this._mouseMarker.on("mousedown",this._onMouseDown,this).addTo(this._map),this._map.on("mousemove",this._onMouseMove,this).on("mouseup",this._onMouseUp,this).on("zoomend",this._onZoomEnd,this))},removeHooks:function(){L.Draw.Feature.prototype.removeHooks.call(this),this._clearHideErrorTimeout(),this._cleanUpShape(),this._map.removeLayer(this._markerGroup),delete this._markerGroup,delete this._markers,this._map.removeLayer(this._poly),delete this._poly,this._mouseMarker.off("mousedown",this._onMouseDown,this).off("mouseup",this._onMouseUp,this),this._map.removeLayer(this._mouseMarker),delete this._mouseMarker,this._clearGuides(),this._map.off("mousemove",this._onMouseMove,this).off("zoomend",this._onZoomEnd,this)},deleteLastVertex:function(){if(!(this._markers.length<=1)){var t=this._markers.pop(),e=this._poly,i=this._poly.spliceLatLngs(e.getLatLngs().length-1,1)[0];this._markerGroup.removeLayer(t),e.getLatLngs().length<2&&this._map.removeLayer(e),this._vertexChanged(i,!1)}},addVertex:function(t){var e=this._markers.length;return e>0&&!this.options.allowIntersection&&this._poly.newLatLngIntersects(t)?(this._showErrorTooltip(),void 0):(this._errorShown&&this._hideErrorTooltip(),this._markers.push(this._createMarker(t)),this._poly.addLatLng(t),2===this._poly.getLatLngs().length&&this._map.addLayer(this._poly),this._vertexChanged(t,!0),void 0)},_finishShape:function(){var t=this._poly.newLatLngIntersects(this._poly.getLatLngs()[0],!0);return!this.options.allowIntersection&&t||!this._shapeIsValid()?(this._showErrorTooltip(),void 0):(this._fireCreatedEvent(),this.disable(),this.options.repeatMode&&this.enable(),void 0)},_shapeIsValid:function(){return!0},_onZoomEnd:function(){this._updateGuide()},_onMouseMove:function(t){var e=t.layerPoint,i=t.latlng;this._currentLatLng=i,this._updateTooltip(i),this._updateGuide(e),this._mouseMarker.setLatLng(i),L.DomEvent.preventDefault(t.originalEvent)},_vertexChanged:function(t,e){this._updateFinishHandler(),this._updateRunningMeasure(t,e),this._clearGuides(),this._updateTooltip()},_onMouseDown:function(t){var e=t.originalEvent;this._mouseDownOrigin=L.point(e.clientX,e.clientY)},_onMouseUp:function(e){if(this._mouseDownOrigin){var i=L.point(e.originalEvent.clientX,e.originalEvent.clientY).distanceTo(this._mouseDownOrigin);Math.abs(i)<9*(t.devicePixelRatio||1)&&this.addVertex(e.latlng)}this._mouseDownOrigin=null},_updateFinishHandler:function(){var t=this._markers.length;t>1&&this._markers[t-1].on("click",this._finishShape,this),t>2&&this._markers[t-2].off("click",this._finishShape,this)},_createMarker:function(t){var e=new L.Marker(t,{icon:this.options.icon,zIndexOffset:2*this.options.zIndexOffset});return this._markerGroup.addLayer(e),e},_updateGuide:function(t){var e=this._markers.length;e>0&&(t=t||this._map.latLngToLayerPoint(this._currentLatLng),this._clearGuides(),this._drawGuide(this._map.latLngToLayerPoint(this._markers[e-1].getLatLng()),t))},_updateTooltip:function(t){var e=this._getTooltipText();t&&this._tooltip.updatePosition(t),this._errorShown||this._tooltip.updateContent(e)},_drawGuide:function(t,e){var i,o,a,s=Math.floor(Math.sqrt(Math.pow(e.x-t.x,2)+Math.pow(e.y-t.y,2))),r=this.options.guidelineDistance,n=this.options.maxGuideLineLength,l=s>n?s-n:r;for(this._guidesContainer||(this._guidesContainer=L.DomUtil.create("div","leaflet-draw-guides",this._overlayPane));s>l;l+=this.options.guidelineDistance)i=l/s,o={x:Math.floor(t.x*(1-i)+i*e.x),y:Math.floor(t.y*(1-i)+i*e.y)},a=L.DomUtil.create("div","leaflet-draw-guide-dash",this._guidesContainer),a.style.backgroundColor=this._errorShown?this.options.drawError.color:this.options.shapeOptions.color,L.DomUtil.setPosition(a,o)},_updateGuideColor:function(t){if(this._guidesContainer)for(var e=0,i=this._guidesContainer.childNodes.length;i>e;e++)this._guidesContainer.childNodes[e].style.backgroundColor=t},_clearGuides:function(){if(this._guidesContainer)for(;this._guidesContainer.firstChild;)this._guidesContainer.removeChild(this._guidesContainer.firstChild)},_getTooltipText:function(){var t,e,i=this.options.showLength;return 0===this._markers.length?t={text:L.drawLocal.draw.handlers.polyline.tooltip.start}:(e=i?this._getMeasurementString():"",t=1===this._markers.length?{text:L.drawLocal.draw.handlers.polyline.tooltip.cont,subtext:e}:{text:L.drawLocal.draw.handlers.polyline.tooltip.end,subtext:e}),t},_updateRunningMeasure:function(t,e){var i,o,a=this._markers.length;1===this._markers.length?this._measurementRunningTotal=0:(i=a-(e?2:1),o=t.distanceTo(this._markers[i].getLatLng()),this._measurementRunningTotal+=o*(e?1:-1))},_getMeasurementString:function(){var t,e=this._currentLatLng,i=this._markers[this._markers.length-1].getLatLng();return t=this._measurementRunningTotal+e.distanceTo(i),L.GeometryUtil.readableDistance(t,this.options.metric)},_showErrorTooltip:function(){this._errorShown=!0,this._tooltip.showAsError().updateContent({text:this.options.drawError.message}),this._updateGuideColor(this.options.drawError.color),this._poly.setStyle({color:this.options.drawError.color}),this._clearHideErrorTimeout(),this._hideErrorTimeout=setTimeout(L.Util.bind(this._hideErrorTooltip,this),this.options.drawError.timeout)},_hideErrorTooltip:function(){this._errorShown=!1,this._clearHideErrorTimeout(),this._tooltip.removeError().updateContent(this._getTooltipText()),this._updateGuideColor(this.options.shapeOptions.color),this._poly.setStyle({color:this.options.shapeOptions.color})},_clearHideErrorTimeout:function(){this._hideErrorTimeout&&(clearTimeout(this._hideErrorTimeout),this._hideErrorTimeout=null)},_cleanUpShape:function(){this._markers.length>1&&this._markers[this._markers.length-1].off("click",this._finishShape,this)},_fireCreatedEvent:function(){var t=new this.Poly(this._poly.getLatLngs(),this.options.shapeOptions);L.Draw.Feature.prototype._fireCreatedEvent.call(this,t)}}),L.Draw.Polygon=L.Draw.Polyline.extend({statics:{TYPE:"polygon"},Poly:L.Polygon,options:{showArea:!1,shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!0,fillColor:null,fillOpacity:.2,clickable:!0}},initialize:function(t,e){L.Draw.Polyline.prototype.initialize.call(this,t,e),this.type=L.Draw.Polygon.TYPE},_updateFinishHandler:function(){var t=this._markers.length;1===t&&this._markers[0].on("click",this._finishShape,this),t>2&&(this._markers[t-1].on("dblclick",this._finishShape,this),t>3&&this._markers[t-2].off("dblclick",this._finishShape,this))},_getTooltipText:function(){var t,e;return 0===this._markers.length?t=L.drawLocal.draw.handlers.polygon.tooltip.start:this._markers.length<3?t=L.drawLocal.draw.handlers.polygon.tooltip.cont:(t=L.drawLocal.draw.handlers.polygon.tooltip.end,e=this._getMeasurementString()),{text:t,subtext:e}},_getMeasurementString:function(){var t=this._area;return t?L.GeometryUtil.readableArea(t,this.options.metric):null},_shapeIsValid:function(){return this._markers.length>=3},_vertexChanged:function(t,e){var i;!this.options.allowIntersection&&this.options.showArea&&(i=this._poly.getLatLngs(),this._area=L.GeometryUtil.geodesicArea(i)),L.Draw.Polyline.prototype._vertexChanged.call(this,t,e)},_cleanUpShape:function(){var t=this._markers.length;t>0&&(this._markers[0].off("click",this._finishShape,this),t>2&&this._markers[t-1].off("dblclick",this._finishShape,this))}}),L.SimpleShape={},L.Draw.SimpleShape=L.Draw.Feature.extend({options:{repeatMode:!1},initialize:function(t,e){this._endLabelText=L.drawLocal.draw.handlers.simpleshape.tooltip.end,L.Draw.Feature.prototype.initialize.call(this,t,e)},addHooks:function(){L.Draw.Feature.prototype.addHooks.call(this),this._map&&(this._mapDraggable=this._map.dragging.enabled(),this._mapDraggable&&this._map.dragging.disable(),this._container.style.cursor="crosshair",this._tooltip.updateContent({text:this._initialLabelText}),this._map.on("mousedown",this._onMouseDown,this).on("mousemove",this._onMouseMove,this))},removeHooks:function(){L.Draw.Feature.prototype.removeHooks.call(this),this._map&&(this._mapDraggable&&this._map.dragging.enable(),this._container.style.cursor="",this._map.off("mousedown",this._onMouseDown,this).off("mousemove",this._onMouseMove,this),L.DomEvent.off(e,"mouseup",this._onMouseUp,this),this._shape&&(this._map.removeLayer(this._shape),delete this._shape)),this._isDrawing=!1},_onMouseDown:function(t){this._isDrawing=!0,this._startLatLng=t.latlng,L.DomEvent.on(e,"mouseup",this._onMouseUp,this).preventDefault(t.originalEvent)},_onMouseMove:function(t){var e=t.latlng;this._tooltip.updatePosition(e),this._isDrawing&&(this._tooltip.updateContent({text:this._endLabelText}),this._drawShape(e))},_onMouseUp:function(){this._shape&&this._fireCreatedEvent(),this.disable(),this.options.repeatMode&&this.enable()}}),L.Draw.Rectangle=L.Draw.SimpleShape.extend({statics:{TYPE:"rectangle"},options:{shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!0,fillColor:null,fillOpacity:.2,clickable:!0}},initialize:function(t,e){this.type=L.Draw.Rectangle.TYPE,this._initialLabelText=L.drawLocal.draw.handlers.rectangle.tooltip.start,L.Draw.SimpleShape.prototype.initialize.call(this,t,e)},_drawShape:function(t){this._shape?this._shape.setBounds(new L.LatLngBounds(this._startLatLng,t)):(this._shape=new L.Rectangle(new L.LatLngBounds(this._startLatLng,t),this.options.shapeOptions),this._map.addLayer(this._shape))},_fireCreatedEvent:function(){var t=new L.Rectangle(this._shape.getBounds(),this.options.shapeOptions);L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this,t)}}),L.Draw.Circle=L.Draw.SimpleShape.extend({statics:{TYPE:"circle"},options:{shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!0,fillColor:null,fillOpacity:.2,clickable:!0},showRadius:!0,metric:!0},initialize:function(t,e){this.type=L.Draw.Circle.TYPE,this._initialLabelText=L.drawLocal.draw.handlers.circle.tooltip.start,L.Draw.SimpleShape.prototype.initialize.call(this,t,e)},_drawShape:function(t){this._shape?this._shape.setRadius(this._startLatLng.distanceTo(t)):(this._shape=new L.Circle(this._startLatLng,this._startLatLng.distanceTo(t),this.options.shapeOptions),this._map.addLayer(this._shape))},_fireCreatedEvent:function(){var t=new L.Circle(this._startLatLng,this._shape.getRadius(),this.options.shapeOptions);L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this,t)},_onMouseMove:function(t){var e,i=t.latlng,o=this.options.showRadius,a=this.options.metric;this._tooltip.updatePosition(i),this._isDrawing&&(this._drawShape(i),e=this._shape.getRadius().toFixed(1),this._tooltip.updateContent({text:this._endLabelText,subtext:o?"Radius: "+L.GeometryUtil.readableDistance(e,a):""}))}}),L.Draw.Marker=L.Draw.Feature.extend({statics:{TYPE:"marker"},options:{icon:new L.Icon.Default,repeatMode:!1,zIndexOffset:2e3},initialize:function(t,e){this.type=L.Draw.Marker.TYPE,L.Draw.Feature.prototype.initialize.call(this,t,e)},addHooks:function(){L.Draw.Feature.prototype.addHooks.call(this),this._map&&(this._tooltip.updateContent({text:L.drawLocal.draw.handlers.marker.tooltip.start}),this._mouseMarker||(this._mouseMarker=L.marker(this._map.getCenter(),{icon:L.divIcon({className:"leaflet-mouse-marker",iconAnchor:[20,20],iconSize:[40,40]}),opacity:0,zIndexOffset:this.options.zIndexOffset})),this._mouseMarker.on("click",this._onClick,this).addTo(this._map),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){L.Draw.Feature.prototype.removeHooks.call(this),this._map&&(this._marker&&(this._marker.off("click",this._onClick,this),this._map.off("click",this._onClick,this).removeLayer(this._marker),delete this._marker),this._mouseMarker.off("click",this._onClick,this),this._map.removeLayer(this._mouseMarker),delete this._mouseMarker,this._map.off("mousemove",this._onMouseMove,this))},_onMouseMove:function(t){var e=t.latlng;this._tooltip.updatePosition(e),this._mouseMarker.setLatLng(e),this._marker?(e=this._mouseMarker.getLatLng(),this._marker.setLatLng(e)):(this._marker=new L.Marker(e,{icon:this.options.icon,zIndexOffset:this.options.zIndexOffset}),this._marker.on("click",this._onClick,this),this._map.on("click",this._onClick,this).addLayer(this._marker))},_onClick:function(){this._fireCreatedEvent(),this.disable(),this.options.repeatMode&&this.enable()},_fireCreatedEvent:function(){var t=new L.Marker(this._marker.getLatLng(),{icon:this.options.icon});L.Draw.Feature.prototype._fireCreatedEvent.call(this,t)}}),L.Edit=L.Edit||{},L.Edit.Poly=L.Handler.extend({options:{icon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon"})},initialize:function(t,e){this._poly=t,L.setOptions(this,e)},addHooks:function(){this._poly._map&&(this._markerGroup||this._initMarkers(),this._poly._map.addLayer(this._markerGroup))},removeHooks:function(){this._poly._map&&(this._poly._map.removeLayer(this._markerGroup),delete this._markerGroup,delete this._markers)},updateMarkers:function(){this._markerGroup.clearLayers(),this._initMarkers()},_initMarkers:function(){this._markerGroup||(this._markerGroup=new L.LayerGroup),this._markers=[];var t,e,i,o,a=this._poly._latlngs;for(t=0,i=a.length;i>t;t++)o=this._createMarker(a[t],t),o.on("click",this._onMarkerClick,this),this._markers.push(o);var s,r;for(t=0,e=i-1;i>t;e=t++)(0!==t||L.Polygon&&this._poly instanceof L.Polygon)&&(s=this._markers[e],r=this._markers[t],this._createMiddleMarker(s,r),this._updatePrevNext(s,r))},_createMarker:function(t,e){var i=new L.Marker(t,{draggable:!0,icon:this.options.icon});return i._origLatLng=t,i._index=e,i.on("drag",this._onMarkerDrag,this),i.on("dragend",this._fireEdit,this),this._markerGroup.addLayer(i),i},_removeMarker:function(t){var e=t._index;this._markerGroup.removeLayer(t),this._markers.splice(e,1),this._poly.spliceLatLngs(e,1),this._updateIndexes(e,-1),t.off("drag",this._onMarkerDrag,this).off("dragend",this._fireEdit,this).off("click",this._onMarkerClick,this)},_fireEdit:function(){this._poly.edited=!0,this._poly.fire("edit")},_onMarkerDrag:function(t){var e=t.target;L.extend(e._origLatLng,e._latlng),e._middleLeft&&e._middleLeft.setLatLng(this._getMiddleLatLng(e._prev,e)),e._middleRight&&e._middleRight.setLatLng(this._getMiddleLatLng(e,e._next)),this._poly.redraw()},_onMarkerClick:function(t){var e=L.Polygon&&this._poly instanceof L.Polygon?4:3,i=t.target;this._poly._latlngs.length<e||(this._removeMarker(i),this._updatePrevNext(i._prev,i._next),i._middleLeft&&this._markerGroup.removeLayer(i._middleLeft),i._middleRight&&this._markerGroup.removeLayer(i._middleRight),i._prev&&i._next?this._createMiddleMarker(i._prev,i._next):i._prev?i._next||(i._prev._middleRight=null):i._next._middleLeft=null,this._fireEdit())},_updateIndexes:function(t,e){this._markerGroup.eachLayer(function(i){i._index>t&&(i._index+=e)})},_createMiddleMarker:function(t,e){var i,o,a,s=this._getMiddleLatLng(t,e),r=this._createMarker(s);r.setOpacity(.6),t._middleRight=e._middleLeft=r,o=function(){var o=e._index;r._index=o,r.off("click",i,this).on("click",this._onMarkerClick,this),s.lat=r.getLatLng().lat,s.lng=r.getLatLng().lng,this._poly.spliceLatLngs(o,0,s),this._markers.splice(o,0,r),r.setOpacity(1),this._updateIndexes(o,1),e._index++,this._updatePrevNext(t,r),this._updatePrevNext(r,e),this._poly.fire("editstart")},a=function(){r.off("dragstart",o,this),r.off("dragend",a,this),this._createMiddleMarker(t,r),this._createMiddleMarker(r,e)},i=function(){o.call(this),a.call(this),this._fireEdit()},r.on("click",i,this).on("dragstart",o,this).on("dragend",a,this),this._markerGroup.addLayer(r)},_updatePrevNext:function(t,e){t&&(t._next=e),e&&(e._prev=t)},_getMiddleLatLng:function(t,e){var i=this._poly._map,o=i.project(t.getLatLng()),a=i.project(e.getLatLng());return i.unproject(o._add(a)._divideBy(2))}}),L.Polyline.addInitHook(function(){this.editing||(L.Edit.Poly&&(this.editing=new L.Edit.Poly(this),this.options.editable&&this.editing.enable()),this.on("add",function(){this.editing&&this.editing.enabled()&&this.editing.addHooks()}),this.on("remove",function(){this.editing&&this.editing.enabled()&&this.editing.removeHooks()}))}),L.Edit=L.Edit||{},L.Edit.SimpleShape=L.Handler.extend({options:{moveIcon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon leaflet-edit-move"}),resizeIcon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon leaflet-edit-resize"})},initialize:function(t,e){this._shape=t,L.Util.setOptions(this,e)},addHooks:function(){this._shape._map&&(this._map=this._shape._map,this._markerGroup||this._initMarkers(),this._map.addLayer(this._markerGroup))},removeHooks:function(){if(this._shape._map){this._unbindMarker(this._moveMarker);for(var t=0,e=this._resizeMarkers.length;e>t;t++)this._unbindMarker(this._resizeMarkers[t]);this._resizeMarkers=null,this._map.removeLayer(this._markerGroup),delete this._markerGroup}this._map=null},updateMarkers:function(){this._markerGroup.clearLayers(),this._initMarkers()},_initMarkers:function(){this._markerGroup||(this._markerGroup=new L.LayerGroup),this._createMoveMarker(),this._createResizeMarker()},_createMoveMarker:function(){},_createResizeMarker:function(){},_createMarker:function(t,e){var i=new L.Marker(t,{draggable:!0,icon:e,zIndexOffset:10});return this._bindMarker(i),this._markerGroup.addLayer(i),i},_bindMarker:function(t){t.on("dragstart",this._onMarkerDragStart,this).on("drag",this._onMarkerDrag,this).on("dragend",this._onMarkerDragEnd,this)},_unbindMarker:function(t){t.off("dragstart",this._onMarkerDragStart,this).off("drag",this._onMarkerDrag,this).off("dragend",this._onMarkerDragEnd,this)},_onMarkerDragStart:function(t){var e=t.target;e.setOpacity(0),this._shape.fire("editstart")},_fireEdit:function(){this._shape.edited=!0,this._shape.fire("edit")},_onMarkerDrag:function(t){var e=t.target,i=e.getLatLng();e===this._moveMarker?this._move(i):this._resize(i),this._shape.redraw()},_onMarkerDragEnd:function(t){var e=t.target;e.setOpacity(1),this._fireEdit()},_move:function(){},_resize:function(){}}),L.Edit=L.Edit||{},L.Edit.Rectangle=L.Edit.SimpleShape.extend({_createMoveMarker:function(){var t=this._shape.getBounds(),e=t.getCenter();this._moveMarker=this._createMarker(e,this.options.moveIcon)},_createResizeMarker:function(){var t=this._getCorners();this._resizeMarkers=[];for(var e=0,i=t.length;i>e;e++)this._resizeMarkers.push(this._createMarker(t[e],this.options.resizeIcon)),this._resizeMarkers[e]._cornerIndex=e},_onMarkerDragStart:function(t){L.Edit.SimpleShape.prototype._onMarkerDragStart.call(this,t);var e=this._getCorners(),i=t.target,o=i._cornerIndex;this._oppositeCorner=e[(o+2)%4],this._toggleCornerMarkers(0,o)},_onMarkerDragEnd:function(t){var e,i,o=t.target;o===this._moveMarker&&(e=this._shape.getBounds(),i=e.getCenter(),o.setLatLng(i)),this._toggleCornerMarkers(1),this._repositionCornerMarkers(),L.Edit.SimpleShape.prototype._onMarkerDragEnd.call(this,t)},_move:function(t){for(var e,i=this._shape.getLatLngs(),o=this._shape.getBounds(),a=o.getCenter(),s=[],r=0,n=i.length;n>r;r++)e=[i[r].lat-a.lat,i[r].lng-a.lng],s.push([t.lat+e[0],t.lng+e[1]]);this._shape.setLatLngs(s),this._repositionCornerMarkers()},_resize:function(t){var e;this._shape.setBounds(L.latLngBounds(t,this._oppositeCorner)),e=this._shape.getBounds(),this._moveMarker.setLatLng(e.getCenter())},_getCorners:function(){var t=this._shape.getBounds(),e=t.getNorthWest(),i=t.getNorthEast(),o=t.getSouthEast(),a=t.getSouthWest();return[e,i,o,a]},_toggleCornerMarkers:function(t){for(var e=0,i=this._resizeMarkers.length;i>e;e++)this._resizeMarkers[e].setOpacity(t)},_repositionCornerMarkers:function(){for(var t=this._getCorners(),e=0,i=this._resizeMarkers.length;i>e;e++)this._resizeMarkers[e].setLatLng(t[e])}}),L.Rectangle.addInitHook(function(){L.Edit.Rectangle&&(this.editing=new L.Edit.Rectangle(this),this.options.editable&&this.editing.enable())}),L.Edit=L.Edit||{},L.Edit.Circle=L.Edit.SimpleShape.extend({_createMoveMarker:function(){var t=this._shape.getLatLng();this._moveMarker=this._createMarker(t,this.options.moveIcon)},_createResizeMarker:function(){var t=this._shape.getLatLng(),e=this._getResizeMarkerPoint(t);this._resizeMarkers=[],this._resizeMarkers.push(this._createMarker(e,this.options.resizeIcon))},_getResizeMarkerPoint:function(t){var e=this._shape._radius*Math.cos(Math.PI/4),i=this._map.project(t);return this._map.unproject([i.x+e,i.y-e])},_move:function(t){var e=this._getResizeMarkerPoint(t);this._resizeMarkers[0].setLatLng(e),this._shape.setLatLng(t)},_resize:function(t){var e=this._moveMarker.getLatLng(),i=e.distanceTo(t);this._shape.setRadius(i)}}),L.Circle.addInitHook(function(){L.Edit.Circle&&(this.editing=new L.Edit.Circle(this),this.options.editable&&this.editing.enable()),this.on("add",function(){this.editing&&this.editing.enabled()&&this.editing.addHooks()}),this.on("remove",function(){this.editing&&this.editing.enabled()&&this.editing.removeHooks()})}),L.LatLngUtil={cloneLatLngs:function(t){for(var e=[],i=0,o=t.length;o>i;i++)e.push(this.cloneLatLng(t[i]));return e},cloneLatLng:function(t){return L.latLng(t.lat,t.lng)}},L.GeometryUtil=L.extend(L.GeometryUtil||{},{geodesicArea:function(t){var e,i,o=t.length,a=0,s=L.LatLng.DEG_TO_RAD;if(o>2){for(var r=0;o>r;r++)e=t[r],i=t[(r+1)%o],a+=(i.lng-e.lng)*s*(2+Math.sin(e.lat*s)+Math.sin(i.lat*s));a=6378137*a*6378137/2}return Math.abs(a)},readableArea:function(t,e){var i;return e?i=t>=1e4?(1e-4*t).toFixed(2)+" ha":t.toFixed(2)+" m&sup2;":(t*=.836127,i=t>=3097600?(t/3097600).toFixed(2)+" mi&sup2;":t>=4840?(t/4840).toFixed(2)+" acres":Math.ceil(t)+" yd&sup2;"),i},readableDistance:function(t,e){var i;return e?i=t>1e3?(t/1e3).toFixed(2)+" km":Math.ceil(t)+" m":(t*=1.09361,i=t>1760?(t/1760).toFixed(2)+" miles":Math.ceil(t)+" yd"),i}}),L.Util.extend(L.LineUtil,{segmentsIntersect:function(t,e,i,o){return this._checkCounterclockwise(t,i,o)!==this._checkCounterclockwise(e,i,o)&&this._checkCounterclockwise(t,e,i)!==this._checkCounterclockwise(t,e,o)},_checkCounterclockwise:function(t,e,i){return(i.y-t.y)*(e.x-t.x)>(e.y-t.y)*(i.x-t.x)}}),L.Polyline.include({intersects:function(){var t,e,i,o=this._originalPoints,a=o?o.length:0;if(this._tooFewPointsForIntersection())return!1;for(t=a-1;t>=3;t--)if(e=o[t-1],i=o[t],this._lineSegmentsIntersectsRange(e,i,t-2))return!0;return!1},newLatLngIntersects:function(t,e){return this._map?this.newPointIntersects(this._map.latLngToLayerPoint(t),e):!1},newPointIntersects:function(t,e){var i=this._originalPoints,o=i?i.length:0,a=i?i[o-1]:null,s=o-2;return this._tooFewPointsForIntersection(1)?!1:this._lineSegmentsIntersectsRange(a,t,s,e?1:0)},_tooFewPointsForIntersection:function(t){var e=this._originalPoints,i=e?e.length:0;return i+=t||0,!this._originalPoints||3>=i},_lineSegmentsIntersectsRange:function(t,e,i,o){var a,s,r=this._originalPoints;o=o||0;for(var n=i;n>o;n--)if(a=r[n-1],s=r[n],L.LineUtil.segmentsIntersect(t,e,a,s))return!0;return!1}}),L.Polygon.include({intersects:function(){var t,e,i,o,a,s=this._originalPoints;return this._tooFewPointsForIntersection()?!1:(t=L.Polyline.prototype.intersects.call(this))?!0:(e=s.length,i=s[0],o=s[e-1],a=e-2,this._lineSegmentsIntersectsRange(o,i,a,1))}}),L.Control.Draw=L.Control.extend({options:{position:"topleft",draw:{},edit:!1},initialize:function(t){if(L.version<"0.7")throw new Error("Leaflet.draw 0.2.3+ requires Leaflet 0.7.0+. Download latest from https://github.com/Leaflet/Leaflet/");L.Control.prototype.initialize.call(this,t);var e,i;this._toolbars={},L.DrawToolbar&&this.options.draw&&(i=new L.DrawToolbar(this.options.draw),e=L.stamp(i),this._toolbars[e]=i,this._toolbars[e].on("enable",this._toolbarEnabled,this)),L.EditToolbar&&this.options.edit&&(i=new L.EditToolbar(this.options.edit),e=L.stamp(i),this._toolbars[e]=i,this._toolbars[e].on("enable",this._toolbarEnabled,this))},onAdd:function(t){var e,i=L.DomUtil.create("div","leaflet-draw"),o=!1,a="leaflet-draw-toolbar-top";for(var s in this._toolbars)this._toolbars.hasOwnProperty(s)&&(e=this._toolbars[s].addToolbar(t),e&&(o||(L.DomUtil.hasClass(e,a)||L.DomUtil.addClass(e.childNodes[0],a),o=!0),i.appendChild(e)));return i},onRemove:function(){for(var t in this._toolbars)this._toolbars.hasOwnProperty(t)&&this._toolbars[t].removeToolbar()},setDrawingOptions:function(t){for(var e in this._toolbars)this._toolbars[e]instanceof L.DrawToolbar&&this._toolbars[e].setOptions(t)},_toolbarEnabled:function(t){var e=""+L.stamp(t.target);for(var i in this._toolbars)this._toolbars.hasOwnProperty(i)&&i!==e&&this._toolbars[i].disable()}}),L.Map.mergeOptions({drawControlTooltips:!0,drawControl:!1}),L.Map.addInitHook(function(){this.options.drawControl&&(this.drawControl=new L.Control.Draw,this.addControl(this.drawControl))}),L.Toolbar=L.Class.extend({includes:[L.Mixin.Events],initialize:function(t){L.setOptions(this,t),this._modes={},this._actionButtons=[],this._activeMode=null},enabled:function(){return null!==this._activeMode},disable:function(){this.enabled()&&this._activeMode.handler.disable()},addToolbar:function(t){var e,i=L.DomUtil.create("div","leaflet-draw-section"),o=0,a=this._toolbarClass||"",s=this.getModeHandlers(t);for(this._toolbarContainer=L.DomUtil.create("div","leaflet-draw-toolbar leaflet-bar"),this._map=t,e=0;e<s.length;e++)s[e].enabled&&this._initModeHandler(s[e].handler,this._toolbarContainer,o++,a,s[e].title);return o?(this._lastButtonIndex=--o,this._actionsContainer=L.DomUtil.create("ul","leaflet-draw-actions"),i.appendChild(this._toolbarContainer),i.appendChild(this._actionsContainer),i):void 0},removeToolbar:function(){for(var t in this._modes)this._modes.hasOwnProperty(t)&&(this._disposeButton(this._modes[t].button,this._modes[t].handler.enable,this._modes[t].handler),this._modes[t].handler.disable(),this._modes[t].handler.off("enabled",this._handlerActivated,this).off("disabled",this._handlerDeactivated,this));this._modes={};for(var e=0,i=this._actionButtons.length;i>e;e++)this._disposeButton(this._actionButtons[e].button,this._actionButtons[e].callback,this);this._actionButtons=[],this._actionsContainer=null},_initModeHandler:function(t,e,i,o,a){var s=t.type;this._modes[s]={},this._modes[s].handler=t,this._modes[s].button=this._createButton({title:a,className:o+"-"+s,container:e,callback:this._modes[s].handler.enable,context:this._modes[s].handler}),this._modes[s].buttonIndex=i,this._modes[s].handler.on("enabled",this._handlerActivated,this).on("disabled",this._handlerDeactivated,this)},_createButton:function(t){var e=L.DomUtil.create("a",t.className||"",t.container);return e.href="#",t.text&&(e.innerHTML=t.text),t.title&&(e.title=t.title),L.DomEvent.on(e,"click",L.DomEvent.stopPropagation).on(e,"mousedown",L.DomEvent.stopPropagation).on(e,"dblclick",L.DomEvent.stopPropagation).on(e,"click",L.DomEvent.preventDefault).on(e,"click",t.callback,t.context),e},_disposeButton:function(t,e){L.DomEvent.off(t,"click",L.DomEvent.stopPropagation).off(t,"mousedown",L.DomEvent.stopPropagation).off(t,"dblclick",L.DomEvent.stopPropagation).off(t,"click",L.DomEvent.preventDefault).off(t,"click",e)},_handlerActivated:function(t){this.disable(),this._activeMode=this._modes[t.handler],L.DomUtil.addClass(this._activeMode.button,"leaflet-draw-toolbar-button-enabled"),this._showActionsToolbar(),this.fire("enable")},_handlerDeactivated:function(){this._hideActionsToolbar(),L.DomUtil.removeClass(this._activeMode.button,"leaflet-draw-toolbar-button-enabled"),this._activeMode=null,this.fire("disable")},_createActions:function(t){var e,i,o,a,s=this._actionsContainer,r=this.getActions(t),n=r.length;for(i=0,o=this._actionButtons.length;o>i;i++)this._disposeButton(this._actionButtons[i].button,this._actionButtons[i].callback);for(this._actionButtons=[];s.firstChild;)s.removeChild(s.firstChild);for(var l=0;n>l;l++)"enabled"in r[l]&&!r[l].enabled||(e=L.DomUtil.create("li","",s),a=this._createButton({title:r[l].title,text:r[l].text,container:e,callback:r[l].callback,context:r[l].context}),this._actionButtons.push({button:a,callback:r[l].callback}))},_showActionsToolbar:function(){var t=this._activeMode.buttonIndex,e=this._lastButtonIndex,i=this._activeMode.button.offsetTop-1;this._createActions(this._activeMode.handler),this._actionsContainer.style.top=i+"px",0===t&&(L.DomUtil.addClass(this._toolbarContainer,"leaflet-draw-toolbar-notop"),L.DomUtil.addClass(this._actionsContainer,"leaflet-draw-actions-top")),t===e&&(L.DomUtil.addClass(this._toolbarContainer,"leaflet-draw-toolbar-nobottom"),L.DomUtil.addClass(this._actionsContainer,"leaflet-draw-actions-bottom")),this._actionsContainer.style.display="block"
+},_hideActionsToolbar:function(){this._actionsContainer.style.display="none",L.DomUtil.removeClass(this._toolbarContainer,"leaflet-draw-toolbar-notop"),L.DomUtil.removeClass(this._toolbarContainer,"leaflet-draw-toolbar-nobottom"),L.DomUtil.removeClass(this._actionsContainer,"leaflet-draw-actions-top"),L.DomUtil.removeClass(this._actionsContainer,"leaflet-draw-actions-bottom")}}),L.Tooltip=L.Class.extend({initialize:function(t){this._map=t,this._popupPane=t._panes.popupPane,this._container=t.options.drawControlTooltips?L.DomUtil.create("div","leaflet-draw-tooltip",this._popupPane):null,this._singleLineLabel=!1},dispose:function(){this._container&&(this._popupPane.removeChild(this._container),this._container=null)},updateContent:function(t){return this._container?(t.subtext=t.subtext||"",0!==t.subtext.length||this._singleLineLabel?t.subtext.length>0&&this._singleLineLabel&&(L.DomUtil.removeClass(this._container,"leaflet-draw-tooltip-single"),this._singleLineLabel=!1):(L.DomUtil.addClass(this._container,"leaflet-draw-tooltip-single"),this._singleLineLabel=!0),this._container.innerHTML=(t.subtext.length>0?'<span class="leaflet-draw-tooltip-subtext">'+t.subtext+"</span><br />":"")+"<span>"+t.text+"</span>",this):this},updatePosition:function(t){var e=this._map.latLngToLayerPoint(t),i=this._container;return this._container&&(i.style.visibility="inherit",L.DomUtil.setPosition(i,e)),this},showAsError:function(){return this._container&&L.DomUtil.addClass(this._container,"leaflet-error-draw-tooltip"),this},removeError:function(){return this._container&&L.DomUtil.removeClass(this._container,"leaflet-error-draw-tooltip"),this}}),L.DrawToolbar=L.Toolbar.extend({options:{polyline:{},polygon:{},rectangle:{},circle:{},marker:{}},initialize:function(t){for(var e in this.options)this.options.hasOwnProperty(e)&&t[e]&&(t[e]=L.extend({},this.options[e],t[e]));this._toolbarClass="leaflet-draw-draw",L.Toolbar.prototype.initialize.call(this,t)},getModeHandlers:function(t){return[{enabled:this.options.polyline,handler:new L.Draw.Polyline(t,this.options.polyline),title:L.drawLocal.draw.toolbar.buttons.polyline},{enabled:this.options.polygon,handler:new L.Draw.Polygon(t,this.options.polygon),title:L.drawLocal.draw.toolbar.buttons.polygon},{enabled:this.options.rectangle,handler:new L.Draw.Rectangle(t,this.options.rectangle),title:L.drawLocal.draw.toolbar.buttons.rectangle},{enabled:this.options.circle,handler:new L.Draw.Circle(t,this.options.circle),title:L.drawLocal.draw.toolbar.buttons.circle},{enabled:this.options.marker,handler:new L.Draw.Marker(t,this.options.marker),title:L.drawLocal.draw.toolbar.buttons.marker}]},getActions:function(t){return[{enabled:t.deleteLastVertex,title:L.drawLocal.draw.toolbar.undo.title,text:L.drawLocal.draw.toolbar.undo.text,callback:t.deleteLastVertex,context:t},{title:L.drawLocal.draw.toolbar.actions.title,text:L.drawLocal.draw.toolbar.actions.text,callback:this.disable,context:this}]},setOptions:function(t){L.setOptions(this,t);for(var e in this._modes)this._modes.hasOwnProperty(e)&&t.hasOwnProperty(e)&&this._modes[e].handler.setOptions(t[e])}}),L.EditToolbar=L.Toolbar.extend({options:{edit:{selectedPathOptions:{color:"#fe57a1",opacity:.6,dashArray:"10, 10",fill:!0,fillColor:"#fe57a1",fillOpacity:.1}},remove:{},featureGroup:null},initialize:function(t){t.edit&&("undefined"==typeof t.edit.selectedPathOptions&&(t.edit.selectedPathOptions=this.options.edit.selectedPathOptions),t.edit=L.extend({},this.options.edit,t.edit)),t.remove&&(t.remove=L.extend({},this.options.remove,t.remove)),this._toolbarClass="leaflet-draw-edit",L.Toolbar.prototype.initialize.call(this,t),this._selectedFeatureCount=0},getModeHandlers:function(t){var e=this.options.featureGroup;return[{enabled:this.options.edit,handler:new L.EditToolbar.Edit(t,{featureGroup:e,selectedPathOptions:this.options.edit.selectedPathOptions}),title:L.drawLocal.edit.toolbar.buttons.edit},{enabled:this.options.remove,handler:new L.EditToolbar.Delete(t,{featureGroup:e}),title:L.drawLocal.edit.toolbar.buttons.remove}]},getActions:function(){return[{title:L.drawLocal.edit.toolbar.actions.save.title,text:L.drawLocal.edit.toolbar.actions.save.text,callback:this._save,context:this},{title:L.drawLocal.edit.toolbar.actions.cancel.title,text:L.drawLocal.edit.toolbar.actions.cancel.text,callback:this.disable,context:this}]},addToolbar:function(t){var e=L.Toolbar.prototype.addToolbar.call(this,t);return this._checkDisabled(),this.options.featureGroup.on("layeradd layerremove",this._checkDisabled,this),e},removeToolbar:function(){this.options.featureGroup.off("layeradd layerremove",this._checkDisabled,this),L.Toolbar.prototype.removeToolbar.call(this)},disable:function(){this.enabled()&&(this._activeMode.handler.revertLayers(),L.Toolbar.prototype.disable.call(this))},_save:function(){this._activeMode.handler.save(),this._activeMode.handler.disable()},_checkDisabled:function(){var t,e=this.options.featureGroup,i=0!==e.getLayers().length;this.options.edit&&(t=this._modes[L.EditToolbar.Edit.TYPE].button,i?L.DomUtil.removeClass(t,"leaflet-disabled"):L.DomUtil.addClass(t,"leaflet-disabled"),t.setAttribute("title",i?L.drawLocal.edit.toolbar.buttons.edit:L.drawLocal.edit.toolbar.buttons.editDisabled)),this.options.remove&&(t=this._modes[L.EditToolbar.Delete.TYPE].button,i?L.DomUtil.removeClass(t,"leaflet-disabled"):L.DomUtil.addClass(t,"leaflet-disabled"),t.setAttribute("title",i?L.drawLocal.edit.toolbar.buttons.remove:L.drawLocal.edit.toolbar.buttons.removeDisabled))}}),L.EditToolbar.Edit=L.Handler.extend({statics:{TYPE:"edit"},includes:L.Mixin.Events,initialize:function(t,e){if(L.Handler.prototype.initialize.call(this,t),this._selectedPathOptions=e.selectedPathOptions,this._featureGroup=e.featureGroup,!(this._featureGroup instanceof L.FeatureGroup))throw new Error("options.featureGroup must be a L.FeatureGroup");this._uneditedLayerProps={},this.type=L.EditToolbar.Edit.TYPE},enable:function(){!this._enabled&&this._hasAvailableLayers()&&(this.fire("enabled",{handler:this.type}),this._map.fire("draw:editstart",{handler:this.type}),L.Handler.prototype.enable.call(this),this._featureGroup.on("layeradd",this._enableLayerEdit,this).on("layerremove",this._disableLayerEdit,this))},disable:function(){this._enabled&&(this._featureGroup.off("layeradd",this._enableLayerEdit,this).off("layerremove",this._disableLayerEdit,this),L.Handler.prototype.disable.call(this),this._map.fire("draw:editstop",{handler:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(t.getContainer().focus(),this._featureGroup.eachLayer(this._enableLayerEdit,this),this._tooltip=new L.Tooltip(this._map),this._tooltip.updateContent({text:L.drawLocal.edit.handlers.edit.tooltip.text,subtext:L.drawLocal.edit.handlers.edit.tooltip.subtext}),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){this._map&&(this._featureGroup.eachLayer(this._disableLayerEdit,this),this._uneditedLayerProps={},this._tooltip.dispose(),this._tooltip=null,this._map.off("mousemove",this._onMouseMove,this))},revertLayers:function(){this._featureGroup.eachLayer(function(t){this._revertLayer(t)},this)},save:function(){var t=new L.LayerGroup;this._featureGroup.eachLayer(function(e){e.edited&&(t.addLayer(e),e.edited=!1)}),this._map.fire("draw:edited",{layers:t})},_backupLayer:function(t){var e=L.Util.stamp(t);this._uneditedLayerProps[e]||(t instanceof L.Polyline||t instanceof L.Polygon||t instanceof L.Rectangle?this._uneditedLayerProps[e]={latlngs:L.LatLngUtil.cloneLatLngs(t.getLatLngs())}:t instanceof L.Circle?this._uneditedLayerProps[e]={latlng:L.LatLngUtil.cloneLatLng(t.getLatLng()),radius:t.getRadius()}:t instanceof L.Marker&&(this._uneditedLayerProps[e]={latlng:L.LatLngUtil.cloneLatLng(t.getLatLng())}))},_revertLayer:function(t){var e=L.Util.stamp(t);t.edited=!1,this._uneditedLayerProps.hasOwnProperty(e)&&(t instanceof L.Polyline||t instanceof L.Polygon||t instanceof L.Rectangle?t.setLatLngs(this._uneditedLayerProps[e].latlngs):t instanceof L.Circle?(t.setLatLng(this._uneditedLayerProps[e].latlng),t.setRadius(this._uneditedLayerProps[e].radius)):t instanceof L.Marker&&t.setLatLng(this._uneditedLayerProps[e].latlng))},_toggleMarkerHighlight:function(t){if(t._icon){var e=t._icon;e.style.display="none",L.DomUtil.hasClass(e,"leaflet-edit-marker-selected")?(L.DomUtil.removeClass(e,"leaflet-edit-marker-selected"),this._offsetMarker(e,-4)):(L.DomUtil.addClass(e,"leaflet-edit-marker-selected"),this._offsetMarker(e,4)),e.style.display=""}},_offsetMarker:function(t,e){var i=parseInt(t.style.marginTop,10)-e,o=parseInt(t.style.marginLeft,10)-e;t.style.marginTop=i+"px",t.style.marginLeft=o+"px"},_enableLayerEdit:function(t){var e,i=t.layer||t.target||t,o=i instanceof L.Marker;(!o||i._icon)&&(this._backupLayer(i),this._selectedPathOptions&&(e=L.Util.extend({},this._selectedPathOptions),o?this._toggleMarkerHighlight(i):(i.options.previousOptions=L.Util.extend({dashArray:null},i.options),i instanceof L.Circle||i instanceof L.Polygon||i instanceof L.Rectangle||(e.fill=!1),i.setStyle(e))),o?(i.dragging.enable(),i.on("dragend",this._onMarkerDragEnd)):i.editing.enable())},_disableLayerEdit:function(t){var e=t.layer||t.target||t;e.edited=!1,this._selectedPathOptions&&(e instanceof L.Marker?this._toggleMarkerHighlight(e):(e.setStyle(e.options.previousOptions),delete e.options.previousOptions)),e instanceof L.Marker?(e.dragging.disable(),e.off("dragend",this._onMarkerDragEnd,this)):e.editing.disable()},_onMarkerDragEnd:function(t){var e=t.target;e.edited=!0},_onMouseMove:function(t){this._tooltip.updatePosition(t.latlng)},_hasAvailableLayers:function(){return 0!==this._featureGroup.getLayers().length}}),L.EditToolbar.Delete=L.Handler.extend({statics:{TYPE:"remove"},includes:L.Mixin.Events,initialize:function(t,e){if(L.Handler.prototype.initialize.call(this,t),L.Util.setOptions(this,e),this._deletableLayers=this.options.featureGroup,!(this._deletableLayers instanceof L.FeatureGroup))throw new Error("options.featureGroup must be a L.FeatureGroup");this.type=L.EditToolbar.Delete.TYPE},enable:function(){!this._enabled&&this._hasAvailableLayers()&&(this.fire("enabled",{handler:this.type}),this._map.fire("draw:deletestart",{handler:this.type}),L.Handler.prototype.enable.call(this),this._deletableLayers.on("layeradd",this._enableLayerDelete,this).on("layerremove",this._disableLayerDelete,this))},disable:function(){this._enabled&&(this._deletableLayers.off("layeradd",this._enableLayerDelete,this).off("layerremove",this._disableLayerDelete,this),L.Handler.prototype.disable.call(this),this._map.fire("draw:deletestop",{handler:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(t.getContainer().focus(),this._deletableLayers.eachLayer(this._enableLayerDelete,this),this._deletedLayers=new L.layerGroup,this._tooltip=new L.Tooltip(this._map),this._tooltip.updateContent({text:L.drawLocal.edit.handlers.remove.tooltip.text}),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){this._map&&(this._deletableLayers.eachLayer(this._disableLayerDelete,this),this._deletedLayers=null,this._tooltip.dispose(),this._tooltip=null,this._map.off("mousemove",this._onMouseMove,this))},revertLayers:function(){this._deletedLayers.eachLayer(function(t){this._deletableLayers.addLayer(t)},this)},save:function(){this._map.fire("draw:deleted",{layers:this._deletedLayers})},_enableLayerDelete:function(t){var e=t.layer||t.target||t;e.on("click",this._removeLayer,this)},_disableLayerDelete:function(t){var e=t.layer||t.target||t;e.off("click",this._removeLayer,this),this._deletedLayers.removeLayer(e)},_removeLayer:function(t){var e=t.layer||t.target||t;this._deletableLayers.removeLayer(e),this._deletedLayers.addLayer(e)},_onMouseMove:function(t){this._tooltip.updatePosition(t.latlng)},_hasAvailableLayers:function(){return 0!==this._deletableLayers.getLayers().length}})}(window,document);
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-hash/leaflet-hash.js":[function(require,module,exports){
 (function(window) {
 	var HAS_HASHCHANGE = (function() {
@@ -9696,959 +10661,7 @@ L.bingLayer = function (key, options) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/node_modules/catiline/dist/catiline.js":[function(require,module,exports){
-/*! catiline 2.9.3 2013-10-25*/
-/*!©2013 Calvin Metcalf @license MIT https://github.com/calvinmetcalf/catiline */
-if (typeof document === 'undefined') {
-	self._noTransferable=true;
-	self.onmessage=function(e){
-		/*jslint evil: true */
-		eval(e.data);
-	};
-} else {
-(function(global){
-	'use strict';
-//overall structure based on when
-//https://github.com/cujojs/when/blob/master/when.js#L805-L852
-var nextTick;
-var MutationObserver = global.MutationObserver || global.WebKitMutationObserver;
-/*if (typeof setImmediate === 'function') {
-	nextTick = setImmediate.bind(global,drainQueue);
-}else */if(MutationObserver){
-	//based on RSVP
-	//https://github.com/tildeio/rsvp.js/blob/master/lib/rsvp/async.js
-	var observer = new MutationObserver(drainQueue);
-	var element = document.createElement('div');
-	observer.observe(element, { attributes: true });
-
-	// Chrome Memory Leak: https://bugs.webkit.org/show_bug.cgi?id=93661
-	addEventListener('unload', function () {
-		observer.disconnect();
-		observer = null;
-	}, false);
-	nextTick =   function () {
-		element.setAttribute('drainQueue', 'drainQueue');
-	};
-}else{
-	var codeWord = 'com.catiline.setImmediate' + Math.random();
-	addEventListener('message', function (event) {
-		// This will catch all incoming messages (even from other windows!), so we need to try reasonably hard to
-		// avoid letting anyone else trick us into firing off. We test the origin is still this window, and that a
-		// (randomly generated) unpredictable identifying prefix is present.
-		if (event.source === window && event.data === codeWord) {
-			drainQueue();
-		}
-	}, false);
-	nextTick =  function() {
-		postMessage(codeWord, '*');
-	};
-}
-var mainQueue = [];
-
-/**
- * Enqueue a task. If the queue is not currently scheduled to be
- * drained, schedule it.
- * @param {function} task
- */
-catiline.nextTick = function(task) {
-	if (mainQueue.push(task) === 1) {
-		nextTick();
-	}
-};
-
-/**
- * Drain the handler queue entirely, being careful to allow the
- * queue to be extended while it is being processed, and to continue
- * processing until it is truly empty.
- */
-function drainQueue() {
-	var i = 0;
-	var task;
-	var innerQueue = mainQueue;
-	mainQueue = [];
-	/*jslint boss: true */
-	while (task = innerQueue[i++]) {
-		task();
-	}
-
-}
-
-var func = 'function';
-// Creates a deferred: an object with a promise and corresponding resolve/reject methods
-function Deferred() {
-	// The `handler` variable points to the function that will
-	// 1) handle a .then(onFulfilled, onRejected) call
-	// 2) handle a .resolve or .reject call (if not fulfilled)
-	// Before 2), `handler` holds a queue of callbacks.
-	// After 2), `handler` is a simple .then handler.
-	// We use only one function to save memory and complexity.
-	var handler = function(onFulfilled, onRejected, value) {
-		// Case 1) handle a .then(onFulfilled, onRejected) call
-		if (onFulfilled !== handler) {
-			var createdDeffered = createDeferred();
-			handler.queue.push({
-				deferred: createdDeffered,
-				resolve: onFulfilled,
-				reject: onRejected
-			});
-			return createdDeffered.promise;
-		}
-
-		// Case 2) handle a .resolve or .reject call
-		// (`onFulfilled` acts as a sentinel)
-		// The actual function signature is
-		// .re[ject|solve](sentinel, success, value)
-		var action = onRejected ? 'resolve' : 'reject';
-		for (var i = 0, l = handler.queue.length; i < l; i++) {
-			var queue = handler.queue[i];
-			var deferred = queue.deferred;
-			var callback = queue[action];
-			if (typeof callback !== func) {
-				deferred[action](value);
-			}
-			else {
-				execute(callback, value, deferred);
-			}
-		}
-		// Replace this handler with a simple resolved or rejected handler
-		handler = createHandler(promise, value, onRejected);
-	};
-
-	function Promise() {
-		this.then = function(onFulfilled, onRejected) {
-			return handler(onFulfilled, onRejected);
-		};
-	}
-	var promise = new Promise();
-	this.promise = promise;
-	// The queue of deferreds
-	handler.queue = [];
-
-	this.resolve = function(value) {
-		if (handler.queue) {
-			handler(handler, true, value);
-		}
-	};
-
-	this.fulfill = this.resolve;
-
-	this.reject = function(reason) {
-		if (handler.queue) {
-			handler(handler, false, reason);
-		}
-	};
-}
-
-function createDeferred() {
-	return new Deferred();
-}
-
-// Creates a fulfilled or rejected .then function
-function createHandler(promise, value, success) {
-	return function(onFulfilled, onRejected) {
-		var callback = success ? onFulfilled : onRejected;
-		if (typeof callback !== func) {
-			return promise;
-		}
-		var result = createDeferred();
-		execute(callback, value, result);
-		return result.promise;
-	};
-}
-
-// Executes the callback with the specified value,
-// resolving or rejecting the deferred
-function execute(callback, value, deferred) {
-	catiline.nextTick(function() {
-		try {
-			var result = callback(value);
-			if (result && typeof result.then === func) {
-				result.then(deferred.resolve, deferred.reject);
-			}
-			else {
-				deferred.resolve(result);
-			}
-		}
-		catch (error) {
-			deferred.reject(error);
-		}
-	});
-}
-catiline.deferred = createDeferred;
-// Returns a resolved promise
-catiline.resolve = function(value) {
-	var promise = {};
-	promise.then = createHandler(promise, value, true);
-	return promise;
-};
-// Returns a rejected promise
-catiline.reject = function(reason) {
-	var promise = {};
-	promise.then = createHandler(promise, reason, false);
-	return promise;
-};
-// Returns a deferred
-
-catiline.all = function(array) {
-	var promise = createDeferred();
-	var len = array.length;
-	var resolved = 0;
-	var out = [];
-	var onSuccess = function(n) {
-		return function(v) {
-			out[n] = v;
-			resolved++;
-			if (resolved === len) {
-				promise.resolve(out);
-			}
-		};
-	};
-	array.forEach(function(v, i) {
-		v.then(onSuccess(i), function(a) {
-			promise.reject(a);
-		});
-	});
-	return promise.promise;
-};
-catiline._hasWorker = typeof Worker !== 'undefined'&&typeof fakeLegacy === 'undefined';
-catiline.URL = window.URL || window.webkitURL;
-catiline._noTransferable=!catiline.URL;
-//regex out the importScript call and move it up to the top out of the function.
-function regexImports(string){
-	var rest=string;
-	var match = true;
-	var matches = {};
-	var loopFunc = function(a,b){
-		if(b){
-			'importScripts('+b.split(',').forEach(function(cc){
-				matches[catiline.makeUrl(cc.match(/\s*[\'\"](\S*)[\'\"]\s*/)[1])]=true; // trim whitespace, add to matches
-			})+');\n';
-		}
-	};
-	while(match){
-		match = rest.match(/(importScripts\(.*?\);?)/);
-		rest = rest.replace(/(importScripts\(\s*(?:[\'\"].*?[\'\"])?\s*\);?)/,'\n');
-		if(match){
-			match[0].replace(/importScripts\(\s*([\'\"].*?[\'\"])?\s*\);?/g,loopFunc);
-		}
-	}
-	matches = Object.keys(matches);
-	return [matches,rest];
-}
-
-function moveImports(string,after){
-	var str = regexImports(string);
-	var matches = str[0];
-	var rest = str[1];
-	if(matches.length>0){
-		return 'importScripts(\''+matches.join('\',\'')+after+rest;
-	}else{
-		return rest;
-	}
-}
-function getPath(){
-	if(typeof SHIM_WORKER_PATH !== 'undefined'){
-		return SHIM_WORKER_PATH;
-	}else if('SHIM_WORKER_PATH' in catiline){
-		return catiline.SHIM_WORKER_PATH;
-	}
-	var scripts = document.getElementsByTagName('script');
-	var len = scripts.length;
-	var i = 0;
-	while(i<len){
-		if(/catiline(\.min)?\.js/.test(scripts[i].src)){
-			return scripts[i].src;
-		}
-		i++;
-	}
-}
-function appendScript(iDoc,text){
-	var iScript = iDoc.createElement('script');
-	if (typeof iScript.text !== 'undefined') {
-		iScript.text = text;
-	} else {
-		iScript.innerHTML = text;
-	}
-	if(iDoc.readyState==='complete'){
-		iDoc.documentElement.appendChild(iScript);
-	}else{
-		iDoc.onreadystatechange=function(){
-			if(iDoc.readyState==='complete'){
-				iDoc.documentElement.appendChild(iScript);
-			}
-		};
-	}
-}
-//much of the iframe stuff inspired by https://github.com/padolsey/operative
-//most things besides the names have since been changed
-function actualMakeI(script,codeword){
-	var iFrame = document.createElement('iframe');
-	iFrame.style.display = 'none';
-	document.body.appendChild(iFrame);
-	var iDoc = iFrame.contentWindow.document;
-	var text=['try{ ',
-	'var __scripts__=\'\';function importScripts(scripts){',
-	'	if(Array.isArray(scripts)&&scripts.length>0){',
-	'		scripts.forEach(function(url){',
-	'			var ajax = new XMLHttpRequest();',
-	'			ajax.open(\'GET\',url,false);',
-	'			ajax.send();__scripts__+=ajax.responseText;',
-	'			__scripts__+=\'\\n;\';',
-	'		});',
-	'	}',
-	'};',
-	script,
-	'}catch(e){',
-	'	window.parent.postMessage([\''+codeword+'\',\'error\'],\'*\')',
-	'}'].join('\n');
-	appendScript(iDoc,text);
-	return iFrame;
-}
-function makeIframe(script,codeword){
-	var promise = catiline.deferred();
-	if(document.readyState==='complete'){
-		promise.resolve(actualMakeI(script,codeword));
-	}else{
-		window.addEventListener('load',function(){
-			promise.resolve(actualMakeI(script,codeword));
-		},false);
-	}
-	return promise.promise;
-}
-catiline.makeIWorker = function (strings,codeword){
-	var script =moveImports(strings.join(''),'\');eval(__scripts__);\n');
-	var worker = {onmessage:function(){}};
-	var ipromise = makeIframe(script,codeword);
-	window.addEventListener('message',function(e){
-		if(e.data.slice && e.data.slice(0,codeword.length) === codeword){
-			worker.onmessage({data:JSON.parse(e.data.slice(codeword.length))});
-		}
-	});
-	worker.postMessage=function(data){
-		ipromise.then(function(iFrame){
-			iFrame.contentWindow.postMessage(JSON.stringify(data),'*');
-		});
-	};
-	worker.terminate=function(){
-		ipromise.then(function(iFrame){
-			document.body.removeChild(iFrame);
-		});
-	};
-	return worker;
-	
-};
-
-function makeFallbackWorker(script){
-	catiline._noTransferable=true;
-	var worker = new Worker(getPath());
-	worker.postMessage(script);
-	return worker;
-}
-//accepts an array of strings, joins them, and turns them into a worker.
-catiline.makeWorker = function (strings, codeword){
-	if(!catiline._hasWorker){
-		return catiline.makeIWorker(strings,codeword);
-	}
-	var worker;
-	var script = moveImports(strings.join('\n'),'\');\n');
-	if(catiline._noTransferable){
-		return makeFallbackWorker(script);
-	}
-	try{
-		worker= new Worker(catiline.URL.createObjectURL(new Blob([script],{type: 'text/javascript'})));
-	}catch(e){
-		try{
-			worker=makeFallbackWorker(script);
-		}catch(ee){
-			worker = catiline.makeIWorker(strings,codeword);
-		}
-	}finally{
-		return worker;
-	}
-};
-
-catiline.makeUrl = function (fileName) {
-	var link = document.createElement('link');
-	link.href = fileName;
-	return link.href;
-};
-
-function stringifyObject(obj){
-	var out = '{';
-	var first = true;
-	for(var key in obj){
-		if(first){
-			first = false;
-		}else{
-			out+=',';
-		}
-		out += key;
-		out += ':';
-		out += catiline.stringify(obj[key]);
-	}
-	out += '}';
-	return out;
-}
-function stringifyArray(array){
-	if(array.length){
-		var out = '[';
-		out += catiline.stringify(array[0]);
-		var i = 0;
-		var len = array.length;
-		while(++i<len){
-			out += ',';
-			out += catiline.stringify(array[i]);
-		}
-		out += ']';
-		return out;
-	}else{
-		return '[]';
-	}
-}
-catiline.stringify = function(thing){
-	if(Array.isArray(thing)){
-		return stringifyArray(thing);
-	}else if(typeof thing === 'function'||typeof thing === 'number'||typeof thing === 'boolean'){
-		return thing.toString();
-	}else if(typeof thing === 'string'){
-		return '"' + thing + '"';
-	}else if(thing.toString() === '[object Object]'){
-		return stringifyObject(thing);
-	}
-};
-
-var workerSetup = function(context) {
-	self.__iFrame__ = typeof document !== 'undefined';
-	self.__self__ = {
-		onmessage: function(e) {
-			context.trigger('messege', e.data[1]);
-			if (e.data[0][0] === context.__codeWord__) {
-				return regMsg(e);
-			}
-			else {
-				context.trigger(e.data[0][0], e.data[1]);
-			}
-		}
-	};
-	if (__iFrame__) {
-		window.onmessage = function(e) {
-			if (typeof e.data === 'string') {
-				e = {
-					data: JSON.parse(e.data)
-				};
-			}
-			__self__.onmessage(e);
-		};
-	}
-	else {
-		self.onmessage = __self__.onmessage;
-	}
-	__self__.postMessage = function(rawData, transfer) {
-		if (!self._noTransferable && !__iFrame__) {
-			self.postMessage(rawData, transfer);
-		}
-		else if (__iFrame__) {
-			var data = context.__codeWord__ + JSON.stringify(rawData);
-			window.parent.postMessage(data, '*');
-		}
-		else if (self._noTransferable) {
-			self.postMessage(rawData);
-		}
-	};
-	self.console = {};
-	var regMsg = function(e) {
-		var cb = function(data, transfer) {
-			__self__.postMessage([e.data[0], data], transfer);
-		};
-		var result;
-		if (__iFrame__) {
-			try {
-				result = context[e.data[1]](e.data[2], cb, context);
-			}
-			catch (ee) {
-				context.fire('error', JSON.stringify(ee));
-			}
-		}
-		else {
-			result = context[e.data[1]](e.data[2], cb, context);
-		}
-		if (typeof result !== 'undefined') {
-			cb(result);
-		}
-	};
-};
-function addEvents(context, msg) {
-	var listeners = {};
-	var sendMessage;
-	if(typeof __self__ !== 'undefined'){
-		sendMessage = __self__.postMessage;
-	}else if (msg) {
-		sendMessage = msg;
-	}
-	context.on = function(eventName, func, scope) {
-		scope = scope || context;
-		if (eventName.indexOf(' ') > 0) {
-			eventName.split(' ').map(function(v) {
-				return context.on(v, func, scope);
-			}, this);
-			return context;
-		}
-		if (!(eventName in listeners)) {
-			listeners[eventName] = [];
-		}
-		var newFunc = function(a) {
-			func.call(scope, a, scope);
-		};
-		newFunc.orig = func;
-		listeners[eventName].push(newFunc);
-		return context;
-	};
-	context.one = function(eventName, func, scope) {
-		scope = scope || context;
-
-		function ourFunc(a) {
-			context.off(eventName, ourFunc);
-			func.call(scope, a, scope);
-		}
-		return context.on(eventName, ourFunc);
-	};
-
-	context.trigger = function(eventName, data) {
-		if (eventName.indexOf(' ') > 0) {
-			eventName.split(' ').forEach(function(v) {
-				context.trigger(v, data);
-			});
-			return context;
-		}
-		if (!(eventName in listeners)) {
-			return context;
-		}
-		listeners[eventName].forEach(function(v) {
-			v(data);
-		});
-		return context;
-	};
-	context.fire = function(eventName, data, transfer) {
-		sendMessage([[eventName],data],transfer);
-		return context;
-	};
-	context.off = function(eventName, func) {
-		if (eventName.indexOf(' ') > 0) {
-			eventName.split(' ').map(function(v) {
-				return context.off(v, func);
-			});
-			return context;
-		}
-		if (!(eventName in listeners)) {
-			return context;
-		}
-		else {
-			if (func) {
-				listeners[eventName] = listeners[eventName].map(function(a) {
-					if (a.orig === func) {
-						return false;
-					}
-					else {
-						return a;
-					}
-				}).filter(function(a) {
-					return a;
-				});
-			}
-			else {
-				delete listeners[eventName];
-			}
-		}
-		return context;
-	};
-}
-function makeConsole(msg) {
-	if (typeof console !== 'undefined') {
-		var method = console[msg[0]] ? msg[0] : 'log';
-		if (typeof console[method].apply === 'undefined') {
-			console[method](msg[1].join(' '));
-		}
-		else {
-			console[method].apply(console, msg[1]);
-		}
-	}
-}
-function makeWorkerConsole(context){
-	function makeConsole(method) {
-		return function() {
-			var len = arguments.length;
-			var out = [];
-			var i = 0;
-			while (i < len) {
-				out.push(arguments[i]);
-				i++;
-			}
-			context.fire('console', [method, out]);
-		};
-	}
-	['log', 'debug', 'error', 'info', 'warn', 'time', 'timeEnd'].forEach(function(v) {
-		console[v] = makeConsole(v);
-	});
-}
-function Catiline(obj) {
-	if (typeof obj === 'function') {
-		obj = {
-			data: obj
-		};
-	}
-	var codeWord = 'com.catilinejs.' + (Catiline._hasWorker ? 'iframe' : 'worker') + Math.random();
-	var self = this;
-	var promises = [];
-	addEvents(self, function(data, transfer) {
-		if (catiline._noTransferable) {
-			worker.postMessage(data);
-		}
-		else {
-			worker.postMessage(data, transfer);
-		}
-	});
-	var rejectPromises = function(msg) {
-		if (typeof msg !== 'string' && 'preventDefault' in msg) {
-			msg.preventDefault();
-			msg = msg.message;
-		}
-		promises.forEach(function(p) {
-			if (p) {
-				p.reject(msg);
-			}
-		});
-	};
-	obj.__codeWord__ = codeWord;
-	obj.__initialize__ = [workerSetup, addEvents, makeWorkerConsole];
-	if (!('initialize' in obj)) {
-		if ('init' in obj) {
-			obj.__initialize__.push(obj.init);
-		}
-	}
-	else {
-		obj.__initialize__.push(obj.initialize);
-	}
-
-	if (!('events' in obj)) {
-		obj.events = {};
-	}
-	if ('listners' in obj && typeof obj.listners !== 'function') {
-		for (var key in obj.listners) {
-			self.on(key, obj.listners[key]);
-		}
-	}
-	var fObj = 'var _db = {\n\t';
-	var keyFunc = function(key) {
-		var out = function(data, transfer) {
-			var i = promises.length;
-			promises[i] = catiline.deferred();
-			if (catiline._noTransferable) {
-				worker.postMessage([
-					[codeWord, i], key, data]);
-			}
-			else {
-				worker.postMessage([
-					[codeWord, i], key, data], transfer);
-			}
-			return promises[i].promise;
-		};
-		return out;
-	};
-	var i = false;
-	for (var key$0 in obj) {
-		if(['listners','initialize','init'].indexOf(key$0)>-1){
-			continue;
-		}
-		if (i) {
-			fObj += ',\n\t';
-		}
-		else {
-			i = true;
-		}
-		if (typeof obj[key$0] === 'function') {
-			fObj = fObj + key$0 + ':' + obj[key$0].toString();
-			self[key$0] = keyFunc(key$0);
-		}
-		else {
-			var outThing = catiline.stringify(obj[key$0]);
-			if (typeof outThing !== 'undefined') {
-				fObj = fObj + key$0 + ':' + outThing;
-			}
-		}
-	}
-	fObj = fObj + '};';
-	var worker = catiline.makeWorker(['\'use strict\';', '',
-	fObj, '_db.__initialize__.forEach(function(f){', '	f.call(_db,_db);', '});', 'for(var key in _db.events){', '	_db.on(key,_db.events[key]);', '}'], codeWord);
-	worker.onmessage = function(e) {
-		self.trigger('message', e.data[1]);
-		if (e.data[0][0] === codeWord) {
-			promises[e.data[0][1]].resolve(e.data[1]);
-			promises[e.data[0][1]] = 0;
-		}
-		else {
-			self.trigger(e.data[0][0], e.data[1]);
-		}
-	};
-	self.on('error', rejectPromises);
-	worker.onerror = function(e) {
-		self.trigger('error', e);
-	};
-	self.on('console', makeConsole);
-	self._close = function() {
-		worker.terminate();
-		rejectPromises('closed');
-		return catiline.resolve();
-	};
-	if (!('close' in self)) {
-		self.close = self._close;
-	}
-}
-catiline.Worker = Catiline;
-
-catiline.worker = function(obj){
-    return new Catiline(obj);
-};
-function makeActualKeyFuncs(resolvePromises, self) {
-	return {
-		keyFunc: function(k) {
-			return function(data, transfer) {
-				return resolvePromises(k, data, transfer);
-			};
-		},
-		keyFuncBatch: function(k) {
-			return function(array) {
-				return catiline.all(array.map(function(data) {
-					return resolvePromises(k, data);
-				}));
-			};
-		},
-		keyFuncBatchCB: function(k) {
-			return function(array) {
-				return catiline.all(array.map(function(data) {
-					return resolvePromises(k, data).then(self.__cb__);
-				}));
-			};
-		},
-		keyFuncBatchTransfer: function(k) {
-			return function(array) {
-				return catiline.all(array.map(function(data) {
-					return resolvePromises(k, data[0], data[1]);
-				}));
-			};
-		},
-		keyFuncBatchTransferCB: function(k) {
-			return function(array) {
-				return catiline.all(array.map(function(data) {
-					return resolvePromises(k, data[0], data[1]).then(self.__cb__);
-				}));
-			};
-		}
-	};
-}
-function makeKeyFuncs(resolvePromises, self, obj){
-	var funcs = makeActualKeyFuncs(resolvePromises, self);
-	for (var key in obj) {
-		self[key] = funcs.keyFunc(key);
-		self.batch[key] = funcs.keyFuncBatch(key);
-		self.__batchcb__[key] = funcs.keyFuncBatchCB(key);
-		self.batchTransfer[key] = funcs.keyFuncBatchTransfer(key);
-		self.__batchtcb__[key] = funcs.keyFuncBatchTransferCB(key);
-	}
-}
-function addBatchEvents(self, workers, n){
-	self.on = function (eventName, func, context) {
-		workers.forEach(function (worker) {
-			worker.on(eventName, func, context);
-		});
-		return self;
-	};
-	self.off = function (eventName, func, context) {
-		workers.forEach(function (worker) {
-			worker.off(eventName, func, context);
-		});
-		return self;
-	};
-	self.fire = function (eventName, data) {
-		workers[~~ (Math.random() * n)].fire(eventName, data);
-		return self;
-	};
-}
-function makeUnmanaged(workers, n){
-	return function(key, data, transfer, promise){
-		promise.promise.cancel = function(reason){
-			return promise.reject(reason);
-		};
-		workers[~~ (Math.random() * n)][key](data, transfer).then(function(v){
-			return promise.resolve(v);
-		},function(v){
-			return promise.reject(v);
-		});
-		return promise.promise;
-	};
-}
-function makeQueueWorkers(n,idle,obj){
-	var workers = [];
-	var numIdle = -1;
-	while (++numIdle < n) {
-		workers[numIdle] = new catiline.Worker(obj);
-		idle.push(numIdle);
-	}
-	return workers;
-}
-function CatilineQueue(obj, n, dumb) {
-	var self = this;
-	var numIdle = n;
-	var idle = [];
-	var que = [];
-	var queueLen = 0;
-	var workers = makeQueueWorkers(n,idle,obj);
-	addBatchEvents(self, workers, n);
-	var batchFire = function (eventName, data) {
-		workers.forEach(function (worker) {
-			worker.fire(eventName, data);
-		});
-		return self;
-	};
-	
-	self.batch.fire = batchFire;
-	self.batchTransfer.fire = batchFire;
-
-	function clearQueue(mgs) {
-		mgs = mgs || 'canceled';
-		queueLen = 0;
-		var oQ = que;
-		que = [];
-		oQ.forEach(function (p) {
-			p[3].reject(mgs);
-		});
-		return self;
-	}
-	self.clearQueue = clearQueue;
-	makeKeyFuncs(resolvePromises, self, obj);
-	
-
-	function done(num) {
-		if (queueLen) {
-			var data = que.shift();
-			queueLen--;
-			workers[num][data[0]](data[1], data[2]).then(function (d) {
-				done(num);
-				data[3].resolve(d);
-			}, function (d) {
-				done(num);
-				data[3].reject(d);
-			});
-		}
-		else {
-			numIdle++;
-			idle.push(num);
-		}
-	}
-	var resolveUnmanagedPromises;
-	if(dumb){
-		resolveUnmanagedPromises = makeUnmanaged(workers, n);
-	}
-	function resolvePromises(key, data, transfer) { //srsly better name!
-		var promise = catiline.deferred();
-		if (dumb) {
-			return resolveUnmanagedPromises(key, data, transfer,promise);
-		}
-		if (!queueLen && numIdle) {
-			var num = idle.pop();
-			numIdle--;
-			promise.promise.cancel = function(reason){
-				return promise.reject(reason);
-			};
-			workers[num][key](data, transfer).then(function (d) {
-				done(num);
-				promise.resolve(d);
-			}, function (d) {
-				done(num);
-				promise.reject(d);
-			});
-		} else if (queueLen || !numIdle) {
-			var queueItem = [key, data, transfer, promise];
-			promise.promise.cancel = function(reason){
-				var loc = que.indexOf(queueItem);
-				if(loc>-1){
-					que.splice(loc,1);
-					queueLen--;
-				}
-				return promise.reject(reason);
-			};
-			queueLen = que.push(queueItem);
-		}
-		return promise.promise;
-	}
-	self._close = function () {
-		return catiline.all(workers.map(function (w) {
-			return w._close();
-		}));
-	};
-	if (!('close' in self)) {
-		self.close = self._close;
-	}
-}
-CatilineQueue.prototype.__batchcb__ = {};
-CatilineQueue.prototype.__batchtcb__ = {};
-CatilineQueue.prototype.batch = function (cb) {
-	if (typeof cb === 'function') {
-		this.__cb__ = cb;
-		return this.__batchcb__;
-	}
-	else {
-		return this.clearQueue(cb);
-	}
-};
-CatilineQueue.prototype.batchTransfer = function (cb) {
-	if (typeof cb === 'function') {
-		this.__batchtcb__.__cb__ = cb;
-		return this.__batchtcb__;
-	}
-	else {
-		return this.clearQueue(cb);
-	}
-};
-catiline.Queue = CatilineQueue;
-catiline.queue = function (obj, n, dumb) {
-	return new catiline.Queue(obj, n, dumb);
-};
-
-function catiline(object,queueLength,unmanaged){
-	if(arguments.length === 1 || !queueLength || queueLength <= 1){
-		return new catiline.Worker(object);
-	}else{
-		return new catiline.Queue(object,queueLength,unmanaged);
-	}
-}
-//will be removed in v3
-catiline.setImmediate = catiline.nextTick;
-function initBrowser(catiline){
-	var origCW = global.cw;
-	catiline.noConflict=function(newName){
-		global.cw = origCW;
-		if(newName){
-			global[newName]=catiline;
-		}
-	};
-	global.catiline = catiline;
-	global.cw = catiline;
-	if(!('communist' in global)){
-		global.communist=catiline;
-	}
-
-}
-
-if(typeof define === 'function'){
-	define(function(require){
-		catiline.SHIM_WORKER_PATH=require.toUrl('./catiline.js');
-		return catiline;
-	});
-}else if(typeof module === 'undefined' || !('exports' in module)){
-	initBrowser(catiline);
-} else {
-	module.exports=catiline;
-}catiline.version = '2.9.3';
-})(this);}
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/catiline/dist/catiline.js"][0].apply(exports,arguments)
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/AbstractWorker.js":[function(require,module,exports){
 var L = require('leaflet');
 
@@ -20877,18 +20890,156 @@ L.Map.include({
 
 
 }(window, document));
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-draw/dist/leaflet.draw.js":[function(require,module,exports){
-/*
-	Leaflet.draw, a plugin that adds drawing and editing tools to Leaflet powered maps.
-	(c) 2012-2013, Jacob Toye, Smartrak
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/AbstractWorker.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/AbstractWorker.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/CatilineWorker.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/CatilineWorker.js"][0].apply(exports,arguments)
+},{"catiline":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/catiline/dist/catiline.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/Leaflet.label-patch.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/Leaflet.label-patch.js"][0].apply(exports,arguments)
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileCache.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileCache.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.BBox.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.BBox.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Div.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Div.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Progress.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Progress.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Vector.Unclipped.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileLayer.Vector.Unclipped.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileQueue.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/TileQueue.js"][0].apply(exports,arguments)
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/index.js":[function(require,module,exports){
+arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js"][0].apply(exports,arguments)
+},{"./AbstractWorker.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/AbstractWorker.js","./CatilineWorker.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/CatilineWorker.js","./Leaflet.label-patch.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/Leaflet.label-patch.js","./TileCache.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileCache.js","./TileLayer.BBox.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.BBox.js","./TileLayer.Div.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Div.js","./TileLayer.GeoJSON.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.GeoJSON.js","./TileLayer.Overzoom.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Overzoom.js","./TileLayer.Progress.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Progress.js","./TileLayer.Vector.Unclipped.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileLayer.Vector.Unclipped.js","./TileQueue.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/TileQueue.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/livinglots.parcels/src/index.js":[function(require,module,exports){
+//
+// Add parcel functionality to a leaflet map
+//
 
-	https://github.com/Leaflet/Leaflet.draw
-	http://leafletjs.com
-	https://github.com/jacobtoye
-*/
-!function(t,e){L.drawVersion="0.2.4-dev",L.drawLocal={draw:{toolbar:{actions:{title:"Cancel drawing",text:"Cancel"},undo:{title:"Delete last point drawn",text:"Delete last point"},buttons:{polyline:"Draw a polyline",polygon:"Draw a polygon",rectangle:"Draw a rectangle",circle:"Draw a circle",marker:"Draw a marker"}},handlers:{circle:{tooltip:{start:"Click and drag to draw circle."}},marker:{tooltip:{start:"Click map to place marker."}},polygon:{tooltip:{start:"Click to start drawing shape.",cont:"Click to continue drawing shape.",end:"Click first point to close this shape."}},polyline:{error:"<strong>Error:</strong> shape edges cannot cross!",tooltip:{start:"Click to start drawing line.",cont:"Click to continue drawing line.",end:"Click last point to finish line."}},rectangle:{tooltip:{start:"Click and drag to draw rectangle."}},simpleshape:{tooltip:{end:"Release mouse to finish drawing."}}}},edit:{toolbar:{actions:{save:{title:"Save changes.",text:"Save"},cancel:{title:"Cancel editing, discards all changes.",text:"Cancel"}},buttons:{edit:"Edit layers.",editDisabled:"No layers to edit.",remove:"Delete layers.",removeDisabled:"No layers to delete."}},handlers:{edit:{tooltip:{text:"Drag handles, or marker to edit feature.",subtext:"Click cancel to undo changes."}},remove:{tooltip:{text:"Click on a feature to remove"}}}}},L.Draw={},L.Draw.Feature=L.Handler.extend({includes:L.Mixin.Events,initialize:function(t,e){this._map=t,this._container=t._container,this._overlayPane=t._panes.overlayPane,this._popupPane=t._panes.popupPane,e&&e.shapeOptions&&(e.shapeOptions=L.Util.extend({},this.options.shapeOptions,e.shapeOptions)),L.setOptions(this,e)},enable:function(){this._enabled||(this.fire("enabled",{handler:this.type}),this._map.fire("draw:drawstart",{layerType:this.type}),L.Handler.prototype.enable.call(this))},disable:function(){this._enabled&&(L.Handler.prototype.disable.call(this),this._map.fire("draw:drawstop",{layerType:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(L.DomUtil.disableTextSelection(),t.getContainer().focus(),this._tooltip=new L.Tooltip(this._map),L.DomEvent.on(this._container,"keyup",this._cancelDrawing,this))},removeHooks:function(){this._map&&(L.DomUtil.enableTextSelection(),this._tooltip.dispose(),this._tooltip=null,L.DomEvent.off(this._container,"keyup",this._cancelDrawing,this))},setOptions:function(t){L.setOptions(this,t)},_fireCreatedEvent:function(t){this._map.fire("draw:created",{layer:t,layerType:this.type})},_cancelDrawing:function(t){27===t.keyCode&&this.disable()}}),L.Draw.Polyline=L.Draw.Feature.extend({statics:{TYPE:"polyline"},Poly:L.Polyline,options:{allowIntersection:!0,repeatMode:!1,drawError:{color:"#b00b00",timeout:2500},icon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon"}),guidelineDistance:20,maxGuideLineLength:4e3,shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!1,clickable:!0},metric:!0,showLength:!0,zIndexOffset:2e3},initialize:function(t,e){this.options.drawError.message=L.drawLocal.draw.handlers.polyline.error,e&&e.drawError&&(e.drawError=L.Util.extend({},this.options.drawError,e.drawError)),this.type=L.Draw.Polyline.TYPE,L.Draw.Feature.prototype.initialize.call(this,t,e)},addHooks:function(){L.Draw.Feature.prototype.addHooks.call(this),this._map&&(this._markers=[],this._markerGroup=new L.LayerGroup,this._map.addLayer(this._markerGroup),this._poly=new L.Polyline([],this.options.shapeOptions),this._tooltip.updateContent(this._getTooltipText()),this._mouseMarker||(this._mouseMarker=L.marker(this._map.getCenter(),{icon:L.divIcon({className:"leaflet-mouse-marker",iconAnchor:[20,20],iconSize:[40,40]}),opacity:0,zIndexOffset:this.options.zIndexOffset})),this._mouseMarker.on("mousedown",this._onMouseDown,this).addTo(this._map),this._map.on("mousemove",this._onMouseMove,this).on("mouseup",this._onMouseUp,this).on("zoomend",this._onZoomEnd,this))},removeHooks:function(){L.Draw.Feature.prototype.removeHooks.call(this),this._clearHideErrorTimeout(),this._cleanUpShape(),this._map.removeLayer(this._markerGroup),delete this._markerGroup,delete this._markers,this._map.removeLayer(this._poly),delete this._poly,this._mouseMarker.off("mousedown",this._onMouseDown,this).off("mouseup",this._onMouseUp,this),this._map.removeLayer(this._mouseMarker),delete this._mouseMarker,this._clearGuides(),this._map.off("mousemove",this._onMouseMove,this).off("zoomend",this._onZoomEnd,this)},deleteLastVertex:function(){if(!(this._markers.length<=1)){var t=this._markers.pop(),e=this._poly,i=this._poly.spliceLatLngs(e.getLatLngs().length-1,1)[0];this._markerGroup.removeLayer(t),e.getLatLngs().length<2&&this._map.removeLayer(e),this._vertexChanged(i,!1)}},addVertex:function(t){var e=this._markers.length;return e>0&&!this.options.allowIntersection&&this._poly.newLatLngIntersects(t)?(this._showErrorTooltip(),void 0):(this._errorShown&&this._hideErrorTooltip(),this._markers.push(this._createMarker(t)),this._poly.addLatLng(t),2===this._poly.getLatLngs().length&&this._map.addLayer(this._poly),this._vertexChanged(t,!0),void 0)},_finishShape:function(){var t=this._poly.newLatLngIntersects(this._poly.getLatLngs()[0],!0);return!this.options.allowIntersection&&t||!this._shapeIsValid()?(this._showErrorTooltip(),void 0):(this._fireCreatedEvent(),this.disable(),this.options.repeatMode&&this.enable(),void 0)},_shapeIsValid:function(){return!0},_onZoomEnd:function(){this._updateGuide()},_onMouseMove:function(t){var e=t.layerPoint,i=t.latlng;this._currentLatLng=i,this._updateTooltip(i),this._updateGuide(e),this._mouseMarker.setLatLng(i),L.DomEvent.preventDefault(t.originalEvent)},_vertexChanged:function(t,e){this._updateFinishHandler(),this._updateRunningMeasure(t,e),this._clearGuides(),this._updateTooltip()},_onMouseDown:function(t){var e=t.originalEvent;this._mouseDownOrigin=L.point(e.clientX,e.clientY)},_onMouseUp:function(e){if(this._mouseDownOrigin){var i=L.point(e.originalEvent.clientX,e.originalEvent.clientY).distanceTo(this._mouseDownOrigin);Math.abs(i)<9*(t.devicePixelRatio||1)&&this.addVertex(e.latlng)}this._mouseDownOrigin=null},_updateFinishHandler:function(){var t=this._markers.length;t>1&&this._markers[t-1].on("click",this._finishShape,this),t>2&&this._markers[t-2].off("click",this._finishShape,this)},_createMarker:function(t){var e=new L.Marker(t,{icon:this.options.icon,zIndexOffset:2*this.options.zIndexOffset});return this._markerGroup.addLayer(e),e},_updateGuide:function(t){var e=this._markers.length;e>0&&(t=t||this._map.latLngToLayerPoint(this._currentLatLng),this._clearGuides(),this._drawGuide(this._map.latLngToLayerPoint(this._markers[e-1].getLatLng()),t))},_updateTooltip:function(t){var e=this._getTooltipText();t&&this._tooltip.updatePosition(t),this._errorShown||this._tooltip.updateContent(e)},_drawGuide:function(t,e){var i,o,a,s=Math.floor(Math.sqrt(Math.pow(e.x-t.x,2)+Math.pow(e.y-t.y,2))),r=this.options.guidelineDistance,n=this.options.maxGuideLineLength,l=s>n?s-n:r;for(this._guidesContainer||(this._guidesContainer=L.DomUtil.create("div","leaflet-draw-guides",this._overlayPane));s>l;l+=this.options.guidelineDistance)i=l/s,o={x:Math.floor(t.x*(1-i)+i*e.x),y:Math.floor(t.y*(1-i)+i*e.y)},a=L.DomUtil.create("div","leaflet-draw-guide-dash",this._guidesContainer),a.style.backgroundColor=this._errorShown?this.options.drawError.color:this.options.shapeOptions.color,L.DomUtil.setPosition(a,o)},_updateGuideColor:function(t){if(this._guidesContainer)for(var e=0,i=this._guidesContainer.childNodes.length;i>e;e++)this._guidesContainer.childNodes[e].style.backgroundColor=t},_clearGuides:function(){if(this._guidesContainer)for(;this._guidesContainer.firstChild;)this._guidesContainer.removeChild(this._guidesContainer.firstChild)},_getTooltipText:function(){var t,e,i=this.options.showLength;return 0===this._markers.length?t={text:L.drawLocal.draw.handlers.polyline.tooltip.start}:(e=i?this._getMeasurementString():"",t=1===this._markers.length?{text:L.drawLocal.draw.handlers.polyline.tooltip.cont,subtext:e}:{text:L.drawLocal.draw.handlers.polyline.tooltip.end,subtext:e}),t},_updateRunningMeasure:function(t,e){var i,o,a=this._markers.length;1===this._markers.length?this._measurementRunningTotal=0:(i=a-(e?2:1),o=t.distanceTo(this._markers[i].getLatLng()),this._measurementRunningTotal+=o*(e?1:-1))},_getMeasurementString:function(){var t,e=this._currentLatLng,i=this._markers[this._markers.length-1].getLatLng();return t=this._measurementRunningTotal+e.distanceTo(i),L.GeometryUtil.readableDistance(t,this.options.metric)},_showErrorTooltip:function(){this._errorShown=!0,this._tooltip.showAsError().updateContent({text:this.options.drawError.message}),this._updateGuideColor(this.options.drawError.color),this._poly.setStyle({color:this.options.drawError.color}),this._clearHideErrorTimeout(),this._hideErrorTimeout=setTimeout(L.Util.bind(this._hideErrorTooltip,this),this.options.drawError.timeout)},_hideErrorTooltip:function(){this._errorShown=!1,this._clearHideErrorTimeout(),this._tooltip.removeError().updateContent(this._getTooltipText()),this._updateGuideColor(this.options.shapeOptions.color),this._poly.setStyle({color:this.options.shapeOptions.color})},_clearHideErrorTimeout:function(){this._hideErrorTimeout&&(clearTimeout(this._hideErrorTimeout),this._hideErrorTimeout=null)},_cleanUpShape:function(){this._markers.length>1&&this._markers[this._markers.length-1].off("click",this._finishShape,this)},_fireCreatedEvent:function(){var t=new this.Poly(this._poly.getLatLngs(),this.options.shapeOptions);L.Draw.Feature.prototype._fireCreatedEvent.call(this,t)}}),L.Draw.Polygon=L.Draw.Polyline.extend({statics:{TYPE:"polygon"},Poly:L.Polygon,options:{showArea:!1,shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!0,fillColor:null,fillOpacity:.2,clickable:!0}},initialize:function(t,e){L.Draw.Polyline.prototype.initialize.call(this,t,e),this.type=L.Draw.Polygon.TYPE},_updateFinishHandler:function(){var t=this._markers.length;1===t&&this._markers[0].on("click",this._finishShape,this),t>2&&(this._markers[t-1].on("dblclick",this._finishShape,this),t>3&&this._markers[t-2].off("dblclick",this._finishShape,this))},_getTooltipText:function(){var t,e;return 0===this._markers.length?t=L.drawLocal.draw.handlers.polygon.tooltip.start:this._markers.length<3?t=L.drawLocal.draw.handlers.polygon.tooltip.cont:(t=L.drawLocal.draw.handlers.polygon.tooltip.end,e=this._getMeasurementString()),{text:t,subtext:e}},_getMeasurementString:function(){var t=this._area;return t?L.GeometryUtil.readableArea(t,this.options.metric):null},_shapeIsValid:function(){return this._markers.length>=3},_vertexChanged:function(t,e){var i;!this.options.allowIntersection&&this.options.showArea&&(i=this._poly.getLatLngs(),this._area=L.GeometryUtil.geodesicArea(i)),L.Draw.Polyline.prototype._vertexChanged.call(this,t,e)},_cleanUpShape:function(){var t=this._markers.length;t>0&&(this._markers[0].off("click",this._finishShape,this),t>2&&this._markers[t-1].off("dblclick",this._finishShape,this))}}),L.SimpleShape={},L.Draw.SimpleShape=L.Draw.Feature.extend({options:{repeatMode:!1},initialize:function(t,e){this._endLabelText=L.drawLocal.draw.handlers.simpleshape.tooltip.end,L.Draw.Feature.prototype.initialize.call(this,t,e)},addHooks:function(){L.Draw.Feature.prototype.addHooks.call(this),this._map&&(this._mapDraggable=this._map.dragging.enabled(),this._mapDraggable&&this._map.dragging.disable(),this._container.style.cursor="crosshair",this._tooltip.updateContent({text:this._initialLabelText}),this._map.on("mousedown",this._onMouseDown,this).on("mousemove",this._onMouseMove,this))},removeHooks:function(){L.Draw.Feature.prototype.removeHooks.call(this),this._map&&(this._mapDraggable&&this._map.dragging.enable(),this._container.style.cursor="",this._map.off("mousedown",this._onMouseDown,this).off("mousemove",this._onMouseMove,this),L.DomEvent.off(e,"mouseup",this._onMouseUp,this),this._shape&&(this._map.removeLayer(this._shape),delete this._shape)),this._isDrawing=!1},_onMouseDown:function(t){this._isDrawing=!0,this._startLatLng=t.latlng,L.DomEvent.on(e,"mouseup",this._onMouseUp,this).preventDefault(t.originalEvent)},_onMouseMove:function(t){var e=t.latlng;this._tooltip.updatePosition(e),this._isDrawing&&(this._tooltip.updateContent({text:this._endLabelText}),this._drawShape(e))},_onMouseUp:function(){this._shape&&this._fireCreatedEvent(),this.disable(),this.options.repeatMode&&this.enable()}}),L.Draw.Rectangle=L.Draw.SimpleShape.extend({statics:{TYPE:"rectangle"},options:{shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!0,fillColor:null,fillOpacity:.2,clickable:!0}},initialize:function(t,e){this.type=L.Draw.Rectangle.TYPE,this._initialLabelText=L.drawLocal.draw.handlers.rectangle.tooltip.start,L.Draw.SimpleShape.prototype.initialize.call(this,t,e)},_drawShape:function(t){this._shape?this._shape.setBounds(new L.LatLngBounds(this._startLatLng,t)):(this._shape=new L.Rectangle(new L.LatLngBounds(this._startLatLng,t),this.options.shapeOptions),this._map.addLayer(this._shape))},_fireCreatedEvent:function(){var t=new L.Rectangle(this._shape.getBounds(),this.options.shapeOptions);L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this,t)}}),L.Draw.Circle=L.Draw.SimpleShape.extend({statics:{TYPE:"circle"},options:{shapeOptions:{stroke:!0,color:"#f06eaa",weight:4,opacity:.5,fill:!0,fillColor:null,fillOpacity:.2,clickable:!0},showRadius:!0,metric:!0},initialize:function(t,e){this.type=L.Draw.Circle.TYPE,this._initialLabelText=L.drawLocal.draw.handlers.circle.tooltip.start,L.Draw.SimpleShape.prototype.initialize.call(this,t,e)},_drawShape:function(t){this._shape?this._shape.setRadius(this._startLatLng.distanceTo(t)):(this._shape=new L.Circle(this._startLatLng,this._startLatLng.distanceTo(t),this.options.shapeOptions),this._map.addLayer(this._shape))},_fireCreatedEvent:function(){var t=new L.Circle(this._startLatLng,this._shape.getRadius(),this.options.shapeOptions);L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this,t)},_onMouseMove:function(t){var e,i=t.latlng,o=this.options.showRadius,a=this.options.metric;this._tooltip.updatePosition(i),this._isDrawing&&(this._drawShape(i),e=this._shape.getRadius().toFixed(1),this._tooltip.updateContent({text:this._endLabelText,subtext:o?"Radius: "+L.GeometryUtil.readableDistance(e,a):""}))}}),L.Draw.Marker=L.Draw.Feature.extend({statics:{TYPE:"marker"},options:{icon:new L.Icon.Default,repeatMode:!1,zIndexOffset:2e3},initialize:function(t,e){this.type=L.Draw.Marker.TYPE,L.Draw.Feature.prototype.initialize.call(this,t,e)},addHooks:function(){L.Draw.Feature.prototype.addHooks.call(this),this._map&&(this._tooltip.updateContent({text:L.drawLocal.draw.handlers.marker.tooltip.start}),this._mouseMarker||(this._mouseMarker=L.marker(this._map.getCenter(),{icon:L.divIcon({className:"leaflet-mouse-marker",iconAnchor:[20,20],iconSize:[40,40]}),opacity:0,zIndexOffset:this.options.zIndexOffset})),this._mouseMarker.on("click",this._onClick,this).addTo(this._map),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){L.Draw.Feature.prototype.removeHooks.call(this),this._map&&(this._marker&&(this._marker.off("click",this._onClick,this),this._map.off("click",this._onClick,this).removeLayer(this._marker),delete this._marker),this._mouseMarker.off("click",this._onClick,this),this._map.removeLayer(this._mouseMarker),delete this._mouseMarker,this._map.off("mousemove",this._onMouseMove,this))},_onMouseMove:function(t){var e=t.latlng;this._tooltip.updatePosition(e),this._mouseMarker.setLatLng(e),this._marker?(e=this._mouseMarker.getLatLng(),this._marker.setLatLng(e)):(this._marker=new L.Marker(e,{icon:this.options.icon,zIndexOffset:this.options.zIndexOffset}),this._marker.on("click",this._onClick,this),this._map.on("click",this._onClick,this).addLayer(this._marker))},_onClick:function(){this._fireCreatedEvent(),this.disable(),this.options.repeatMode&&this.enable()},_fireCreatedEvent:function(){var t=new L.Marker(this._marker.getLatLng(),{icon:this.options.icon});L.Draw.Feature.prototype._fireCreatedEvent.call(this,t)}}),L.Edit=L.Edit||{},L.Edit.Poly=L.Handler.extend({options:{icon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon"})},initialize:function(t,e){this._poly=t,L.setOptions(this,e)},addHooks:function(){this._poly._map&&(this._markerGroup||this._initMarkers(),this._poly._map.addLayer(this._markerGroup))},removeHooks:function(){this._poly._map&&(this._poly._map.removeLayer(this._markerGroup),delete this._markerGroup,delete this._markers)},updateMarkers:function(){this._markerGroup.clearLayers(),this._initMarkers()},_initMarkers:function(){this._markerGroup||(this._markerGroup=new L.LayerGroup),this._markers=[];var t,e,i,o,a=this._poly._latlngs;for(t=0,i=a.length;i>t;t++)o=this._createMarker(a[t],t),o.on("click",this._onMarkerClick,this),this._markers.push(o);var s,r;for(t=0,e=i-1;i>t;e=t++)(0!==t||L.Polygon&&this._poly instanceof L.Polygon)&&(s=this._markers[e],r=this._markers[t],this._createMiddleMarker(s,r),this._updatePrevNext(s,r))},_createMarker:function(t,e){var i=new L.Marker(t,{draggable:!0,icon:this.options.icon});return i._origLatLng=t,i._index=e,i.on("drag",this._onMarkerDrag,this),i.on("dragend",this._fireEdit,this),this._markerGroup.addLayer(i),i},_removeMarker:function(t){var e=t._index;this._markerGroup.removeLayer(t),this._markers.splice(e,1),this._poly.spliceLatLngs(e,1),this._updateIndexes(e,-1),t.off("drag",this._onMarkerDrag,this).off("dragend",this._fireEdit,this).off("click",this._onMarkerClick,this)},_fireEdit:function(){this._poly.edited=!0,this._poly.fire("edit")},_onMarkerDrag:function(t){var e=t.target;L.extend(e._origLatLng,e._latlng),e._middleLeft&&e._middleLeft.setLatLng(this._getMiddleLatLng(e._prev,e)),e._middleRight&&e._middleRight.setLatLng(this._getMiddleLatLng(e,e._next)),this._poly.redraw()},_onMarkerClick:function(t){var e=L.Polygon&&this._poly instanceof L.Polygon?4:3,i=t.target;this._poly._latlngs.length<e||(this._removeMarker(i),this._updatePrevNext(i._prev,i._next),i._middleLeft&&this._markerGroup.removeLayer(i._middleLeft),i._middleRight&&this._markerGroup.removeLayer(i._middleRight),i._prev&&i._next?this._createMiddleMarker(i._prev,i._next):i._prev?i._next||(i._prev._middleRight=null):i._next._middleLeft=null,this._fireEdit())},_updateIndexes:function(t,e){this._markerGroup.eachLayer(function(i){i._index>t&&(i._index+=e)})},_createMiddleMarker:function(t,e){var i,o,a,s=this._getMiddleLatLng(t,e),r=this._createMarker(s);r.setOpacity(.6),t._middleRight=e._middleLeft=r,o=function(){var o=e._index;r._index=o,r.off("click",i,this).on("click",this._onMarkerClick,this),s.lat=r.getLatLng().lat,s.lng=r.getLatLng().lng,this._poly.spliceLatLngs(o,0,s),this._markers.splice(o,0,r),r.setOpacity(1),this._updateIndexes(o,1),e._index++,this._updatePrevNext(t,r),this._updatePrevNext(r,e),this._poly.fire("editstart")},a=function(){r.off("dragstart",o,this),r.off("dragend",a,this),this._createMiddleMarker(t,r),this._createMiddleMarker(r,e)},i=function(){o.call(this),a.call(this),this._fireEdit()},r.on("click",i,this).on("dragstart",o,this).on("dragend",a,this),this._markerGroup.addLayer(r)},_updatePrevNext:function(t,e){t&&(t._next=e),e&&(e._prev=t)},_getMiddleLatLng:function(t,e){var i=this._poly._map,o=i.project(t.getLatLng()),a=i.project(e.getLatLng());return i.unproject(o._add(a)._divideBy(2))}}),L.Polyline.addInitHook(function(){this.editing||(L.Edit.Poly&&(this.editing=new L.Edit.Poly(this),this.options.editable&&this.editing.enable()),this.on("add",function(){this.editing&&this.editing.enabled()&&this.editing.addHooks()}),this.on("remove",function(){this.editing&&this.editing.enabled()&&this.editing.removeHooks()}))}),L.Edit=L.Edit||{},L.Edit.SimpleShape=L.Handler.extend({options:{moveIcon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon leaflet-edit-move"}),resizeIcon:new L.DivIcon({iconSize:new L.Point(8,8),className:"leaflet-div-icon leaflet-editing-icon leaflet-edit-resize"})},initialize:function(t,e){this._shape=t,L.Util.setOptions(this,e)},addHooks:function(){this._shape._map&&(this._map=this._shape._map,this._markerGroup||this._initMarkers(),this._map.addLayer(this._markerGroup))},removeHooks:function(){if(this._shape._map){this._unbindMarker(this._moveMarker);for(var t=0,e=this._resizeMarkers.length;e>t;t++)this._unbindMarker(this._resizeMarkers[t]);this._resizeMarkers=null,this._map.removeLayer(this._markerGroup),delete this._markerGroup}this._map=null},updateMarkers:function(){this._markerGroup.clearLayers(),this._initMarkers()},_initMarkers:function(){this._markerGroup||(this._markerGroup=new L.LayerGroup),this._createMoveMarker(),this._createResizeMarker()},_createMoveMarker:function(){},_createResizeMarker:function(){},_createMarker:function(t,e){var i=new L.Marker(t,{draggable:!0,icon:e,zIndexOffset:10});return this._bindMarker(i),this._markerGroup.addLayer(i),i},_bindMarker:function(t){t.on("dragstart",this._onMarkerDragStart,this).on("drag",this._onMarkerDrag,this).on("dragend",this._onMarkerDragEnd,this)},_unbindMarker:function(t){t.off("dragstart",this._onMarkerDragStart,this).off("drag",this._onMarkerDrag,this).off("dragend",this._onMarkerDragEnd,this)},_onMarkerDragStart:function(t){var e=t.target;e.setOpacity(0),this._shape.fire("editstart")},_fireEdit:function(){this._shape.edited=!0,this._shape.fire("edit")},_onMarkerDrag:function(t){var e=t.target,i=e.getLatLng();e===this._moveMarker?this._move(i):this._resize(i),this._shape.redraw()},_onMarkerDragEnd:function(t){var e=t.target;e.setOpacity(1),this._fireEdit()},_move:function(){},_resize:function(){}}),L.Edit=L.Edit||{},L.Edit.Rectangle=L.Edit.SimpleShape.extend({_createMoveMarker:function(){var t=this._shape.getBounds(),e=t.getCenter();this._moveMarker=this._createMarker(e,this.options.moveIcon)},_createResizeMarker:function(){var t=this._getCorners();this._resizeMarkers=[];for(var e=0,i=t.length;i>e;e++)this._resizeMarkers.push(this._createMarker(t[e],this.options.resizeIcon)),this._resizeMarkers[e]._cornerIndex=e},_onMarkerDragStart:function(t){L.Edit.SimpleShape.prototype._onMarkerDragStart.call(this,t);var e=this._getCorners(),i=t.target,o=i._cornerIndex;this._oppositeCorner=e[(o+2)%4],this._toggleCornerMarkers(0,o)},_onMarkerDragEnd:function(t){var e,i,o=t.target;o===this._moveMarker&&(e=this._shape.getBounds(),i=e.getCenter(),o.setLatLng(i)),this._toggleCornerMarkers(1),this._repositionCornerMarkers(),L.Edit.SimpleShape.prototype._onMarkerDragEnd.call(this,t)},_move:function(t){for(var e,i=this._shape.getLatLngs(),o=this._shape.getBounds(),a=o.getCenter(),s=[],r=0,n=i.length;n>r;r++)e=[i[r].lat-a.lat,i[r].lng-a.lng],s.push([t.lat+e[0],t.lng+e[1]]);this._shape.setLatLngs(s),this._repositionCornerMarkers()},_resize:function(t){var e;this._shape.setBounds(L.latLngBounds(t,this._oppositeCorner)),e=this._shape.getBounds(),this._moveMarker.setLatLng(e.getCenter())},_getCorners:function(){var t=this._shape.getBounds(),e=t.getNorthWest(),i=t.getNorthEast(),o=t.getSouthEast(),a=t.getSouthWest();return[e,i,o,a]},_toggleCornerMarkers:function(t){for(var e=0,i=this._resizeMarkers.length;i>e;e++)this._resizeMarkers[e].setOpacity(t)},_repositionCornerMarkers:function(){for(var t=this._getCorners(),e=0,i=this._resizeMarkers.length;i>e;e++)this._resizeMarkers[e].setLatLng(t[e])}}),L.Rectangle.addInitHook(function(){L.Edit.Rectangle&&(this.editing=new L.Edit.Rectangle(this),this.options.editable&&this.editing.enable())}),L.Edit=L.Edit||{},L.Edit.Circle=L.Edit.SimpleShape.extend({_createMoveMarker:function(){var t=this._shape.getLatLng();this._moveMarker=this._createMarker(t,this.options.moveIcon)},_createResizeMarker:function(){var t=this._shape.getLatLng(),e=this._getResizeMarkerPoint(t);this._resizeMarkers=[],this._resizeMarkers.push(this._createMarker(e,this.options.resizeIcon))},_getResizeMarkerPoint:function(t){var e=this._shape._radius*Math.cos(Math.PI/4),i=this._map.project(t);return this._map.unproject([i.x+e,i.y-e])},_move:function(t){var e=this._getResizeMarkerPoint(t);this._resizeMarkers[0].setLatLng(e),this._shape.setLatLng(t)},_resize:function(t){var e=this._moveMarker.getLatLng(),i=e.distanceTo(t);this._shape.setRadius(i)}}),L.Circle.addInitHook(function(){L.Edit.Circle&&(this.editing=new L.Edit.Circle(this),this.options.editable&&this.editing.enable()),this.on("add",function(){this.editing&&this.editing.enabled()&&this.editing.addHooks()}),this.on("remove",function(){this.editing&&this.editing.enabled()&&this.editing.removeHooks()})}),L.LatLngUtil={cloneLatLngs:function(t){for(var e=[],i=0,o=t.length;o>i;i++)e.push(this.cloneLatLng(t[i]));return e},cloneLatLng:function(t){return L.latLng(t.lat,t.lng)}},L.GeometryUtil=L.extend(L.GeometryUtil||{},{geodesicArea:function(t){var e,i,o=t.length,a=0,s=L.LatLng.DEG_TO_RAD;if(o>2){for(var r=0;o>r;r++)e=t[r],i=t[(r+1)%o],a+=(i.lng-e.lng)*s*(2+Math.sin(e.lat*s)+Math.sin(i.lat*s));a=6378137*a*6378137/2}return Math.abs(a)},readableArea:function(t,e){var i;return e?i=t>=1e4?(1e-4*t).toFixed(2)+" ha":t.toFixed(2)+" m&sup2;":(t*=.836127,i=t>=3097600?(t/3097600).toFixed(2)+" mi&sup2;":t>=4840?(t/4840).toFixed(2)+" acres":Math.ceil(t)+" yd&sup2;"),i},readableDistance:function(t,e){var i;return e?i=t>1e3?(t/1e3).toFixed(2)+" km":Math.ceil(t)+" m":(t*=1.09361,i=t>1760?(t/1760).toFixed(2)+" miles":Math.ceil(t)+" yd"),i}}),L.Util.extend(L.LineUtil,{segmentsIntersect:function(t,e,i,o){return this._checkCounterclockwise(t,i,o)!==this._checkCounterclockwise(e,i,o)&&this._checkCounterclockwise(t,e,i)!==this._checkCounterclockwise(t,e,o)},_checkCounterclockwise:function(t,e,i){return(i.y-t.y)*(e.x-t.x)>(e.y-t.y)*(i.x-t.x)}}),L.Polyline.include({intersects:function(){var t,e,i,o=this._originalPoints,a=o?o.length:0;if(this._tooFewPointsForIntersection())return!1;for(t=a-1;t>=3;t--)if(e=o[t-1],i=o[t],this._lineSegmentsIntersectsRange(e,i,t-2))return!0;return!1},newLatLngIntersects:function(t,e){return this._map?this.newPointIntersects(this._map.latLngToLayerPoint(t),e):!1},newPointIntersects:function(t,e){var i=this._originalPoints,o=i?i.length:0,a=i?i[o-1]:null,s=o-2;return this._tooFewPointsForIntersection(1)?!1:this._lineSegmentsIntersectsRange(a,t,s,e?1:0)},_tooFewPointsForIntersection:function(t){var e=this._originalPoints,i=e?e.length:0;return i+=t||0,!this._originalPoints||3>=i},_lineSegmentsIntersectsRange:function(t,e,i,o){var a,s,r=this._originalPoints;o=o||0;for(var n=i;n>o;n--)if(a=r[n-1],s=r[n],L.LineUtil.segmentsIntersect(t,e,a,s))return!0;return!1}}),L.Polygon.include({intersects:function(){var t,e,i,o,a,s=this._originalPoints;return this._tooFewPointsForIntersection()?!1:(t=L.Polyline.prototype.intersects.call(this))?!0:(e=s.length,i=s[0],o=s[e-1],a=e-2,this._lineSegmentsIntersectsRange(o,i,a,1))}}),L.Control.Draw=L.Control.extend({options:{position:"topleft",draw:{},edit:!1},initialize:function(t){if(L.version<"0.7")throw new Error("Leaflet.draw 0.2.3+ requires Leaflet 0.7.0+. Download latest from https://github.com/Leaflet/Leaflet/");L.Control.prototype.initialize.call(this,t);var e,i;this._toolbars={},L.DrawToolbar&&this.options.draw&&(i=new L.DrawToolbar(this.options.draw),e=L.stamp(i),this._toolbars[e]=i,this._toolbars[e].on("enable",this._toolbarEnabled,this)),L.EditToolbar&&this.options.edit&&(i=new L.EditToolbar(this.options.edit),e=L.stamp(i),this._toolbars[e]=i,this._toolbars[e].on("enable",this._toolbarEnabled,this))},onAdd:function(t){var e,i=L.DomUtil.create("div","leaflet-draw"),o=!1,a="leaflet-draw-toolbar-top";for(var s in this._toolbars)this._toolbars.hasOwnProperty(s)&&(e=this._toolbars[s].addToolbar(t),e&&(o||(L.DomUtil.hasClass(e,a)||L.DomUtil.addClass(e.childNodes[0],a),o=!0),i.appendChild(e)));return i},onRemove:function(){for(var t in this._toolbars)this._toolbars.hasOwnProperty(t)&&this._toolbars[t].removeToolbar()},setDrawingOptions:function(t){for(var e in this._toolbars)this._toolbars[e]instanceof L.DrawToolbar&&this._toolbars[e].setOptions(t)},_toolbarEnabled:function(t){var e=""+L.stamp(t.target);for(var i in this._toolbars)this._toolbars.hasOwnProperty(i)&&i!==e&&this._toolbars[i].disable()}}),L.Map.mergeOptions({drawControlTooltips:!0,drawControl:!1}),L.Map.addInitHook(function(){this.options.drawControl&&(this.drawControl=new L.Control.Draw,this.addControl(this.drawControl))}),L.Toolbar=L.Class.extend({includes:[L.Mixin.Events],initialize:function(t){L.setOptions(this,t),this._modes={},this._actionButtons=[],this._activeMode=null},enabled:function(){return null!==this._activeMode},disable:function(){this.enabled()&&this._activeMode.handler.disable()},addToolbar:function(t){var e,i=L.DomUtil.create("div","leaflet-draw-section"),o=0,a=this._toolbarClass||"",s=this.getModeHandlers(t);for(this._toolbarContainer=L.DomUtil.create("div","leaflet-draw-toolbar leaflet-bar"),this._map=t,e=0;e<s.length;e++)s[e].enabled&&this._initModeHandler(s[e].handler,this._toolbarContainer,o++,a,s[e].title);return o?(this._lastButtonIndex=--o,this._actionsContainer=L.DomUtil.create("ul","leaflet-draw-actions"),i.appendChild(this._toolbarContainer),i.appendChild(this._actionsContainer),i):void 0},removeToolbar:function(){for(var t in this._modes)this._modes.hasOwnProperty(t)&&(this._disposeButton(this._modes[t].button,this._modes[t].handler.enable,this._modes[t].handler),this._modes[t].handler.disable(),this._modes[t].handler.off("enabled",this._handlerActivated,this).off("disabled",this._handlerDeactivated,this));this._modes={};for(var e=0,i=this._actionButtons.length;i>e;e++)this._disposeButton(this._actionButtons[e].button,this._actionButtons[e].callback,this);this._actionButtons=[],this._actionsContainer=null},_initModeHandler:function(t,e,i,o,a){var s=t.type;this._modes[s]={},this._modes[s].handler=t,this._modes[s].button=this._createButton({title:a,className:o+"-"+s,container:e,callback:this._modes[s].handler.enable,context:this._modes[s].handler}),this._modes[s].buttonIndex=i,this._modes[s].handler.on("enabled",this._handlerActivated,this).on("disabled",this._handlerDeactivated,this)},_createButton:function(t){var e=L.DomUtil.create("a",t.className||"",t.container);return e.href="#",t.text&&(e.innerHTML=t.text),t.title&&(e.title=t.title),L.DomEvent.on(e,"click",L.DomEvent.stopPropagation).on(e,"mousedown",L.DomEvent.stopPropagation).on(e,"dblclick",L.DomEvent.stopPropagation).on(e,"click",L.DomEvent.preventDefault).on(e,"click",t.callback,t.context),e},_disposeButton:function(t,e){L.DomEvent.off(t,"click",L.DomEvent.stopPropagation).off(t,"mousedown",L.DomEvent.stopPropagation).off(t,"dblclick",L.DomEvent.stopPropagation).off(t,"click",L.DomEvent.preventDefault).off(t,"click",e)},_handlerActivated:function(t){this.disable(),this._activeMode=this._modes[t.handler],L.DomUtil.addClass(this._activeMode.button,"leaflet-draw-toolbar-button-enabled"),this._showActionsToolbar(),this.fire("enable")},_handlerDeactivated:function(){this._hideActionsToolbar(),L.DomUtil.removeClass(this._activeMode.button,"leaflet-draw-toolbar-button-enabled"),this._activeMode=null,this.fire("disable")},_createActions:function(t){var e,i,o,a,s=this._actionsContainer,r=this.getActions(t),n=r.length;for(i=0,o=this._actionButtons.length;o>i;i++)this._disposeButton(this._actionButtons[i].button,this._actionButtons[i].callback);for(this._actionButtons=[];s.firstChild;)s.removeChild(s.firstChild);for(var l=0;n>l;l++)"enabled"in r[l]&&!r[l].enabled||(e=L.DomUtil.create("li","",s),a=this._createButton({title:r[l].title,text:r[l].text,container:e,callback:r[l].callback,context:r[l].context}),this._actionButtons.push({button:a,callback:r[l].callback}))},_showActionsToolbar:function(){var t=this._activeMode.buttonIndex,e=this._lastButtonIndex,i=this._activeMode.button.offsetTop-1;this._createActions(this._activeMode.handler),this._actionsContainer.style.top=i+"px",0===t&&(L.DomUtil.addClass(this._toolbarContainer,"leaflet-draw-toolbar-notop"),L.DomUtil.addClass(this._actionsContainer,"leaflet-draw-actions-top")),t===e&&(L.DomUtil.addClass(this._toolbarContainer,"leaflet-draw-toolbar-nobottom"),L.DomUtil.addClass(this._actionsContainer,"leaflet-draw-actions-bottom")),this._actionsContainer.style.display="block"
-},_hideActionsToolbar:function(){this._actionsContainer.style.display="none",L.DomUtil.removeClass(this._toolbarContainer,"leaflet-draw-toolbar-notop"),L.DomUtil.removeClass(this._toolbarContainer,"leaflet-draw-toolbar-nobottom"),L.DomUtil.removeClass(this._actionsContainer,"leaflet-draw-actions-top"),L.DomUtil.removeClass(this._actionsContainer,"leaflet-draw-actions-bottom")}}),L.Tooltip=L.Class.extend({initialize:function(t){this._map=t,this._popupPane=t._panes.popupPane,this._container=t.options.drawControlTooltips?L.DomUtil.create("div","leaflet-draw-tooltip",this._popupPane):null,this._singleLineLabel=!1},dispose:function(){this._container&&(this._popupPane.removeChild(this._container),this._container=null)},updateContent:function(t){return this._container?(t.subtext=t.subtext||"",0!==t.subtext.length||this._singleLineLabel?t.subtext.length>0&&this._singleLineLabel&&(L.DomUtil.removeClass(this._container,"leaflet-draw-tooltip-single"),this._singleLineLabel=!1):(L.DomUtil.addClass(this._container,"leaflet-draw-tooltip-single"),this._singleLineLabel=!0),this._container.innerHTML=(t.subtext.length>0?'<span class="leaflet-draw-tooltip-subtext">'+t.subtext+"</span><br />":"")+"<span>"+t.text+"</span>",this):this},updatePosition:function(t){var e=this._map.latLngToLayerPoint(t),i=this._container;return this._container&&(i.style.visibility="inherit",L.DomUtil.setPosition(i,e)),this},showAsError:function(){return this._container&&L.DomUtil.addClass(this._container,"leaflet-error-draw-tooltip"),this},removeError:function(){return this._container&&L.DomUtil.removeClass(this._container,"leaflet-error-draw-tooltip"),this}}),L.DrawToolbar=L.Toolbar.extend({options:{polyline:{},polygon:{},rectangle:{},circle:{},marker:{}},initialize:function(t){for(var e in this.options)this.options.hasOwnProperty(e)&&t[e]&&(t[e]=L.extend({},this.options[e],t[e]));this._toolbarClass="leaflet-draw-draw",L.Toolbar.prototype.initialize.call(this,t)},getModeHandlers:function(t){return[{enabled:this.options.polyline,handler:new L.Draw.Polyline(t,this.options.polyline),title:L.drawLocal.draw.toolbar.buttons.polyline},{enabled:this.options.polygon,handler:new L.Draw.Polygon(t,this.options.polygon),title:L.drawLocal.draw.toolbar.buttons.polygon},{enabled:this.options.rectangle,handler:new L.Draw.Rectangle(t,this.options.rectangle),title:L.drawLocal.draw.toolbar.buttons.rectangle},{enabled:this.options.circle,handler:new L.Draw.Circle(t,this.options.circle),title:L.drawLocal.draw.toolbar.buttons.circle},{enabled:this.options.marker,handler:new L.Draw.Marker(t,this.options.marker),title:L.drawLocal.draw.toolbar.buttons.marker}]},getActions:function(t){return[{enabled:t.deleteLastVertex,title:L.drawLocal.draw.toolbar.undo.title,text:L.drawLocal.draw.toolbar.undo.text,callback:t.deleteLastVertex,context:t},{title:L.drawLocal.draw.toolbar.actions.title,text:L.drawLocal.draw.toolbar.actions.text,callback:this.disable,context:this}]},setOptions:function(t){L.setOptions(this,t);for(var e in this._modes)this._modes.hasOwnProperty(e)&&t.hasOwnProperty(e)&&this._modes[e].handler.setOptions(t[e])}}),L.EditToolbar=L.Toolbar.extend({options:{edit:{selectedPathOptions:{color:"#fe57a1",opacity:.6,dashArray:"10, 10",fill:!0,fillColor:"#fe57a1",fillOpacity:.1}},remove:{},featureGroup:null},initialize:function(t){t.edit&&("undefined"==typeof t.edit.selectedPathOptions&&(t.edit.selectedPathOptions=this.options.edit.selectedPathOptions),t.edit=L.extend({},this.options.edit,t.edit)),t.remove&&(t.remove=L.extend({},this.options.remove,t.remove)),this._toolbarClass="leaflet-draw-edit",L.Toolbar.prototype.initialize.call(this,t),this._selectedFeatureCount=0},getModeHandlers:function(t){var e=this.options.featureGroup;return[{enabled:this.options.edit,handler:new L.EditToolbar.Edit(t,{featureGroup:e,selectedPathOptions:this.options.edit.selectedPathOptions}),title:L.drawLocal.edit.toolbar.buttons.edit},{enabled:this.options.remove,handler:new L.EditToolbar.Delete(t,{featureGroup:e}),title:L.drawLocal.edit.toolbar.buttons.remove}]},getActions:function(){return[{title:L.drawLocal.edit.toolbar.actions.save.title,text:L.drawLocal.edit.toolbar.actions.save.text,callback:this._save,context:this},{title:L.drawLocal.edit.toolbar.actions.cancel.title,text:L.drawLocal.edit.toolbar.actions.cancel.text,callback:this.disable,context:this}]},addToolbar:function(t){var e=L.Toolbar.prototype.addToolbar.call(this,t);return this._checkDisabled(),this.options.featureGroup.on("layeradd layerremove",this._checkDisabled,this),e},removeToolbar:function(){this.options.featureGroup.off("layeradd layerremove",this._checkDisabled,this),L.Toolbar.prototype.removeToolbar.call(this)},disable:function(){this.enabled()&&(this._activeMode.handler.revertLayers(),L.Toolbar.prototype.disable.call(this))},_save:function(){this._activeMode.handler.save(),this._activeMode.handler.disable()},_checkDisabled:function(){var t,e=this.options.featureGroup,i=0!==e.getLayers().length;this.options.edit&&(t=this._modes[L.EditToolbar.Edit.TYPE].button,i?L.DomUtil.removeClass(t,"leaflet-disabled"):L.DomUtil.addClass(t,"leaflet-disabled"),t.setAttribute("title",i?L.drawLocal.edit.toolbar.buttons.edit:L.drawLocal.edit.toolbar.buttons.editDisabled)),this.options.remove&&(t=this._modes[L.EditToolbar.Delete.TYPE].button,i?L.DomUtil.removeClass(t,"leaflet-disabled"):L.DomUtil.addClass(t,"leaflet-disabled"),t.setAttribute("title",i?L.drawLocal.edit.toolbar.buttons.remove:L.drawLocal.edit.toolbar.buttons.removeDisabled))}}),L.EditToolbar.Edit=L.Handler.extend({statics:{TYPE:"edit"},includes:L.Mixin.Events,initialize:function(t,e){if(L.Handler.prototype.initialize.call(this,t),this._selectedPathOptions=e.selectedPathOptions,this._featureGroup=e.featureGroup,!(this._featureGroup instanceof L.FeatureGroup))throw new Error("options.featureGroup must be a L.FeatureGroup");this._uneditedLayerProps={},this.type=L.EditToolbar.Edit.TYPE},enable:function(){!this._enabled&&this._hasAvailableLayers()&&(this.fire("enabled",{handler:this.type}),this._map.fire("draw:editstart",{handler:this.type}),L.Handler.prototype.enable.call(this),this._featureGroup.on("layeradd",this._enableLayerEdit,this).on("layerremove",this._disableLayerEdit,this))},disable:function(){this._enabled&&(this._featureGroup.off("layeradd",this._enableLayerEdit,this).off("layerremove",this._disableLayerEdit,this),L.Handler.prototype.disable.call(this),this._map.fire("draw:editstop",{handler:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(t.getContainer().focus(),this._featureGroup.eachLayer(this._enableLayerEdit,this),this._tooltip=new L.Tooltip(this._map),this._tooltip.updateContent({text:L.drawLocal.edit.handlers.edit.tooltip.text,subtext:L.drawLocal.edit.handlers.edit.tooltip.subtext}),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){this._map&&(this._featureGroup.eachLayer(this._disableLayerEdit,this),this._uneditedLayerProps={},this._tooltip.dispose(),this._tooltip=null,this._map.off("mousemove",this._onMouseMove,this))},revertLayers:function(){this._featureGroup.eachLayer(function(t){this._revertLayer(t)},this)},save:function(){var t=new L.LayerGroup;this._featureGroup.eachLayer(function(e){e.edited&&(t.addLayer(e),e.edited=!1)}),this._map.fire("draw:edited",{layers:t})},_backupLayer:function(t){var e=L.Util.stamp(t);this._uneditedLayerProps[e]||(t instanceof L.Polyline||t instanceof L.Polygon||t instanceof L.Rectangle?this._uneditedLayerProps[e]={latlngs:L.LatLngUtil.cloneLatLngs(t.getLatLngs())}:t instanceof L.Circle?this._uneditedLayerProps[e]={latlng:L.LatLngUtil.cloneLatLng(t.getLatLng()),radius:t.getRadius()}:t instanceof L.Marker&&(this._uneditedLayerProps[e]={latlng:L.LatLngUtil.cloneLatLng(t.getLatLng())}))},_revertLayer:function(t){var e=L.Util.stamp(t);t.edited=!1,this._uneditedLayerProps.hasOwnProperty(e)&&(t instanceof L.Polyline||t instanceof L.Polygon||t instanceof L.Rectangle?t.setLatLngs(this._uneditedLayerProps[e].latlngs):t instanceof L.Circle?(t.setLatLng(this._uneditedLayerProps[e].latlng),t.setRadius(this._uneditedLayerProps[e].radius)):t instanceof L.Marker&&t.setLatLng(this._uneditedLayerProps[e].latlng))},_toggleMarkerHighlight:function(t){if(t._icon){var e=t._icon;e.style.display="none",L.DomUtil.hasClass(e,"leaflet-edit-marker-selected")?(L.DomUtil.removeClass(e,"leaflet-edit-marker-selected"),this._offsetMarker(e,-4)):(L.DomUtil.addClass(e,"leaflet-edit-marker-selected"),this._offsetMarker(e,4)),e.style.display=""}},_offsetMarker:function(t,e){var i=parseInt(t.style.marginTop,10)-e,o=parseInt(t.style.marginLeft,10)-e;t.style.marginTop=i+"px",t.style.marginLeft=o+"px"},_enableLayerEdit:function(t){var e,i=t.layer||t.target||t,o=i instanceof L.Marker;(!o||i._icon)&&(this._backupLayer(i),this._selectedPathOptions&&(e=L.Util.extend({},this._selectedPathOptions),o?this._toggleMarkerHighlight(i):(i.options.previousOptions=L.Util.extend({dashArray:null},i.options),i instanceof L.Circle||i instanceof L.Polygon||i instanceof L.Rectangle||(e.fill=!1),i.setStyle(e))),o?(i.dragging.enable(),i.on("dragend",this._onMarkerDragEnd)):i.editing.enable())},_disableLayerEdit:function(t){var e=t.layer||t.target||t;e.edited=!1,this._selectedPathOptions&&(e instanceof L.Marker?this._toggleMarkerHighlight(e):(e.setStyle(e.options.previousOptions),delete e.options.previousOptions)),e instanceof L.Marker?(e.dragging.disable(),e.off("dragend",this._onMarkerDragEnd,this)):e.editing.disable()},_onMarkerDragEnd:function(t){var e=t.target;e.edited=!0},_onMouseMove:function(t){this._tooltip.updatePosition(t.latlng)},_hasAvailableLayers:function(){return 0!==this._featureGroup.getLayers().length}}),L.EditToolbar.Delete=L.Handler.extend({statics:{TYPE:"remove"},includes:L.Mixin.Events,initialize:function(t,e){if(L.Handler.prototype.initialize.call(this,t),L.Util.setOptions(this,e),this._deletableLayers=this.options.featureGroup,!(this._deletableLayers instanceof L.FeatureGroup))throw new Error("options.featureGroup must be a L.FeatureGroup");this.type=L.EditToolbar.Delete.TYPE},enable:function(){!this._enabled&&this._hasAvailableLayers()&&(this.fire("enabled",{handler:this.type}),this._map.fire("draw:deletestart",{handler:this.type}),L.Handler.prototype.enable.call(this),this._deletableLayers.on("layeradd",this._enableLayerDelete,this).on("layerremove",this._disableLayerDelete,this))},disable:function(){this._enabled&&(this._deletableLayers.off("layeradd",this._enableLayerDelete,this).off("layerremove",this._disableLayerDelete,this),L.Handler.prototype.disable.call(this),this._map.fire("draw:deletestop",{handler:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(t.getContainer().focus(),this._deletableLayers.eachLayer(this._enableLayerDelete,this),this._deletedLayers=new L.layerGroup,this._tooltip=new L.Tooltip(this._map),this._tooltip.updateContent({text:L.drawLocal.edit.handlers.remove.tooltip.text}),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){this._map&&(this._deletableLayers.eachLayer(this._disableLayerDelete,this),this._deletedLayers=null,this._tooltip.dispose(),this._tooltip=null,this._map.off("mousemove",this._onMouseMove,this))},revertLayers:function(){this._deletedLayers.eachLayer(function(t){this._deletableLayers.addLayer(t)},this)},save:function(){this._map.fire("draw:deleted",{layers:this._deletedLayers})},_enableLayerDelete:function(t){var e=t.layer||t.target||t;e.on("click",this._removeLayer,this)},_disableLayerDelete:function(t){var e=t.layer||t.target||t;e.off("click",this._removeLayer,this),this._deletedLayers.removeLayer(e)},_removeLayer:function(t){var e=t.layer||t.target||t;this._deletableLayers.removeLayer(e),this._deletedLayers.addLayer(e)},_onMouseMove:function(t){this._tooltip.updatePosition(t.latlng)},_hasAvailableLayers:function(){return 0!==this._deletableLayers.getLayers().length}})}(window,document);
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/index.js":[function(require,module,exports){
+var L = require('leaflet');
+
+require('leaflet-tilelayer-vector');
+
+
+var map,
+    parcelsLayer,
+    selectedParcel,
+
+    parcelDefaultStyle = {
+        color: '#2593c6',
+        fillOpacity: 0,
+        weight: 2.5
+    };
+
+
+var ParcelsMixin = {
+    parcelLayerOptions: {
+        onEachFeature: function (feature, layer) {
+            layer.on({
+                'click': function (event) {
+                    var map = this._map,
+                        layer = event.layer,
+                        feature = event.target.feature;
+                    if (selectedParcel && selectedParcel.id === feature.id) {
+                        selectedParcel = null;
+                        layer.setStyle(parcelDefaultStyle);
+                        $('#id_parcels').val('');
+                        map.fire('parcels.unselect', { layer: layer, feature: feature });
+                    }
+                    else {
+                        if (selectedParcel) {
+                            selectedParcel.layer.setStyle(map.parcelSelectStyle);
+                        }
+                        selectedParcel = {
+                            id: feature.id,
+                            address: feature.properties.address,
+                            layer: layer
+                        };
+                        $('#id_parcels').val(feature.id);
+                        layer.setStyle(map.parcelSelectStyle);
+                        layer.bindPopup(map.getParcelPopupContent(layer, feature)).openPopup();
+                        map.fire('parcels.select', { layer: layer, feature: feature });
+                    }
+                },
+
+                'mouseover': function (event) {
+                    var layer = event.layer,
+                        feature = event.target.feature;
+                    $('.map-add-lot-current-parcel').text(feature.properties.address);
+                    this._map.fire('parcels.mouseover', { layer: layer, feature: feature });
+                }
+            });
+        },
+
+        style: function (feature) {
+            return parcelDefaultStyle;
+        }
+    },
+
+    parcelSelectStyle: {
+        fillColor: '#EEC619',
+        fillOpacity: 0.5
+    },
+
+    getParcelPopupContent: function (layer, feature) {
+        return feature.properties.address || 'unknown address';
+    },
+
+    removeParcelsLayer: function () {
+        if (parcelsLayer) {
+            this.removeLayer(parcelsLayer);
+        }
+    },
+
+    addParcelsLayer: function () {
+        if (parcelsLayer) {
+            this.removeLayer(parcelsLayer);
+        }
+        var url = this.options.parcelsUrl;
+
+        var options = {
+            layerFactory: L.geoJson,
+            minZoom: 17,
+            serverZooms: [17],
+            unique: function (feature) {
+                return feature.id;
+            }
+        };
+
+        var layerOptions = L.Util.extend({}, this.parcelLayerOptions);
+        parcelsLayer = new L.TileLayer.Vector(url, options, layerOptions);
+        this.addLayer(parcelsLayer);
+    }
+
+};
+
+L.Map.include(ParcelsMixin);
+
+function setView(map, latlng) {
+    if (map) {
+        map.setView(latlng, 18);
+    }
+}
+
+module.exports = {
+    init: function (map, latlng) {
+        if (latlng) {
+            setView(map, latlng);
+        }
+        map.addParcelsLayer();
+    },
+
+    exit: function (map) {
+        map.removeParcelsLayer();
+    },
+
+    setView: setView
+};
+
+},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-tilelayer-vector/src/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/index.js":[function(require,module,exports){
 var L = require('leaflet');
 var Handlebars = require('handlebars');
 var _ = require('underscore');
@@ -21159,7 +21310,7 @@ L.Map.addInitHook(function () {
     });
 });
 
-},{"./templates":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/templates.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-draw":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/leaflet-draw/dist/leaflet.draw.js","livinglots.parcels":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.parcels/src/index.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/templates.js":[function(require,module,exports){
+},{"./templates":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/templates.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-draw":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-draw/dist/leaflet.draw.js","livinglots.parcels":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/node_modules/livinglots.parcels/src/index.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.addlot/src/templates.js":[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -21246,1806 +21397,6 @@ L.Map.include({
 });
 
 L.Map.addInitHook('_initBoundaries');
-
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.js"][0].apply(exports,arguments)
-},{"./handlebars.runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.runtime.js","./handlebars/compiler/ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./handlebars/compiler/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js","./handlebars/compiler/compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js","./handlebars/compiler/javascript-compiler":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars.runtime.js"][0].apply(exports,arguments)
-},{"./handlebars/base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/base.js","./handlebars/exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js","./handlebars/runtime":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/runtime.js","./handlebars/safe-string":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/safe-string.js","./handlebars/utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/base.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/base.js"][0].apply(exports,arguments)
-},{"./exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js"][0].apply(exports,arguments)
-},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/base.js"][0].apply(exports,arguments)
-},{"../utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/utils.js","./ast":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/ast.js","./helpers":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js","./parser":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/compiler.js"][0].apply(exports,arguments)
-},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js","../utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/helpers.js"][0].apply(exports,arguments)
-},{"../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js"][0].apply(exports,arguments)
-},{"../base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/base.js","../exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/parser.js"][0].apply(exports,arguments)
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js"][0].apply(exports,arguments)
-},{"./visitor":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js"][0].apply(exports,arguments)
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/exception.js"][0].apply(exports,arguments)
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/runtime.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/runtime.js"][0].apply(exports,arguments)
-},{"./base":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/base.js","./exception":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/safe-string.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"][0].apply(exports,arguments)
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/utils.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/dist/cjs/handlebars/utils.js"][0].apply(exports,arguments)
-},{"./safe-string":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/lib/index.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js"][0].apply(exports,arguments)
-},{"../dist/cjs/handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","../dist/cjs/handlebars/compiler/visitor":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/dist/cjs/handlebars/compiler/visitor.js","fs":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/browserify/lib/_empty.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/spin.js/spin.js":[function(require,module,exports){
-/**
- * Copyright (c) 2011-2014 Felix Gnass
- * Licensed under the MIT license
- */
-(function(root, factory) {
-
-  /* CommonJS */
-  if (typeof exports == 'object')  module.exports = factory()
-
-  /* AMD module */
-  else if (typeof define == 'function' && define.amd) define(factory)
-
-  /* Browser global */
-  else root.Spinner = factory()
-}
-(this, function() {
-  "use strict";
-
-  var prefixes = ['webkit', 'Moz', 'ms', 'O'] /* Vendor prefixes */
-    , animations = {} /* Animation rules keyed by their name */
-    , useCssAnimations /* Whether to use CSS animations or setTimeout */
-
-  /**
-   * Utility function to create elements. If no tag name is given,
-   * a DIV is created. Optionally properties can be passed.
-   */
-  function createEl(tag, prop) {
-    var el = document.createElement(tag || 'div')
-      , n
-
-    for(n in prop) el[n] = prop[n]
-    return el
-  }
-
-  /**
-   * Appends children and returns the parent.
-   */
-  function ins(parent /* child1, child2, ...*/) {
-    for (var i=1, n=arguments.length; i<n; i++)
-      parent.appendChild(arguments[i])
-
-    return parent
-  }
-
-  /**
-   * Insert a new stylesheet to hold the @keyframe or VML rules.
-   */
-  var sheet = (function() {
-    var el = createEl('style', {type : 'text/css'})
-    ins(document.getElementsByTagName('head')[0], el)
-    return el.sheet || el.styleSheet
-  }())
-
-  /**
-   * Creates an opacity keyframe animation rule and returns its name.
-   * Since most mobile Webkits have timing issues with animation-delay,
-   * we create separate rules for each line/segment.
-   */
-  function addAnimation(alpha, trail, i, lines) {
-    var name = ['opacity', trail, ~~(alpha*100), i, lines].join('-')
-      , start = 0.01 + i/lines * 100
-      , z = Math.max(1 - (1-alpha) / trail * (100-start), alpha)
-      , prefix = useCssAnimations.substring(0, useCssAnimations.indexOf('Animation')).toLowerCase()
-      , pre = prefix && '-' + prefix + '-' || ''
-
-    if (!animations[name]) {
-      sheet.insertRule(
-        '@' + pre + 'keyframes ' + name + '{' +
-        '0%{opacity:' + z + '}' +
-        start + '%{opacity:' + alpha + '}' +
-        (start+0.01) + '%{opacity:1}' +
-        (start+trail) % 100 + '%{opacity:' + alpha + '}' +
-        '100%{opacity:' + z + '}' +
-        '}', sheet.cssRules.length)
-
-      animations[name] = 1
-    }
-
-    return name
-  }
-
-  /**
-   * Tries various vendor prefixes and returns the first supported property.
-   */
-  function vendor(el, prop) {
-    var s = el.style
-      , pp
-      , i
-
-    prop = prop.charAt(0).toUpperCase() + prop.slice(1)
-    for(i=0; i<prefixes.length; i++) {
-      pp = prefixes[i]+prop
-      if(s[pp] !== undefined) return pp
-    }
-    if(s[prop] !== undefined) return prop
-  }
-
-  /**
-   * Sets multiple style properties at once.
-   */
-  function css(el, prop) {
-    for (var n in prop)
-      el.style[vendor(el, n)||n] = prop[n]
-
-    return el
-  }
-
-  /**
-   * Fills in default values.
-   */
-  function merge(obj) {
-    for (var i=1; i < arguments.length; i++) {
-      var def = arguments[i]
-      for (var n in def)
-        if (obj[n] === undefined) obj[n] = def[n]
-    }
-    return obj
-  }
-
-  /**
-   * Returns the absolute page-offset of the given element.
-   */
-  function pos(el) {
-    var o = { x:el.offsetLeft, y:el.offsetTop }
-    while((el = el.offsetParent))
-      o.x+=el.offsetLeft, o.y+=el.offsetTop
-
-    return o
-  }
-
-  /**
-   * Returns the line color from the given string or array.
-   */
-  function getColor(color, idx) {
-    return typeof color == 'string' ? color : color[idx % color.length]
-  }
-
-  // Built-in defaults
-
-  var defaults = {
-    lines: 12,            // The number of lines to draw
-    length: 7,            // The length of each line
-    width: 5,             // The line thickness
-    radius: 10,           // The radius of the inner circle
-    rotate: 0,            // Rotation offset
-    corners: 1,           // Roundness (0..1)
-    color: '#000',        // #rgb or #rrggbb
-    direction: 1,         // 1: clockwise, -1: counterclockwise
-    speed: 1,             // Rounds per second
-    trail: 100,           // Afterglow percentage
-    opacity: 1/4,         // Opacity of the lines
-    fps: 20,              // Frames per second when using setTimeout()
-    zIndex: 2e9,          // Use a high z-index by default
-    className: 'spinner', // CSS class to assign to the element
-    top: '50%',           // center vertically
-    left: '50%',          // center horizontally
-    position: 'absolute'  // element position
-  }
-
-  /** The constructor */
-  function Spinner(o) {
-    this.opts = merge(o || {}, Spinner.defaults, defaults)
-  }
-
-  // Global defaults that override the built-ins:
-  Spinner.defaults = {}
-
-  merge(Spinner.prototype, {
-
-    /**
-     * Adds the spinner to the given target element. If this instance is already
-     * spinning, it is automatically removed from its previous target b calling
-     * stop() internally.
-     */
-    spin: function(target) {
-      this.stop()
-
-      var self = this
-        , o = self.opts
-        , el = self.el = css(createEl(0, {className: o.className}), {position: o.position, width: 0, zIndex: o.zIndex})
-        , mid = o.radius+o.length+o.width
-
-      css(el, {
-        left: o.left,
-        top: o.top
-      })
-        
-      if (target) {
-        target.insertBefore(el, target.firstChild||null)
-      }
-
-      el.setAttribute('role', 'progressbar')
-      self.lines(el, self.opts)
-
-      if (!useCssAnimations) {
-        // No CSS animation support, use setTimeout() instead
-        var i = 0
-          , start = (o.lines - 1) * (1 - o.direction) / 2
-          , alpha
-          , fps = o.fps
-          , f = fps/o.speed
-          , ostep = (1-o.opacity) / (f*o.trail / 100)
-          , astep = f/o.lines
-
-        ;(function anim() {
-          i++;
-          for (var j = 0; j < o.lines; j++) {
-            alpha = Math.max(1 - (i + (o.lines - j) * astep) % f * ostep, o.opacity)
-
-            self.opacity(el, j * o.direction + start, alpha, o)
-          }
-          self.timeout = self.el && setTimeout(anim, ~~(1000/fps))
-        })()
-      }
-      return self
-    },
-
-    /**
-     * Stops and removes the Spinner.
-     */
-    stop: function() {
-      var el = this.el
-      if (el) {
-        clearTimeout(this.timeout)
-        if (el.parentNode) el.parentNode.removeChild(el)
-        this.el = undefined
-      }
-      return this
-    },
-
-    /**
-     * Internal method that draws the individual lines. Will be overwritten
-     * in VML fallback mode below.
-     */
-    lines: function(el, o) {
-      var i = 0
-        , start = (o.lines - 1) * (1 - o.direction) / 2
-        , seg
-
-      function fill(color, shadow) {
-        return css(createEl(), {
-          position: 'absolute',
-          width: (o.length+o.width) + 'px',
-          height: o.width + 'px',
-          background: color,
-          boxShadow: shadow,
-          transformOrigin: 'left',
-          transform: 'rotate(' + ~~(360/o.lines*i+o.rotate) + 'deg) translate(' + o.radius+'px' +',0)',
-          borderRadius: (o.corners * o.width>>1) + 'px'
-        })
-      }
-
-      for (; i < o.lines; i++) {
-        seg = css(createEl(), {
-          position: 'absolute',
-          top: 1+~(o.width/2) + 'px',
-          transform: o.hwaccel ? 'translate3d(0,0,0)' : '',
-          opacity: o.opacity,
-          animation: useCssAnimations && addAnimation(o.opacity, o.trail, start + i * o.direction, o.lines) + ' ' + 1/o.speed + 's linear infinite'
-        })
-
-        if (o.shadow) ins(seg, css(fill('#000', '0 0 4px ' + '#000'), {top: 2+'px'}))
-        ins(el, ins(seg, fill(getColor(o.color, i), '0 0 1px rgba(0,0,0,.1)')))
-      }
-      return el
-    },
-
-    /**
-     * Internal method that adjusts the opacity of a single line.
-     * Will be overwritten in VML fallback mode below.
-     */
-    opacity: function(el, i, val) {
-      if (i < el.childNodes.length) el.childNodes[i].style.opacity = val
-    }
-
-  })
-
-
-  function initVML() {
-
-    /* Utility function to create a VML tag */
-    function vml(tag, attr) {
-      return createEl('<' + tag + ' xmlns="urn:schemas-microsoft.com:vml" class="spin-vml">', attr)
-    }
-
-    // No CSS transforms but VML support, add a CSS rule for VML elements:
-    sheet.addRule('.spin-vml', 'behavior:url(#default#VML)')
-
-    Spinner.prototype.lines = function(el, o) {
-      var r = o.length+o.width
-        , s = 2*r
-
-      function grp() {
-        return css(
-          vml('group', {
-            coordsize: s + ' ' + s,
-            coordorigin: -r + ' ' + -r
-          }),
-          { width: s, height: s }
-        )
-      }
-
-      var margin = -(o.width+o.length)*2 + 'px'
-        , g = css(grp(), {position: 'absolute', top: margin, left: margin})
-        , i
-
-      function seg(i, dx, filter) {
-        ins(g,
-          ins(css(grp(), {rotation: 360 / o.lines * i + 'deg', left: ~~dx}),
-            ins(css(vml('roundrect', {arcsize: o.corners}), {
-                width: r,
-                height: o.width,
-                left: o.radius,
-                top: -o.width>>1,
-                filter: filter
-              }),
-              vml('fill', {color: getColor(o.color, i), opacity: o.opacity}),
-              vml('stroke', {opacity: 0}) // transparent stroke to fix color bleeding upon opacity change
-            )
-          )
-        )
-      }
-
-      if (o.shadow)
-        for (i = 1; i <= o.lines; i++)
-          seg(i, -2, 'progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)')
-
-      for (i = 1; i <= o.lines; i++) seg(i)
-      return ins(el, g)
-    }
-
-    Spinner.prototype.opacity = function(el, i, val, o) {
-      var c = el.firstChild
-      o = o.shadow && o.lines || 0
-      if (c && i+o < c.childNodes.length) {
-        c = c.childNodes[i+o]; c = c && c.firstChild; c = c && c.firstChild
-        if (c) c.opacity = val
-      }
-    }
-  }
-
-  var probe = css(createEl('group'), {behavior: 'url(#default#VML)'})
-
-  if (!vendor(probe, 'transform') && probe.adj) initVML()
-  else useCssAnimations = vendor(probe, 'animation')
-
-  return Spinner
-
-}));
-
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/underscore/underscore.js":[function(require,module,exports){
-//     Underscore.js 1.7.0
-//     http://underscorejs.org
-//     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Underscore may be freely distributed under the MIT license.
-
-(function() {
-
-  // Baseline setup
-  // --------------
-
-  // Establish the root object, `window` in the browser, or `exports` on the server.
-  var root = this;
-
-  // Save the previous value of the `_` variable.
-  var previousUnderscore = root._;
-
-  // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-
-  // Create quick reference variables for speed access to core prototypes.
-  var
-    push             = ArrayProto.push,
-    slice            = ArrayProto.slice,
-    concat           = ArrayProto.concat,
-    toString         = ObjProto.toString,
-    hasOwnProperty   = ObjProto.hasOwnProperty;
-
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
-  var
-    nativeIsArray      = Array.isArray,
-    nativeKeys         = Object.keys,
-    nativeBind         = FuncProto.bind;
-
-  // Create a safe reference to the Underscore object for use below.
-  var _ = function(obj) {
-    if (obj instanceof _) return obj;
-    if (!(this instanceof _)) return new _(obj);
-    this._wrapped = obj;
-  };
-
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for the old `require()` API. If we're in
-  // the browser, add `_` as a global object.
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports = module.exports = _;
-    }
-    exports._ = _;
-  } else {
-    root._ = _;
-  }
-
-  // Current version.
-  _.VERSION = '1.7.0';
-
-  // Internal function that returns an efficient (for current engines) version
-  // of the passed-in callback, to be repeatedly applied in other Underscore
-  // functions.
-  var createCallback = function(func, context, argCount) {
-    if (context === void 0) return func;
-    switch (argCount == null ? 3 : argCount) {
-      case 1: return function(value) {
-        return func.call(context, value);
-      };
-      case 2: return function(value, other) {
-        return func.call(context, value, other);
-      };
-      case 3: return function(value, index, collection) {
-        return func.call(context, value, index, collection);
-      };
-      case 4: return function(accumulator, value, index, collection) {
-        return func.call(context, accumulator, value, index, collection);
-      };
-    }
-    return function() {
-      return func.apply(context, arguments);
-    };
-  };
-
-  // A mostly-internal function to generate callbacks that can be applied
-  // to each element in a collection, returning the desired result — either
-  // identity, an arbitrary callback, a property matcher, or a property accessor.
-  _.iteratee = function(value, context, argCount) {
-    if (value == null) return _.identity;
-    if (_.isFunction(value)) return createCallback(value, context, argCount);
-    if (_.isObject(value)) return _.matches(value);
-    return _.property(value);
-  };
-
-  // Collection Functions
-  // --------------------
-
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles raw objects in addition to array-likes. Treats all
-  // sparse array-likes as if they were dense.
-  _.each = _.forEach = function(obj, iteratee, context) {
-    if (obj == null) return obj;
-    iteratee = createCallback(iteratee, context);
-    var i, length = obj.length;
-    if (length === +length) {
-      for (i = 0; i < length; i++) {
-        iteratee(obj[i], i, obj);
-      }
-    } else {
-      var keys = _.keys(obj);
-      for (i = 0, length = keys.length; i < length; i++) {
-        iteratee(obj[keys[i]], keys[i], obj);
-      }
-    }
-    return obj;
-  };
-
-  // Return the results of applying the iteratee to each element.
-  _.map = _.collect = function(obj, iteratee, context) {
-    if (obj == null) return [];
-    iteratee = _.iteratee(iteratee, context);
-    var keys = obj.length !== +obj.length && _.keys(obj),
-        length = (keys || obj).length,
-        results = Array(length),
-        currentKey;
-    for (var index = 0; index < length; index++) {
-      currentKey = keys ? keys[index] : index;
-      results[index] = iteratee(obj[currentKey], currentKey, obj);
-    }
-    return results;
-  };
-
-  var reduceError = 'Reduce of empty array with no initial value';
-
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`.
-  _.reduce = _.foldl = _.inject = function(obj, iteratee, memo, context) {
-    if (obj == null) obj = [];
-    iteratee = createCallback(iteratee, context, 4);
-    var keys = obj.length !== +obj.length && _.keys(obj),
-        length = (keys || obj).length,
-        index = 0, currentKey;
-    if (arguments.length < 3) {
-      if (!length) throw new TypeError(reduceError);
-      memo = obj[keys ? keys[index++] : index++];
-    }
-    for (; index < length; index++) {
-      currentKey = keys ? keys[index] : index;
-      memo = iteratee(memo, obj[currentKey], currentKey, obj);
-    }
-    return memo;
-  };
-
-  // The right-associative version of reduce, also known as `foldr`.
-  _.reduceRight = _.foldr = function(obj, iteratee, memo, context) {
-    if (obj == null) obj = [];
-    iteratee = createCallback(iteratee, context, 4);
-    var keys = obj.length !== + obj.length && _.keys(obj),
-        index = (keys || obj).length,
-        currentKey;
-    if (arguments.length < 3) {
-      if (!index) throw new TypeError(reduceError);
-      memo = obj[keys ? keys[--index] : --index];
-    }
-    while (index--) {
-      currentKey = keys ? keys[index] : index;
-      memo = iteratee(memo, obj[currentKey], currentKey, obj);
-    }
-    return memo;
-  };
-
-  // Return the first value which passes a truth test. Aliased as `detect`.
-  _.find = _.detect = function(obj, predicate, context) {
-    var result;
-    predicate = _.iteratee(predicate, context);
-    _.some(obj, function(value, index, list) {
-      if (predicate(value, index, list)) {
-        result = value;
-        return true;
-      }
-    });
-    return result;
-  };
-
-  // Return all the elements that pass a truth test.
-  // Aliased as `select`.
-  _.filter = _.select = function(obj, predicate, context) {
-    var results = [];
-    if (obj == null) return results;
-    predicate = _.iteratee(predicate, context);
-    _.each(obj, function(value, index, list) {
-      if (predicate(value, index, list)) results.push(value);
-    });
-    return results;
-  };
-
-  // Return all the elements for which a truth test fails.
-  _.reject = function(obj, predicate, context) {
-    return _.filter(obj, _.negate(_.iteratee(predicate)), context);
-  };
-
-  // Determine whether all of the elements match a truth test.
-  // Aliased as `all`.
-  _.every = _.all = function(obj, predicate, context) {
-    if (obj == null) return true;
-    predicate = _.iteratee(predicate, context);
-    var keys = obj.length !== +obj.length && _.keys(obj),
-        length = (keys || obj).length,
-        index, currentKey;
-    for (index = 0; index < length; index++) {
-      currentKey = keys ? keys[index] : index;
-      if (!predicate(obj[currentKey], currentKey, obj)) return false;
-    }
-    return true;
-  };
-
-  // Determine if at least one element in the object matches a truth test.
-  // Aliased as `any`.
-  _.some = _.any = function(obj, predicate, context) {
-    if (obj == null) return false;
-    predicate = _.iteratee(predicate, context);
-    var keys = obj.length !== +obj.length && _.keys(obj),
-        length = (keys || obj).length,
-        index, currentKey;
-    for (index = 0; index < length; index++) {
-      currentKey = keys ? keys[index] : index;
-      if (predicate(obj[currentKey], currentKey, obj)) return true;
-    }
-    return false;
-  };
-
-  // Determine if the array or object contains a given value (using `===`).
-  // Aliased as `include`.
-  _.contains = _.include = function(obj, target) {
-    if (obj == null) return false;
-    if (obj.length !== +obj.length) obj = _.values(obj);
-    return _.indexOf(obj, target) >= 0;
-  };
-
-  // Invoke a method (with arguments) on every item in a collection.
-  _.invoke = function(obj, method) {
-    var args = slice.call(arguments, 2);
-    var isFunc = _.isFunction(method);
-    return _.map(obj, function(value) {
-      return (isFunc ? method : value[method]).apply(value, args);
-    });
-  };
-
-  // Convenience version of a common use case of `map`: fetching a property.
-  _.pluck = function(obj, key) {
-    return _.map(obj, _.property(key));
-  };
-
-  // Convenience version of a common use case of `filter`: selecting only objects
-  // containing specific `key:value` pairs.
-  _.where = function(obj, attrs) {
-    return _.filter(obj, _.matches(attrs));
-  };
-
-  // Convenience version of a common use case of `find`: getting the first object
-  // containing specific `key:value` pairs.
-  _.findWhere = function(obj, attrs) {
-    return _.find(obj, _.matches(attrs));
-  };
-
-  // Return the maximum element (or element-based computation).
-  _.max = function(obj, iteratee, context) {
-    var result = -Infinity, lastComputed = -Infinity,
-        value, computed;
-    if (iteratee == null && obj != null) {
-      obj = obj.length === +obj.length ? obj : _.values(obj);
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value > result) {
-          result = value;
-        }
-      }
-    } else {
-      iteratee = _.iteratee(iteratee, context);
-      _.each(obj, function(value, index, list) {
-        computed = iteratee(value, index, list);
-        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
-          result = value;
-          lastComputed = computed;
-        }
-      });
-    }
-    return result;
-  };
-
-  // Return the minimum element (or element-based computation).
-  _.min = function(obj, iteratee, context) {
-    var result = Infinity, lastComputed = Infinity,
-        value, computed;
-    if (iteratee == null && obj != null) {
-      obj = obj.length === +obj.length ? obj : _.values(obj);
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value < result) {
-          result = value;
-        }
-      }
-    } else {
-      iteratee = _.iteratee(iteratee, context);
-      _.each(obj, function(value, index, list) {
-        computed = iteratee(value, index, list);
-        if (computed < lastComputed || computed === Infinity && result === Infinity) {
-          result = value;
-          lastComputed = computed;
-        }
-      });
-    }
-    return result;
-  };
-
-  // Shuffle a collection, using the modern version of the
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
-  _.shuffle = function(obj) {
-    var set = obj && obj.length === +obj.length ? obj : _.values(obj);
-    var length = set.length;
-    var shuffled = Array(length);
-    for (var index = 0, rand; index < length; index++) {
-      rand = _.random(0, index);
-      if (rand !== index) shuffled[index] = shuffled[rand];
-      shuffled[rand] = set[index];
-    }
-    return shuffled;
-  };
-
-  // Sample **n** random values from a collection.
-  // If **n** is not specified, returns a single random element.
-  // The internal `guard` argument allows it to work with `map`.
-  _.sample = function(obj, n, guard) {
-    if (n == null || guard) {
-      if (obj.length !== +obj.length) obj = _.values(obj);
-      return obj[_.random(obj.length - 1)];
-    }
-    return _.shuffle(obj).slice(0, Math.max(0, n));
-  };
-
-  // Sort the object's values by a criterion produced by an iteratee.
-  _.sortBy = function(obj, iteratee, context) {
-    iteratee = _.iteratee(iteratee, context);
-    return _.pluck(_.map(obj, function(value, index, list) {
-      return {
-        value: value,
-        index: index,
-        criteria: iteratee(value, index, list)
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria;
-      var b = right.criteria;
-      if (a !== b) {
-        if (a > b || a === void 0) return 1;
-        if (a < b || b === void 0) return -1;
-      }
-      return left.index - right.index;
-    }), 'value');
-  };
-
-  // An internal function used for aggregate "group by" operations.
-  var group = function(behavior) {
-    return function(obj, iteratee, context) {
-      var result = {};
-      iteratee = _.iteratee(iteratee, context);
-      _.each(obj, function(value, index) {
-        var key = iteratee(value, index, obj);
-        behavior(result, value, key);
-      });
-      return result;
-    };
-  };
-
-  // Groups the object's values by a criterion. Pass either a string attribute
-  // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, value, key) {
-    if (_.has(result, key)) result[key].push(value); else result[key] = [value];
-  });
-
-  // Indexes the object's values by a criterion, similar to `groupBy`, but for
-  // when you know that your index values will be unique.
-  _.indexBy = group(function(result, value, key) {
-    result[key] = value;
-  });
-
-  // Counts instances of an object that group by a certain criterion. Pass
-  // either a string attribute to count by, or a function that returns the
-  // criterion.
-  _.countBy = group(function(result, value, key) {
-    if (_.has(result, key)) result[key]++; else result[key] = 1;
-  });
-
-  // Use a comparator function to figure out the smallest index at which
-  // an object should be inserted so as to maintain order. Uses binary search.
-  _.sortedIndex = function(array, obj, iteratee, context) {
-    iteratee = _.iteratee(iteratee, context, 1);
-    var value = iteratee(obj);
-    var low = 0, high = array.length;
-    while (low < high) {
-      var mid = low + high >>> 1;
-      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;
-    }
-    return low;
-  };
-
-  // Safely create a real, live array from anything iterable.
-  _.toArray = function(obj) {
-    if (!obj) return [];
-    if (_.isArray(obj)) return slice.call(obj);
-    if (obj.length === +obj.length) return _.map(obj, _.identity);
-    return _.values(obj);
-  };
-
-  // Return the number of elements in an object.
-  _.size = function(obj) {
-    if (obj == null) return 0;
-    return obj.length === +obj.length ? obj.length : _.keys(obj).length;
-  };
-
-  // Split a collection into two arrays: one whose elements all satisfy the given
-  // predicate, and one whose elements all do not satisfy the predicate.
-  _.partition = function(obj, predicate, context) {
-    predicate = _.iteratee(predicate, context);
-    var pass = [], fail = [];
-    _.each(obj, function(value, key, obj) {
-      (predicate(value, key, obj) ? pass : fail).push(value);
-    });
-    return [pass, fail];
-  };
-
-  // Array Functions
-  // ---------------
-
-  // Get the first element of an array. Passing **n** will return the first N
-  // values in the array. Aliased as `head` and `take`. The **guard** check
-  // allows it to work with `_.map`.
-  _.first = _.head = _.take = function(array, n, guard) {
-    if (array == null) return void 0;
-    if (n == null || guard) return array[0];
-    if (n < 0) return [];
-    return slice.call(array, 0, n);
-  };
-
-  // Returns everything but the last entry of the array. Especially useful on
-  // the arguments object. Passing **n** will return all the values in
-  // the array, excluding the last N. The **guard** check allows it to work with
-  // `_.map`.
-  _.initial = function(array, n, guard) {
-    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
-  };
-
-  // Get the last element of an array. Passing **n** will return the last N
-  // values in the array. The **guard** check allows it to work with `_.map`.
-  _.last = function(array, n, guard) {
-    if (array == null) return void 0;
-    if (n == null || guard) return array[array.length - 1];
-    return slice.call(array, Math.max(array.length - n, 0));
-  };
-
-  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
-  // Especially useful on the arguments object. Passing an **n** will return
-  // the rest N values in the array. The **guard**
-  // check allows it to work with `_.map`.
-  _.rest = _.tail = _.drop = function(array, n, guard) {
-    return slice.call(array, n == null || guard ? 1 : n);
-  };
-
-  // Trim out all falsy values from an array.
-  _.compact = function(array) {
-    return _.filter(array, _.identity);
-  };
-
-  // Internal implementation of a recursive `flatten` function.
-  var flatten = function(input, shallow, strict, output) {
-    if (shallow && _.every(input, _.isArray)) {
-      return concat.apply(output, input);
-    }
-    for (var i = 0, length = input.length; i < length; i++) {
-      var value = input[i];
-      if (!_.isArray(value) && !_.isArguments(value)) {
-        if (!strict) output.push(value);
-      } else if (shallow) {
-        push.apply(output, value);
-      } else {
-        flatten(value, shallow, strict, output);
-      }
-    }
-    return output;
-  };
-
-  // Flatten out an array, either recursively (by default), or just one level.
-  _.flatten = function(array, shallow) {
-    return flatten(array, shallow, false, []);
-  };
-
-  // Return a version of the array that does not contain the specified value(s).
-  _.without = function(array) {
-    return _.difference(array, slice.call(arguments, 1));
-  };
-
-  // Produce a duplicate-free version of the array. If the array has already
-  // been sorted, you have the option of using a faster algorithm.
-  // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted, iteratee, context) {
-    if (array == null) return [];
-    if (!_.isBoolean(isSorted)) {
-      context = iteratee;
-      iteratee = isSorted;
-      isSorted = false;
-    }
-    if (iteratee != null) iteratee = _.iteratee(iteratee, context);
-    var result = [];
-    var seen = [];
-    for (var i = 0, length = array.length; i < length; i++) {
-      var value = array[i];
-      if (isSorted) {
-        if (!i || seen !== value) result.push(value);
-        seen = value;
-      } else if (iteratee) {
-        var computed = iteratee(value, i, array);
-        if (_.indexOf(seen, computed) < 0) {
-          seen.push(computed);
-          result.push(value);
-        }
-      } else if (_.indexOf(result, value) < 0) {
-        result.push(value);
-      }
-    }
-    return result;
-  };
-
-  // Produce an array that contains the union: each distinct element from all of
-  // the passed-in arrays.
-  _.union = function() {
-    return _.uniq(flatten(arguments, true, true, []));
-  };
-
-  // Produce an array that contains every item shared between all the
-  // passed-in arrays.
-  _.intersection = function(array) {
-    if (array == null) return [];
-    var result = [];
-    var argsLength = arguments.length;
-    for (var i = 0, length = array.length; i < length; i++) {
-      var item = array[i];
-      if (_.contains(result, item)) continue;
-      for (var j = 1; j < argsLength; j++) {
-        if (!_.contains(arguments[j], item)) break;
-      }
-      if (j === argsLength) result.push(item);
-    }
-    return result;
-  };
-
-  // Take the difference between one array and a number of other arrays.
-  // Only the elements present in just the first array will remain.
-  _.difference = function(array) {
-    var rest = flatten(slice.call(arguments, 1), true, true, []);
-    return _.filter(array, function(value){
-      return !_.contains(rest, value);
-    });
-  };
-
-  // Zip together multiple lists into a single array -- elements that share
-  // an index go together.
-  _.zip = function(array) {
-    if (array == null) return [];
-    var length = _.max(arguments, 'length').length;
-    var results = Array(length);
-    for (var i = 0; i < length; i++) {
-      results[i] = _.pluck(arguments, i);
-    }
-    return results;
-  };
-
-  // Converts lists into objects. Pass either a single array of `[key, value]`
-  // pairs, or two parallel arrays of the same length -- one of keys, and one of
-  // the corresponding values.
-  _.object = function(list, values) {
-    if (list == null) return {};
-    var result = {};
-    for (var i = 0, length = list.length; i < length; i++) {
-      if (values) {
-        result[list[i]] = values[i];
-      } else {
-        result[list[i][0]] = list[i][1];
-      }
-    }
-    return result;
-  };
-
-  // Return the position of the first occurrence of an item in an array,
-  // or -1 if the item is not included in the array.
-  // If the array is large and already in sort order, pass `true`
-  // for **isSorted** to use binary search.
-  _.indexOf = function(array, item, isSorted) {
-    if (array == null) return -1;
-    var i = 0, length = array.length;
-    if (isSorted) {
-      if (typeof isSorted == 'number') {
-        i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted;
-      } else {
-        i = _.sortedIndex(array, item);
-        return array[i] === item ? i : -1;
-      }
-    }
-    for (; i < length; i++) if (array[i] === item) return i;
-    return -1;
-  };
-
-  _.lastIndexOf = function(array, item, from) {
-    if (array == null) return -1;
-    var idx = array.length;
-    if (typeof from == 'number') {
-      idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1);
-    }
-    while (--idx >= 0) if (array[idx] === item) return idx;
-    return -1;
-  };
-
-  // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python `range()` function. See
-  // [the Python documentation](http://docs.python.org/library/functions.html#range).
-  _.range = function(start, stop, step) {
-    if (arguments.length <= 1) {
-      stop = start || 0;
-      start = 0;
-    }
-    step = step || 1;
-
-    var length = Math.max(Math.ceil((stop - start) / step), 0);
-    var range = Array(length);
-
-    for (var idx = 0; idx < length; idx++, start += step) {
-      range[idx] = start;
-    }
-
-    return range;
-  };
-
-  // Function (ahem) Functions
-  // ------------------
-
-  // Reusable constructor function for prototype setting.
-  var Ctor = function(){};
-
-  // Create a function bound to a given object (assigning `this`, and arguments,
-  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
-  // available.
-  _.bind = function(func, context) {
-    var args, bound;
-    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
-    args = slice.call(arguments, 2);
-    bound = function() {
-      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      Ctor.prototype = func.prototype;
-      var self = new Ctor;
-      Ctor.prototype = null;
-      var result = func.apply(self, args.concat(slice.call(arguments)));
-      if (_.isObject(result)) return result;
-      return self;
-    };
-    return bound;
-  };
-
-  // Partially apply a function by creating a version that has had some of its
-  // arguments pre-filled, without changing its dynamic `this` context. _ acts
-  // as a placeholder, allowing any combination of arguments to be pre-filled.
-  _.partial = function(func) {
-    var boundArgs = slice.call(arguments, 1);
-    return function() {
-      var position = 0;
-      var args = boundArgs.slice();
-      for (var i = 0, length = args.length; i < length; i++) {
-        if (args[i] === _) args[i] = arguments[position++];
-      }
-      while (position < arguments.length) args.push(arguments[position++]);
-      return func.apply(this, args);
-    };
-  };
-
-  // Bind a number of an object's methods to that object. Remaining arguments
-  // are the method names to be bound. Useful for ensuring that all callbacks
-  // defined on an object belong to it.
-  _.bindAll = function(obj) {
-    var i, length = arguments.length, key;
-    if (length <= 1) throw new Error('bindAll must be passed function names');
-    for (i = 1; i < length; i++) {
-      key = arguments[i];
-      obj[key] = _.bind(obj[key], obj);
-    }
-    return obj;
-  };
-
-  // Memoize an expensive function by storing its results.
-  _.memoize = function(func, hasher) {
-    var memoize = function(key) {
-      var cache = memoize.cache;
-      var address = hasher ? hasher.apply(this, arguments) : key;
-      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
-      return cache[address];
-    };
-    memoize.cache = {};
-    return memoize;
-  };
-
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  _.delay = function(func, wait) {
-    var args = slice.call(arguments, 2);
-    return setTimeout(function(){
-      return func.apply(null, args);
-    }, wait);
-  };
-
-  // Defers a function, scheduling it to run after the current call stack has
-  // cleared.
-  _.defer = function(func) {
-    return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
-  };
-
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time. Normally, the throttled function will run
-  // as much as it can, without ever going more than once per `wait` duration;
-  // but if you'd like to disable the execution on the leading edge, pass
-  // `{leading: false}`. To disable execution on the trailing edge, ditto.
-  _.throttle = function(func, wait, options) {
-    var context, args, result;
-    var timeout = null;
-    var previous = 0;
-    if (!options) options = {};
-    var later = function() {
-      previous = options.leading === false ? 0 : _.now();
-      timeout = null;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    };
-    return function() {
-      var now = _.now();
-      if (!previous && options.leading === false) previous = now;
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      if (remaining <= 0 || remaining > wait) {
-        clearTimeout(timeout);
-        timeout = null;
-        previous = now;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-      } else if (!timeout && options.trailing !== false) {
-        timeout = setTimeout(later, remaining);
-      }
-      return result;
-    };
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds. If `immediate` is passed, trigger the function on the
-  // leading edge, instead of the trailing.
-  _.debounce = function(func, wait, immediate) {
-    var timeout, args, context, timestamp, result;
-
-    var later = function() {
-      var last = _.now() - timestamp;
-
-      if (last < wait && last > 0) {
-        timeout = setTimeout(later, wait - last);
-      } else {
-        timeout = null;
-        if (!immediate) {
-          result = func.apply(context, args);
-          if (!timeout) context = args = null;
-        }
-      }
-    };
-
-    return function() {
-      context = this;
-      args = arguments;
-      timestamp = _.now();
-      var callNow = immediate && !timeout;
-      if (!timeout) timeout = setTimeout(later, wait);
-      if (callNow) {
-        result = func.apply(context, args);
-        context = args = null;
-      }
-
-      return result;
-    };
-  };
-
-  // Returns the first function passed as an argument to the second,
-  // allowing you to adjust arguments, run code before and after, and
-  // conditionally execute the original function.
-  _.wrap = function(func, wrapper) {
-    return _.partial(wrapper, func);
-  };
-
-  // Returns a negated version of the passed-in predicate.
-  _.negate = function(predicate) {
-    return function() {
-      return !predicate.apply(this, arguments);
-    };
-  };
-
-  // Returns a function that is the composition of a list of functions, each
-  // consuming the return value of the function that follows.
-  _.compose = function() {
-    var args = arguments;
-    var start = args.length - 1;
-    return function() {
-      var i = start;
-      var result = args[start].apply(this, arguments);
-      while (i--) result = args[i].call(this, result);
-      return result;
-    };
-  };
-
-  // Returns a function that will only be executed after being called N times.
-  _.after = function(times, func) {
-    return function() {
-      if (--times < 1) {
-        return func.apply(this, arguments);
-      }
-    };
-  };
-
-  // Returns a function that will only be executed before being called N times.
-  _.before = function(times, func) {
-    var memo;
-    return function() {
-      if (--times > 0) {
-        memo = func.apply(this, arguments);
-      } else {
-        func = null;
-      }
-      return memo;
-    };
-  };
-
-  // Returns a function that will be executed at most one time, no matter how
-  // often you call it. Useful for lazy initialization.
-  _.once = _.partial(_.before, 2);
-
-  // Object Functions
-  // ----------------
-
-  // Retrieve the names of an object's properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`
-  _.keys = function(obj) {
-    if (!_.isObject(obj)) return [];
-    if (nativeKeys) return nativeKeys(obj);
-    var keys = [];
-    for (var key in obj) if (_.has(obj, key)) keys.push(key);
-    return keys;
-  };
-
-  // Retrieve the values of an object's properties.
-  _.values = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var values = Array(length);
-    for (var i = 0; i < length; i++) {
-      values[i] = obj[keys[i]];
-    }
-    return values;
-  };
-
-  // Convert an object into a list of `[key, value]` pairs.
-  _.pairs = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var pairs = Array(length);
-    for (var i = 0; i < length; i++) {
-      pairs[i] = [keys[i], obj[keys[i]]];
-    }
-    return pairs;
-  };
-
-  // Invert the keys and values of an object. The values must be serializable.
-  _.invert = function(obj) {
-    var result = {};
-    var keys = _.keys(obj);
-    for (var i = 0, length = keys.length; i < length; i++) {
-      result[obj[keys[i]]] = keys[i];
-    }
-    return result;
-  };
-
-  // Return a sorted list of the function names available on the object.
-  // Aliased as `methods`
-  _.functions = _.methods = function(obj) {
-    var names = [];
-    for (var key in obj) {
-      if (_.isFunction(obj[key])) names.push(key);
-    }
-    return names.sort();
-  };
-
-  // Extend a given object with all the properties in passed-in object(s).
-  _.extend = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    var source, prop;
-    for (var i = 1, length = arguments.length; i < length; i++) {
-      source = arguments[i];
-      for (prop in source) {
-        if (hasOwnProperty.call(source, prop)) {
-            obj[prop] = source[prop];
-        }
-      }
-    }
-    return obj;
-  };
-
-  // Return a copy of the object only containing the whitelisted properties.
-  _.pick = function(obj, iteratee, context) {
-    var result = {}, key;
-    if (obj == null) return result;
-    if (_.isFunction(iteratee)) {
-      iteratee = createCallback(iteratee, context);
-      for (key in obj) {
-        var value = obj[key];
-        if (iteratee(value, key, obj)) result[key] = value;
-      }
-    } else {
-      var keys = concat.apply([], slice.call(arguments, 1));
-      obj = new Object(obj);
-      for (var i = 0, length = keys.length; i < length; i++) {
-        key = keys[i];
-        if (key in obj) result[key] = obj[key];
-      }
-    }
-    return result;
-  };
-
-   // Return a copy of the object without the blacklisted properties.
-  _.omit = function(obj, iteratee, context) {
-    if (_.isFunction(iteratee)) {
-      iteratee = _.negate(iteratee);
-    } else {
-      var keys = _.map(concat.apply([], slice.call(arguments, 1)), String);
-      iteratee = function(value, key) {
-        return !_.contains(keys, key);
-      };
-    }
-    return _.pick(obj, iteratee, context);
-  };
-
-  // Fill in a given object with default properties.
-  _.defaults = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    for (var i = 1, length = arguments.length; i < length; i++) {
-      var source = arguments[i];
-      for (var prop in source) {
-        if (obj[prop] === void 0) obj[prop] = source[prop];
-      }
-    }
-    return obj;
-  };
-
-  // Create a (shallow-cloned) duplicate of an object.
-  _.clone = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
-  };
-
-  // Invokes interceptor with the obj, and then returns obj.
-  // The primary purpose of this method is to "tap into" a method chain, in
-  // order to perform operations on intermediate results within the chain.
-  _.tap = function(obj, interceptor) {
-    interceptor(obj);
-    return obj;
-  };
-
-  // Internal recursive comparison function for `isEqual`.
-  var eq = function(a, b, aStack, bStack) {
-    // Identical objects are equal. `0 === -0`, but they aren't identical.
-    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
-    if (a === b) return a !== 0 || 1 / a === 1 / b;
-    // A strict comparison is necessary because `null == undefined`.
-    if (a == null || b == null) return a === b;
-    // Unwrap any wrapped objects.
-    if (a instanceof _) a = a._wrapped;
-    if (b instanceof _) b = b._wrapped;
-    // Compare `[[Class]]` names.
-    var className = toString.call(a);
-    if (className !== toString.call(b)) return false;
-    switch (className) {
-      // Strings, numbers, regular expressions, dates, and booleans are compared by value.
-      case '[object RegExp]':
-      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
-      case '[object String]':
-        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
-        // equivalent to `new String("5")`.
-        return '' + a === '' + b;
-      case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive.
-        // Object(NaN) is equivalent to NaN
-        if (+a !== +a) return +b !== +b;
-        // An `egal` comparison is performed for other numeric values.
-        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-      case '[object Date]':
-      case '[object Boolean]':
-        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
-        // millisecond representations. Note that invalid dates with millisecond representations
-        // of `NaN` are not equivalent.
-        return +a === +b;
-    }
-    if (typeof a != 'object' || typeof b != 'object') return false;
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-    var length = aStack.length;
-    while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
-      if (aStack[length] === a) return bStack[length] === b;
-    }
-    // Objects with different constructors are not equivalent, but `Object`s
-    // from different frames are.
-    var aCtor = a.constructor, bCtor = b.constructor;
-    if (
-      aCtor !== bCtor &&
-      // Handle Object.create(x) cases
-      'constructor' in a && 'constructor' in b &&
-      !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
-        _.isFunction(bCtor) && bCtor instanceof bCtor)
-    ) {
-      return false;
-    }
-    // Add the first object to the stack of traversed objects.
-    aStack.push(a);
-    bStack.push(b);
-    var size, result;
-    // Recursively compare objects and arrays.
-    if (className === '[object Array]') {
-      // Compare array lengths to determine if a deep comparison is necessary.
-      size = a.length;
-      result = size === b.length;
-      if (result) {
-        // Deep compare the contents, ignoring non-numeric properties.
-        while (size--) {
-          if (!(result = eq(a[size], b[size], aStack, bStack))) break;
-        }
-      }
-    } else {
-      // Deep compare objects.
-      var keys = _.keys(a), key;
-      size = keys.length;
-      // Ensure that both objects contain the same number of properties before comparing deep equality.
-      result = _.keys(b).length === size;
-      if (result) {
-        while (size--) {
-          // Deep compare each member
-          key = keys[size];
-          if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
-        }
-      }
-    }
-    // Remove the first object from the stack of traversed objects.
-    aStack.pop();
-    bStack.pop();
-    return result;
-  };
-
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
-    return eq(a, b, [], []);
-  };
-
-  // Is a given array, string, or object empty?
-  // An "empty" object has no enumerable own-properties.
-  _.isEmpty = function(obj) {
-    if (obj == null) return true;
-    if (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) return obj.length === 0;
-    for (var key in obj) if (_.has(obj, key)) return false;
-    return true;
-  };
-
-  // Is a given value a DOM element?
-  _.isElement = function(obj) {
-    return !!(obj && obj.nodeType === 1);
-  };
-
-  // Is a given value an array?
-  // Delegates to ECMA5's native Array.isArray
-  _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) === '[object Array]';
-  };
-
-  // Is a given variable an object?
-  _.isObject = function(obj) {
-    var type = typeof obj;
-    return type === 'function' || type === 'object' && !!obj;
-  };
-
-  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
-  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
-    _['is' + name] = function(obj) {
-      return toString.call(obj) === '[object ' + name + ']';
-    };
-  });
-
-  // Define a fallback version of the method in browsers (ahem, IE), where
-  // there isn't any inspectable "Arguments" type.
-  if (!_.isArguments(arguments)) {
-    _.isArguments = function(obj) {
-      return _.has(obj, 'callee');
-    };
-  }
-
-  // Optimize `isFunction` if appropriate. Work around an IE 11 bug.
-  if (typeof /./ !== 'function') {
-    _.isFunction = function(obj) {
-      return typeof obj == 'function' || false;
-    };
-  }
-
-  // Is a given object a finite number?
-  _.isFinite = function(obj) {
-    return isFinite(obj) && !isNaN(parseFloat(obj));
-  };
-
-  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
-  _.isNaN = function(obj) {
-    return _.isNumber(obj) && obj !== +obj;
-  };
-
-  // Is a given value a boolean?
-  _.isBoolean = function(obj) {
-    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
-  };
-
-  // Is a given value equal to null?
-  _.isNull = function(obj) {
-    return obj === null;
-  };
-
-  // Is a given variable undefined?
-  _.isUndefined = function(obj) {
-    return obj === void 0;
-  };
-
-  // Shortcut function for checking if an object has a given property directly
-  // on itself (in other words, not on a prototype).
-  _.has = function(obj, key) {
-    return obj != null && hasOwnProperty.call(obj, key);
-  };
-
-  // Utility Functions
-  // -----------------
-
-  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
-  // previous owner. Returns a reference to the Underscore object.
-  _.noConflict = function() {
-    root._ = previousUnderscore;
-    return this;
-  };
-
-  // Keep the identity function around for default iteratees.
-  _.identity = function(value) {
-    return value;
-  };
-
-  _.constant = function(value) {
-    return function() {
-      return value;
-    };
-  };
-
-  _.noop = function(){};
-
-  _.property = function(key) {
-    return function(obj) {
-      return obj[key];
-    };
-  };
-
-  // Returns a predicate for checking whether an object has a given set of `key:value` pairs.
-  _.matches = function(attrs) {
-    var pairs = _.pairs(attrs), length = pairs.length;
-    return function(obj) {
-      if (obj == null) return !length;
-      obj = new Object(obj);
-      for (var i = 0; i < length; i++) {
-        var pair = pairs[i], key = pair[0];
-        if (pair[1] !== obj[key] || !(key in obj)) return false;
-      }
-      return true;
-    };
-  };
-
-  // Run a function **n** times.
-  _.times = function(n, iteratee, context) {
-    var accum = Array(Math.max(0, n));
-    iteratee = createCallback(iteratee, context, 1);
-    for (var i = 0; i < n; i++) accum[i] = iteratee(i);
-    return accum;
-  };
-
-  // Return a random integer between min and max (inclusive).
-  _.random = function(min, max) {
-    if (max == null) {
-      max = min;
-      min = 0;
-    }
-    return min + Math.floor(Math.random() * (max - min + 1));
-  };
-
-  // A (possibly faster) way to get the current timestamp as an integer.
-  _.now = Date.now || function() {
-    return new Date().getTime();
-  };
-
-   // List of HTML entities for escaping.
-  var escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '`': '&#x60;'
-  };
-  var unescapeMap = _.invert(escapeMap);
-
-  // Functions for escaping and unescaping strings to/from HTML interpolation.
-  var createEscaper = function(map) {
-    var escaper = function(match) {
-      return map[match];
-    };
-    // Regexes for identifying a key that needs to be escaped
-    var source = '(?:' + _.keys(map).join('|') + ')';
-    var testRegexp = RegExp(source);
-    var replaceRegexp = RegExp(source, 'g');
-    return function(string) {
-      string = string == null ? '' : '' + string;
-      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-    };
-  };
-  _.escape = createEscaper(escapeMap);
-  _.unescape = createEscaper(unescapeMap);
-
-  // If the value of the named `property` is a function then invoke it with the
-  // `object` as context; otherwise, return it.
-  _.result = function(object, property) {
-    if (object == null) return void 0;
-    var value = object[property];
-    return _.isFunction(value) ? object[property]() : value;
-  };
-
-  // Generate a unique integer id (unique within the entire client session).
-  // Useful for temporary DOM ids.
-  var idCounter = 0;
-  _.uniqueId = function(prefix) {
-    var id = ++idCounter + '';
-    return prefix ? prefix + id : id;
-  };
-
-  // By default, Underscore uses ERB-style template delimiters, change the
-  // following template settings to use alternative delimiters.
-  _.templateSettings = {
-    evaluate    : /<%([\s\S]+?)%>/g,
-    interpolate : /<%=([\s\S]+?)%>/g,
-    escape      : /<%-([\s\S]+?)%>/g
-  };
-
-  // When customizing `templateSettings`, if you don't want to define an
-  // interpolation, evaluation or escaping regex, we need one that is
-  // guaranteed not to match.
-  var noMatch = /(.)^/;
-
-  // Certain characters need to be escaped so that they can be put into a
-  // string literal.
-  var escapes = {
-    "'":      "'",
-    '\\':     '\\',
-    '\r':     'r',
-    '\n':     'n',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
-  };
-
-  var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
-
-  var escapeChar = function(match) {
-    return '\\' + escapes[match];
-  };
-
-  // JavaScript micro-templating, similar to John Resig's implementation.
-  // Underscore templating handles arbitrary delimiters, preserves whitespace,
-  // and correctly escapes quotes within interpolated code.
-  // NB: `oldSettings` only exists for backwards compatibility.
-  _.template = function(text, settings, oldSettings) {
-    if (!settings && oldSettings) settings = oldSettings;
-    settings = _.defaults({}, settings, _.templateSettings);
-
-    // Combine delimiters into one regular expression via alternation.
-    var matcher = RegExp([
-      (settings.escape || noMatch).source,
-      (settings.interpolate || noMatch).source,
-      (settings.evaluate || noMatch).source
-    ].join('|') + '|$', 'g');
-
-    // Compile the template source, escaping string literals appropriately.
-    var index = 0;
-    var source = "__p+='";
-    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-      source += text.slice(index, offset).replace(escaper, escapeChar);
-      index = offset + match.length;
-
-      if (escape) {
-        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-      } else if (interpolate) {
-        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-      } else if (evaluate) {
-        source += "';\n" + evaluate + "\n__p+='";
-      }
-
-      // Adobe VMs need the match returned to produce the correct offest.
-      return match;
-    });
-    source += "';\n";
-
-    // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
-
-    source = "var __t,__p='',__j=Array.prototype.join," +
-      "print=function(){__p+=__j.call(arguments,'');};\n" +
-      source + 'return __p;\n';
-
-    try {
-      var render = new Function(settings.variable || 'obj', '_', source);
-    } catch (e) {
-      e.source = source;
-      throw e;
-    }
-
-    var template = function(data) {
-      return render.call(this, data, _);
-    };
-
-    // Provide the compiled source as a convenience for precompilation.
-    var argument = settings.variable || 'obj';
-    template.source = 'function(' + argument + '){\n' + source + '}';
-
-    return template;
-  };
-
-  // Add a "chain" function. Start chaining a wrapped Underscore object.
-  _.chain = function(obj) {
-    var instance = _(obj);
-    instance._chain = true;
-    return instance;
-  };
-
-  // OOP
-  // ---------------
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-
-  // Helper function to continue chaining intermediate results.
-  var result = function(obj) {
-    return this._chain ? _(obj).chain() : obj;
-  };
-
-  // Add your own custom functions to the Underscore object.
-  _.mixin = function(obj) {
-    _.each(_.functions(obj), function(name) {
-      var func = _[name] = obj[name];
-      _.prototype[name] = function() {
-        var args = [this._wrapped];
-        push.apply(args, arguments);
-        return result.call(this, func.apply(_, args));
-      };
-    });
-  };
-
-  // Add all of the Underscore functions to the wrapper object.
-  _.mixin(_);
-
-  // Add all mutator Array functions to the wrapper.
-  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      var obj = this._wrapped;
-      method.apply(obj, arguments);
-      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
-      return result.call(this, obj);
-    };
-  });
-
-  // Add all accessor Array functions to the wrapper.
-  _.each(['concat', 'join', 'slice'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      return result.call(this, method.apply(this._wrapped, arguments));
-    };
-  });
-
-  // Extracts the result from a wrapped and chained object.
-  _.prototype.value = function() {
-    return this._wrapped;
-  };
-
-  // AMD registration happens at the end for compatibility with AMD loaders
-  // that may not enforce next-turn semantics on modules. Even though general
-  // practice for AMD registration is to be anonymous, underscore registers
-  // as a named module because, like jQuery, it is a base library that is
-  // popular enough to be bundled in a third party lib, but not be part of
-  // an AMD load request. Those cases could generate an error when an
-  // anonymous define() is called outside of a loader request.
-  if (typeof define === 'function' && define.amd) {
-    define('underscore', [], function() {
-      return _;
-    });
-  }
-}.call(this));
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/index.js":[function(require,module,exports){
 var L = require('leaflet');
@@ -23225,7 +21576,7 @@ L.control.emailParticipants = function (opts) {
     return new L.Control.EmailParticipants(opts);
 };
 
-},{"./templates":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/templates.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/templates.js":[function(require,module,exports){
+},{"./templates":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/templates.js","handlebars":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/handlebars/lib/index.js","leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","spin.js":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/spin.js/spin.js","underscore":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/src/templates.js":[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -23267,132 +21618,7 @@ templates["window.hbs"] = Handlebars.template({"1":function(depth0,helpers,parti
 return templates;
 
 };
-},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.parcels/src/index.js":[function(require,module,exports){
-//
-// Add parcel functionality to a leaflet map
-//
-
-var L = require('leaflet');
-
-require('leaflet-tilelayer-vector');
-
-
-var map,
-    parcelsLayer,
-    selectedParcel,
-
-    parcelDefaultStyle = {
-        color: '#2593c6',
-        fillOpacity: 0,
-        weight: 2.5
-    };
-
-
-var ParcelsMixin = {
-    parcelLayerOptions: {
-        onEachFeature: function (feature, layer) {
-            layer.on({
-                'click': function (event) {
-                    var map = this._map,
-                        layer = event.layer,
-                        feature = event.target.feature;
-                    if (selectedParcel && selectedParcel.id === feature.id) {
-                        selectedParcel = null;
-                        layer.setStyle(parcelDefaultStyle);
-                        $('#id_parcels').val('');
-                        map.fire('parcels.unselect', { layer: layer, feature: feature });
-                    }
-                    else {
-                        if (selectedParcel) {
-                            selectedParcel.layer.setStyle(map.parcelSelectStyle);
-                        }
-                        selectedParcel = {
-                            id: feature.id,
-                            address: feature.properties.address,
-                            layer: layer
-                        };
-                        $('#id_parcels').val(feature.id);
-                        layer.setStyle(map.parcelSelectStyle);
-                        layer.bindPopup(map.getParcelPopupContent(layer, feature)).openPopup();
-                        map.fire('parcels.select', { layer: layer, feature: feature });
-                    }
-                },
-
-                'mouseover': function (event) {
-                    var layer = event.layer,
-                        feature = event.target.feature;
-                    $('.map-add-lot-current-parcel').text(feature.properties.address);
-                    this._map.fire('parcels.mouseover', { layer: layer, feature: feature });
-                }
-            });
-        },
-
-        style: function (feature) {
-            return parcelDefaultStyle;
-        }
-    },
-
-    parcelSelectStyle: {
-        fillColor: '#EEC619',
-        fillOpacity: 0.5
-    },
-
-    getParcelPopupContent: function (layer, feature) {
-        return feature.properties.address || 'unknown address';
-    },
-
-    removeParcelsLayer: function () {
-        if (parcelsLayer) {
-            this.removeLayer(parcelsLayer);
-        }
-    },
-
-    addParcelsLayer: function () {
-        if (parcelsLayer) {
-            this.removeLayer(parcelsLayer);
-        }
-        var url = this.options.parcelsUrl;
-
-        var options = {
-            layerFactory: L.geoJson,
-            minZoom: 17,
-            serverZooms: [17],
-            unique: function (feature) {
-                return feature.id;
-            }
-        };
-
-        var layerOptions = L.Util.extend({}, this.parcelLayerOptions);
-        parcelsLayer = new L.TileLayer.Vector(url, options, layerOptions);
-        this.addLayer(parcelsLayer);
-    }
-
-};
-
-L.Map.include(ParcelsMixin);
-
-function setView(map, latlng) {
-    if (map) {
-        map.setView(latlng, 18);
-    }
-}
-
-module.exports = {
-    init: function (map, latlng) {
-        if (latlng) {
-            setView(map, latlng);
-        }
-        map.addParcelsLayer();
-    },
-
-    exit: function (map) {
-        map.removeParcelsLayer();
-    },
-
-    setView: setView
-};
-
-},{"leaflet":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet/dist/leaflet-src.js","leaflet-tilelayer-vector":"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/leaflet-tilelayer-vector/src/index.js"}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Point.js":[function(require,module,exports){
+},{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/lib/Point.js":[function(require,module,exports){
 var mgrs = require('mgrs');
 
 function Point(x, y, z) {
@@ -28798,7 +27024,7 @@ function getMinNorthing(zoneLetter) {
 }
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/proj4/package.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports={
   "name": "proj4",
   "version": "2.3.3",
   "description": "Proj4js is a JavaScript library to transform point coordinates from one coordinate system to another, including datum transformations.",
@@ -29378,5 +27604,1420 @@ module.exports = function(coordinates, properties) {
 };
 
 },{}],"/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/underscore/underscore.js":[function(require,module,exports){
-arguments[4]["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/node_modules/livinglots.emailparticipants/node_modules/underscore/underscore.js"][0].apply(exports,arguments)
+//     Underscore.js 1.7.0
+//     http://underscorejs.org
+//     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     Underscore may be freely distributed under the MIT license.
+
+(function() {
+
+  // Baseline setup
+  // --------------
+
+  // Establish the root object, `window` in the browser, or `exports` on the server.
+  var root = this;
+
+  // Save the previous value of the `_` variable.
+  var previousUnderscore = root._;
+
+  // Save bytes in the minified (but not gzipped) version:
+  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+
+  // Create quick reference variables for speed access to core prototypes.
+  var
+    push             = ArrayProto.push,
+    slice            = ArrayProto.slice,
+    concat           = ArrayProto.concat,
+    toString         = ObjProto.toString,
+    hasOwnProperty   = ObjProto.hasOwnProperty;
+
+  // All **ECMAScript 5** native function implementations that we hope to use
+  // are declared here.
+  var
+    nativeIsArray      = Array.isArray,
+    nativeKeys         = Object.keys,
+    nativeBind         = FuncProto.bind;
+
+  // Create a safe reference to the Underscore object for use below.
+  var _ = function(obj) {
+    if (obj instanceof _) return obj;
+    if (!(this instanceof _)) return new _(obj);
+    this._wrapped = obj;
+  };
+
+  // Export the Underscore object for **Node.js**, with
+  // backwards-compatibility for the old `require()` API. If we're in
+  // the browser, add `_` as a global object.
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = _;
+    }
+    exports._ = _;
+  } else {
+    root._ = _;
+  }
+
+  // Current version.
+  _.VERSION = '1.7.0';
+
+  // Internal function that returns an efficient (for current engines) version
+  // of the passed-in callback, to be repeatedly applied in other Underscore
+  // functions.
+  var createCallback = function(func, context, argCount) {
+    if (context === void 0) return func;
+    switch (argCount == null ? 3 : argCount) {
+      case 1: return function(value) {
+        return func.call(context, value);
+      };
+      case 2: return function(value, other) {
+        return func.call(context, value, other);
+      };
+      case 3: return function(value, index, collection) {
+        return func.call(context, value, index, collection);
+      };
+      case 4: return function(accumulator, value, index, collection) {
+        return func.call(context, accumulator, value, index, collection);
+      };
+    }
+    return function() {
+      return func.apply(context, arguments);
+    };
+  };
+
+  // A mostly-internal function to generate callbacks that can be applied
+  // to each element in a collection, returning the desired result — either
+  // identity, an arbitrary callback, a property matcher, or a property accessor.
+  _.iteratee = function(value, context, argCount) {
+    if (value == null) return _.identity;
+    if (_.isFunction(value)) return createCallback(value, context, argCount);
+    if (_.isObject(value)) return _.matches(value);
+    return _.property(value);
+  };
+
+  // Collection Functions
+  // --------------------
+
+  // The cornerstone, an `each` implementation, aka `forEach`.
+  // Handles raw objects in addition to array-likes. Treats all
+  // sparse array-likes as if they were dense.
+  _.each = _.forEach = function(obj, iteratee, context) {
+    if (obj == null) return obj;
+    iteratee = createCallback(iteratee, context);
+    var i, length = obj.length;
+    if (length === +length) {
+      for (i = 0; i < length; i++) {
+        iteratee(obj[i], i, obj);
+      }
+    } else {
+      var keys = _.keys(obj);
+      for (i = 0, length = keys.length; i < length; i++) {
+        iteratee(obj[keys[i]], keys[i], obj);
+      }
+    }
+    return obj;
+  };
+
+  // Return the results of applying the iteratee to each element.
+  _.map = _.collect = function(obj, iteratee, context) {
+    if (obj == null) return [];
+    iteratee = _.iteratee(iteratee, context);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        results = Array(length),
+        currentKey;
+    for (var index = 0; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      results[index] = iteratee(obj[currentKey], currentKey, obj);
+    }
+    return results;
+  };
+
+  var reduceError = 'Reduce of empty array with no initial value';
+
+  // **Reduce** builds up a single result from a list of values, aka `inject`,
+  // or `foldl`.
+  _.reduce = _.foldl = _.inject = function(obj, iteratee, memo, context) {
+    if (obj == null) obj = [];
+    iteratee = createCallback(iteratee, context, 4);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        index = 0, currentKey;
+    if (arguments.length < 3) {
+      if (!length) throw new TypeError(reduceError);
+      memo = obj[keys ? keys[index++] : index++];
+    }
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      memo = iteratee(memo, obj[currentKey], currentKey, obj);
+    }
+    return memo;
+  };
+
+  // The right-associative version of reduce, also known as `foldr`.
+  _.reduceRight = _.foldr = function(obj, iteratee, memo, context) {
+    if (obj == null) obj = [];
+    iteratee = createCallback(iteratee, context, 4);
+    var keys = obj.length !== + obj.length && _.keys(obj),
+        index = (keys || obj).length,
+        currentKey;
+    if (arguments.length < 3) {
+      if (!index) throw new TypeError(reduceError);
+      memo = obj[keys ? keys[--index] : --index];
+    }
+    while (index--) {
+      currentKey = keys ? keys[index] : index;
+      memo = iteratee(memo, obj[currentKey], currentKey, obj);
+    }
+    return memo;
+  };
+
+  // Return the first value which passes a truth test. Aliased as `detect`.
+  _.find = _.detect = function(obj, predicate, context) {
+    var result;
+    predicate = _.iteratee(predicate, context);
+    _.some(obj, function(value, index, list) {
+      if (predicate(value, index, list)) {
+        result = value;
+        return true;
+      }
+    });
+    return result;
+  };
+
+  // Return all the elements that pass a truth test.
+  // Aliased as `select`.
+  _.filter = _.select = function(obj, predicate, context) {
+    var results = [];
+    if (obj == null) return results;
+    predicate = _.iteratee(predicate, context);
+    _.each(obj, function(value, index, list) {
+      if (predicate(value, index, list)) results.push(value);
+    });
+    return results;
+  };
+
+  // Return all the elements for which a truth test fails.
+  _.reject = function(obj, predicate, context) {
+    return _.filter(obj, _.negate(_.iteratee(predicate)), context);
+  };
+
+  // Determine whether all of the elements match a truth test.
+  // Aliased as `all`.
+  _.every = _.all = function(obj, predicate, context) {
+    if (obj == null) return true;
+    predicate = _.iteratee(predicate, context);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        index, currentKey;
+    for (index = 0; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      if (!predicate(obj[currentKey], currentKey, obj)) return false;
+    }
+    return true;
+  };
+
+  // Determine if at least one element in the object matches a truth test.
+  // Aliased as `any`.
+  _.some = _.any = function(obj, predicate, context) {
+    if (obj == null) return false;
+    predicate = _.iteratee(predicate, context);
+    var keys = obj.length !== +obj.length && _.keys(obj),
+        length = (keys || obj).length,
+        index, currentKey;
+    for (index = 0; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      if (predicate(obj[currentKey], currentKey, obj)) return true;
+    }
+    return false;
+  };
+
+  // Determine if the array or object contains a given value (using `===`).
+  // Aliased as `include`.
+  _.contains = _.include = function(obj, target) {
+    if (obj == null) return false;
+    if (obj.length !== +obj.length) obj = _.values(obj);
+    return _.indexOf(obj, target) >= 0;
+  };
+
+  // Invoke a method (with arguments) on every item in a collection.
+  _.invoke = function(obj, method) {
+    var args = slice.call(arguments, 2);
+    var isFunc = _.isFunction(method);
+    return _.map(obj, function(value) {
+      return (isFunc ? method : value[method]).apply(value, args);
+    });
+  };
+
+  // Convenience version of a common use case of `map`: fetching a property.
+  _.pluck = function(obj, key) {
+    return _.map(obj, _.property(key));
+  };
+
+  // Convenience version of a common use case of `filter`: selecting only objects
+  // containing specific `key:value` pairs.
+  _.where = function(obj, attrs) {
+    return _.filter(obj, _.matches(attrs));
+  };
+
+  // Convenience version of a common use case of `find`: getting the first object
+  // containing specific `key:value` pairs.
+  _.findWhere = function(obj, attrs) {
+    return _.find(obj, _.matches(attrs));
+  };
+
+  // Return the maximum element (or element-based computation).
+  _.max = function(obj, iteratee, context) {
+    var result = -Infinity, lastComputed = -Infinity,
+        value, computed;
+    if (iteratee == null && obj != null) {
+      obj = obj.length === +obj.length ? obj : _.values(obj);
+      for (var i = 0, length = obj.length; i < length; i++) {
+        value = obj[i];
+        if (value > result) {
+          result = value;
+        }
+      }
+    } else {
+      iteratee = _.iteratee(iteratee, context);
+      _.each(obj, function(value, index, list) {
+        computed = iteratee(value, index, list);
+        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
+          result = value;
+          lastComputed = computed;
+        }
+      });
+    }
+    return result;
+  };
+
+  // Return the minimum element (or element-based computation).
+  _.min = function(obj, iteratee, context) {
+    var result = Infinity, lastComputed = Infinity,
+        value, computed;
+    if (iteratee == null && obj != null) {
+      obj = obj.length === +obj.length ? obj : _.values(obj);
+      for (var i = 0, length = obj.length; i < length; i++) {
+        value = obj[i];
+        if (value < result) {
+          result = value;
+        }
+      }
+    } else {
+      iteratee = _.iteratee(iteratee, context);
+      _.each(obj, function(value, index, list) {
+        computed = iteratee(value, index, list);
+        if (computed < lastComputed || computed === Infinity && result === Infinity) {
+          result = value;
+          lastComputed = computed;
+        }
+      });
+    }
+    return result;
+  };
+
+  // Shuffle a collection, using the modern version of the
+  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
+  _.shuffle = function(obj) {
+    var set = obj && obj.length === +obj.length ? obj : _.values(obj);
+    var length = set.length;
+    var shuffled = Array(length);
+    for (var index = 0, rand; index < length; index++) {
+      rand = _.random(0, index);
+      if (rand !== index) shuffled[index] = shuffled[rand];
+      shuffled[rand] = set[index];
+    }
+    return shuffled;
+  };
+
+  // Sample **n** random values from a collection.
+  // If **n** is not specified, returns a single random element.
+  // The internal `guard` argument allows it to work with `map`.
+  _.sample = function(obj, n, guard) {
+    if (n == null || guard) {
+      if (obj.length !== +obj.length) obj = _.values(obj);
+      return obj[_.random(obj.length - 1)];
+    }
+    return _.shuffle(obj).slice(0, Math.max(0, n));
+  };
+
+  // Sort the object's values by a criterion produced by an iteratee.
+  _.sortBy = function(obj, iteratee, context) {
+    iteratee = _.iteratee(iteratee, context);
+    return _.pluck(_.map(obj, function(value, index, list) {
+      return {
+        value: value,
+        index: index,
+        criteria: iteratee(value, index, list)
+      };
+    }).sort(function(left, right) {
+      var a = left.criteria;
+      var b = right.criteria;
+      if (a !== b) {
+        if (a > b || a === void 0) return 1;
+        if (a < b || b === void 0) return -1;
+      }
+      return left.index - right.index;
+    }), 'value');
+  };
+
+  // An internal function used for aggregate "group by" operations.
+  var group = function(behavior) {
+    return function(obj, iteratee, context) {
+      var result = {};
+      iteratee = _.iteratee(iteratee, context);
+      _.each(obj, function(value, index) {
+        var key = iteratee(value, index, obj);
+        behavior(result, value, key);
+      });
+      return result;
+    };
+  };
+
+  // Groups the object's values by a criterion. Pass either a string attribute
+  // to group by, or a function that returns the criterion.
+  _.groupBy = group(function(result, value, key) {
+    if (_.has(result, key)) result[key].push(value); else result[key] = [value];
+  });
+
+  // Indexes the object's values by a criterion, similar to `groupBy`, but for
+  // when you know that your index values will be unique.
+  _.indexBy = group(function(result, value, key) {
+    result[key] = value;
+  });
+
+  // Counts instances of an object that group by a certain criterion. Pass
+  // either a string attribute to count by, or a function that returns the
+  // criterion.
+  _.countBy = group(function(result, value, key) {
+    if (_.has(result, key)) result[key]++; else result[key] = 1;
+  });
+
+  // Use a comparator function to figure out the smallest index at which
+  // an object should be inserted so as to maintain order. Uses binary search.
+  _.sortedIndex = function(array, obj, iteratee, context) {
+    iteratee = _.iteratee(iteratee, context, 1);
+    var value = iteratee(obj);
+    var low = 0, high = array.length;
+    while (low < high) {
+      var mid = low + high >>> 1;
+      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;
+    }
+    return low;
+  };
+
+  // Safely create a real, live array from anything iterable.
+  _.toArray = function(obj) {
+    if (!obj) return [];
+    if (_.isArray(obj)) return slice.call(obj);
+    if (obj.length === +obj.length) return _.map(obj, _.identity);
+    return _.values(obj);
+  };
+
+  // Return the number of elements in an object.
+  _.size = function(obj) {
+    if (obj == null) return 0;
+    return obj.length === +obj.length ? obj.length : _.keys(obj).length;
+  };
+
+  // Split a collection into two arrays: one whose elements all satisfy the given
+  // predicate, and one whose elements all do not satisfy the predicate.
+  _.partition = function(obj, predicate, context) {
+    predicate = _.iteratee(predicate, context);
+    var pass = [], fail = [];
+    _.each(obj, function(value, key, obj) {
+      (predicate(value, key, obj) ? pass : fail).push(value);
+    });
+    return [pass, fail];
+  };
+
+  // Array Functions
+  // ---------------
+
+  // Get the first element of an array. Passing **n** will return the first N
+  // values in the array. Aliased as `head` and `take`. The **guard** check
+  // allows it to work with `_.map`.
+  _.first = _.head = _.take = function(array, n, guard) {
+    if (array == null) return void 0;
+    if (n == null || guard) return array[0];
+    if (n < 0) return [];
+    return slice.call(array, 0, n);
+  };
+
+  // Returns everything but the last entry of the array. Especially useful on
+  // the arguments object. Passing **n** will return all the values in
+  // the array, excluding the last N. The **guard** check allows it to work with
+  // `_.map`.
+  _.initial = function(array, n, guard) {
+    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
+  };
+
+  // Get the last element of an array. Passing **n** will return the last N
+  // values in the array. The **guard** check allows it to work with `_.map`.
+  _.last = function(array, n, guard) {
+    if (array == null) return void 0;
+    if (n == null || guard) return array[array.length - 1];
+    return slice.call(array, Math.max(array.length - n, 0));
+  };
+
+  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
+  // Especially useful on the arguments object. Passing an **n** will return
+  // the rest N values in the array. The **guard**
+  // check allows it to work with `_.map`.
+  _.rest = _.tail = _.drop = function(array, n, guard) {
+    return slice.call(array, n == null || guard ? 1 : n);
+  };
+
+  // Trim out all falsy values from an array.
+  _.compact = function(array) {
+    return _.filter(array, _.identity);
+  };
+
+  // Internal implementation of a recursive `flatten` function.
+  var flatten = function(input, shallow, strict, output) {
+    if (shallow && _.every(input, _.isArray)) {
+      return concat.apply(output, input);
+    }
+    for (var i = 0, length = input.length; i < length; i++) {
+      var value = input[i];
+      if (!_.isArray(value) && !_.isArguments(value)) {
+        if (!strict) output.push(value);
+      } else if (shallow) {
+        push.apply(output, value);
+      } else {
+        flatten(value, shallow, strict, output);
+      }
+    }
+    return output;
+  };
+
+  // Flatten out an array, either recursively (by default), or just one level.
+  _.flatten = function(array, shallow) {
+    return flatten(array, shallow, false, []);
+  };
+
+  // Return a version of the array that does not contain the specified value(s).
+  _.without = function(array) {
+    return _.difference(array, slice.call(arguments, 1));
+  };
+
+  // Produce a duplicate-free version of the array. If the array has already
+  // been sorted, you have the option of using a faster algorithm.
+  // Aliased as `unique`.
+  _.uniq = _.unique = function(array, isSorted, iteratee, context) {
+    if (array == null) return [];
+    if (!_.isBoolean(isSorted)) {
+      context = iteratee;
+      iteratee = isSorted;
+      isSorted = false;
+    }
+    if (iteratee != null) iteratee = _.iteratee(iteratee, context);
+    var result = [];
+    var seen = [];
+    for (var i = 0, length = array.length; i < length; i++) {
+      var value = array[i];
+      if (isSorted) {
+        if (!i || seen !== value) result.push(value);
+        seen = value;
+      } else if (iteratee) {
+        var computed = iteratee(value, i, array);
+        if (_.indexOf(seen, computed) < 0) {
+          seen.push(computed);
+          result.push(value);
+        }
+      } else if (_.indexOf(result, value) < 0) {
+        result.push(value);
+      }
+    }
+    return result;
+  };
+
+  // Produce an array that contains the union: each distinct element from all of
+  // the passed-in arrays.
+  _.union = function() {
+    return _.uniq(flatten(arguments, true, true, []));
+  };
+
+  // Produce an array that contains every item shared between all the
+  // passed-in arrays.
+  _.intersection = function(array) {
+    if (array == null) return [];
+    var result = [];
+    var argsLength = arguments.length;
+    for (var i = 0, length = array.length; i < length; i++) {
+      var item = array[i];
+      if (_.contains(result, item)) continue;
+      for (var j = 1; j < argsLength; j++) {
+        if (!_.contains(arguments[j], item)) break;
+      }
+      if (j === argsLength) result.push(item);
+    }
+    return result;
+  };
+
+  // Take the difference between one array and a number of other arrays.
+  // Only the elements present in just the first array will remain.
+  _.difference = function(array) {
+    var rest = flatten(slice.call(arguments, 1), true, true, []);
+    return _.filter(array, function(value){
+      return !_.contains(rest, value);
+    });
+  };
+
+  // Zip together multiple lists into a single array -- elements that share
+  // an index go together.
+  _.zip = function(array) {
+    if (array == null) return [];
+    var length = _.max(arguments, 'length').length;
+    var results = Array(length);
+    for (var i = 0; i < length; i++) {
+      results[i] = _.pluck(arguments, i);
+    }
+    return results;
+  };
+
+  // Converts lists into objects. Pass either a single array of `[key, value]`
+  // pairs, or two parallel arrays of the same length -- one of keys, and one of
+  // the corresponding values.
+  _.object = function(list, values) {
+    if (list == null) return {};
+    var result = {};
+    for (var i = 0, length = list.length; i < length; i++) {
+      if (values) {
+        result[list[i]] = values[i];
+      } else {
+        result[list[i][0]] = list[i][1];
+      }
+    }
+    return result;
+  };
+
+  // Return the position of the first occurrence of an item in an array,
+  // or -1 if the item is not included in the array.
+  // If the array is large and already in sort order, pass `true`
+  // for **isSorted** to use binary search.
+  _.indexOf = function(array, item, isSorted) {
+    if (array == null) return -1;
+    var i = 0, length = array.length;
+    if (isSorted) {
+      if (typeof isSorted == 'number') {
+        i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted;
+      } else {
+        i = _.sortedIndex(array, item);
+        return array[i] === item ? i : -1;
+      }
+    }
+    for (; i < length; i++) if (array[i] === item) return i;
+    return -1;
+  };
+
+  _.lastIndexOf = function(array, item, from) {
+    if (array == null) return -1;
+    var idx = array.length;
+    if (typeof from == 'number') {
+      idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1);
+    }
+    while (--idx >= 0) if (array[idx] === item) return idx;
+    return -1;
+  };
+
+  // Generate an integer Array containing an arithmetic progression. A port of
+  // the native Python `range()` function. See
+  // [the Python documentation](http://docs.python.org/library/functions.html#range).
+  _.range = function(start, stop, step) {
+    if (arguments.length <= 1) {
+      stop = start || 0;
+      start = 0;
+    }
+    step = step || 1;
+
+    var length = Math.max(Math.ceil((stop - start) / step), 0);
+    var range = Array(length);
+
+    for (var idx = 0; idx < length; idx++, start += step) {
+      range[idx] = start;
+    }
+
+    return range;
+  };
+
+  // Function (ahem) Functions
+  // ------------------
+
+  // Reusable constructor function for prototype setting.
+  var Ctor = function(){};
+
+  // Create a function bound to a given object (assigning `this`, and arguments,
+  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
+  // available.
+  _.bind = function(func, context) {
+    var args, bound;
+    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
+    args = slice.call(arguments, 2);
+    bound = function() {
+      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+      Ctor.prototype = func.prototype;
+      var self = new Ctor;
+      Ctor.prototype = null;
+      var result = func.apply(self, args.concat(slice.call(arguments)));
+      if (_.isObject(result)) return result;
+      return self;
+    };
+    return bound;
+  };
+
+  // Partially apply a function by creating a version that has had some of its
+  // arguments pre-filled, without changing its dynamic `this` context. _ acts
+  // as a placeholder, allowing any combination of arguments to be pre-filled.
+  _.partial = function(func) {
+    var boundArgs = slice.call(arguments, 1);
+    return function() {
+      var position = 0;
+      var args = boundArgs.slice();
+      for (var i = 0, length = args.length; i < length; i++) {
+        if (args[i] === _) args[i] = arguments[position++];
+      }
+      while (position < arguments.length) args.push(arguments[position++]);
+      return func.apply(this, args);
+    };
+  };
+
+  // Bind a number of an object's methods to that object. Remaining arguments
+  // are the method names to be bound. Useful for ensuring that all callbacks
+  // defined on an object belong to it.
+  _.bindAll = function(obj) {
+    var i, length = arguments.length, key;
+    if (length <= 1) throw new Error('bindAll must be passed function names');
+    for (i = 1; i < length; i++) {
+      key = arguments[i];
+      obj[key] = _.bind(obj[key], obj);
+    }
+    return obj;
+  };
+
+  // Memoize an expensive function by storing its results.
+  _.memoize = function(func, hasher) {
+    var memoize = function(key) {
+      var cache = memoize.cache;
+      var address = hasher ? hasher.apply(this, arguments) : key;
+      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
+      return cache[address];
+    };
+    memoize.cache = {};
+    return memoize;
+  };
+
+  // Delays a function for the given number of milliseconds, and then calls
+  // it with the arguments supplied.
+  _.delay = function(func, wait) {
+    var args = slice.call(arguments, 2);
+    return setTimeout(function(){
+      return func.apply(null, args);
+    }, wait);
+  };
+
+  // Defers a function, scheduling it to run after the current call stack has
+  // cleared.
+  _.defer = function(func) {
+    return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)));
+  };
+
+  // Returns a function, that, when invoked, will only be triggered at most once
+  // during a given window of time. Normally, the throttled function will run
+  // as much as it can, without ever going more than once per `wait` duration;
+  // but if you'd like to disable the execution on the leading edge, pass
+  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  _.throttle = function(func, wait, options) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    if (!options) options = {};
+    var later = function() {
+      previous = options.leading === false ? 0 : _.now();
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    };
+    return function() {
+      var now = _.now();
+      if (!previous && options.leading === false) previous = now;
+      var remaining = wait - (now - previous);
+      context = this;
+      args = arguments;
+      if (remaining <= 0 || remaining > wait) {
+        clearTimeout(timeout);
+        timeout = null;
+        previous = now;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+      } else if (!timeout && options.trailing !== false) {
+        timeout = setTimeout(later, remaining);
+      }
+      return result;
+    };
+  };
+
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds. If `immediate` is passed, trigger the function on the
+  // leading edge, instead of the trailing.
+  _.debounce = function(func, wait, immediate) {
+    var timeout, args, context, timestamp, result;
+
+    var later = function() {
+      var last = _.now() - timestamp;
+
+      if (last < wait && last > 0) {
+        timeout = setTimeout(later, wait - last);
+      } else {
+        timeout = null;
+        if (!immediate) {
+          result = func.apply(context, args);
+          if (!timeout) context = args = null;
+        }
+      }
+    };
+
+    return function() {
+      context = this;
+      args = arguments;
+      timestamp = _.now();
+      var callNow = immediate && !timeout;
+      if (!timeout) timeout = setTimeout(later, wait);
+      if (callNow) {
+        result = func.apply(context, args);
+        context = args = null;
+      }
+
+      return result;
+    };
+  };
+
+  // Returns the first function passed as an argument to the second,
+  // allowing you to adjust arguments, run code before and after, and
+  // conditionally execute the original function.
+  _.wrap = function(func, wrapper) {
+    return _.partial(wrapper, func);
+  };
+
+  // Returns a negated version of the passed-in predicate.
+  _.negate = function(predicate) {
+    return function() {
+      return !predicate.apply(this, arguments);
+    };
+  };
+
+  // Returns a function that is the composition of a list of functions, each
+  // consuming the return value of the function that follows.
+  _.compose = function() {
+    var args = arguments;
+    var start = args.length - 1;
+    return function() {
+      var i = start;
+      var result = args[start].apply(this, arguments);
+      while (i--) result = args[i].call(this, result);
+      return result;
+    };
+  };
+
+  // Returns a function that will only be executed after being called N times.
+  _.after = function(times, func) {
+    return function() {
+      if (--times < 1) {
+        return func.apply(this, arguments);
+      }
+    };
+  };
+
+  // Returns a function that will only be executed before being called N times.
+  _.before = function(times, func) {
+    var memo;
+    return function() {
+      if (--times > 0) {
+        memo = func.apply(this, arguments);
+      } else {
+        func = null;
+      }
+      return memo;
+    };
+  };
+
+  // Returns a function that will be executed at most one time, no matter how
+  // often you call it. Useful for lazy initialization.
+  _.once = _.partial(_.before, 2);
+
+  // Object Functions
+  // ----------------
+
+  // Retrieve the names of an object's properties.
+  // Delegates to **ECMAScript 5**'s native `Object.keys`
+  _.keys = function(obj) {
+    if (!_.isObject(obj)) return [];
+    if (nativeKeys) return nativeKeys(obj);
+    var keys = [];
+    for (var key in obj) if (_.has(obj, key)) keys.push(key);
+    return keys;
+  };
+
+  // Retrieve the values of an object's properties.
+  _.values = function(obj) {
+    var keys = _.keys(obj);
+    var length = keys.length;
+    var values = Array(length);
+    for (var i = 0; i < length; i++) {
+      values[i] = obj[keys[i]];
+    }
+    return values;
+  };
+
+  // Convert an object into a list of `[key, value]` pairs.
+  _.pairs = function(obj) {
+    var keys = _.keys(obj);
+    var length = keys.length;
+    var pairs = Array(length);
+    for (var i = 0; i < length; i++) {
+      pairs[i] = [keys[i], obj[keys[i]]];
+    }
+    return pairs;
+  };
+
+  // Invert the keys and values of an object. The values must be serializable.
+  _.invert = function(obj) {
+    var result = {};
+    var keys = _.keys(obj);
+    for (var i = 0, length = keys.length; i < length; i++) {
+      result[obj[keys[i]]] = keys[i];
+    }
+    return result;
+  };
+
+  // Return a sorted list of the function names available on the object.
+  // Aliased as `methods`
+  _.functions = _.methods = function(obj) {
+    var names = [];
+    for (var key in obj) {
+      if (_.isFunction(obj[key])) names.push(key);
+    }
+    return names.sort();
+  };
+
+  // Extend a given object with all the properties in passed-in object(s).
+  _.extend = function(obj) {
+    if (!_.isObject(obj)) return obj;
+    var source, prop;
+    for (var i = 1, length = arguments.length; i < length; i++) {
+      source = arguments[i];
+      for (prop in source) {
+        if (hasOwnProperty.call(source, prop)) {
+            obj[prop] = source[prop];
+        }
+      }
+    }
+    return obj;
+  };
+
+  // Return a copy of the object only containing the whitelisted properties.
+  _.pick = function(obj, iteratee, context) {
+    var result = {}, key;
+    if (obj == null) return result;
+    if (_.isFunction(iteratee)) {
+      iteratee = createCallback(iteratee, context);
+      for (key in obj) {
+        var value = obj[key];
+        if (iteratee(value, key, obj)) result[key] = value;
+      }
+    } else {
+      var keys = concat.apply([], slice.call(arguments, 1));
+      obj = new Object(obj);
+      for (var i = 0, length = keys.length; i < length; i++) {
+        key = keys[i];
+        if (key in obj) result[key] = obj[key];
+      }
+    }
+    return result;
+  };
+
+   // Return a copy of the object without the blacklisted properties.
+  _.omit = function(obj, iteratee, context) {
+    if (_.isFunction(iteratee)) {
+      iteratee = _.negate(iteratee);
+    } else {
+      var keys = _.map(concat.apply([], slice.call(arguments, 1)), String);
+      iteratee = function(value, key) {
+        return !_.contains(keys, key);
+      };
+    }
+    return _.pick(obj, iteratee, context);
+  };
+
+  // Fill in a given object with default properties.
+  _.defaults = function(obj) {
+    if (!_.isObject(obj)) return obj;
+    for (var i = 1, length = arguments.length; i < length; i++) {
+      var source = arguments[i];
+      for (var prop in source) {
+        if (obj[prop] === void 0) obj[prop] = source[prop];
+      }
+    }
+    return obj;
+  };
+
+  // Create a (shallow-cloned) duplicate of an object.
+  _.clone = function(obj) {
+    if (!_.isObject(obj)) return obj;
+    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+  };
+
+  // Invokes interceptor with the obj, and then returns obj.
+  // The primary purpose of this method is to "tap into" a method chain, in
+  // order to perform operations on intermediate results within the chain.
+  _.tap = function(obj, interceptor) {
+    interceptor(obj);
+    return obj;
+  };
+
+  // Internal recursive comparison function for `isEqual`.
+  var eq = function(a, b, aStack, bStack) {
+    // Identical objects are equal. `0 === -0`, but they aren't identical.
+    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
+    if (a === b) return a !== 0 || 1 / a === 1 / b;
+    // A strict comparison is necessary because `null == undefined`.
+    if (a == null || b == null) return a === b;
+    // Unwrap any wrapped objects.
+    if (a instanceof _) a = a._wrapped;
+    if (b instanceof _) b = b._wrapped;
+    // Compare `[[Class]]` names.
+    var className = toString.call(a);
+    if (className !== toString.call(b)) return false;
+    switch (className) {
+      // Strings, numbers, regular expressions, dates, and booleans are compared by value.
+      case '[object RegExp]':
+      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
+      case '[object String]':
+        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
+        // equivalent to `new String("5")`.
+        return '' + a === '' + b;
+      case '[object Number]':
+        // `NaN`s are equivalent, but non-reflexive.
+        // Object(NaN) is equivalent to NaN
+        if (+a !== +a) return +b !== +b;
+        // An `egal` comparison is performed for other numeric values.
+        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+      case '[object Date]':
+      case '[object Boolean]':
+        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
+        // millisecond representations. Note that invalid dates with millisecond representations
+        // of `NaN` are not equivalent.
+        return +a === +b;
+    }
+    if (typeof a != 'object' || typeof b != 'object') return false;
+    // Assume equality for cyclic structures. The algorithm for detecting cyclic
+    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
+    var length = aStack.length;
+    while (length--) {
+      // Linear search. Performance is inversely proportional to the number of
+      // unique nested structures.
+      if (aStack[length] === a) return bStack[length] === b;
+    }
+    // Objects with different constructors are not equivalent, but `Object`s
+    // from different frames are.
+    var aCtor = a.constructor, bCtor = b.constructor;
+    if (
+      aCtor !== bCtor &&
+      // Handle Object.create(x) cases
+      'constructor' in a && 'constructor' in b &&
+      !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
+        _.isFunction(bCtor) && bCtor instanceof bCtor)
+    ) {
+      return false;
+    }
+    // Add the first object to the stack of traversed objects.
+    aStack.push(a);
+    bStack.push(b);
+    var size, result;
+    // Recursively compare objects and arrays.
+    if (className === '[object Array]') {
+      // Compare array lengths to determine if a deep comparison is necessary.
+      size = a.length;
+      result = size === b.length;
+      if (result) {
+        // Deep compare the contents, ignoring non-numeric properties.
+        while (size--) {
+          if (!(result = eq(a[size], b[size], aStack, bStack))) break;
+        }
+      }
+    } else {
+      // Deep compare objects.
+      var keys = _.keys(a), key;
+      size = keys.length;
+      // Ensure that both objects contain the same number of properties before comparing deep equality.
+      result = _.keys(b).length === size;
+      if (result) {
+        while (size--) {
+          // Deep compare each member
+          key = keys[size];
+          if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
+        }
+      }
+    }
+    // Remove the first object from the stack of traversed objects.
+    aStack.pop();
+    bStack.pop();
+    return result;
+  };
+
+  // Perform a deep comparison to check if two objects are equal.
+  _.isEqual = function(a, b) {
+    return eq(a, b, [], []);
+  };
+
+  // Is a given array, string, or object empty?
+  // An "empty" object has no enumerable own-properties.
+  _.isEmpty = function(obj) {
+    if (obj == null) return true;
+    if (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) return obj.length === 0;
+    for (var key in obj) if (_.has(obj, key)) return false;
+    return true;
+  };
+
+  // Is a given value a DOM element?
+  _.isElement = function(obj) {
+    return !!(obj && obj.nodeType === 1);
+  };
+
+  // Is a given value an array?
+  // Delegates to ECMA5's native Array.isArray
+  _.isArray = nativeIsArray || function(obj) {
+    return toString.call(obj) === '[object Array]';
+  };
+
+  // Is a given variable an object?
+  _.isObject = function(obj) {
+    var type = typeof obj;
+    return type === 'function' || type === 'object' && !!obj;
+  };
+
+  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
+  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
+    _['is' + name] = function(obj) {
+      return toString.call(obj) === '[object ' + name + ']';
+    };
+  });
+
+  // Define a fallback version of the method in browsers (ahem, IE), where
+  // there isn't any inspectable "Arguments" type.
+  if (!_.isArguments(arguments)) {
+    _.isArguments = function(obj) {
+      return _.has(obj, 'callee');
+    };
+  }
+
+  // Optimize `isFunction` if appropriate. Work around an IE 11 bug.
+  if (typeof /./ !== 'function') {
+    _.isFunction = function(obj) {
+      return typeof obj == 'function' || false;
+    };
+  }
+
+  // Is a given object a finite number?
+  _.isFinite = function(obj) {
+    return isFinite(obj) && !isNaN(parseFloat(obj));
+  };
+
+  // Is the given value `NaN`? (NaN is the only number which does not equal itself).
+  _.isNaN = function(obj) {
+    return _.isNumber(obj) && obj !== +obj;
+  };
+
+  // Is a given value a boolean?
+  _.isBoolean = function(obj) {
+    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
+  };
+
+  // Is a given value equal to null?
+  _.isNull = function(obj) {
+    return obj === null;
+  };
+
+  // Is a given variable undefined?
+  _.isUndefined = function(obj) {
+    return obj === void 0;
+  };
+
+  // Shortcut function for checking if an object has a given property directly
+  // on itself (in other words, not on a prototype).
+  _.has = function(obj, key) {
+    return obj != null && hasOwnProperty.call(obj, key);
+  };
+
+  // Utility Functions
+  // -----------------
+
+  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
+  // previous owner. Returns a reference to the Underscore object.
+  _.noConflict = function() {
+    root._ = previousUnderscore;
+    return this;
+  };
+
+  // Keep the identity function around for default iteratees.
+  _.identity = function(value) {
+    return value;
+  };
+
+  _.constant = function(value) {
+    return function() {
+      return value;
+    };
+  };
+
+  _.noop = function(){};
+
+  _.property = function(key) {
+    return function(obj) {
+      return obj[key];
+    };
+  };
+
+  // Returns a predicate for checking whether an object has a given set of `key:value` pairs.
+  _.matches = function(attrs) {
+    var pairs = _.pairs(attrs), length = pairs.length;
+    return function(obj) {
+      if (obj == null) return !length;
+      obj = new Object(obj);
+      for (var i = 0; i < length; i++) {
+        var pair = pairs[i], key = pair[0];
+        if (pair[1] !== obj[key] || !(key in obj)) return false;
+      }
+      return true;
+    };
+  };
+
+  // Run a function **n** times.
+  _.times = function(n, iteratee, context) {
+    var accum = Array(Math.max(0, n));
+    iteratee = createCallback(iteratee, context, 1);
+    for (var i = 0; i < n; i++) accum[i] = iteratee(i);
+    return accum;
+  };
+
+  // Return a random integer between min and max (inclusive).
+  _.random = function(min, max) {
+    if (max == null) {
+      max = min;
+      min = 0;
+    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+  };
+
+  // A (possibly faster) way to get the current timestamp as an integer.
+  _.now = Date.now || function() {
+    return new Date().getTime();
+  };
+
+   // List of HTML entities for escaping.
+  var escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '`': '&#x60;'
+  };
+  var unescapeMap = _.invert(escapeMap);
+
+  // Functions for escaping and unescaping strings to/from HTML interpolation.
+  var createEscaper = function(map) {
+    var escaper = function(match) {
+      return map[match];
+    };
+    // Regexes for identifying a key that needs to be escaped
+    var source = '(?:' + _.keys(map).join('|') + ')';
+    var testRegexp = RegExp(source);
+    var replaceRegexp = RegExp(source, 'g');
+    return function(string) {
+      string = string == null ? '' : '' + string;
+      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
+    };
+  };
+  _.escape = createEscaper(escapeMap);
+  _.unescape = createEscaper(unescapeMap);
+
+  // If the value of the named `property` is a function then invoke it with the
+  // `object` as context; otherwise, return it.
+  _.result = function(object, property) {
+    if (object == null) return void 0;
+    var value = object[property];
+    return _.isFunction(value) ? object[property]() : value;
+  };
+
+  // Generate a unique integer id (unique within the entire client session).
+  // Useful for temporary DOM ids.
+  var idCounter = 0;
+  _.uniqueId = function(prefix) {
+    var id = ++idCounter + '';
+    return prefix ? prefix + id : id;
+  };
+
+  // By default, Underscore uses ERB-style template delimiters, change the
+  // following template settings to use alternative delimiters.
+  _.templateSettings = {
+    evaluate    : /<%([\s\S]+?)%>/g,
+    interpolate : /<%=([\s\S]+?)%>/g,
+    escape      : /<%-([\s\S]+?)%>/g
+  };
+
+  // When customizing `templateSettings`, if you don't want to define an
+  // interpolation, evaluation or escaping regex, we need one that is
+  // guaranteed not to match.
+  var noMatch = /(.)^/;
+
+  // Certain characters need to be escaped so that they can be put into a
+  // string literal.
+  var escapes = {
+    "'":      "'",
+    '\\':     '\\',
+    '\r':     'r',
+    '\n':     'n',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
+  };
+
+  var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
+
+  var escapeChar = function(match) {
+    return '\\' + escapes[match];
+  };
+
+  // JavaScript micro-templating, similar to John Resig's implementation.
+  // Underscore templating handles arbitrary delimiters, preserves whitespace,
+  // and correctly escapes quotes within interpolated code.
+  // NB: `oldSettings` only exists for backwards compatibility.
+  _.template = function(text, settings, oldSettings) {
+    if (!settings && oldSettings) settings = oldSettings;
+    settings = _.defaults({}, settings, _.templateSettings);
+
+    // Combine delimiters into one regular expression via alternation.
+    var matcher = RegExp([
+      (settings.escape || noMatch).source,
+      (settings.interpolate || noMatch).source,
+      (settings.evaluate || noMatch).source
+    ].join('|') + '|$', 'g');
+
+    // Compile the template source, escaping string literals appropriately.
+    var index = 0;
+    var source = "__p+='";
+    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      source += text.slice(index, offset).replace(escaper, escapeChar);
+      index = offset + match.length;
+
+      if (escape) {
+        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
+      } else if (interpolate) {
+        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+      } else if (evaluate) {
+        source += "';\n" + evaluate + "\n__p+='";
+      }
+
+      // Adobe VMs need the match returned to produce the correct offest.
+      return match;
+    });
+    source += "';\n";
+
+    // If a variable is not specified, place data values in local scope.
+    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+
+    source = "var __t,__p='',__j=Array.prototype.join," +
+      "print=function(){__p+=__j.call(arguments,'');};\n" +
+      source + 'return __p;\n';
+
+    try {
+      var render = new Function(settings.variable || 'obj', '_', source);
+    } catch (e) {
+      e.source = source;
+      throw e;
+    }
+
+    var template = function(data) {
+      return render.call(this, data, _);
+    };
+
+    // Provide the compiled source as a convenience for precompilation.
+    var argument = settings.variable || 'obj';
+    template.source = 'function(' + argument + '){\n' + source + '}';
+
+    return template;
+  };
+
+  // Add a "chain" function. Start chaining a wrapped Underscore object.
+  _.chain = function(obj) {
+    var instance = _(obj);
+    instance._chain = true;
+    return instance;
+  };
+
+  // OOP
+  // ---------------
+  // If Underscore is called as a function, it returns a wrapped object that
+  // can be used OO-style. This wrapper holds altered versions of all the
+  // underscore functions. Wrapped objects may be chained.
+
+  // Helper function to continue chaining intermediate results.
+  var result = function(obj) {
+    return this._chain ? _(obj).chain() : obj;
+  };
+
+  // Add your own custom functions to the Underscore object.
+  _.mixin = function(obj) {
+    _.each(_.functions(obj), function(name) {
+      var func = _[name] = obj[name];
+      _.prototype[name] = function() {
+        var args = [this._wrapped];
+        push.apply(args, arguments);
+        return result.call(this, func.apply(_, args));
+      };
+    });
+  };
+
+  // Add all of the Underscore functions to the wrapper object.
+  _.mixin(_);
+
+  // Add all mutator Array functions to the wrapper.
+  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+    var method = ArrayProto[name];
+    _.prototype[name] = function() {
+      var obj = this._wrapped;
+      method.apply(obj, arguments);
+      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
+      return result.call(this, obj);
+    };
+  });
+
+  // Add all accessor Array functions to the wrapper.
+  _.each(['concat', 'join', 'slice'], function(name) {
+    var method = ArrayProto[name];
+    _.prototype[name] = function() {
+      return result.call(this, method.apply(this._wrapped, arguments));
+    };
+  });
+
+  // Extracts the result from a wrapped and chained object.
+  _.prototype.value = function() {
+    return this._wrapped;
+  };
+
+  // AMD registration happens at the end for compatibility with AMD loaders
+  // that may not enforce next-turn semantics on modules. Even though general
+  // practice for AMD registration is to be anonymous, underscore registers
+  // as a named module because, like jQuery, it is a base library that is
+  // popular enough to be bundled in a third party lib, but not be part of
+  // an AMD load request. Those cases could generate an error when an
+  // anonymous define() is called outside of a loader request.
+  if (typeof define === 'function' && define.amd) {
+    define('underscore', [], function() {
+      return _;
+    });
+  }
+}.call(this));
+
 },{}]},{},["/home/eric/Documents/596/livinglots-nyc/livinglotsnyc/static/js/main.js"]);
