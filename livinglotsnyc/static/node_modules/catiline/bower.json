@@ -1,0 +1,17 @@
+{
+  "name": "catiline",
+  "version": "2.9.3",
+  "main": "dist/catiline.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "test",
+    "tests",
+    "website",
+    "*.md",
+    "*~",
+    "src"
+  ]
+}

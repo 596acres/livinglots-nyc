@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.2",
+    "catiline": "^2.9.3",
     "fancybox": "^2.1.7",
     "handlebars": "^2.0.0",
     "jquery-infinite-scroll": "git://github.com/paulirish/infinite-scroll",
@@ -25,6 +26,7 @@
     "livinglots.addlot": "git://github.com/596acres/livinglots.addlot#v0.2.0",
     "livinglots.boundaries": "git://github.com/596acres/livinglots.boundaries#v0.1.1",
     "livinglots.emailparticipants": "git://github.com/596acres/livinglots.emailparticipants#v0.2.3",
+    "livinglots.lotlayer": "git://github.com/596acres/livinglots.lotlayer#v1.0.0",
     "proj4": "^2.3.3",
     "select2": "^3.5.2-browserify",
     "spin.js": "^2.0.2",
