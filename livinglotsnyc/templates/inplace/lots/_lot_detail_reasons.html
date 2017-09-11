@@ -1,32 +1,34 @@
 {% load i18n lots_tags %}
 
-<section>
-    <h2>{% trans "Why is this lot here?" %}</h2>
-    {% if not lot.is_visible %}
-        <p>
-            {% blocktrans %}
-                Actually, it should not be here. Let us know so we can take 
-                care of it.
-            {% endblocktrans %}
-        </p>
-    {% else %}
-        {% get_vacant_reasons for lot as reasons %}
-        {% if reasons or lot.known_use %}
-            {% if lot.known_use %}
-                <p>{% trans "We posted this lot because:" %}</p>
-            {% elif reasons %}
-                <p>{% trans "We think this lot is vacant because:" %}</p>
-            {% endif %}
-            <ul class="lot-detail-reasons">
+{% get_vacant_reasons for lot as reasons %}
+{% if reasons or lot.known_use or not lot.is_visible %}
+    <section>
+        <h2>{% trans "Why is this lot here?" %}</h2>
+        {% if not lot.is_visible %}
+            <p>
+                {% blocktrans %}
+                    Actually, it should not be here. Let us know so we can take 
+                    care of it.
+                {% endblocktrans %}
+            </p>
+        {% else %}
+            {% if reasons or lot.known_use %}
                 {% if lot.known_use %}
-                    {% blocktrans with use=lot.known_use %}
-                        <li>The lot is being used as a {{ use }}.</li>
-                    {% endblocktrans %}
+                    <p>{% trans "We posted this lot because:" %}</p>
+                {% elif reasons %}
+                    <p>{% trans "We think this lot is vacant because:" %}</p>
                 {% endif %}
-                {% for reason in reasons %}
-                    <li>{{ reason|safe }}</li>
-                {% endfor %}
-            </ul>
+                <ul class="lot-detail-reasons">
+                    {% if lot.known_use %}
+                        {% blocktrans with use=lot.known_use %}
+                            <li>The lot is being used as a {{ use }}.</li>
+                        {% endblocktrans %}
+                    {% endif %}
+                    {% for reason in reasons %}
+                        <li>{{ reason|safe }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         {% endif %}
-    {% endif %}
-</section>
+    </section>
+{% endif %}
