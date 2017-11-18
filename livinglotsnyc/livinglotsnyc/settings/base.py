@@ -135,7 +135,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'django.contrib.webdesign',
 
     #
     # third-party
@@ -317,12 +316,12 @@ LIVING_LOTS = {
 }
 
 CONTACT_FORM_REASONS = OrderedDict([
-    ('The lot I want permission to use is not here.', ['facilitators@livinglotsnyc.org',]),
-    ('I want to share my land access story.', ['facilitators@livinglotsnyc.org',]),
-    ('I want to loan or lease my land for a temporary project.', ['facilitators@livinglotsnyc.org',]),
-    ('I want to invite admins to an event.', ['facilitators@livinglotsnyc.org',]),
-    ('I want to reach 596 Acres, the team that made this site.', ['paula@596acres.org',]),
-    ('I have a press inquiry.', ['facilitators@livinglotsnyc.org',]),
+    ('The lot I want permission to use is not here.', ['organizers@596acres.org',]),
+    ('I want to share my land access story.', ['organizers@596acres.org',]),
+    ('I want to loan or lease my land for a temporary project.', ['organizers@596acres.org',]),
+    ('I want to invite admins to an event.', ['mara@596acres.org',]),
+    ('I want to reach 596 Acres, the team that made this site.', ['mara@596acres.org',]),
+    ('I have a press inquiry.', ['mara@596acres.org',]),
 ])
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
